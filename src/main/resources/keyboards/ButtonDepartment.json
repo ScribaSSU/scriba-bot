@@ -1,0 +1,180 @@
+{
+"one_time": false,
+"buttons": [
+[{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"1\"}",
+"label": "БИОЛОГ. ФАК-Т"
+},
+"color": "primary"
+},
+{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"2\"}",
+"label": "ГЕОГРАФ. ФАК-Т"
+},
+"color": "primary"
+},
+{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"2\"}",
+"label": "ГЕОЛОГ. ФАК-Т"
+},
+"color": "primary"
+}
+],
+[{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"1\"}",
+"label": "ИДПО"
+},
+"color": "primary"
+},
+{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"2\"}",
+"label": "И-Т ИСКУССТВ"
+},
+"color": "primary"
+},
+{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"2\"}",
+"label": "ИИИМО"
+},
+"color": "primary"
+}
+],
+[{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"1\"}",
+"label": "И-Т ФИЗ. КУЛ."
+},
+"color": "primary"
+},
+{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"2\"}",
+"label": "ИФИЖ"
+},
+"color": "primary"
+},
+{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"2\"}",
+"label": "И-Т ХИМИИ"
+},
+"color": "primary"
+}
+],
+[{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"1\"}",
+"label": "МЕХМАТ"
+},
+"color": "primary"
+},
+{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"2\"}",
+"label": "СОЦ. ФАК-Т"
+},
+"color": "primary"
+},
+{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"2\"}",
+"label": "ИН. ЯЗ. ФАК-Т"
+},
+"color": "primary"
+}
+],
+[{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"1\"}",
+"label": "КНИИТ"
+},
+"color": "primary"
+},
+{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"2\"}",
+"label": "ФНБМТ"
+},
+"color": "primary"
+},
+{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"2\"}",
+"label": "ФНП"
+},
+"color": "primary"
+}
+],
+[{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"1\"}",
+"label": "ПСИХОЛОГ. ФАК-Т"
+},
+"color": "primary"
+},
+{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"2\"}",
+"label": "ППИСО"
+},
+"color": "primary"
+},
+{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"2\"}",
+"label": "ФИЗФАК"
+},
+"color": "primary"
+}
+],
+[{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"1\"}",
+"label": "ФИЛОСОФ. ФАК-Т"
+},
+"color": "primary"
+},
+{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"2\"}",
+"label": "ЭКОНОМ. ФАК-Т"
+},
+"color": "primary"
+},
+{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"2\"}",
+"label": "ЮРФАК"
+},
+"color": "primary"
+}
+]
+]
+}

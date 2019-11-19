@@ -1,0 +1,48 @@
+{
+"one_time": false,
+"buttons": [
+[{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"1\"}",
+"label": "Расписание"
+},
+"color": "primary"
+},
+{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"1\"}",
+"label": "Активности"
+},
+"color": "primary"
+}
+],
+[{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"1\"}",
+"label": "Отмена пары"
+},
+"color": "primary"
+},
+{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"1\"}",
+"label": "Добавление пересдачи"
+},
+"color": "primary"
+}
+],
+[{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"1\"}",
+"label": "Включить уведомления"
+},
+"color": "primary"
+}
+]
+]
+}

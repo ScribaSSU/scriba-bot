@@ -1,0 +1,30 @@
+{
+"one_time": false,
+"buttons": [
+[{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"1\"}",
+"label": "Расписание"
+},
+"color": "secondary"
+},
+{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"1\"}",
+"label": "Активности"
+},
+"color": "secondary"
+},
+{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"2\"}",
+"label": "Дом. задания"
+},
+"color": "secondary"
+}
+]
+]
+}

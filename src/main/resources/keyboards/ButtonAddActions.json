@@ -1,0 +1,48 @@
+{
+"one_time": false,
+"buttons": [
+[{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"1\"}",
+"label": "Расписание"
+},
+"color": "primary"
+},
+{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"2\"}",
+"label": "Активности"
+},
+"color": "primary"
+}
+],
+[{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"1\"}",
+"label": "Дом. задания"
+},
+"color": "primary"
+},
+{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"2\"}",
+"label": "Вкл. уведомления"
+},
+"color": "primary"
+}
+],
+[{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"1\"}",
+"label": "Оповещения от других пользователей"
+},
+"color": "primary"
+}
+]
+]
+}

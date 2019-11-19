@@ -1,0 +1,30 @@
+{
+"one_time": false,
+"buttons": [
+[{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"1\"}",
+"label": "Очная форма обучения"
+},
+"color": "primary"
+},
+{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"2\"}",
+"label": "Заочная форма обучения"
+},
+"color": "primary"
+}
+],
+[{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"1\"}",
+"label": "Преподаватели"
+},
+"color": "primary"
+}]
+]
+}
