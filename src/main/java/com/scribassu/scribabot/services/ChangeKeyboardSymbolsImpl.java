@@ -89,26 +89,23 @@ public class ChangeKeyboardSymbolsImpl implements ChangeKeyboardSymbols{
     public void changeSymbols (String fileFrom, String fileTo)
     {
         try {
-            BufferedReader bufferedReader = new BufferedReader(new FileReader(fileFrom));
-            String line = "";
+            KeyboardFileReader reader = new KeyboardFileReaderImpl();
+            String line = reader.readAsString(fileFrom);
             StringBuilder res = new StringBuilder();
-            while ((line = bufferedReader.readLine()) != null)
+            StringBuilder stringBuilder = new StringBuilder();
+            for (int i = 0; i < line.length(); i++)
             {
-                StringBuilder stringBuilder = new StringBuilder();
-                for (int i = 0; i < line.length(); i++)
+                char symbol = line.charAt(i);
+                if (symbols.containsKey(symbol))
                 {
-                    char symbol = line.charAt(i);
-                    if (symbols.containsKey(symbol))
-                    {
-                        stringBuilder.append(symbols.get(symbol));
-                    }
-                    else
-                    {
-                        stringBuilder.append(symbol);
-                    }
+                    stringBuilder.append(symbols.get(symbol));
                 }
-                res.append(stringBuilder.toString());
+                else
+                {
+                    stringBuilder.append(symbol);
+                }
             }
+            res.append(stringBuilder.toString());
             BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(fileTo));
             bufferedWriter.write(res.toString());
             bufferedWriter.flush();
