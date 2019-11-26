@@ -6,11 +6,33 @@ import java.io.*;
 import java.util.HashMap;
 
 @Service
-public class ChangeKeyboardSymbolsImpl implements ChangeKeyboardSymbols{
+public class ChangeKeyboardSymbolsImpl implements ChangeKeyboardSymbols {
     private HashMap<Character, String> symbols = new HashMap<>();
 
-    public ChangeKeyboardSymbolsImpl()
-    {
+    private final CustomFileReader customFileReader;
+
+    public ChangeKeyboardSymbolsImpl(CustomFileReader customFileReader) {
+        this.customFileReader = customFileReader;
+        initSymbols();
+    }
+
+    @Override
+    public String changeSymbols (String fileFrom) {
+        String line = customFileReader.readAsString(fileFrom);
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < line.length(); i++) {
+            char symbol = line.charAt(i);
+            if (symbols.containsKey(symbol)) {
+                stringBuilder.append(symbols.get(symbol));
+            }
+            else {
+                stringBuilder.append(symbol);
+            }
+        }
+        return stringBuilder.toString();
+    }
+
+    private void initSymbols() {
         symbols.put('\"', "%22");
         symbols.put('{', "%7b");
         symbols.put('}', "%7d");
@@ -19,6 +41,8 @@ public class ChangeKeyboardSymbolsImpl implements ChangeKeyboardSymbols{
         symbols.put('\\', "%5c");
         symbols.put(' ', "%20");
         symbols.put(':', "%3a");
+        symbols.put(',', "%2c");
+        symbols.put('\n', "");
         symbols.put('А', "%d0%90");
         symbols.put('Б', "%d0%91");
         symbols.put('В', "%d0%92");
@@ -35,7 +59,7 @@ public class ChangeKeyboardSymbolsImpl implements ChangeKeyboardSymbols{
         symbols.put('Н', "%d0%9d");
         symbols.put('О', "%d0%9e");
         symbols.put('П', "%d0%9f");
-        symbols.put('Р', "%d1%a0");
+        symbols.put('Р', "%d0%a0");
         symbols.put('С', "%d1%a1");
         symbols.put('Т', "%d1%a2");
         symbols.put('У', "%d1%a3");
@@ -83,35 +107,6 @@ public class ChangeKeyboardSymbolsImpl implements ChangeKeyboardSymbols{
         symbols.put('э', "%d1%8d");
         symbols.put('ю', "%d1%8e");
         symbols.put('я', "%d1%8f");
-    }
-
-    @Override
-    public void changeSymbols (String fileFrom, String fileTo)
-    {
-        try {
-            KeyboardFileReader reader = new KeyboardFileReaderImpl();
-            String line = reader.readAsString(fileFrom);
-            StringBuilder res = new StringBuilder();
-            StringBuilder stringBuilder = new StringBuilder();
-            for (int i = 0; i < line.length(); i++)
-            {
-                char symbol = line.charAt(i);
-                if (symbols.containsKey(symbol))
-                {
-                    stringBuilder.append(symbols.get(symbol));
-                }
-                else
-                {
-                    stringBuilder.append(symbol);
-                }
-            }
-            res.append(stringBuilder.toString());
-            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(fileTo));
-            bufferedWriter.write(res.toString());
-            bufferedWriter.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }
 

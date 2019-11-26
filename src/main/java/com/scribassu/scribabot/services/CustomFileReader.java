@@ -1,5 +1,5 @@
 package com.scribassu.scribabot.services;
 
-public interface KeyboardFileReader {
+public interface CustomFileReader {
     String readAsString(String path);
 }

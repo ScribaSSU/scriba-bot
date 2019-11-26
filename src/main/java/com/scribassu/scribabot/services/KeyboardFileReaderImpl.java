@@ -2,11 +2,13 @@ package com.scribassu.scribabot.services;
 
 import org.springframework.stereotype.Service;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.stream.Collectors;
 
 @Service
-public class KeyboardFileReaderImpl implements KeyboardFileReader {
+public class KeyboardFileReaderImpl implements CustomFileReader {
 
     @Override
     public String readAsString(String path) {

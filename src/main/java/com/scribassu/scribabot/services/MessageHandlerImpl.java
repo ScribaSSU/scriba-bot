@@ -1,5 +1,7 @@
 package com.scribassu.scribabot.services;
 
+import com.scribassu.scribabot.keyboard.KeyboardMap;
+import com.scribassu.scribabot.keyboard.KeyboardType;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -17,11 +19,9 @@ public class MessageHandlerImpl implements MessageHandler {
 
         if (message.equalsIgnoreCase("к")) {
             botMessage.put("message", "keybrd");
-            botMessage.put("keyboard", k1);
+            botMessage.put("keyboard", KeyboardMap.keyboards.get(KeyboardType.ButtonActions).getJsonText());
         }
 
         return botMessage;
     }
-
-    private static final String k1 = "%7b%22one_time%22%3afalse,%22buttons%22%3a%5b%5b%7b%22action%22%3a%7b%22type%22%3a%22text%22,%22payload%22%3a%22%7b%5c%22button%5c%22%3a%20%5c%221%5c%22%7d%22,%22label%22%3a%22Schedule%22%7d,%22color%22%3a%22primary%22%7d,%7b%22action%22%3a%7b%22type%22%3a%22text%22,%22payload%22%3a%22%7b%5c%22button%5c%22%3a%20%5c%221%5c%22%7d%22,%22label%22%3a%22Activities%22%7d,%22color%22%3a%22primary%22%7d%5d,%5b%7b%22action%22%3a%7b%22type%22%3a%22text%22,%22payload%22%3a%22%7b%5c%22button%5c%22%3a%20%5c%221%5c%22%7d%22,%22label%22%3a%22Reject%20lesson%22%7d,%22color%22%3a%22primary%22%7d,%7b%22action%22%3a%7b%22type%22%3a%22text%22,%22payload%22%3a%22%7b%5c%22button%5c%22%3a%20%5c%221%5c%22%7d%22,%22label%22%3a%22Add%20exam%22%7d,%22color%22%3a%22primary%22%7d%5d,%5b%7b%22action%22%3a%7b%22type%22%3a%22text%22,%22payload%22%3a%22%7b%5c%22button%5c%22%3a%20%5c%221%5c%22%7d%22,%22label%22%3a%22Enable%20notifications%22%7d,%22color%22%3a%22primary%22%7d%5d%5d%7d";
 }
