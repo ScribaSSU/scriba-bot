@@ -2,3 +2,16 @@ scriba-bot:
   token:
   secret:
   confirmation-code:
+  keyboards-folder: keyboards/
+
+spring:
+  datasource:
+    url:
+    username:
+    password:
+  jpa:
+    properties:
+      hibernate:
+        dialect:
+    hibernate:
+      ddl-auto:
