@@ -21,7 +21,7 @@ public class CallRestService {
     private String FULL_DEP_EDU_GROUP_DAY_URI = "schedule/full/%s/%s/%s";
     private String FULL_DEP_EDU_GROUP_DAY_LESSON_URI = "schedule/full/%s/%s/%s/%s";
 
-    public List<FullTimeLesson> getFullLessonsByDayAndLesson(String department,
+    public List<FullTimeLesson> getFullTimeLessonsByDayAndLesson(String department,
                                           String groupNumber,
                                           String dayNumber,
                                           String lessonNumber) {
@@ -40,7 +40,7 @@ public class CallRestService {
         return mapToListFullTimeLesson(result);
     }
 
-    public List<FullTimeLesson> getFullLessonsByDay(String department,
+    public List<FullTimeLesson> getFullTimeLessonsByDay(String department,
                                                     String groupNumber,
                                                     String dayNumber) {
         RestTemplate restTemplate = new RestTemplate();
@@ -56,7 +56,7 @@ public class CallRestService {
         return mapToListFullTimeLesson(result);
     }
 
-    public List<FullTimeLesson> getFullLessonsByGroup(String department,
+    public List<FullTimeLesson> getFullTimeLessonsByGroup(String department,
                                                     String groupNumber) {
         RestTemplate restTemplate = new RestTemplate();
         String uri = prefix +
