@@ -1,9 +1,6 @@
 package com.scribassu.scribabot.controllers;
 
-import com.scribassu.scribabot.services.MessageHandler;
-import com.scribassu.scribabot.services.MessageParser;
-import com.scribassu.scribabot.services.MessageParserImpl;
-import com.scribassu.scribabot.services.CallRestService;
+import com.scribassu.scribabot.services.*;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -29,12 +26,15 @@ public class VkController {
     private final Random random = new Random();
     private final MessageParser messageParser;
     private final MessageHandler messageHandler;
+    private final SymbolConverter symbolConverter;
 
     @Autowired
     public VkController(MessageParser messageParser,
-                        MessageHandler messageHandler) {
+                        MessageHandler messageHandler,
+                        SymbolConverter symbolConverter) {
         this.messageParser = messageParser;
         this.messageHandler = messageHandler;
+        this.symbolConverter = symbolConverter;
     }
 
     @PostMapping(value = "/testscriba", consumes = {"application/json"})
@@ -76,10 +76,10 @@ public class VkController {
 
     private String buildVkApiResponse(String vkApiMethod, String userId, String message, String keyboard){
         if(keyboard == null || keyboard.isEmpty()) {
-            return (vkApiMethod + "&user_id=" + userId + "&message=" + message + "&random_id=" + random.nextInt());
+            return (vkApiMethod + "&user_id=" + userId + "&message=" + symbolConverter.convertSymbols(message) + "&random_id=" + random.nextInt());
         }
         else {
-            return (vkApiMethod + "&user_id=" + userId + "&message=" + message + "&keyboard=" + keyboard + "&random_id=" + random.nextInt());
+            return (vkApiMethod + "&user_id=" + userId + "&message=" + symbolConverter.convertSymbols(message) + "&keyboard=" + keyboard + "&random_id=" + random.nextInt());
         }
     }
 }

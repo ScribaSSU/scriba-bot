@@ -6,9 +6,10 @@ import com.scribassu.tracto.domain.LessonType;
 import java.util.List;
 
 public class Templates {
-    public String makeTemplate(List<FullTimeLesson> fullTimeLessons)
+
+    public static String makeTemplate(List<FullTimeLesson> fullTimeLessons)
     {
-        fullTimeLessons.sort((o1, o2) -> (int) (o1.getLessonTime().getLessonNumber() - o2.getLessonTime().getLessonNumber()));
+        fullTimeLessons.sort((o1, o2) -> (o1.getLessonTime().getLessonNumber() - o2.getLessonTime().getLessonNumber()));
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("Сегодня ").append(fullTimeLessons.get(0).getDay().getWeekDay().getDay()).append("\nНеделя - ");
         stringBuilder.append(fullTimeLessons.get(0).getWeekType().getType()).append("\uD83D\uDD4A\n");
