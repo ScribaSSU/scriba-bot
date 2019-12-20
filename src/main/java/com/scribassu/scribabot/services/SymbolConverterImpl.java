@@ -2,26 +2,24 @@ package com.scribassu.scribabot.services;
 
 import org.springframework.stereotype.Service;
 
-import java.io.*;
 import java.util.HashMap;
 
 @Service
-public class ChangeKeyboardSymbolsImpl implements ChangeKeyboardSymbols {
+public class SymbolConverterImpl implements SymbolConverter {
     private HashMap<Character, String> symbols = new HashMap<>();
 
     private final CustomFileReader customFileReader;
 
-    public ChangeKeyboardSymbolsImpl(CustomFileReader customFileReader) {
+    public SymbolConverterImpl(CustomFileReader customFileReader) {
         this.customFileReader = customFileReader;
         initSymbols();
     }
 
     @Override
-    public String changeSymbols (String fileFrom) {
-        String line = customFileReader.readAsString(fileFrom);
+    public String convertSymbols(String string) {
         StringBuilder stringBuilder = new StringBuilder();
-        for (int i = 0; i < line.length(); i++) {
-            char symbol = line.charAt(i);
+        for (int i = 0; i < string.length(); i++) {
+            char symbol = string.charAt(i);
             if (symbols.containsKey(symbol)) {
                 stringBuilder.append(symbols.get(symbol));
             }
@@ -42,7 +40,8 @@ public class ChangeKeyboardSymbolsImpl implements ChangeKeyboardSymbols {
         symbols.put(' ', "%20");
         symbols.put(':', "%3a");
         symbols.put(',', "%2c");
-        symbols.put('\n', "");
+        symbols.put('\n', "%0a");
+        symbols.put('№', "%E2%84%96");
         symbols.put('А', "%d0%90");
         symbols.put('Б', "%d0%91");
         symbols.put('В', "%d0%92");
@@ -60,21 +59,21 @@ public class ChangeKeyboardSymbolsImpl implements ChangeKeyboardSymbols {
         symbols.put('О', "%d0%9e");
         symbols.put('П', "%d0%9f");
         symbols.put('Р', "%d0%a0");
-        symbols.put('С', "%d1%a1");
-        symbols.put('Т', "%d1%a2");
-        symbols.put('У', "%d1%a3");
-        symbols.put('Ф', "%d1%a4");
-        symbols.put('Х', "%d1%a5");
-        symbols.put('Ц', "%d1%a6");
-        symbols.put('Ч', "%d1%a7");
-        symbols.put('Ш', "%d1%a8");
-        symbols.put('Щ', "%d1%a9");
-        symbols.put('Ъ', "%d1%aa");
-        symbols.put('Ы', "%d1%ab");
-        symbols.put('Ь', "%d1%ac");
-        symbols.put('Э', "%d1%ad");
-        symbols.put('Ю', "%d1%ae");
-        symbols.put('Я', "%d1%af");
+        symbols.put('С', "%d0%a1");
+        symbols.put('Т', "%d0%a2");
+        symbols.put('У', "%d0%a3");
+        symbols.put('Ф', "%d0%a4");
+        symbols.put('Х', "%d0%a5");
+        symbols.put('Ц', "%d0%a6");
+        symbols.put('Ч', "%d0%a7");
+        symbols.put('Ш', "%d0%a8");
+        symbols.put('Щ', "%d0%a9");
+        symbols.put('Ъ', "%d0%aa");
+        symbols.put('Ы', "%d0%ab");
+        symbols.put('Ь', "%d0%ac");
+        symbols.put('Э', "%d0%ad");
+        symbols.put('Ю', "%d0%ae");
+        symbols.put('Я', "%d0%af");
         symbols.put('а', "%d0%b0");
         symbols.put('б', "%d0%b1");
         symbols.put('в', "%d0%b2");

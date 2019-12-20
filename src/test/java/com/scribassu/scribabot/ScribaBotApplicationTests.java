@@ -8,11 +8,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
-@ActiveProfiles(profiles = {"dev", "prod"})
+@ActiveProfiles(profiles = {"dev"})
 public class ScribaBotApplicationTests {
 
 	@Test
 	public void contextLoads() {
 	}
-
 }
