@@ -6,6 +6,7 @@ import com.scribassu.scribabot.util.Templates;
 import com.scribassu.tracto.domain.FullTimeLesson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -40,7 +41,13 @@ public class MessageHandlerImpl implements MessageHandler {
                     params[2],
                     params[3]
             );
-            botMessage.put("message", Templates.makeTemplate(lessons));
+
+            if(CollectionUtils.isEmpty(lessons)) {
+                botMessage.put("message", "Информация отсутствует.");
+            }
+            else {
+                botMessage.put("message", Templates.makeTemplate(lessons));
+            }
         }
 
         if(botMessage.isEmpty() || !botMessage.containsKey("message")) {

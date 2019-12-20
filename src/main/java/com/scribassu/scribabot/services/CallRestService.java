@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -79,7 +80,7 @@ public class CallRestService {
             return objectMapper.readValue(string, collectionType);
         } catch (IOException e) {
             e.printStackTrace();
-            return null;
+            return new ArrayList<>();
         }
     }
 }
