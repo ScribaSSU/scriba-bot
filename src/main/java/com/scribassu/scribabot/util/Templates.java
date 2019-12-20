@@ -10,9 +10,9 @@ public class Templates {
     {
         fullTimeLessons.sort((o1, o2) -> (int) (o1.getId() - o2.getId()));
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("Сегодня \n").append("Неделя - ").append(fullTimeLessons.get(0).getWeekType())
-                     .append("\uD83D\uDD4A \n").append("Группа № ").append(fullTimeLessons.get(0).getStudentGroup())
-                     .append("\n");
+        stringBuilder.append("Сегодня ").append(fullTimeLessons.get(0).getDay().getWeekDay()).append("\n Неделя - ")
+                .append(fullTimeLessons.get(0).getWeekType()).append("\uD83D\uDD4A \n")
+                .append("Группа № ").append(fullTimeLessons.get(0).getStudentGroup()).append("\n");
         for (FullTimeLesson fullTimeLesson : fullTimeLessons) {
             stringBuilder.append(fullTimeLesson.getLessonTime().getTimeStart()).append(" - ")
                    .append(fullTimeLesson.getLessonTime().getTimeFinish()).append("\n");
