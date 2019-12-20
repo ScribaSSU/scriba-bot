@@ -4,6 +4,13 @@ scriba-bot:
   confirmation-code: ${SCRIBA_BOT_CONFIRMATION_CODE}
   keyboards-folder: keyboards/
 
+call:
+  rest:
+    prefix: ${SCRIBA_BOT_CALL_REST_PREFIX}
+
+server:
+  port: ${SCRIBA_BOT_SERVER_PORT}
+
 spring:
   datasource:
     url: ${SCRIBA_BOT_DATABASE_URL}
