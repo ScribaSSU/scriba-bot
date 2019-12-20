@@ -43,6 +43,10 @@ public class MessageHandlerImpl implements MessageHandler {
             botMessage.put("message", Templates.makeTemplate(lessons));
         }
 
+        if(botMessage.isEmpty() || !botMessage.containsKey("message")) {
+            botMessage.put("message", "Сообщение не распознано.");
+        }
+
         return botMessage;
     }
 }
