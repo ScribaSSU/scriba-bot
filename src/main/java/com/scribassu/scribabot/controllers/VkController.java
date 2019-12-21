@@ -1,6 +1,7 @@
 package com.scribassu.scribabot.controllers;
 
 import com.scribassu.scribabot.services.*;
+import com.scribassu.scribabot.util.Constants;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -45,12 +46,12 @@ public class VkController {
         if(incomingMessage != null){
             parsedMessage = messageParser.parseMessage(incomingMessage);
 
-            if(parsedMessage.containsKey("message")) {
-                String userId = parsedMessage.get("userId");
-                String message = parsedMessage.get("message");
+            if(parsedMessage.containsKey(Constants.KEY_MESSAGE)) {
+                String userId = parsedMessage.get(Constants.KEY_USER_ID);
+                String message = parsedMessage.get(Constants.KEY_MESSAGE);
                 Map<String, String> botMessage = messageHandler.getBotMessage(message);
                 String vkApiMethod = "https://api.vk.com/method/messages.send?access_token=" + token + "&v=5.100";
-                String botMessageUrl = buildVkApiResponse(vkApiMethod, userId, botMessage.get("message"), botMessage.get("keyboard"));
+                String botMessageUrl = buildVkApiResponse(vkApiMethod, userId, botMessage.get(Constants.KEY_MESSAGE), botMessage.get(Constants.KEY_KEYBOARD));
 
                 System.out.println(botMessageUrl);
                 try {
@@ -66,11 +67,11 @@ public class VkController {
         else {
             throw new IllegalArgumentException("Message was not received!");
         }
-        if(parsedMessage.containsKey(MessageParserImpl.CONFIRMATION_TYPE)) {
+        if(parsedMessage.containsKey(Constants.TYPE_CONFIRMATION)) {
             return confirmationCode;
         }
         else {
-            return "ok";
+            return Constants.OK;
         }
     }
 

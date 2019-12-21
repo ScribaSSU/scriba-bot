@@ -2,6 +2,7 @@ package com.scribassu.scribabot.services;
 
 import com.scribassu.scribabot.keyboard.KeyboardMap;
 import com.scribassu.scribabot.keyboard.KeyboardType;
+import com.scribassu.scribabot.util.Constants;
 import com.scribassu.scribabot.util.Templates;
 import com.scribassu.tracto.domain.FullTimeLesson;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,11 +28,11 @@ public class MessageHandlerImpl implements MessageHandler {
         Map<String, String> botMessage = new HashMap<>();
 
         if (message.equalsIgnoreCase("т"))
-            botMessage.put("message", "test");
+            botMessage.put(Constants.KEY_MESSAGE, "test");
 
         if (message.equalsIgnoreCase("к")) {
-            botMessage.put("message", "keybrd");
-            botMessage.put("keyboard", KeyboardMap.keyboards.get(KeyboardType.ButtonActions).getJsonText());
+            botMessage.put(Constants.KEY_MESSAGE, "keybrd");
+            botMessage.put(Constants.KEY_KEYBOARD, KeyboardMap.keyboards.get(KeyboardType.ButtonActions).getJsonText());
         }
 
         if(message.startsWith("р")) {
@@ -43,15 +44,15 @@ public class MessageHandlerImpl implements MessageHandler {
             );
 
             if(CollectionUtils.isEmpty(lessons)) {
-                botMessage.put("message", "Информация отсутствует.");
+                botMessage.put(Constants.KEY_MESSAGE, "Информация отсутствует.");
             }
             else {
-                botMessage.put("message", Templates.makeTemplate(lessons));
+                botMessage.put(Constants.KEY_MESSAGE, Templates.makeTemplate(lessons));
             }
         }
 
         if(botMessage.isEmpty() || !botMessage.containsKey("message")) {
-            botMessage.put("message", "Сообщение не распознано.");
+            botMessage.put(Constants.KEY_MESSAGE, "Сообщение не распознано.");
         }
 
         return botMessage;
