@@ -1,29 +1,41 @@
 {
-"one_time": false,
+"one_time": true,
 "buttons": [
 [{
 "action": {
 "type": "text",
 "payload": "{\"button\": \"1\"}",
-"label": "Расписание"
+"label": "Занятия"
 },
-"color": "secondary"
+"color": "primary"
 },
 {
 "action": {
 "type": "text",
 "payload": "{\"button\": \"1\"}",
-"label": "Активности"
+"label": "Сессия"
 },
 "color": "secondary"
-},
+}
+],
+[
 {
 "action": {
 "type": "text",
-"payload": "{\"button\": \"2\"}",
-"label": "Дом. задания"
+"payload": "{\"button\": \"1\"}",
+"label": "Выбрать факультет и т. д."
 },
-"color": "secondary"
+"color": "primary"
+}
+],
+[
+{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"1\"}",
+"label": "Главное меню"
+},
+"color": "primary"
 }
 ]
 ]

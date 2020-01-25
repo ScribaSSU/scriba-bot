@@ -1,4 +1,4 @@
-package com.scribassu.scribabot.services;
+package com.scribassu.scribabot.services.messages;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

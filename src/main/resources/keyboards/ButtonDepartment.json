@@ -1,11 +1,11 @@
 {
-"one_time": false,
+"one_time": true,
 "buttons": [
 [{
 "action": {
 "type": "text",
 "payload": "{\"button\": \"1\"}",
-"label": "БИОЛОГ. ФАК-Т"
+"label": "БИОЛОГ."
 },
 "color": "primary"
 },
@@ -13,7 +13,7 @@
 "action": {
 "type": "text",
 "payload": "{\"button\": \"2\"}",
-"label": "ГЕОГРАФ. ФАК-Т"
+"label": "ГЕОГРАФ."
 },
 "color": "primary"
 },
@@ -21,7 +21,7 @@
 "action": {
 "type": "text",
 "payload": "{\"button\": \"2\"}",
-"label": "ГЕОЛОГ. ФАК-Т"
+"label": "ГЕОЛОГ."
 },
 "color": "primary"
 }
@@ -88,7 +88,7 @@
 "action": {
 "type": "text",
 "payload": "{\"button\": \"2\"}",
-"label": "СОЦ. ФАК-Т"
+"label": "СОЦФАК"
 },
 "color": "primary"
 },
@@ -96,7 +96,7 @@
 "action": {
 "type": "text",
 "payload": "{\"button\": \"2\"}",
-"label": "ИН. ЯЗ. ФАК-Т"
+"label": "ФИЯИЛ"
 },
 "color": "primary"
 }
@@ -130,7 +130,7 @@
 "action": {
 "type": "text",
 "payload": "{\"button\": \"1\"}",
-"label": "ПСИХОЛОГ. ФАК-Т"
+"label": "ПСИХОЛОГ."
 },
 "color": "primary"
 },
@@ -155,7 +155,7 @@
 "action": {
 "type": "text",
 "payload": "{\"button\": \"1\"}",
-"label": "ФИЛОСОФ. ФАК-Т"
+"label": "ФИЛОСОФ."
 },
 "color": "primary"
 },
@@ -163,7 +163,7 @@
 "action": {
 "type": "text",
 "payload": "{\"button\": \"2\"}",
-"label": "ЭКОНОМ. ФАК-Т"
+"label": "ЭКОНОМ."
 },
 "color": "primary"
 },
@@ -172,6 +172,16 @@
 "type": "text",
 "payload": "{\"button\": \"2\"}",
 "label": "ЮРФАК"
+},
+"color": "primary"
+}
+],
+[
+{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"1\"}",
+"label": "Главное меню"
 },
 "color": "primary"
 }

@@ -30,6 +30,18 @@ public class SymbolConverterImpl implements SymbolConverter {
         return stringBuilder.toString();
     }
 
+    @Override
+    public String toOneLine(String string) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < string.length(); i++) {
+            char symbol = string.charAt(i);
+            if (symbol != '\n') {
+                stringBuilder.append(symbol);
+            }
+        }
+        return stringBuilder.toString();
+    }
+
     private void initSymbols() {
         symbols.put('\"', "%22");
         symbols.put('{', "%7b");

@@ -5,6 +5,7 @@ import com.scribassu.scribabot.keyboard.KeyboardMap;
 import com.scribassu.scribabot.keyboard.KeyboardType;
 import com.scribassu.scribabot.services.CustomFileReader;
 import com.scribassu.scribabot.services.SymbolConverter;
+import com.scribassu.scribabot.util.DepartmentConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
@@ -34,9 +35,31 @@ public class StartupEvents implements ApplicationListener<ContextRefreshedEvent>
                     k,
                     new Keyboard(
                             k.toString(),
-                            symbolConverter.convertSymbols(customFileReader.readAsString(keyboardsFolder + k.getFilename()))
+                            symbolConverter.toOneLine(customFileReader.readAsString(keyboardsFolder + k.getFilename()))
                     )
             );
         }
+
+        DepartmentConverter.add("биолог.", "bf");
+        DepartmentConverter.add("географ.", "gf");
+        DepartmentConverter.add("геолог.", "gl");
+        DepartmentConverter.add("идпо", "idpo");
+        DepartmentConverter.add("и-т искусств", "ii");
+        DepartmentConverter.add("ииимо", "imo");
+        DepartmentConverter.add("и-т физ. кул.", "ifk");
+        DepartmentConverter.add("ифиж", "ifg");
+        DepartmentConverter.add("и-т химии", "ih");
+        DepartmentConverter.add("мехмат", "mm");
+        DepartmentConverter.add("фияил", "fi");
+        DepartmentConverter.add("книит", "knt");
+        DepartmentConverter.add("фнбмт", "fn");
+        DepartmentConverter.add("фнп", "fnp");
+        DepartmentConverter.add("психолог", "fps");
+        DepartmentConverter.add("пписо", "fppso");
+        DepartmentConverter.add("физфак", "ff");
+        DepartmentConverter.add("философ", "fp");
+        DepartmentConverter.add("эконом", "ef");
+        DepartmentConverter.add("юрфак", "uf");
+        DepartmentConverter.add("соцфак", "sf");
     }
 }

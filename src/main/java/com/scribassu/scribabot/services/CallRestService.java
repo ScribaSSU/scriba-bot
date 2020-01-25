@@ -36,14 +36,16 @@ public class CallRestService {
                         lessonNumber
                 );
 
+        //https://stackoverflow.com/questions/19540289/how-to-fix-the-java-security-cert-certificateexception-no-subject-alternative
+        javax.net.ssl.HttpsURLConnection.setDefaultHostnameVerifier((hostname, sslSession) -> true);
 
         String result = restTemplate.getForObject(uri, String.class);
         return mapToListFullTimeLesson(result);
     }
 
     public List<FullTimeLesson> getFullTimeLessonsByDay(String department,
-                                                    String groupNumber,
-                                                    String dayNumber) {
+                                                        String groupNumber,
+                                                        String dayNumber) {
         RestTemplate restTemplate = new RestTemplate();
         String uri = prefix +
                 String.format(
@@ -53,12 +55,15 @@ public class CallRestService {
                         dayNumber
                 );
 
+        //https://stackoverflow.com/questions/19540289/how-to-fix-the-java-security-cert-certificateexception-no-subject-alternative
+        javax.net.ssl.HttpsURLConnection.setDefaultHostnameVerifier((hostname, sslSession) -> true);
+
         String result = restTemplate.getForObject(uri, String.class);
         return mapToListFullTimeLesson(result);
     }
 
     public List<FullTimeLesson> getFullTimeLessonsByGroup(String department,
-                                                    String groupNumber) {
+                                                          String groupNumber) {
         RestTemplate restTemplate = new RestTemplate();
         String uri = prefix +
                 String.format(
@@ -66,6 +71,9 @@ public class CallRestService {
                         department,
                         groupNumber
                 );
+
+        //https://stackoverflow.com/questions/19540289/how-to-fix-the-java-security-cert-certificateexception-no-subject-alternative
+        javax.net.ssl.HttpsURLConnection.setDefaultHostnameVerifier((hostname, sslSession) -> true);
 
         String result = restTemplate.getForObject(uri, String.class);
         return mapToListFullTimeLesson(result);

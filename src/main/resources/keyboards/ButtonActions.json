@@ -7,39 +7,51 @@
 "payload": "{\"button\": \"1\"}",
 "label": "Расписание"
 },
-"color": "primary"
-},
+"color": "positive"
+}
+],
+[
 {
 "action": {
 "type": "text",
 "payload": "{\"button\": \"1\"}",
 "label": "Активности"
 },
-"color": "primary"
-}
-],
-[{
-"action": {
-"type": "text",
-"payload": "{\"button\": \"1\"}",
-"label": "Отмена пары"
-},
-"color": "primary"
+"color": "secondary"
 },
 {
 "action": {
 "type": "text",
 "payload": "{\"button\": \"1\"}",
-"label": "Добавление пересдачи"
+"label": "Добавить событие"
 },
-"color": "primary"
+"color": "secondary"
 }
 ],
-[{
+[
+{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"1\"}",
+"label": "Уведомления"
+},
+"color": "secondary"
+},
+{
 "action": {
 "type": "text",
 "payload": "{\"button\": \"1\"}",
 "label": "Включить уведомления"
+},
+"color": "secondary"
+}
+],
+[
+{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"1\"}",
+"label": "Справка"
 },
 "color": "primary"
 }

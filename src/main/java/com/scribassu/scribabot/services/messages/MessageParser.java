@@ -1,4 +1,4 @@
-package com.scribassu.scribabot.services;
+package com.scribassu.scribabot.services.messages;
 
 import java.util.Map;
 

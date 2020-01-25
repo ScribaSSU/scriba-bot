@@ -1,11 +1,11 @@
 {
-"one_time": false,
+"one_time": true,
 "buttons": [
 [{
 "action": {
 "type": "text",
 "payload": "{\"button\": \"1\"}",
-"label": "Очная форма обучения"
+"label": "Дневная"
 },
 "color": "primary"
 },
@@ -13,7 +13,7 @@
 "action": {
 "type": "text",
 "payload": "{\"button\": \"2\"}",
-"label": "Заочная форма обучения"
+"label": "Заочная"
 },
 "color": "primary"
 }
@@ -21,10 +21,19 @@
 [{
 "action": {
 "type": "text",
-"payload": "{\"button\": \"1\"}",
-"label": "Преподаватели"
+"payload": "{\"button\": \"2\"}",
+"label": "Вечерняя"
 },
 "color": "primary"
-}]
+},
+{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"1\"}",
+"label": "Преподаватель"
+},
+"color": "secondary"
+}
+]
 ]
 }
