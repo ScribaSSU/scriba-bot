@@ -9,7 +9,9 @@ public enum KeyboardType {
     ButtonGroupType("ButtonGroupType.json"),
     ButtonMailing("ButtonMailing.json"),
     ButtonSchedule("ButtonSchedule.json"),
-    ButtonFullTimeSchedule("ButtonFullTimeSchedule.json");
+    ButtonFullTimeSchedule("ButtonFullTimeSchedule.json"),
+    ButtonSettings("ButtonSettings.json"),
+    ButtonHours("ButtonHours.json");
 
     private String filename;
 

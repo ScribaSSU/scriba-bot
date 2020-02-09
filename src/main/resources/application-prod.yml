@@ -3,10 +3,15 @@ scriba-bot:
   secret: ${SCRIBA_BOT_SECRET}
   confirmation-code: ${SCRIBA_BOT_CONFIRMATION_CODE}
   keyboards-folder: keyboards/
+  vk-api-version: ${SCRIBA_BOT_VK_API_VERSION}
 
 call:
   rest:
     prefix: ${SCRIBA_BOT_CALL_REST_PREFIX}
+
+scheduled:
+  daily-notification-service:
+    cron: 0 0 * * * *
 
 server:
   port: ${SCRIBA_BOT_SERVER_PORT}

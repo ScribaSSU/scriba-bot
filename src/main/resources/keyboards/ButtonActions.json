@@ -41,9 +41,9 @@
 "action": {
 "type": "text",
 "payload": "{\"button\": \"1\"}",
-"label": "Включить уведомления"
+"label": "Настройки"
 },
-"color": "secondary"
+"color": "primary"
 }
 ],
 [
