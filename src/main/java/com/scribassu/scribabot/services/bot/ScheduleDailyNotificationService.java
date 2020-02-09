@@ -23,18 +23,10 @@ import java.util.Map;
 @Service
 public class ScheduleDailyNotificationService {
 
-    /*
-    Every sendSchedule() iteration increments value by 1.
-    Current hour for sending schedules.
-     */
-    @Value("${scheduled.daily-notification-service.hour}")
-    private int hour;
-
     private final MessageSender messageSender;
     private final CallRestService callRestService;
     private final BotUserRepository botUserRepository;
     private final ScheduleDailyNotificationRepository scheduleDailyNotificationRepository;
-    private static final Calendar calendar = Calendar.getInstance();
 
     @Autowired
     public ScheduleDailyNotificationService(MessageSender messageSender,
@@ -49,8 +41,9 @@ public class ScheduleDailyNotificationService {
 
     @Scheduled(cron = "${scheduled.daily-notification-service.cron}")
     public void sendSchedule() throws Exception {
+        Calendar calendar = Calendar.getInstance();
         List<ScheduleDailyNotification> scheduleDailyNotifications =
-                scheduleDailyNotificationRepository.findByHourForSendAndEnabled(hour);
+                scheduleDailyNotificationRepository.findByHourForSendAndEnabled(calendar.get(Calendar.HOUR_OF_DAY));
 
         if(!CollectionUtils.isEmpty(scheduleDailyNotifications)) {
             for(ScheduleDailyNotification notification : scheduleDailyNotifications) {
@@ -66,7 +59,5 @@ public class ScheduleDailyNotificationService {
                 }
             }
         }
-
-        hour = hour == 24 ? 1 : hour + 1;
     }
 }

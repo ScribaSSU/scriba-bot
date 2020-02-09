@@ -11,10 +11,11 @@ import javax.persistence.Id;
 @NoArgsConstructor
 public class BotUser {
     @Id
-    public String userId;
-    public String department;
-    public String groupNumber;
-    public String educationForm;
+    private String userId;
+
+    private String department;
+    private String groupNumber;
+    private String educationForm;
 
     public BotUser(String userId) {
         this.userId = userId;

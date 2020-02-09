@@ -8,6 +8,7 @@ import com.scribassu.scribabot.keyboard.KeyboardType;
 import com.scribassu.scribabot.repositories.BotUserRepository;
 import com.scribassu.scribabot.repositories.ScheduleDailyNotificationRepository;
 import com.scribassu.scribabot.services.CallRestService;
+import com.scribassu.scribabot.services.bot.FullTimeLessonService;
 import com.scribassu.scribabot.services.bot.HelpService;
 import com.scribassu.scribabot.util.BotMessageUtils;
 import com.scribassu.scribabot.util.Constants;
@@ -29,21 +30,21 @@ public class MessageHandlerImpl implements MessageHandler {
 
     private final CallRestService callRestService;
     private final HelpService helpService;
+    private final FullTimeLessonService fullTimeLessonService;
     private final BotUserRepository botUserRepository;
     private final ScheduleDailyNotificationRepository scheduleDailyNotificationRepository;
 
     @Autowired
     public MessageHandlerImpl(CallRestService callRestService,
                               HelpService helpService,
-                              BotUserRepository botUserRepository,
+                              FullTimeLessonService fullTimeLessonService, BotUserRepository botUserRepository,
                               ScheduleDailyNotificationRepository scheduleDailyNotificationRepository) {
         this.callRestService = callRestService;
         this.helpService = helpService;
+        this.fullTimeLessonService = fullTimeLessonService;
         this.botUserRepository = botUserRepository;
         this.scheduleDailyNotificationRepository = scheduleDailyNotificationRepository;
     }
-
-    private static final Calendar calendar = Calendar.getInstance();
 
     @Override
     public Map<String, String> getBotMessage(String message, String userId) {
@@ -94,7 +95,9 @@ public class MessageHandlerImpl implements MessageHandler {
                         KeyboardMap.keyboards.get(KeyboardType.ButtonSchedule).getJsonText());
                 break;
             case CommandText.LESSONS:
-                if(botUser != null && botUser.getEducationForm().equalsIgnoreCase(EducationForm.DO.getGroupType())) {
+                if(botUser != null
+                        && botUser.getEducationForm() != null
+                        && EducationForm.DO.getGroupType().equalsIgnoreCase(botUser.getEducationForm())) {
                     botMessage.put(
                             Constants.KEY_MESSAGE,
                             "Выберите день, для которого хотите узнать расписание");
@@ -135,86 +138,14 @@ public class MessageHandlerImpl implements MessageHandler {
                         "Введите номер группы в формате 'г номер_группы'");
                 break;
             case CommandText.MONDAY:
-                if(botUser != null && botUser.getEducationForm().equalsIgnoreCase(EducationForm.DO.getGroupType())) {
-                    List<FullTimeLesson> lessons = callRestService.getFullTimeLessonsByDay(
-                            botUser.getDepartment(),
-                            botUser.getGroupNumber(),
-                            "1"
-                    );
-                    botMessage = BotMessageUtils.getBotMessageForFullTimeLessons(lessons);
-                }
-                break;
             case CommandText.TUESDAY:
-                if(botUser != null && botUser.getEducationForm().equalsIgnoreCase(EducationForm.DO.getGroupType())) {
-                    List<FullTimeLesson> lessons = callRestService.getFullTimeLessonsByDay(
-                            botUser.getDepartment(),
-                            botUser.getGroupNumber(),
-                            "2"
-                    );
-                    botMessage = BotMessageUtils.getBotMessageForFullTimeLessons(lessons);
-                }
-                break;
             case CommandText.WEDNESDAY:
-                if(botUser != null && botUser.getEducationForm().equalsIgnoreCase(EducationForm.DO.getGroupType())) {
-                    List<FullTimeLesson> lessons = callRestService.getFullTimeLessonsByDay(
-                            botUser.getDepartment(),
-                            botUser.getGroupNumber(),
-                            "3"
-                    );
-                    botMessage = BotMessageUtils.getBotMessageForFullTimeLessons(lessons);
-                }
-                break;
             case CommandText.THURSDAY:
-                if(botUser != null && botUser.getEducationForm().equalsIgnoreCase(EducationForm.DO.getGroupType())) {
-                    List<FullTimeLesson> lessons = callRestService.getFullTimeLessonsByDay(
-                            botUser.getDepartment(),
-                            botUser.getGroupNumber(),
-                            "4"
-                    );
-                    botMessage = BotMessageUtils.getBotMessageForFullTimeLessons(lessons);
-                }
-                break;
             case CommandText.FRIDAY:
-                if(botUser != null && botUser.getEducationForm().equalsIgnoreCase(EducationForm.DO.getGroupType())) {
-                    List<FullTimeLesson> lessons = callRestService.getFullTimeLessonsByDay(
-                            botUser.getDepartment(),
-                            botUser.getGroupNumber(),
-                            "5"
-                    );
-                    botMessage = BotMessageUtils.getBotMessageForFullTimeLessons(lessons);
-                }
-                break;
             case CommandText.SATURDAY:
-                if(botUser != null && botUser.getEducationForm().equalsIgnoreCase(EducationForm.DO.getGroupType())) {
-                    List<FullTimeLesson> lessons = callRestService.getFullTimeLessonsByDay(
-                            botUser.getDepartment(),
-                            botUser.getGroupNumber(),
-                            "6"
-                    );
-                    botMessage = BotMessageUtils.getBotMessageForFullTimeLessons(lessons);
-                }
-                break;
             case CommandText.TODAY:
-                if(botUser != null && botUser.getEducationForm().equalsIgnoreCase(EducationForm.DO.getGroupType())) {
-                    List<FullTimeLesson> lessons = callRestService.getFullTimeLessonsByDay(
-                            botUser.getDepartment(),
-                            botUser.getGroupNumber(),
-                            String.valueOf(calendar.get(Calendar.DAY_OF_WEEK))
-                    );
-                    botMessage = BotMessageUtils.getBotMessageForFullTimeLessons(lessons);
-                }
-                break;
             case CommandText.TOMORROW:
-                if(botUser != null && botUser.getEducationForm().equalsIgnoreCase(EducationForm.DO.getGroupType())) {
-                    calendar.add(Calendar.DAY_OF_WEEK, 1);
-                    List<FullTimeLesson> lessons = callRestService.getFullTimeLessonsByDay(
-                            botUser.getDepartment(),
-                            botUser.getGroupNumber(),
-                            String.valueOf(calendar.get(Calendar.DAY_OF_WEEK))
-                    );
-                    botMessage = BotMessageUtils.getBotMessageForFullTimeLessons(lessons);
-                    calendar.add(Calendar.DAY_OF_WEEK, -1);
-                }
+                botMessage = fullTimeLessonService.getBotMessage(message, botUser);
                 break;
             case CommandText.SETTINGS:
                 botMessage.put(
@@ -256,7 +187,7 @@ public class MessageHandlerImpl implements MessageHandler {
                     scheduleDailyNotificationRepository.disableScheduleDailyNotificationByUserId(userId);
                     botMessage.put(
                             Constants.KEY_MESSAGE,
-                            "Теперь расписание будет приходить в " + scheduleDailyNotificationDis.getHourForSend() + " ч.");
+                            "Рассылка расписания отключена");
                 }
                 else {
                     botMessage.put(
@@ -333,7 +264,7 @@ public class MessageHandlerImpl implements MessageHandler {
         if(botMessage.isEmpty()
                 || !botMessage.containsKey(Constants.KEY_MESSAGE)
                 && !botMessage.containsKey(Constants.KEY_KEYBOARD)) {
-            botMessage.put(Constants.KEY_MESSAGE, "Сообщение не распознано или недостаточно данных.");
+            botMessage.put(Constants.KEY_MESSAGE, "Сообщение не распознано или недостаточно данных :(");
         }
 
         return botMessage;

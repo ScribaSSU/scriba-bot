@@ -11,7 +11,6 @@ call:
 
 scheduled:
   daily-notification-service:
-    hour: ${SCRIBA_BOT_SCHEDULED_DAILY_NOTIFICATION_SERVICE}
     cron: 0 0 * * * *
 
 server:

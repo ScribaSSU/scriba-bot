@@ -11,7 +11,7 @@ call:
 
 scheduled:
   daily-notification-service:
-    hour: 1
+    cron: 0 0 * * * *
 
 server:
   port:

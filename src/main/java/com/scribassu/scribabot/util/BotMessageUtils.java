@@ -1,5 +1,8 @@
 package com.scribassu.scribabot.util;
 
+import com.scribassu.scribabot.keyboard.Keyboard;
+import com.scribassu.scribabot.keyboard.KeyboardMap;
+import com.scribassu.scribabot.keyboard.KeyboardType;
 import com.scribassu.tracto.domain.FullTimeLesson;
 import org.springframework.util.CollectionUtils;
 
@@ -12,11 +15,18 @@ public class BotMessageUtils {
     public static Map<String, String> getBotMessageForFullTimeLessons(List<FullTimeLesson> lessons) {
         Map<String, String> botMessage = new HashMap<>();
         if(CollectionUtils.isEmpty(lessons)) {
-            botMessage.put(Constants.KEY_MESSAGE, "Информация отсутствует.");
+            botMessage.put(Constants.KEY_MESSAGE, "А пар-то нету :)");
         }
         else {
             botMessage.put(Constants.KEY_MESSAGE, Templates.makeTemplate(lessons));
         }
+        return botMessage;
+    }
+
+    public static Map<String, String> getBotMessageForUnsupportedLessons() {
+        Map<String, String> botMessage = new HashMap<>();
+        botMessage.put(Constants.KEY_MESSAGE, "Ваш вид расписания пока не поддерживается или вы указали недостаточно информации для выдачи расписания");
+        botMessage.put(Constants.KEY_KEYBOARD, KeyboardMap.keyboards.get(KeyboardType.ButtonSchedule).getJsonText());
         return botMessage;
     }
 }

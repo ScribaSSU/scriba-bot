@@ -23,9 +23,9 @@ public class CallRestService {
     private String FULL_DEP_EDU_GROUP_DAY_LESSON_URI = "schedule/full/%s/%s/%s/%s";
 
     public List<FullTimeLesson> getFullTimeLessonsByDayAndLesson(String department,
-                                          String groupNumber,
-                                          String dayNumber,
-                                          String lessonNumber) {
+                                                                 String groupNumber,
+                                                                 String dayNumber,
+                                                                 String lessonNumber) {
         RestTemplate restTemplate = new RestTemplate();
         String uri = prefix +
                 String.format(
