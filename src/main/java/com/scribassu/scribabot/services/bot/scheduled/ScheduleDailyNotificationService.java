@@ -1,4 +1,4 @@
-package com.scribassu.scribabot.services.bot;
+package com.scribassu.scribabot.services.bot.scheduled;
 
 import com.scribassu.scribabot.entities.BotUser;
 import com.scribassu.scribabot.entities.ScheduleDailyNotification;
@@ -7,6 +7,7 @@ import com.scribassu.scribabot.repositories.ScheduleDailyNotificationRepository;
 import com.scribassu.scribabot.services.CallRestService;
 import com.scribassu.scribabot.services.messages.MessageSender;
 import com.scribassu.scribabot.util.BotMessageUtils;
+import com.scribassu.scribabot.util.CalendarUtils;
 import com.scribassu.tracto.domain.EducationForm;
 import com.scribassu.tracto.domain.FullTimeLesson;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +16,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class ScheduleDailyNotificationService {
@@ -41,18 +39,18 @@ public class ScheduleDailyNotificationService {
 
     @Scheduled(cron = "${scheduled.daily-notification-service.cron}")
     public void sendSchedule() throws Exception {
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = CalendarUtils.getCalendar();
         List<ScheduleDailyNotification> scheduleDailyNotifications =
                 scheduleDailyNotificationRepository.findByHourForSendAndEnabled(calendar.get(Calendar.HOUR_OF_DAY));
 
         if(!CollectionUtils.isEmpty(scheduleDailyNotifications)) {
             for(ScheduleDailyNotification notification : scheduleDailyNotifications) {
                 BotUser botUser = botUserRepository.findOneById(notification.getUserId());
-                if(botUser != null && botUser.getEducationForm().equalsIgnoreCase(EducationForm.DO.getGroupType())) {
+                if(BotMessageUtils.isBotUserFullTime(botUser)) {
                     List<FullTimeLesson> lessons = callRestService.getFullTimeLessonsByDay(
                             botUser.getDepartment(),
                             botUser.getGroupNumber(),
-                            String.valueOf(calendar.get(Calendar.DAY_OF_WEEK))
+                            String.valueOf(CalendarUtils.getDayOfWeekStartsFromMonday(calendar))
                     );
                     Map<String, String> botMessage = BotMessageUtils.getBotMessageForFullTimeLessons(lessons);
                     messageSender.send(botMessage, botUser.getUserId());

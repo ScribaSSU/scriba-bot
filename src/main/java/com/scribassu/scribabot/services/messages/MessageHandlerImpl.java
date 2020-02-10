@@ -10,7 +10,7 @@ import com.scribassu.scribabot.repositories.ScheduleDailyNotificationRepository;
 import com.scribassu.scribabot.services.CallRestService;
 import com.scribassu.scribabot.services.bot.FullTimeLessonService;
 import com.scribassu.scribabot.services.bot.HelpService;
-import com.scribassu.scribabot.util.BotMessageUtils;
+import com.scribassu.scribabot.services.bot.SettingsScheduleDailyNotificationService;
 import com.scribassu.scribabot.util.Constants;
 import com.scribassu.scribabot.util.DepartmentConverter;
 import com.scribassu.scribabot.util.Templates;
@@ -20,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,17 +32,21 @@ public class MessageHandlerImpl implements MessageHandler {
     private final FullTimeLessonService fullTimeLessonService;
     private final BotUserRepository botUserRepository;
     private final ScheduleDailyNotificationRepository scheduleDailyNotificationRepository;
+    private final SettingsScheduleDailyNotificationService settingsScheduleDailyNotificationService;
 
     @Autowired
     public MessageHandlerImpl(CallRestService callRestService,
                               HelpService helpService,
-                              FullTimeLessonService fullTimeLessonService, BotUserRepository botUserRepository,
-                              ScheduleDailyNotificationRepository scheduleDailyNotificationRepository) {
+                              FullTimeLessonService fullTimeLessonService,
+                              BotUserRepository botUserRepository,
+                              ScheduleDailyNotificationRepository scheduleDailyNotificationRepository,
+                              SettingsScheduleDailyNotificationService settingsScheduleDailyNotificationService) {
         this.callRestService = callRestService;
         this.helpService = helpService;
         this.fullTimeLessonService = fullTimeLessonService;
         this.botUserRepository = botUserRepository;
         this.scheduleDailyNotificationRepository = scheduleDailyNotificationRepository;
+        this.settingsScheduleDailyNotificationService = settingsScheduleDailyNotificationService;
     }
 
     @Override
@@ -79,12 +82,7 @@ public class MessageHandlerImpl implements MessageHandler {
                         KeyboardMap.keyboards.get(KeyboardType.ButtonActions).getJsonText());
                 break;
             case CommandText.HELP:
-                botMessage.put(
-                        Constants.KEY_MESSAGE,
-                        helpService.getHelp());
-                botMessage.put(
-                        Constants.KEY_KEYBOARD,
-                        KeyboardMap.keyboards.get(KeyboardType.ButtonActions).getJsonText());
+                botMessage = helpService.getBotMessage(message, botUser);
                 break;
             case CommandText.SCHEDULE:
                 botMessage.put(
@@ -156,48 +154,9 @@ public class MessageHandlerImpl implements MessageHandler {
                         KeyboardMap.keyboards.get(KeyboardType.ButtonSettings).getJsonText());
                 break;
             case CommandText.SET_SEND_SCHEDULE_TIME:
-                botMessage.put(
-                        Constants.KEY_MESSAGE,
-                        "Выберите удобное время для рассылки расписания");
-                botMessage.put(
-                        Constants.KEY_KEYBOARD,
-                        KeyboardMap.keyboards.get(KeyboardType.ButtonHours).getJsonText());
-                break;
             case CommandText.ENABLE_SEND_SCHEDULE:
-                ScheduleDailyNotification scheduleDailyNotificationEn = scheduleDailyNotificationRepository.findByUserId(userId);
-                if(scheduleDailyNotificationEn != null && !scheduleDailyNotificationEn.isEnabled()) {
-                    scheduleDailyNotificationRepository.enableScheduleDailyNotificationByUserId(userId);
-                    botMessage.put(
-                            Constants.KEY_MESSAGE,
-                            "Теперь расписание будет приходить в " + scheduleDailyNotificationEn.getHourForSend() + " ч.");
-                }
-                else {
-                    botMessage.put(
-                            Constants.KEY_MESSAGE,
-                            "Вы не подключали рассылку расписания или она уже включена");
-                }
-
-                botMessage.put(
-                        Constants.KEY_KEYBOARD,
-                        KeyboardMap.keyboards.get(KeyboardType.ButtonSettings).getJsonText());
-                break;
             case CommandText.DISABLE_SEND_SCHEDULE:
-                ScheduleDailyNotification scheduleDailyNotificationDis = scheduleDailyNotificationRepository.findByUserId(userId);
-                if(scheduleDailyNotificationDis != null && scheduleDailyNotificationDis.isEnabled()) {
-                    scheduleDailyNotificationRepository.disableScheduleDailyNotificationByUserId(userId);
-                    botMessage.put(
-                            Constants.KEY_MESSAGE,
-                            "Рассылка расписания отключена");
-                }
-                else {
-                    botMessage.put(
-                            Constants.KEY_MESSAGE,
-                            "Вы не подключали рассылку расписания или она уже выключена");
-                }
-
-                botMessage.put(
-                        Constants.KEY_KEYBOARD,
-                        KeyboardMap.keyboards.get(KeyboardType.ButtonSettings).getJsonText());
+                botMessage = settingsScheduleDailyNotificationService.getBotMessage(message, botUser);
                 break;
             case "т":
                 botMessage.put(Constants.KEY_MESSAGE, "test");
