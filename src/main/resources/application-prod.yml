@@ -1,0 +1,29 @@
+scriba-bot:
+  token: ${SCRIBA_BOT_TOKEN}
+  secret: ${SCRIBA_BOT_SECRET}
+  confirmation-code: ${SCRIBA_BOT_CONFIRMATION_CODE}
+  keyboards-folder: keyboards/
+  vk-api-version: ${SCRIBA_BOT_VK_API_VERSION}
+
+call:
+  rest:
+    prefix: ${SCRIBA_BOT_CALL_REST_PREFIX}
+
+scheduled:
+  daily-notification-service:
+    cron: 0 0 * * * *
+
+server:
+  port: ${SCRIBA_BOT_SERVER_PORT}
+
+spring:
+  datasource:
+    url: ${SCRIBA_BOT_DATABASE_URL}
+    username: ${SCRIBA_BOT_DATABASE_USERNAME}
+    password: ${SCRIBA_BOT_DATABASE_PASSWORD}
+  jpa:
+    properties:
+      hibernate:
+        dialect: ${SCRIBA_BOT_JPA_HIBERNATE_DIALECT}
+    hibernate:
+      ddl-auto: update

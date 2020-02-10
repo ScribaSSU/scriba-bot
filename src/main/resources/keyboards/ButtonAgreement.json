@@ -1,0 +1,22 @@
+{
+"one_time": true,
+"buttons": [
+[{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"1\"}",
+"label": "Потверждаю"
+},
+"color": "positive"
+},
+{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"2\"}",
+"label": "Не подтверждаю"
+},
+"color": "negative"
+}
+]
+]
+}
