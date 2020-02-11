@@ -29,6 +29,8 @@ public class FullTimeLessonService implements BotMessageService {
         Calendar calendar = CalendarUtils.getCalendar();
         List<FullTimeLesson> lessons = new ArrayList<>();
         boolean isBotUserFullTime = false;
+        boolean isToday = false;
+        boolean isTomorrow = false;
 
         switch(message) {
             case CommandText.MONDAY:
@@ -99,6 +101,7 @@ public class FullTimeLessonService implements BotMessageService {
                             String.valueOf(CalendarUtils.getDayOfWeekStartsFromMonday(calendar))
                     );
                     isBotUserFullTime = true;
+                    isToday = true;
                 }
                 break;
             case CommandText.TOMORROW:
@@ -110,12 +113,19 @@ public class FullTimeLessonService implements BotMessageService {
                             String.valueOf(CalendarUtils.getDayOfWeekStartsFromMonday(calendar))
                     );
                     isBotUserFullTime = true;
+                    isTomorrow = true;
                 }
                 break;
         }
 
         if(isBotUserFullTime) {
-            return BotMessageUtils.getBotMessageForFullTimeLessons(lessons);
+            if(isToday) {
+                return BotMessageUtils.getBotMessageForFullTimeLessons(lessons, CommandText.TODAY);
+            }
+            if(isTomorrow) {
+                return BotMessageUtils.getBotMessageForFullTimeLessons(lessons, CommandText.TOMORROW);
+            }
+            return BotMessageUtils.getBotMessageForFullTimeLessons(lessons, "");
         }
         else {
             return BotMessageUtils.getBotMessageForUnsupportedLessons();

@@ -121,19 +121,19 @@ public class MessageHandlerImpl implements MessageHandler {
                 botUserRepository.updateEducationForm(EducationForm.DO.getGroupType(), userId);
                 botMessage.put(
                         Constants.KEY_MESSAGE,
-                        "Введите номер группы в формате 'г номер_группы'");
+                        "Введите номер группы в формате 'г номер_группы'. Буква 'г' и пробел после нее обязательны!");
                 break;
             case CommandText.EXTRAMURAL:
                 botUserRepository.updateEducationForm(EducationForm.ZO.getGroupType(), userId);
                 botMessage.put(
                         Constants.KEY_MESSAGE,
-                        "Введите номер группы в формате 'г номер_группы'");
+                        "Введите номер группы в формате 'г номер_группы'. Буква 'г' и пробел после нее обязательны!");
                 break;
             case CommandText.EVENING:
                 botUserRepository.updateEducationForm(EducationForm.VO.getGroupType(), userId);
                 botMessage.put(
                         Constants.KEY_MESSAGE,
-                        "Введите номер группы в формате 'г номер_группы'");
+                        "Введите номер группы в формате 'г номер_группы'. Буква 'г' и пробел после нее обязательны!");
                 break;
             case CommandText.MONDAY:
             case CommandText.TUESDAY:
@@ -216,7 +216,7 @@ public class MessageHandlerImpl implements MessageHandler {
                 botMessage.put(Constants.KEY_MESSAGE, "Информация отсутствует.");
             }
             else {
-                botMessage.put(Constants.KEY_MESSAGE, Templates.makeTemplate(lessons));
+                botMessage.put(Constants.KEY_MESSAGE, Templates.makeTemplate(lessons, ""));
             }
         }
 

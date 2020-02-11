@@ -199,7 +199,7 @@
 "action": {
 "type": "text",
 "payload": "{\"button\": \"1\"}",
-"label": "24 ч"
+"label": "0 ч"
 },
 "color": "primary"
 }

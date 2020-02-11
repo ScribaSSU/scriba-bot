@@ -1,5 +1,6 @@
 package com.scribassu.scribabot.util;
 
+import com.scribassu.scribabot.commands.CommandText;
 import com.scribassu.tracto.domain.FullTimeLesson;
 import com.scribassu.tracto.domain.LessonType;
 import com.scribassu.tracto.domain.WeekType;
@@ -8,11 +9,19 @@ import java.util.List;
 
 public class Templates {
 
-    public static String makeTemplate(List<FullTimeLesson> fullTimeLessons)
+    public static String makeTemplate(List<FullTimeLesson> fullTimeLessons, String day)
     {
         fullTimeLessons.sort((o1, o2) -> (o1.getLessonTime().getLessonNumber() - o2.getLessonTime().getLessonNumber()));
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("Сегодня ").append(fullTimeLessons.get(0).getDay().getWeekDay().getDay()).append("\n");
+
+        if(day.equalsIgnoreCase(CommandText.TODAY)) {
+            stringBuilder.append("Сегодня ");
+        }
+        if(day.equalsIgnoreCase(CommandText.TOMORROW)) {
+            stringBuilder.append("Завтра ");
+        }
+
+        stringBuilder.append(fullTimeLessons.get(0).getDay().getWeekDay().getDay()).append("\n");
         //stringBuilder.append("Сегодня ").append(fullTimeLessons.get(0).getDay().getWeekDay().getDay()).append("\nНеделя - ");
         //stringBuilder.append(fullTimeLessons.get(0).getWeekType().getType()).append("\uD83D\uDD4A\n");
         stringBuilder.append("Группа № ").append(fullTimeLessons.get(0).getStudentGroup().getGroupNumber()).append("\n \n");

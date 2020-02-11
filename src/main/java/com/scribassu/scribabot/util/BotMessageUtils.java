@@ -16,13 +16,13 @@ import java.util.Map;
 
 public class BotMessageUtils {
 
-    public static Map<String, String> getBotMessageForFullTimeLessons(List<FullTimeLesson> lessons) {
+    public static Map<String, String> getBotMessageForFullTimeLessons(List<FullTimeLesson> lessons, String day) {
         Map<String, String> botMessage = new HashMap<>();
         if(CollectionUtils.isEmpty(lessons)) {
             botMessage.put(Constants.KEY_MESSAGE, "А пар-то нету :)");
         }
         else {
-            botMessage.put(Constants.KEY_MESSAGE, Templates.makeTemplate(lessons));
+            botMessage.put(Constants.KEY_MESSAGE, Templates.makeTemplate(lessons, day));
         }
         botMessage.put(
                 Constants.KEY_KEYBOARD,
