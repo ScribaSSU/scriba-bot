@@ -1,40 +1,47 @@
 package com.scribassu.scribabot.util;
 
-import com.scribassu.scribabot.commands.CommandText;
+import com.scribassu.scribabot.text.CommandText;
 import com.scribassu.tracto.domain.FullTimeLesson;
 import com.scribassu.tracto.domain.LessonType;
 import com.scribassu.tracto.domain.WeekType;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 public class Templates {
 
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-
     public static String makeTemplate(List<FullTimeLesson> fullTimeLessons, String day)
     {
         fullTimeLessons.sort((o1, o2) -> (o1.getLessonTime().getLessonNumber() - o2.getLessonTime().getLessonNumber()));
         StringBuilder stringBuilder = new StringBuilder();
+        Calendar calendar = CalendarUtils.getCalendar();
 
         if(day.equalsIgnoreCase(CommandText.TODAY)) {
             stringBuilder.append("Сегодня ");
         }
         if(day.equalsIgnoreCase(CommandText.TOMORROW)) {
             stringBuilder.append("Завтра ");
+            calendar.add(Calendar.DAY_OF_MONTH, 1);
         }
         if(day.equalsIgnoreCase(CommandText.YESTERDAY)) {
             stringBuilder.append("Вчера ");
+            calendar.add(Calendar.DAY_OF_MONTH, -1);
         }
 
-        Date date = new Date();
+        String data = calendar.get(Calendar.DAY_OF_MONTH) + "-" + calendar.get(Calendar.MONTH) + "-" + calendar.get(Calendar.YEAR);
 
         stringBuilder
                 .append(fullTimeLessons.get(0).getDay().getWeekDay().getDay())
-                .append(" ")
-                .append(dateFormat.format(date))
-                .append("\n");
+                .append(" ");
+
+        if(day.equalsIgnoreCase(CommandText.TODAY)
+                || day.equalsIgnoreCase(CommandText.TOMORROW)
+                || day.equalsIgnoreCase(CommandText.YESTERDAY)) {
+            stringBuilder.append(data);
+        }
+        stringBuilder.append("\n");
         //stringBuilder.append("Сегодня ").append(fullTimeLessons.get(0).getDay().getWeekDay().getDay()).append("\nНеделя - ");
         //stringBuilder.append(fullTimeLessons.get(0).getWeekType().getType()).append("\uD83D\uDD4A\n");
         stringBuilder.append("Группа № ").append(fullTimeLessons.get(0).getStudentGroup().getGroupNumber()).append("\n \n");

@@ -33,6 +33,24 @@
 "action": {
 "type": "text",
 "payload": "{\"button\": \"1\"}",
+"label": "Выбрать факультет и т. д."
+},
+"color": "positive"
+},
+{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"1\"}",
+"label": "Текущие настройки пользователя"
+},
+"color": "primary"
+}
+],
+[
+{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"1\"}",
 "label": "Главное меню"
 },
 "color": "primary"

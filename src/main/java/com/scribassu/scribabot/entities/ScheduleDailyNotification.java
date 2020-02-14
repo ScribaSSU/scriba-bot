@@ -17,7 +17,7 @@ public class ScheduleDailyNotification {
 
     private String userId;
     private boolean isEnabled;
-    private int hourForSend;
+    private Integer hourForSend;
 
     public ScheduleDailyNotification(String userId, boolean isEnabled, int hourForSend) {
         this.userId = userId;

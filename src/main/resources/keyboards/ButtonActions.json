@@ -15,32 +15,6 @@
 "action": {
 "type": "text",
 "payload": "{\"button\": \"1\"}",
-"label": "Активности"
-},
-"color": "secondary"
-},
-{
-"action": {
-"type": "text",
-"payload": "{\"button\": \"1\"}",
-"label": "Добавить событие"
-},
-"color": "secondary"
-}
-],
-[
-{
-"action": {
-"type": "text",
-"payload": "{\"button\": \"1\"}",
-"label": "Уведомления"
-},
-"color": "secondary"
-},
-{
-"action": {
-"type": "text",
-"payload": "{\"button\": \"1\"}",
 "label": "Настройки"
 },
 "color": "primary"

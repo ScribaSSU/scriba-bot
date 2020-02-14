@@ -1,6 +1,6 @@
 package com.scribassu.scribabot.services.bot.scheduled;
 
-import com.scribassu.scribabot.commands.CommandText;
+import com.scribassu.scribabot.text.CommandText;
 import com.scribassu.scribabot.entities.BotUser;
 import com.scribassu.scribabot.entities.ScheduleDailyNotification;
 import com.scribassu.scribabot.repositories.BotUserRepository;

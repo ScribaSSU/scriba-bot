@@ -1,4 +1,4 @@
-package com.scribassu.scribabot.commands;
+package com.scribassu.scribabot.text;
 
 import java.util.regex.Pattern;
 
@@ -35,6 +35,7 @@ public class CommandText {
     public static final String SET_SEND_SCHEDULE_TIME = "установить время рассылки расписания";
     public static final String ENABLE_SEND_SCHEDULE = "вкл. рассылку расписания";
     public static final String DISABLE_SEND_SCHEDULE = "выкл. рассылку расписания";
+    public static final String CURRENT_USER_SETTINGS = "текущие настройки пользователя";
 
     private static final String DEPARTMENT = "биолог\\.|географ\\.|геолог\\.|идпо|и-т искусств|ииимо" +
             "|и-т физ\\. кул\\.|ифиж|и-т химии|мехмат|фияил|книит|соцфак" +
