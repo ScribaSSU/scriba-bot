@@ -18,6 +18,7 @@ public class CommandText {
 
     public static final String TODAY = "сегодня";
     public static final String TOMORROW = "завтра";
+    public static final String YESTERDAY = "вчера";
 
     public static final String MONDAY = "пн";
     public static final String TUESDAY = "вт";

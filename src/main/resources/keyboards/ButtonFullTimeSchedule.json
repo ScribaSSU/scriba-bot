@@ -16,6 +16,14 @@
 "label": "Завтра"
 },
 "color": "primary"
+},
+{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"1\"}",
+"label": "Вчера"
+},
+"color": "primary"
 }
 ],
 [{

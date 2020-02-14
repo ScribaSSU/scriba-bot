@@ -31,6 +31,7 @@ public class FullTimeLessonService implements BotMessageService {
         boolean isBotUserFullTime = false;
         boolean isToday = false;
         boolean isTomorrow = false;
+        boolean isYesterday = false;
 
         switch(message) {
             case CommandText.MONDAY:
@@ -116,6 +117,19 @@ public class FullTimeLessonService implements BotMessageService {
                     isTomorrow = true;
                 }
                 break;
+            case CommandText.YESTERDAY:
+                calendar.add(Calendar.DAY_OF_WEEK, -1);
+                if(BotMessageUtils.isBotUserFullTime(botUser)) {
+                    lessons = callRestService.getFullTimeLessonsByDay(
+                            botUser.getDepartment(),
+                            botUser.getGroupNumber(),
+                            String.valueOf(CalendarUtils.getDayOfWeekStartsFromMonday(calendar))
+                    );
+                    isBotUserFullTime = true;
+                    isYesterday = true;
+                }
+                break;
+
         }
 
         if(isBotUserFullTime) {
@@ -124,6 +138,9 @@ public class FullTimeLessonService implements BotMessageService {
             }
             if(isTomorrow) {
                 return BotMessageUtils.getBotMessageForFullTimeLessons(lessons, CommandText.TOMORROW);
+            }
+            if(isYesterday) {
+                return BotMessageUtils.getBotMessageForFullTimeLessons(lessons, CommandText.YESTERDAY);
             }
             return BotMessageUtils.getBotMessageForFullTimeLessons(lessons, "");
         }

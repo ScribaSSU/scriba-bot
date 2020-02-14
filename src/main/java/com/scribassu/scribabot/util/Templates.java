@@ -5,9 +5,13 @@ import com.scribassu.tracto.domain.FullTimeLesson;
 import com.scribassu.tracto.domain.LessonType;
 import com.scribassu.tracto.domain.WeekType;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 public class Templates {
+
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 
     public static String makeTemplate(List<FullTimeLesson> fullTimeLessons, String day)
     {
@@ -20,8 +24,17 @@ public class Templates {
         if(day.equalsIgnoreCase(CommandText.TOMORROW)) {
             stringBuilder.append("Завтра ");
         }
+        if(day.equalsIgnoreCase(CommandText.YESTERDAY)) {
+            stringBuilder.append("Вчера ");
+        }
 
-        stringBuilder.append(fullTimeLessons.get(0).getDay().getWeekDay().getDay()).append("\n");
+        Date date = new Date();
+
+        stringBuilder
+                .append(fullTimeLessons.get(0).getDay().getWeekDay().getDay())
+                .append(" ")
+                .append(dateFormat.format(date))
+                .append("\n");
         //stringBuilder.append("Сегодня ").append(fullTimeLessons.get(0).getDay().getWeekDay().getDay()).append("\nНеделя - ");
         //stringBuilder.append(fullTimeLessons.get(0).getWeekType().getType()).append("\uD83D\uDD4A\n");
         stringBuilder.append("Группа № ").append(fullTimeLessons.get(0).getStudentGroup().getGroupNumber()).append("\n \n");

@@ -7,6 +7,7 @@ import com.scribassu.scribabot.keyboard.KeyboardMap;
 import com.scribassu.scribabot.keyboard.KeyboardType;
 import com.scribassu.scribabot.repositories.ScheduleDailyNotificationRepository;
 import com.scribassu.scribabot.util.Constants;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -17,6 +18,7 @@ public class SettingsScheduleDailyNotificationService implements BotMessageServi
 
     private final ScheduleDailyNotificationRepository scheduleDailyNotificationRepository;
 
+    @Autowired
     public SettingsScheduleDailyNotificationService(ScheduleDailyNotificationRepository scheduleDailyNotificationRepository) {
         this.scheduleDailyNotificationRepository = scheduleDailyNotificationRepository;
     }
@@ -44,9 +46,16 @@ public class SettingsScheduleDailyNotificationService implements BotMessageServi
                             "Теперь расписание будет приходить в " + scheduleDailyNotificationEn.getHourForSend() + " ч.");
                 }
                 else {
-                    botMessage.put(
-                            Constants.KEY_MESSAGE,
-                            "Вы не подключали рассылку расписания или она уже включена");
+                    if(scheduleDailyNotificationEn == null) {
+                        botMessage.put(
+                                Constants.KEY_MESSAGE,
+                                "Вы еще не подключали рассылку расписания. Подключите через '" + CommandText.SET_SEND_SCHEDULE_TIME + "'");
+                    }
+                    else {
+                        botMessage.put(
+                                Constants.KEY_MESSAGE,
+                                "Рассылка расписания уже включена");
+                    }
                 }
 
                 botMessage.put(
@@ -62,9 +71,16 @@ public class SettingsScheduleDailyNotificationService implements BotMessageServi
                             "Рассылка расписания отключена");
                 }
                 else {
-                    botMessage.put(
-                            Constants.KEY_MESSAGE,
-                            "Вы не подключали рассылку расписания или она уже выключена");
+                    if(scheduleDailyNotificationDis == null) {
+                        botMessage.put(
+                                Constants.KEY_MESSAGE,
+                                "Вы еще не подключали рассылку расписания. Подключите через '" + CommandText.SET_SEND_SCHEDULE_TIME + "'");
+                    }
+                    else {
+                        botMessage.put(
+                                Constants.KEY_MESSAGE,
+                                "Рассылка расписания уже выключена");
+                    }
                 }
 
                 botMessage.put(

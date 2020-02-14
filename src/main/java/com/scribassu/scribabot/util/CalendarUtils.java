@@ -14,6 +14,9 @@ public class CalendarUtils {
         if(dayOfWeekStartsFromMonday == 0) {
             dayOfWeekStartsFromMonday = 7;
         }
+        if(dayOfWeekStartsFromMonday == -1) {
+            dayOfWeekStartsFromMonday = 6;
+        }
         return dayOfWeekStartsFromMonday;
     }
 }

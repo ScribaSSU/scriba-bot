@@ -11,6 +11,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -18,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-@Component
+@Service
 public class MessageSenderImpl implements MessageSender {
 
     private static final String VK_API_METHOD = "https://api.vk.com/method/messages.send";
