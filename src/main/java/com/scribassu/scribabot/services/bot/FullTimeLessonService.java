@@ -29,6 +29,7 @@ public class FullTimeLessonService implements BotMessageService {
         boolean isToday = false;
         boolean isTomorrow = false;
         boolean isYesterday = false;
+        String dayNumber = "";
 
         switch(message) {
             case CommandText.MONDAY:
@@ -39,6 +40,7 @@ public class FullTimeLessonService implements BotMessageService {
                             "1"
                     );
                     isBotUserFullTime = true;
+                    dayNumber = "1";
                 }
                 break;
             case CommandText.TUESDAY:
@@ -49,6 +51,7 @@ public class FullTimeLessonService implements BotMessageService {
                             "2"
                     );
                     isBotUserFullTime = true;
+                    dayNumber = "2";
                 }
                 break;
             case CommandText.WEDNESDAY:
@@ -59,6 +62,7 @@ public class FullTimeLessonService implements BotMessageService {
                             "3"
                     );
                     isBotUserFullTime = true;
+                    dayNumber = "3";
                 }
                 break;
             case CommandText.THURSDAY:
@@ -69,6 +73,7 @@ public class FullTimeLessonService implements BotMessageService {
                             "4"
                     );
                     isBotUserFullTime = true;
+                    dayNumber = "4";
                 }
                 break;
             case CommandText.FRIDAY:
@@ -79,6 +84,7 @@ public class FullTimeLessonService implements BotMessageService {
                             "5"
                     );
                     isBotUserFullTime = true;
+                    dayNumber = "5";
                 }
                 break;
             case CommandText.SATURDAY:
@@ -89,56 +95,63 @@ public class FullTimeLessonService implements BotMessageService {
                             "6"
                     );
                     isBotUserFullTime = true;
+                    dayNumber = "6";
                 }
                 break;
             case CommandText.TODAY:
+                String day = String.valueOf(CalendarUtils.getDayOfWeekStartsFromMonday(calendar));
                 if(BotMessageUtils.isBotUserFullTime(botUser)) {
                     lessons = callRestService.getFullTimeLessonsByDay(
                             botUser.getDepartment(),
                             botUser.getGroupNumber(),
-                            String.valueOf(CalendarUtils.getDayOfWeekStartsFromMonday(calendar))
+                            day
                     );
                     isBotUserFullTime = true;
                     isToday = true;
+                    dayNumber = day;
                 }
                 break;
             case CommandText.TOMORROW:
                 calendar.add(Calendar.DAY_OF_WEEK, 1);
+                day = String.valueOf(CalendarUtils.getDayOfWeekStartsFromMonday(calendar));
                 if(BotMessageUtils.isBotUserFullTime(botUser)) {
                     lessons = callRestService.getFullTimeLessonsByDay(
                             botUser.getDepartment(),
                             botUser.getGroupNumber(),
-                            String.valueOf(CalendarUtils.getDayOfWeekStartsFromMonday(calendar))
+                            day
                     );
                     isBotUserFullTime = true;
                     isTomorrow = true;
+                    dayNumber = day;
                 }
                 break;
             case CommandText.YESTERDAY:
                 calendar.add(Calendar.DAY_OF_WEEK, -1);
+                day = String.valueOf(CalendarUtils.getDayOfWeekStartsFromMonday(calendar));
                 if(BotMessageUtils.isBotUserFullTime(botUser)) {
                     lessons = callRestService.getFullTimeLessonsByDay(
                             botUser.getDepartment(),
                             botUser.getGroupNumber(),
-                            String.valueOf(CalendarUtils.getDayOfWeekStartsFromMonday(calendar))
+                            day
                     );
                     isBotUserFullTime = true;
                     isYesterday = true;
+                    dayNumber = day;
                 }
                 break;
         }
 
         if(isBotUserFullTime) {
             if(isToday) {
-                return BotMessageUtils.getBotMessageForFullTimeLessons(lessons, CommandText.TODAY);
+                return BotMessageUtils.getBotMessageForFullTimeLessons(lessons, CommandText.TODAY, dayNumber);
             }
             if(isTomorrow) {
-                return BotMessageUtils.getBotMessageForFullTimeLessons(lessons, CommandText.TOMORROW);
+                return BotMessageUtils.getBotMessageForFullTimeLessons(lessons, CommandText.TOMORROW, dayNumber);
             }
             if(isYesterday) {
-                return BotMessageUtils.getBotMessageForFullTimeLessons(lessons, CommandText.YESTERDAY);
+                return BotMessageUtils.getBotMessageForFullTimeLessons(lessons, CommandText.YESTERDAY, dayNumber);
             }
-            return BotMessageUtils.getBotMessageForFullTimeLessons(lessons, "");
+            return BotMessageUtils.getBotMessageForFullTimeLessons(lessons, "", dayNumber);
         }
         else {
             return BotMessageUtils.getBotMessageForUnsupportedLessons();

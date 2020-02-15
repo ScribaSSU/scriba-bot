@@ -52,15 +52,16 @@ public class ScheduleDailyNotificationService {
 
         if(!CollectionUtils.isEmpty(scheduleDailyNotifications)) {
             LOGGER.info("Send full time schedule for hour {}", hourOfDay);
+            final String dayNumber = String.valueOf(CalendarUtils.getDayOfWeekStartsFromMonday(calendar));
             for(ScheduleDailyNotification notification : scheduleDailyNotifications) {
                 BotUser botUser = botUserRepository.findOneById(notification.getUserId());
                 if(BotMessageUtils.isBotUserFullTime(botUser)) {
                     List<FullTimeLesson> lessons = callRestService.getFullTimeLessonsByDay(
                             botUser.getDepartment(),
                             botUser.getGroupNumber(),
-                            String.valueOf(CalendarUtils.getDayOfWeekStartsFromMonday(calendar))
+                            dayNumber
                     );
-                    Map<String, String> botMessage = BotMessageUtils.getBotMessageForFullTimeLessons(lessons, CommandText.TODAY);
+                    Map<String, String> botMessage = BotMessageUtils.getBotMessageForFullTimeLessons(lessons, CommandText.TODAY, dayNumber);
                     messageSender.send(botMessage, botUser.getUserId());
                 }
             }

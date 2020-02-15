@@ -240,7 +240,7 @@ public class MessageHandlerImpl implements MessageHandler {
                         KeyboardMap.keyboards.get(KeyboardType.ButtonActions).getJsonText());
             }
             else {
-                botMessage.put(Constants.KEY_MESSAGE, Templates.makeTemplate(lessons, ""));
+                botMessage.put(Constants.KEY_MESSAGE, Templates.makeTemplate(lessons, "", params[3]));
                 botMessage.put(
                         Constants.KEY_KEYBOARD,
                         KeyboardMap.keyboards.get(KeyboardType.ButtonActions).getJsonText());
