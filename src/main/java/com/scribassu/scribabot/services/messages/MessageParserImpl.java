@@ -34,7 +34,16 @@ public class MessageParserImpl implements MessageParser {
             String message = object.getAsJsonPrimitive(Constants.KEY_TEXT).getAsString();
             parsed.put(Constants.KEY_MESSAGE, message);
             parsed.put(Constants.KEY_USER_ID, userId);
-            System.out.println(userId + " message " + message);
+
+            String payload = "";
+            try {
+                payload = object.getAsJsonPrimitive(Constants.KEY_PAYLOAD).getAsString();
+                parsed.put(Constants.KEY_PAYLOAD, payload);
+            }
+            catch(Exception e) {
+                System.out.println("No payload");
+            }
+            System.out.println(userId + " message " + message );
             return parsed;
         }
         return new HashMap<>();
