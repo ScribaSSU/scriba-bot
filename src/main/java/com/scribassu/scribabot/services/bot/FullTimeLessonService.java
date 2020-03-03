@@ -1,5 +1,6 @@
 package com.scribassu.scribabot.services.bot;
 
+import com.scribassu.scribabot.dto.FullTimeLessonDto;
 import com.scribassu.scribabot.text.CommandText;
 import com.scribassu.scribabot.entities.BotUser;
 import com.scribassu.scribabot.services.CallRestService;
@@ -24,12 +25,11 @@ public class FullTimeLessonService implements BotMessageService {
     @Override
     public Map<String, String> getBotMessage(String message, BotUser botUser) {
         Calendar calendar = CalendarUtils.getCalendar();
-        List<FullTimeLesson> lessons = new ArrayList<>();
+        FullTimeLessonDto lessons = new FullTimeLessonDto();
         boolean isBotUserFullTime = false;
         boolean isToday = false;
         boolean isTomorrow = false;
         boolean isYesterday = false;
-        String dayNumber = "";
 
         switch(message) {
             case CommandText.MONDAY:
@@ -40,7 +40,6 @@ public class FullTimeLessonService implements BotMessageService {
                             "1"
                     );
                     isBotUserFullTime = true;
-                    dayNumber = "1";
                 }
                 break;
             case CommandText.TUESDAY:
@@ -51,7 +50,6 @@ public class FullTimeLessonService implements BotMessageService {
                             "2"
                     );
                     isBotUserFullTime = true;
-                    dayNumber = "2";
                 }
                 break;
             case CommandText.WEDNESDAY:
@@ -62,7 +60,6 @@ public class FullTimeLessonService implements BotMessageService {
                             "3"
                     );
                     isBotUserFullTime = true;
-                    dayNumber = "3";
                 }
                 break;
             case CommandText.THURSDAY:
@@ -73,7 +70,6 @@ public class FullTimeLessonService implements BotMessageService {
                             "4"
                     );
                     isBotUserFullTime = true;
-                    dayNumber = "4";
                 }
                 break;
             case CommandText.FRIDAY:
@@ -84,7 +80,6 @@ public class FullTimeLessonService implements BotMessageService {
                             "5"
                     );
                     isBotUserFullTime = true;
-                    dayNumber = "5";
                 }
                 break;
             case CommandText.SATURDAY:
@@ -95,7 +90,6 @@ public class FullTimeLessonService implements BotMessageService {
                             "6"
                     );
                     isBotUserFullTime = true;
-                    dayNumber = "6";
                 }
                 break;
             case CommandText.TODAY:
@@ -108,7 +102,6 @@ public class FullTimeLessonService implements BotMessageService {
                     );
                     isBotUserFullTime = true;
                     isToday = true;
-                    dayNumber = day;
                 }
                 break;
             case CommandText.TOMORROW:
@@ -122,7 +115,6 @@ public class FullTimeLessonService implements BotMessageService {
                     );
                     isBotUserFullTime = true;
                     isTomorrow = true;
-                    dayNumber = day;
                 }
                 break;
             case CommandText.YESTERDAY:
@@ -136,22 +128,21 @@ public class FullTimeLessonService implements BotMessageService {
                     );
                     isBotUserFullTime = true;
                     isYesterday = true;
-                    dayNumber = day;
                 }
                 break;
         }
 
         if(isBotUserFullTime) {
             if(isToday) {
-                return BotMessageUtils.getBotMessageForFullTimeLessons(lessons, CommandText.TODAY, dayNumber);
+                return BotMessageUtils.getBotMessageForFullTimeLessons(lessons, CommandText.TODAY);
             }
             if(isTomorrow) {
-                return BotMessageUtils.getBotMessageForFullTimeLessons(lessons, CommandText.TOMORROW, dayNumber);
+                return BotMessageUtils.getBotMessageForFullTimeLessons(lessons, CommandText.TOMORROW);
             }
             if(isYesterday) {
-                return BotMessageUtils.getBotMessageForFullTimeLessons(lessons, CommandText.YESTERDAY, dayNumber);
+                return BotMessageUtils.getBotMessageForFullTimeLessons(lessons, CommandText.YESTERDAY);
             }
-            return BotMessageUtils.getBotMessageForFullTimeLessons(lessons, "", dayNumber);
+            return BotMessageUtils.getBotMessageForFullTimeLessons(lessons, "");
         }
         else {
             return BotMessageUtils.getBotMessageForUnsupportedLessons();

@@ -1,12 +1,11 @@
 package com.scribassu.scribabot.services.bot;
 
-import com.scribassu.scribabot.repositories.BotUserRepository;
-import com.scribassu.scribabot.text.CommandText;
 import com.scribassu.scribabot.entities.BotUser;
 import com.scribassu.scribabot.entities.ScheduleDailyNotification;
 import com.scribassu.scribabot.keyboard.KeyboardMap;
 import com.scribassu.scribabot.keyboard.KeyboardType;
 import com.scribassu.scribabot.repositories.ScheduleDailyNotificationRepository;
+import com.scribassu.scribabot.text.CommandText;
 import com.scribassu.scribabot.util.Constants;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;

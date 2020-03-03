@@ -1,0 +1,60 @@
+{
+"one_time": true,
+"buttons": [
+[{
+"action": {
+"type": "text",
+"payload": "курс",
+"label": "1 курс"
+},
+"color": "primary"
+},
+{
+"action": {
+"type": "text",
+"payload": "курс",
+"label": "2 курс"
+},
+"color": "primary"
+}
+],
+[
+{
+"action": {
+"type": "text",
+"payload": "курс",
+"label": "3 курс"
+},
+"color": "primary"
+},
+{
+"action": {
+"type": "text",
+"payload": "курс",
+"label": "4 курс"
+},
+"color": "primary"
+}
+],
+[
+{
+"action": {
+"type": "text",
+"payload": "курс",
+"label": "5 курс"
+},
+"color": "primary"
+}
+],
+[
+{
+"action": {
+"type": "text",
+"payload": "меню",
+"label": "Главное меню"
+},
+"color": "primary"
+}
+]
+]
+}

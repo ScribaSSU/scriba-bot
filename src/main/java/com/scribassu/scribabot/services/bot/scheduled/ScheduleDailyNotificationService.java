@@ -1,5 +1,6 @@
 package com.scribassu.scribabot.services.bot.scheduled;
 
+import com.scribassu.scribabot.dto.FullTimeLessonDto;
 import com.scribassu.scribabot.text.CommandText;
 import com.scribassu.scribabot.entities.BotUser;
 import com.scribassu.scribabot.entities.ScheduleDailyNotification;
@@ -56,12 +57,12 @@ public class ScheduleDailyNotificationService {
             for(ScheduleDailyNotification notification : scheduleDailyNotifications) {
                 BotUser botUser = botUserRepository.findOneById(notification.getUserId());
                 if(BotMessageUtils.isBotUserFullTime(botUser)) {
-                    List<FullTimeLesson> lessons = callRestService.getFullTimeLessonsByDay(
+                    FullTimeLessonDto lessons = callRestService.getFullTimeLessonsByDay(
                             botUser.getDepartment(),
                             botUser.getGroupNumber(),
                             dayNumber
                     );
-                    Map<String, String> botMessage = BotMessageUtils.getBotMessageForFullTimeLessons(lessons, CommandText.TODAY, dayNumber);
+                    Map<String, String> botMessage = BotMessageUtils.getBotMessageForFullTimeLessons(lessons, CommandText.TODAY);
                     messageSender.send(botMessage, botUser.getUserId());
                 }
             }

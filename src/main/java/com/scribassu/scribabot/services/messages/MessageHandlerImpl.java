@@ -1,5 +1,10 @@
 package com.scribassu.scribabot.services.messages;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.scribassu.scribabot.dto.FullTimeLessonDto;
+import com.scribassu.scribabot.dto.GroupNumbersDto;
+import com.scribassu.scribabot.dto.vkkeyboard.*;
+import com.scribassu.scribabot.text.Command;
 import com.scribassu.scribabot.text.CommandText;
 import com.scribassu.scribabot.entities.BotUser;
 import com.scribassu.scribabot.entities.ScheduleDailyNotification;
@@ -21,7 +26,9 @@ import com.scribassu.tracto.domain.FullTimeLesson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,9 +59,11 @@ public class MessageHandlerImpl implements MessageHandler {
     }
 
     @Override
-    public Map<String, String> getBotMessage(String message, String userId) {
+    public Map<String, String> getBotMessage(Command command) {
         Map<String, String> botMessage = new HashMap<>();
-        message = message.toLowerCase();
+        String message = command.getMessage().toLowerCase();
+        String payload = command.getPayload().toLowerCase();
+        String userId = command.getUserId();
         System.out.println("Get message: " + message);
 
         BotUser botUser = botUserRepository.findOneById(userId);
@@ -135,15 +144,24 @@ public class MessageHandlerImpl implements MessageHandler {
                 break;
             case CommandText.FULL_TIME:
                 botUserRepository.updateEducationForm(EducationForm.DO.getGroupType(), userId);
-                botMessage.put(Constants.KEY_MESSAGE, MessageText.CHOOSE_STUDENT_GROUP);
+                botMessage.put(Constants.KEY_MESSAGE, "Выберите курс.");
+                botMessage.put(
+                        Constants.KEY_KEYBOARD,
+                        KeyboardMap.keyboards.get(KeyboardType.ButtonCourse).getJsonText());
                 break;
             case CommandText.EXTRAMURAL:
                 botUserRepository.updateEducationForm(EducationForm.ZO.getGroupType(), userId);
-                botMessage.put(Constants.KEY_MESSAGE, MessageText.CHOOSE_STUDENT_GROUP);
+                botMessage.put(Constants.KEY_MESSAGE, "Выберите курс.");
+                botMessage.put(
+                        Constants.KEY_KEYBOARD,
+                        KeyboardMap.keyboards.get(KeyboardType.ButtonCourse).getJsonText());
                 break;
             case CommandText.EVENING:
                 botUserRepository.updateEducationForm(EducationForm.VO.getGroupType(), userId);
-                botMessage.put(Constants.KEY_MESSAGE, MessageText.CHOOSE_STUDENT_GROUP);
+                botMessage.put(Constants.KEY_MESSAGE, "Выберите курс.");
+                botMessage.put(
+                        Constants.KEY_KEYBOARD,
+                        KeyboardMap.keyboards.get(KeyboardType.ButtonCourse).getJsonText());
                 break;
             case CommandText.MONDAY:
             case CommandText.TUESDAY:
@@ -183,6 +201,69 @@ public class MessageHandlerImpl implements MessageHandler {
             botMessage.put(
                     Constants.KEY_KEYBOARD,
                     KeyboardMap.keyboards.get(KeyboardType.ButtonGroupType).getJsonText());
+        }
+
+        if(CommandText.COURSE_PATTERN.matcher(message).matches()) {
+            String course = message.substring(0, 1);
+            if(botUser != null
+                    && !StringUtils.isEmpty(botUser.getDepartment())
+                    && !StringUtils.isEmpty(botUser.getEducationForm())) {
+                GroupNumbersDto groupNumbersDto =
+                        callRestService.getGroupNumbersByDepartmentUrlAndEducationFormAndCourse(
+                                botUser.getDepartment(),
+                                EducationForm.fromGroupType(botUser.getEducationForm()).toString(),
+                                course
+                        );
+                if(CollectionUtils.isEmpty(groupNumbersDto.getGroupNumbers())) {
+                    botMessage.put(
+                            Constants.KEY_MESSAGE,
+                            "Группы не найдены.");
+                    botMessage.put(
+                            Constants.KEY_KEYBOARD,
+                            KeyboardMap.keyboards.get(KeyboardType.ButtonCourse).getJsonText());
+                }
+                else {
+                    List<String> groupNumbers = groupNumbersDto.getGroupNumbers();
+                    List<List<VkKeyboardButton>> vkKeyboardButtons = new ArrayList<>();
+
+                    int i = 0;
+                    int row = 0;
+                    vkKeyboardButtons.add(new ArrayList<>());
+
+                    while(i < groupNumbers.size()) {
+                        if(i % 5 == 4) {
+                            row++;
+                            vkKeyboardButtons.add(new ArrayList<>());
+                        }
+                        vkKeyboardButtons.get(row).add(
+                                new VkKeyboardButton(
+                                        new VkKeyboardButtonActionText(
+                                                groupNumbers.get(i),
+                                                CommandText.CHOOSE_STUDENT_GROUP,
+                                                VkKeyboardButtonActionType.TEXT
+                                        ), VkKeyboardButtonColor.PRIMARY)
+                        );
+                        i++;
+                    }
+
+                    VkKeyboard vkKeyboard = new VkKeyboard(vkKeyboardButtons, true);
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    try {
+                        botMessage.put(Constants.KEY_KEYBOARD, objectMapper.writeValueAsString(vkKeyboard));
+                        botMessage.put(Constants.KEY_MESSAGE, "Выберите группу.");
+                    }
+                    catch(Exception e) {
+                        botMessage.put(Constants.KEY_MESSAGE, "Не удалось загрузить список групп.");
+                    }
+                }
+            }
+        }
+
+        if(CommandText.CHOOSE_STUDENT_GROUP.equalsIgnoreCase(payload)) {
+            botUser.setGroupNumber(message);
+            botUserRepository.save(botUser);
+            botMessage.put(Constants.KEY_MESSAGE, "Вы выбрали группу " + message);
+            botMessage.put(Constants.KEY_KEYBOARD, KeyboardMap.keyboards.get(KeyboardType.ButtonSchedule).getJsonText());
         }
 
         if(CommandText.HOUR_PATTERN.matcher(message).matches()) {
@@ -227,24 +308,33 @@ public class MessageHandlerImpl implements MessageHandler {
 
         if(message.startsWith("р ")) {
             String[] params = message.split(" ");
-            List<FullTimeLesson> lessons = callRestService.getFullTimeLessonsByDay(
+            FullTimeLessonDto lessons = callRestService.getFullTimeLessonsByDay(
                     params[1],
                     params[2],
                     params[3]
             );
 
-            if(CollectionUtils.isEmpty(lessons)) {
+            if(CollectionUtils.isEmpty(lessons.getLessons())) {
                 botMessage.put(Constants.KEY_MESSAGE, "Информация отсутствует.");
                 botMessage.put(
                         Constants.KEY_KEYBOARD,
                         KeyboardMap.keyboards.get(KeyboardType.ButtonActions).getJsonText());
             }
             else {
-                botMessage.put(Constants.KEY_MESSAGE, Templates.makeTemplate(lessons, "", params[3]));
+                botMessage.put(Constants.KEY_MESSAGE, Templates.makeTemplate(lessons, ""));
                 botMessage.put(
                         Constants.KEY_KEYBOARD,
                         KeyboardMap.keyboards.get(KeyboardType.ButtonActions).getJsonText());
             }
+        }
+
+        if(message.equalsIgnoreCase("testkb")) {
+            botMessage.put(Constants.KEY_MESSAGE, "Тестим кастомную клаву");
+            try {
+                botMessage.put(
+                        Constants.KEY_KEYBOARD,
+                        TestKeyboardService.getTestKeyboard());
+            }catch(Exception e) {}
         }
 
         if(botMessage.isEmpty()

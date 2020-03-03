@@ -1,16 +1,10 @@
 package com.scribassu.scribabot.services;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.type.CollectionType;
-import com.fasterxml.jackson.databind.type.TypeFactory;
-import com.scribassu.tracto.domain.FullTimeLesson;
+import com.scribassu.scribabot.dto.FullTimeLessonDto;
+import com.scribassu.scribabot.dto.GroupNumbersDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 public class CallRestService {
@@ -22,15 +16,17 @@ public class CallRestService {
     private String FULL_DEP_EDU_GROUP_DAY_URI = "schedule/full/%s/%s/%s";
     private String FULL_DEP_EDU_GROUP_DAY_LESSON_URI = "schedule/full/%s/%s/%s/%s";
 
-    public List<FullTimeLesson> getFullTimeLessonsByDayAndLesson(String department,
-                                                                 String groupNumber,
-                                                                 String dayNumber,
-                                                                 String lessonNumber) {
+    private String STUDENT_GROUP_NUMBER_URI = "group/number/%s/%s/%s";
+
+    public FullTimeLessonDto getFullTimeLessonsByDayAndLesson(String departmentUrl,
+                                                              String groupNumber,
+                                                              String dayNumber,
+                                                              String lessonNumber) {
         RestTemplate restTemplate = new RestTemplate();
         String uri = prefix +
                 String.format(
                         FULL_DEP_EDU_GROUP_DAY_LESSON_URI,
-                        department,
+                        departmentUrl,
                         groupNumber,
                         dayNumber,
                         lessonNumber
@@ -39,18 +35,17 @@ public class CallRestService {
         //https://stackoverflow.com/questions/19540289/how-to-fix-the-java-security-cert-certificateexception-no-subject-alternative
         javax.net.ssl.HttpsURLConnection.setDefaultHostnameVerifier((hostname, sslSession) -> true);
 
-        String result = restTemplate.getForObject(uri, String.class);
-        return mapToListFullTimeLesson(result);
+        return restTemplate.getForObject(uri, FullTimeLessonDto.class);
     }
 
-    public List<FullTimeLesson> getFullTimeLessonsByDay(String department,
-                                                        String groupNumber,
-                                                        String dayNumber) {
+    public FullTimeLessonDto getFullTimeLessonsByDay(String departmentUrl,
+                                                     String groupNumber,
+                                                     String dayNumber) {
         RestTemplate restTemplate = new RestTemplate();
         String uri = prefix +
                 String.format(
                         FULL_DEP_EDU_GROUP_DAY_URI,
-                        department,
+                        departmentUrl,
                         groupNumber,
                         dayNumber
                 );
@@ -58,37 +53,41 @@ public class CallRestService {
         //https://stackoverflow.com/questions/19540289/how-to-fix-the-java-security-cert-certificateexception-no-subject-alternative
         javax.net.ssl.HttpsURLConnection.setDefaultHostnameVerifier((hostname, sslSession) -> true);
 
-        String result = restTemplate.getForObject(uri, String.class);
-        return mapToListFullTimeLesson(result);
+        return restTemplate.getForObject(uri, FullTimeLessonDto.class);
     }
 
-    public List<FullTimeLesson> getFullTimeLessonsByGroup(String department,
-                                                          String groupNumber) {
+    public FullTimeLessonDto getFullTimeLessonsByGroup(String departmentUrl,
+                                                       String groupNumber) {
         RestTemplate restTemplate = new RestTemplate();
         String uri = prefix +
                 String.format(
                         FULL_DEP_EDU_GROUP_URI,
-                        department,
+                        departmentUrl,
                         groupNumber
                 );
 
         //https://stackoverflow.com/questions/19540289/how-to-fix-the-java-security-cert-certificateexception-no-subject-alternative
         javax.net.ssl.HttpsURLConnection.setDefaultHostnameVerifier((hostname, sslSession) -> true);
 
-        String result = restTemplate.getForObject(uri, String.class);
-        return mapToListFullTimeLesson(result);
+        return restTemplate.getForObject(uri, FullTimeLessonDto.class);
     }
 
-    private List<FullTimeLesson> mapToListFullTimeLesson(String string) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            TypeFactory typeFactory = objectMapper.getTypeFactory();
-            CollectionType collectionType = typeFactory.constructCollectionType(
-                    List.class, FullTimeLesson.class);
-            return objectMapper.readValue(string, collectionType);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return new ArrayList<>();
-        }
+    public GroupNumbersDto getGroupNumbersByDepartmentUrlAndEducationFormAndCourse(
+            String departmentUrl,
+            String educationForm,
+            String course) {
+        RestTemplate restTemplate = new RestTemplate();
+        String uri = prefix +
+                String.format(
+                        STUDENT_GROUP_NUMBER_URI,
+                        departmentUrl,
+                        educationForm,
+                        course
+                );
+
+        //https://stackoverflow.com/questions/19540289/how-to-fix-the-java-security-cert-certificateexception-no-subject-alternative
+        javax.net.ssl.HttpsURLConnection.setDefaultHostnameVerifier((hostname, sslSession) -> true);
+
+        return restTemplate.getForObject(uri, GroupNumbersDto.class);
     }
 }
