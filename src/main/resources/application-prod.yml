@@ -10,8 +10,10 @@ call:
     prefix: ${SCRIBA_BOT_CALL_REST_PREFIX}
 
 scheduled:
-  daily-notification-service:
-    cron: 0 0 * * * *
+  schedule-daily-notification-service:
+    cron: 1 0 * * * *
+  schedule-tomorrow-notification-service:
+    cron: 5 0 * * * *
 
 server:
   port: ${SCRIBA_BOT_SERVER_PORT}

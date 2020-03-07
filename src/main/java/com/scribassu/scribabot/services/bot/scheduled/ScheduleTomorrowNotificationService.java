@@ -1,16 +1,15 @@
 package com.scribassu.scribabot.services.bot.scheduled;
 
 import com.scribassu.scribabot.dto.FullTimeLessonDto;
-import com.scribassu.scribabot.text.CommandText;
 import com.scribassu.scribabot.entities.BotUser;
-import com.scribassu.scribabot.entities.ScheduleDailyNotification;
+import com.scribassu.scribabot.entities.ScheduleTomorrowNotification;
 import com.scribassu.scribabot.repositories.BotUserRepository;
-import com.scribassu.scribabot.repositories.ScheduleDailyNotificationRepository;
+import com.scribassu.scribabot.repositories.ScheduleTomorrowNotificationRepository;
 import com.scribassu.scribabot.services.CallRestService;
 import com.scribassu.scribabot.services.messages.MessageSender;
+import com.scribassu.scribabot.text.CommandText;
 import com.scribassu.scribabot.util.BotMessageUtils;
 import com.scribassu.scribabot.util.CalendarUtils;
-import com.scribassu.tracto.domain.FullTimeLesson;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,36 +24,36 @@ import java.util.Map;
 
 @Slf4j
 @Service
-public class ScheduleDailyNotificationService {
+public class ScheduleTomorrowNotificationService {
 
     private final MessageSender messageSender;
     private final CallRestService callRestService;
     private final BotUserRepository botUserRepository;
-    private final ScheduleDailyNotificationRepository scheduleDailyNotificationRepository;
+    private final ScheduleTomorrowNotificationRepository scheduleTomorrowNotificationRepository;
 
     @Autowired
-    public ScheduleDailyNotificationService(MessageSender messageSender,
-                                            CallRestService callRestService,
-                                            BotUserRepository botUserRepository,
-                                            ScheduleDailyNotificationRepository scheduleDailyNotificationRepository) {
+    public ScheduleTomorrowNotificationService(MessageSender messageSender,
+                                               CallRestService callRestService,
+                                               BotUserRepository botUserRepository,
+                                               ScheduleTomorrowNotificationRepository scheduleTomorrowNotificationRepository) {
         this.messageSender = messageSender;
         this.callRestService = callRestService;
         this.botUserRepository = botUserRepository;
-        this.scheduleDailyNotificationRepository = scheduleDailyNotificationRepository;
+        this.scheduleTomorrowNotificationRepository = scheduleTomorrowNotificationRepository;
     }
 
-    @Scheduled(cron = "${scheduled.schedule-daily-notification-service.cron}")
+    @Scheduled(cron = "${scheduled.schedule-tomorrow-notification-service.cron}")
     public void sendSchedule() throws Exception {
         Calendar calendar = CalendarUtils.getCalendar();
         int hourOfDay = calendar.get(Calendar.HOUR_OF_DAY);
-        log.info("Start to send full time schedule for hour {}", hourOfDay);
-        List<ScheduleDailyNotification> scheduleDailyNotifications =
-                scheduleDailyNotificationRepository.findByHourForSendAndEnabled(hourOfDay);
+        log.info("Start to send tomorrow full time schedule for hour {}", hourOfDay);
+        List<ScheduleTomorrowNotification> scheduleTomorrowNotifications =
+                scheduleTomorrowNotificationRepository.findByHourForSendAndEnabled(hourOfDay);
 
-        if(!CollectionUtils.isEmpty(scheduleDailyNotifications)) {
-            log.info("Send full time schedule for hour {}", hourOfDay);
-            final String dayNumber = String.valueOf(CalendarUtils.getDayOfWeekStartsFromMonday(calendar));
-            for(ScheduleDailyNotification notification : scheduleDailyNotifications) {
+        if(!CollectionUtils.isEmpty(scheduleTomorrowNotifications)) {
+            log.info("Send tomorrow full time schedule for hour {}", hourOfDay);
+            final String dayNumber = String.valueOf(CalendarUtils.getDayOfWeekStartsFromMonday(calendar)) + 1;
+            for(ScheduleTomorrowNotification notification : scheduleTomorrowNotifications) {
                 BotUser botUser = botUserRepository.findOneById(notification.getUserId());
                 if(BotMessageUtils.isBotUserFullTime(botUser)) {
                     FullTimeLessonDto lessons = callRestService.getFullTimeLessonsByDay(
@@ -62,14 +61,15 @@ public class ScheduleDailyNotificationService {
                             botUser.getGroupNumber(),
                             dayNumber
                     );
-                    Map<String, String> botMessage = BotMessageUtils.getBotMessageForFullTimeLessons(lessons, CommandText.TODAY);
+                    Map<String, String> botMessage = BotMessageUtils.getBotMessageForFullTimeLessons(lessons, CommandText.TOMORROW);
                     messageSender.send(botMessage, botUser.getUserId());
                 }
             }
         }
         else {
-            log.info("No need to send full time schedule for hour {}", hourOfDay);
+            log.info("No need to send tomorrow full time schedule for hour {}", hourOfDay);
         }
-        log.info("Finish sending full time schedule for hour {}", hourOfDay);
+        log.info("Finish sending tomorrow full time schedule for hour {}", hourOfDay);
     }
+    
 }

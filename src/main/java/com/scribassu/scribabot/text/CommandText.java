@@ -33,9 +33,12 @@ public class CommandText {
     public static final String EVENING = "вечерняя";
     public static final String TEACHER = "преподаватель";
 
-    public static final String SET_SEND_SCHEDULE_TIME = "установить время рассылки расписания";
-    public static final String ENABLE_SEND_SCHEDULE = "вкл. рассылку расписания";
-    public static final String DISABLE_SEND_SCHEDULE = "выкл. рассылку расписания";
+    public static final String SET_SEND_SCHEDULE_TIME_TODAY = "установить время рассылки расписания на сегодня";
+    public static final String ENABLE_SEND_SCHEDULE_TODAY = "вкл. рассылку расписания на сегодня";
+    public static final String DISABLE_SEND_SCHEDULE_TODAY = "выкл. рассылку расписания на сегодня";
+    public static final String SET_SEND_SCHEDULE_TIME_TOMORROW = "установить время рассылки расписания на завтра";
+    public static final String ENABLE_SEND_SCHEDULE_TOMORROW = "вкл. рассылку расписания на завтра";
+    public static final String DISABLE_SEND_SCHEDULE_TOMORROW = "выкл. рассылку расписания на завтра";
     public static final String CURRENT_USER_SETTINGS = "текущие настройки пользователя";
 
     private static final String DEPARTMENT = "биолог\\.|географ\\.|геолог\\.|идпо|и-т искусств|ииимо" +

@@ -5,7 +5,7 @@
 "action": {
 "type": "text",
 "payload": "{\"button\": \"1\"}",
-"label": "Установить время рассылки расписания"
+"label": "Установить время рассылки расписания на сегодня"
 },
 "color": "primary"
 }
@@ -15,7 +15,7 @@
 "action": {
 "type": "text",
 "payload": "{\"button\": \"1\"}",
-"label": "Вкл. рассылку расписания"
+"label": "Вкл. рассылку расписания на сегодня"
 },
 "color": "positive"
 },
@@ -23,7 +23,34 @@
 "action": {
 "type": "text",
 "payload": "{\"button\": \"1\"}",
-"label": "Выкл. рассылку расписания"
+"label": "Выкл. рассылку расписания на сегодня"
+},
+"color": "negative"
+}
+],
+[{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"1\"}",
+"label": "Установить время рассылки расписания на завтра"
+},
+"color": "primary"
+}
+],
+[
+{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"1\"}",
+"label": "Вкл. рассылку расписания на завтра"
+},
+"color": "positive"
+},
+{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"1\"}",
+"label": "Выкл. рассылку расписания на завтра"
 },
 "color": "negative"
 }

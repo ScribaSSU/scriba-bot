@@ -1,17 +1,19 @@
-scriba-bot:
+scribabot:
   token:
   secret:
   confirmation-code:
   keyboards-folder: keyboards/
-  vk-api-version: 5.100
+  vk-api-version: "5.100"
 
 call:
   rest:
-    prefix: http://localhost:8080/api/v1.0/
+    prefix:
 
 scheduled:
-  daily-notification-service:
-    cron: 0 0 * * * *
+  schedule-daily-notification-service:
+    cron: 1 0 * * * *
+  schedule-tomorrow-notification-service:
+    cron: 5 0 * * * *
 
 server:
   port:
