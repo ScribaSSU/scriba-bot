@@ -14,4 +14,8 @@ public class Constants {
 
     public static final String TYPE_CONFIRMATION = "confirmation";
     public static final String TYPE_MESSAGE_NEW = "message_new";
+
+    public static final String PAYLOAD = "{\"button\": \"%s\"}";
+    public static final String PAYLOAD_START = "{\"button\": \"";
+    public static final String PAYLOAD_END = "\"}";
 }

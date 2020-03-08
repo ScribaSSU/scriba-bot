@@ -206,6 +206,8 @@ public class SettingsService implements BotMessageService {
 
         stringBuilder.append("\n\n");
 
+        System.out.println("SCHEDULE TOMORROW INFO START");
+
         ScheduleTomorrowNotification scheduleTomorrowNotification =
                 scheduleTomorrowNotificationRepository.findByUserId(userId);
 
@@ -229,6 +231,8 @@ public class SettingsService implements BotMessageService {
                 stringBuilder.append(scheduleTomorrowNotification.getHourForSend()).append(" ч.");
             }
         }
+
+        System.out.println("SCHEDULE TOMORROW INFO END");
 
         return stringBuilder.toString();
     }

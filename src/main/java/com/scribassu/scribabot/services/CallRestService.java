@@ -85,6 +85,8 @@ public class CallRestService {
                         course
                 );
 
+        System.out.println(uri);
+
         //https://stackoverflow.com/questions/19540289/how-to-fix-the-java-security-cert-certificateexception-no-subject-alternative
         javax.net.ssl.HttpsURLConnection.setDefaultHostnameVerifier((hostname, sslSession) -> true);
 

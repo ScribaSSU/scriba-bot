@@ -4,7 +4,7 @@
 [{
 "action": {
 "type": "text",
-"payload": "курс",
+"payload": "{\"button\": \"курс\"}",
 "label": "1 курс"
 },
 "color": "primary"
@@ -12,7 +12,7 @@
 {
 "action": {
 "type": "text",
-"payload": "курс",
+"payload": "{\"button\": \"курс\"}",
 "label": "2 курс"
 },
 "color": "primary"
@@ -22,7 +22,7 @@
 {
 "action": {
 "type": "text",
-"payload": "курс",
+"payload": "{\"button\": \"курс\"}",
 "label": "3 курс"
 },
 "color": "primary"
@@ -30,7 +30,7 @@
 {
 "action": {
 "type": "text",
-"payload": "курс",
+"payload": "{\"button\": \"курс\"}",
 "label": "4 курс"
 },
 "color": "primary"
@@ -40,7 +40,7 @@
 {
 "action": {
 "type": "text",
-"payload": "курс",
+"payload": "{\"button\": \"курс\"}",
 "label": "5 курс"
 },
 "color": "primary"
@@ -50,7 +50,7 @@
 {
 "action": {
 "type": "text",
-"payload": "меню",
+"payload": "",
 "label": "Главное меню"
 },
 "color": "primary"

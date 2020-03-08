@@ -227,13 +227,14 @@ public class MessageHandlerImpl implements MessageHandler {
         }
 
         if(CommandText.COURSE_PATTERN.matcher(message).matches()) {
+            System.out.println("COURSE PATTERN MATCH");
             botMessage = getStudentGroupService.getBotMessage(message, botUser);
         }
 
         if(CommandText.CHOOSE_STUDENT_GROUP.equalsIgnoreCase(payload)) {
             botUserRepository.updateGroupNumber(message, userId);
             botUser = botUserRepository.findOneById(userId);
-            if(botUser.getPreviousUserMessage().equalsIgnoreCase(MessageText.GREETING_WITH_CHOOSE_DEPARTMENT)) {
+            if(botUser.getPreviousUserMessage() != null && botUser.getPreviousUserMessage().equalsIgnoreCase(MessageText.GREETING_WITH_CHOOSE_DEPARTMENT)) {
                 botMessage.put(
                         Constants.KEY_MESSAGE,
                         "Это главное меню бота. Отсюда вы можете узнать расписание, задать настройки и не только.");

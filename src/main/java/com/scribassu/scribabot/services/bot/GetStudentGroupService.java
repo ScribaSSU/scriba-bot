@@ -43,6 +43,7 @@ public class GetStudentGroupService implements BotMessageService {
                             EducationForm.fromGroupType(botUser.getEducationForm()).toString(),
                             course
                     );
+            System.out.println(groupNumbersDto);
             if(CollectionUtils.isEmpty(groupNumbersDto.getGroupNumbers())) {
                 botMessage.put(
                         Constants.KEY_MESSAGE,
@@ -72,15 +73,6 @@ public class GetStudentGroupService implements BotMessageService {
         int i = 0;
         int row = 0;
         vkKeyboardButtons.add(new ArrayList<>());
-        vkKeyboardButtons.get(row).add(
-                new VkKeyboardButton(
-                        new VkKeyboardButtonActionText(
-                                groupNumbers.get(i),
-                                CommandText.CHOOSE_STUDENT_GROUP,
-                                VkKeyboardButtonActionType.TEXT
-                        ), VkKeyboardButtonColor.PRIMARY)
-        );
-        i++;
 
         while(i < groupNumbers.size()) {
             if(i % 5 == 4) {
@@ -91,7 +83,7 @@ public class GetStudentGroupService implements BotMessageService {
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     groupNumbers.get(i),
-                                    CommandText.CHOOSE_STUDENT_GROUP,
+                                    String.format(Constants.PAYLOAD, CommandText.CHOOSE_STUDENT_GROUP),
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY)
             );

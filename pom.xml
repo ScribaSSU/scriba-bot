@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.scribassu</groupId>
 	<artifactId>scriba-bot</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.3-SNAPSHOT</version>
 	<name>scriba-bot</name>
 	<description>Scriba bot</description>
 
@@ -50,6 +50,7 @@
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
+            <version>5.1.45</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
