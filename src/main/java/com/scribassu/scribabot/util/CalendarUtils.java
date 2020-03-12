@@ -1,5 +1,7 @@
 package com.scribassu.scribabot.util;
 
+import com.scribassu.tracto.domain.WeekType;
+
 import java.util.Calendar;
 import java.util.TimeZone;
 

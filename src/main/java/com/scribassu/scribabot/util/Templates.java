@@ -42,15 +42,15 @@ public class Templates {
             stringBuilder.append(data);
         }
         stringBuilder.append("\n");
-        //stringBuilder.append("Сегодня ").append(fullTimeLessons.get(0).getDay().getWeekDay().getDay()).append("\nНеделя - ");
-        //stringBuilder.append(fullTimeLessons.get(0).getWeekType().getType()).append("\uD83D\uDD4A\n");
+        stringBuilder.append("Неделя: ").append(WeekTypeUtils.weekTypeToLongString(WeekTypeUtils.getWeekType(calendar))).append("\n");
+        stringBuilder.append("Группа № ").append(fullTimeLessonDto.getStudentGroup().getGroupNumber()).append("\n \n");
+
         if(CollectionUtils.isEmpty(fullTimeLessonDto.getLessons())) {
             stringBuilder.append("А пар-то нету :)");
         }
         else {
             List<FullTimeLesson> fullTimeLessons = fullTimeLessonDto.getLessons();
             fullTimeLessons.sort((o1, o2) -> (o1.getLessonTime().getLessonNumber() - o2.getLessonTime().getLessonNumber()));
-            stringBuilder.append("Группа № ").append(fullTimeLessons.get(0).getStudentGroup().getGroupNumber()).append("\n \n");
             for (FullTimeLesson fullTimeLesson : fullTimeLessons) {
                 stringBuilder.append(fullTimeLesson.getLessonTime().getTimeStart()).append(" - ")
                         .append(fullTimeLesson.getLessonTime().getTimeFinish()).append("\n")

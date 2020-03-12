@@ -9,6 +9,7 @@ public class CommandText {
     public static final String SETTINGS = "настройки";
     public static final String MAIN_MENU = "главное меню";
     public static final String SHORT_MAIN_MENU = "меню";
+    public static final String THANKS = "спасибо";
 
     public static final String LESSONS = "занятия";
     public static final String EXAMS = "сессия";

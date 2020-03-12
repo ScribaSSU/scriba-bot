@@ -15,6 +15,9 @@ scheduled:
   schedule-tomorrow-notification-service:
     cron: 5 0 * * * *
 
+week-type:
+  access-token: ${SCRIBA_BOT_WEEK_TYPE_ACCESS_TOKEN}
+
 server:
   port: ${SCRIBA_BOT_SERVER_PORT}
 

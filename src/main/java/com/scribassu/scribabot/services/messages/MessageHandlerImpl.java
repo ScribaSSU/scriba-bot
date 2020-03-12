@@ -109,6 +109,14 @@ public class MessageHandlerImpl implements MessageHandler {
                         Constants.KEY_KEYBOARD,
                         KeyboardMap.keyboards.get(KeyboardType.ButtonSchedule).getJsonText());
                 break;
+            case CommandText.THANKS:
+                botMessage.put(
+                        Constants.KEY_MESSAGE,
+                        "Пожалуйста :)");
+                botMessage.put(
+                        Constants.KEY_KEYBOARD,
+                        KeyboardMap.keyboards.get(KeyboardType.ButtonActions).getJsonText());
+                break;
             case CommandText.LESSONS:
                 if(BotMessageUtils.isBotUserFullTime(botUser)) {
                     botMessage.put(

@@ -1,16 +1,16 @@
 package com.scribassu.scribabot.services.bot;
 
 import com.scribassu.scribabot.dto.FullTimeLessonDto;
-import com.scribassu.scribabot.text.CommandText;
 import com.scribassu.scribabot.entities.BotUser;
 import com.scribassu.scribabot.services.CallRestService;
+import com.scribassu.scribabot.text.CommandText;
 import com.scribassu.scribabot.util.BotMessageUtils;
 import com.scribassu.scribabot.util.CalendarUtils;
-import com.scribassu.tracto.domain.FullTimeLesson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Calendar;
+import java.util.Map;
 
 @Service
 public class FullTimeLessonService implements BotMessageService {
