@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.scribassu</groupId>
 	<artifactId>scriba-bot</artifactId>
-	<version>0.0.3-SNAPSHOT</version>
+	<version>0.0.4-SNAPSHOT</version>
 	<name>scriba-bot</name>
 	<description>Scriba bot</description>
 
@@ -52,11 +52,6 @@
 			<artifactId>mysql-connector-java</artifactId>
             <version>5.1.45</version>
 			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.postgresql</groupId>
-			<artifactId>postgresql</artifactId>
-			<version>42.2.8</version>
 		</dependency>
 
 		<dependency>

@@ -5,9 +5,11 @@ import com.scribassu.scribabot.entities.ScheduleDailyNotification;
 import com.scribassu.scribabot.entities.ScheduleTomorrowNotification;
 import com.scribassu.scribabot.keyboard.KeyboardMap;
 import com.scribassu.scribabot.keyboard.KeyboardType;
+import com.scribassu.scribabot.repositories.BotUserRepository;
 import com.scribassu.scribabot.repositories.ScheduleDailyNotificationRepository;
 import com.scribassu.scribabot.repositories.ScheduleTomorrowNotificationRepository;
 import com.scribassu.scribabot.text.CommandText;
+import com.scribassu.scribabot.text.MessageText;
 import com.scribassu.scribabot.util.Constants;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,12 +21,15 @@ import java.util.Map;
 @Service
 public class SettingsService implements BotMessageService {
 
+    private final BotUserRepository botUserRepository;
     private final ScheduleDailyNotificationRepository scheduleDailyNotificationRepository;
     private final ScheduleTomorrowNotificationRepository scheduleTomorrowNotificationRepository;
 
     @Autowired
-    public SettingsService(ScheduleDailyNotificationRepository scheduleDailyNotificationRepository,
+    public SettingsService(BotUserRepository botUserRepository,
+                           ScheduleDailyNotificationRepository scheduleDailyNotificationRepository,
                            ScheduleTomorrowNotificationRepository scheduleTomorrowNotificationRepository) {
+        this.botUserRepository = botUserRepository;
         this.scheduleDailyNotificationRepository = scheduleDailyNotificationRepository;
         this.scheduleTomorrowNotificationRepository = scheduleTomorrowNotificationRepository;
     }
@@ -38,10 +43,12 @@ public class SettingsService implements BotMessageService {
             case CommandText.SET_SEND_SCHEDULE_TIME_TODAY:
                 botMessage.put(
                         Constants.KEY_MESSAGE,
-                        "Выберите удобное время для рассылки расписания на сегодня.");
+                        String.format(MessageText.CHOOSE_SCHEDULE_NOTIFICATION_TIME, "сегодня"));
                 botMessage.put(
                         Constants.KEY_KEYBOARD,
                         KeyboardMap.keyboards.get(KeyboardType.ButtonHours).getJsonText());
+                botUser.setPreviousUserMessage(String.format(MessageText.CHOOSE_SCHEDULE_NOTIFICATION_TIME, "сегодня"));
+                botUserRepository.save(botUser);
                 break;
             case CommandText.ENABLE_SEND_SCHEDULE_TODAY:
                 ScheduleDailyNotification scheduleDailyNotificationEn =
@@ -50,7 +57,7 @@ public class SettingsService implements BotMessageService {
                     scheduleDailyNotificationRepository.enableScheduleDailyNotificationByUserId(userId);
                     botMessage.put(
                             Constants.KEY_MESSAGE,
-                            "Теперь расписание на сегодня будет приходить в " +
+                            String.format(MessageText.SCHEDULE_WILL_BE_SENT, "сегодня") +
                                     scheduleDailyNotificationEn.getHourForSend() + " ч.");
                 }
                 else {
@@ -63,7 +70,7 @@ public class SettingsService implements BotMessageService {
                     else {
                         botMessage.put(
                                 Constants.KEY_MESSAGE,
-                                "Рассылка расписания на сегодня уже включена.");
+                                String.format(MessageText.SCHEDULE_IS_ENABLED_DOUBLE, "сегодня"));
                     }
                 }
 
@@ -78,7 +85,7 @@ public class SettingsService implements BotMessageService {
                     scheduleDailyNotificationRepository.disableScheduleDailyNotificationByUserId(userId);
                     botMessage.put(
                             Constants.KEY_MESSAGE,
-                            "Рассылка расписания на сегодня отключена.");
+                            String.format(MessageText.SCHEDULE_IS_DISABLED, "сегодня"));
                 }
                 else {
                     if(scheduleDailyNotificationDis == null) {
@@ -90,7 +97,7 @@ public class SettingsService implements BotMessageService {
                     else {
                         botMessage.put(
                                 Constants.KEY_MESSAGE,
-                                "Рассылка расписания на сегодня уже выключена.");
+                                String.format(MessageText.SCHEDULE_IS_DISABLED_DOUBLE, "сегодня"));
                     }
                 }
                 botMessage.put(
@@ -100,10 +107,12 @@ public class SettingsService implements BotMessageService {
             case CommandText.SET_SEND_SCHEDULE_TIME_TOMORROW:
                 botMessage.put(
                         Constants.KEY_MESSAGE,
-                        "Выберите удобное время для рассылки расписания на завтра.");
+                        String.format(MessageText.CHOOSE_SCHEDULE_NOTIFICATION_TIME, "завтра"));
                 botMessage.put(
                         Constants.KEY_KEYBOARD,
                         KeyboardMap.keyboards.get(KeyboardType.ButtonHours).getJsonText());
+                botUser.setPreviousUserMessage(String.format(MessageText.CHOOSE_SCHEDULE_NOTIFICATION_TIME, "завтра"));
+                botUserRepository.save(botUser);
                 break;
             case CommandText.ENABLE_SEND_SCHEDULE_TOMORROW:
                 ScheduleTomorrowNotification scheduleTomorrowNotificationEn =
@@ -112,7 +121,7 @@ public class SettingsService implements BotMessageService {
                     scheduleTomorrowNotificationRepository.enableScheduleTomorrowNotificationByUserId(userId);
                     botMessage.put(
                             Constants.KEY_MESSAGE,
-                            "Теперь расписание на завтра будет приходить в " +
+                            String.format(MessageText.SCHEDULE_WILL_BE_SENT, "завтра") +
                                     scheduleTomorrowNotificationEn.getHourForSend() + " ч.");
                 }
                 else {
@@ -125,7 +134,7 @@ public class SettingsService implements BotMessageService {
                     else {
                         botMessage.put(
                                 Constants.KEY_MESSAGE,
-                                "Рассылка расписания на завтра уже включена.");
+                                String.format(MessageText.SCHEDULE_IS_ENABLED_DOUBLE, "завтра"));
                     }
                 }
 
@@ -140,7 +149,7 @@ public class SettingsService implements BotMessageService {
                     scheduleTomorrowNotificationRepository.disableScheduleTomorrowNotificationByUserId(userId);
                     botMessage.put(
                             Constants.KEY_MESSAGE,
-                            "Рассылка расписания на завтра отключена.");
+                            String.format(MessageText.SCHEDULE_IS_DISABLED, "завтра"));
                 }
                 else {
                     if(scheduleTomorrowNotificationDis == null) {
@@ -152,7 +161,7 @@ public class SettingsService implements BotMessageService {
                     else {
                         botMessage.put(
                                 Constants.KEY_MESSAGE,
-                                "Рассылка расписания на завтра уже выключена.");
+                                String.format(MessageText.SCHEDULE_IS_DISABLED_DOUBLE, "завтра"));
                     }
                 }
                 botMessage.put(

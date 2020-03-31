@@ -1,6 +1,8 @@
 package com.scribassu.scribabot.services.messages;
 
 import com.scribassu.scribabot.dto.FullTimeLessonDto;
+import com.scribassu.scribabot.entities.ScheduleTomorrowNotification;
+import com.scribassu.scribabot.repositories.ScheduleTomorrowNotificationRepository;
 import com.scribassu.scribabot.services.bot.GetStudentGroupService;
 import com.scribassu.scribabot.text.Command;
 import com.scribassu.scribabot.text.CommandText;
@@ -35,6 +37,7 @@ public class MessageHandlerImpl implements MessageHandler {
     private final FullTimeLessonService fullTimeLessonService;
     private final BotUserRepository botUserRepository;
     private final ScheduleDailyNotificationRepository scheduleDailyNotificationRepository;
+    private final ScheduleTomorrowNotificationRepository scheduleTomorrowNotificationRepository;
     private final SettingsService settingsService;
     private final GetStudentGroupService getStudentGroupService;
 
@@ -44,6 +47,7 @@ public class MessageHandlerImpl implements MessageHandler {
                               FullTimeLessonService fullTimeLessonService,
                               BotUserRepository botUserRepository,
                               ScheduleDailyNotificationRepository scheduleDailyNotificationRepository,
+                              ScheduleTomorrowNotificationRepository scheduleTomorrowNotificationRepository,
                               SettingsService settingsService,
                               GetStudentGroupService getStudentGroupService) {
         this.callRestService = callRestService;
@@ -51,6 +55,7 @@ public class MessageHandlerImpl implements MessageHandler {
         this.fullTimeLessonService = fullTimeLessonService;
         this.botUserRepository = botUserRepository;
         this.scheduleDailyNotificationRepository = scheduleDailyNotificationRepository;
+        this.scheduleTomorrowNotificationRepository = scheduleTomorrowNotificationRepository;
         this.settingsService = settingsService;
         this.getStudentGroupService = getStudentGroupService;
     }
@@ -207,18 +212,37 @@ public class MessageHandlerImpl implements MessageHandler {
         }
 
         if(CommandText.HOUR_PATTERN.matcher(message).matches()) {
-            ScheduleDailyNotification scheduleDailyNotification = scheduleDailyNotificationRepository.findByUserId(userId);
             int hourForSend = Integer.parseInt(message.substring(0, message.indexOf(" ")));
-            if(scheduleDailyNotification == null) {
-                scheduleDailyNotification = new ScheduleDailyNotification(userId, true, hourForSend);
+
+            if(botUser != null && botUser.getPreviousUserMessage().equalsIgnoreCase(
+                    String.format(MessageText.CHOOSE_SCHEDULE_NOTIFICATION_TIME, "сегодня"))) {
+                ScheduleDailyNotification scheduleDailyNotification =
+                        scheduleDailyNotificationRepository.findByUserId(userId);
+
+                if(scheduleDailyNotification == null) {
+                    scheduleDailyNotification = new ScheduleDailyNotification(userId, true, hourForSend);
+                }
+                else {
+                    scheduleDailyNotification.setHourForSend(hourForSend);
+                }
+                scheduleDailyNotificationRepository.save(scheduleDailyNotification);
             }
-            else {
-                scheduleDailyNotification.setHourForSend(hourForSend);
+            if(botUser != null && botUser.getPreviousUserMessage().equalsIgnoreCase(
+                    String.format(MessageText.CHOOSE_SCHEDULE_NOTIFICATION_TIME, "завтра"))) {
+                ScheduleTomorrowNotification scheduleTomorrowNotification =
+                        scheduleTomorrowNotificationRepository.findByUserId(userId);
+
+                if(scheduleTomorrowNotification == null) {
+                    scheduleTomorrowNotification = new ScheduleTomorrowNotification(userId, true, hourForSend);
+                }
+                else {
+                    scheduleTomorrowNotification.setHourForSend(hourForSend);
+                }
+                scheduleTomorrowNotificationRepository.save(scheduleTomorrowNotification);
             }
-            scheduleDailyNotificationRepository.save(scheduleDailyNotification);
             botMessage.put(
                     Constants.KEY_MESSAGE,
-                    "Теперь расписание будет приходить в " + scheduleDailyNotification.getHourForSend() + " ч.");
+                    "Теперь расписание будет приходить в " + hourForSend + " ч.");
             botMessage.put(
                     Constants.KEY_KEYBOARD,
                     KeyboardMap.keyboards.get(KeyboardType.ButtonSettings).getJsonText());

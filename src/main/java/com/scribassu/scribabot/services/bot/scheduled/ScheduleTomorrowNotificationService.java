@@ -52,7 +52,14 @@ public class ScheduleTomorrowNotificationService {
 
         if(!CollectionUtils.isEmpty(scheduleTomorrowNotifications)) {
             log.info("Send tomorrow full time schedule for hour {}", hourOfDay);
-            final String dayNumber = String.valueOf(CalendarUtils.getDayOfWeekStartsFromMonday(calendar)) + 1;
+            int dayNumberInt = CalendarUtils.getDayOfWeekStartsFromMonday(calendar);
+            if(dayNumberInt == 7) {
+                dayNumberInt = 1;
+            }
+            else {
+                dayNumberInt++;
+            }
+            final String dayNumber = String.valueOf(dayNumberInt);
             for(ScheduleTomorrowNotification notification : scheduleTomorrowNotifications) {
                 BotUser botUser = botUserRepository.findOneById(notification.getUserId());
                 if(BotMessageUtils.isBotUserFullTime(botUser)) {

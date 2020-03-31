@@ -38,9 +38,10 @@ public class MessageParserImpl implements MessageParser {
             String payload = "";
             try {
                 payload = object.getAsJsonPrimitive(Constants.KEY_PAYLOAD).getAsString();
-                payload = payload.substring(Constants.PAYLOAD_START.length());
+                payload = payload.substring(Constants.PAYLOAD_START.length() - 1);
                 payload = payload.substring(0, payload.indexOf(Constants.PAYLOAD_END));
                 parsed.put(Constants.KEY_PAYLOAD, payload);
+                System.out.println("payload:"+payload+";");
             }
             catch(Exception e) {
                 System.out.println("No payload");

@@ -23,5 +23,6 @@ public class BotUser {
 
     public BotUser(String userId) {
         this.userId = userId;
+        this.previousUserMessage = "";
     }
 }

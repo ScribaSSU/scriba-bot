@@ -42,7 +42,11 @@ public class Templates {
             stringBuilder.append(data);
         }
         stringBuilder.append("\n");
+        if(calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) { // for week type determination
+            calendar.add(Calendar.DAY_OF_MONTH, -1);
+        }
         stringBuilder.append("Неделя: ").append(WeekTypeUtils.weekTypeToLongString(WeekTypeUtils.getWeekType(calendar))).append("\n");
+
         stringBuilder.append("Группа № ").append(fullTimeLessonDto.getStudentGroup().getGroupNumber()).append("\n \n");
 
         if(CollectionUtils.isEmpty(fullTimeLessonDto.getLessons())) {
