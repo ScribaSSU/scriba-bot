@@ -29,4 +29,10 @@ public interface BotUserRepository extends JpaRepository<BotUser, String> {
     @Transactional
     @Query("update BotUser set educationForm = :educationForm where userId = :userId")
     void updateEducationForm(@Param("educationForm") String message, @Param("userId") String userId);
+
+    @Modifying
+    @Transactional
+    @Query("update BotUser set previousUserMessage = :previousUserMessage where userId = :userId")
+    void updatePreviousUserMessage(@Param("previousUserMessage") String previousUserMessage,
+                                   @Param("userId") String userId);
 }

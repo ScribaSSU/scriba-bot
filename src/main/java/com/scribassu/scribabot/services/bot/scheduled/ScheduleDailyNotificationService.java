@@ -1,5 +1,7 @@
 package com.scribassu.scribabot.services.bot.scheduled;
 
+import com.scribassu.scribabot.dto.FullTimeLessonDto;
+import com.scribassu.scribabot.text.CommandText;
 import com.scribassu.scribabot.entities.BotUser;
 import com.scribassu.scribabot.entities.ScheduleDailyNotification;
 import com.scribassu.scribabot.repositories.BotUserRepository;
@@ -8,16 +10,20 @@ import com.scribassu.scribabot.services.CallRestService;
 import com.scribassu.scribabot.services.messages.MessageSender;
 import com.scribassu.scribabot.util.BotMessageUtils;
 import com.scribassu.scribabot.util.CalendarUtils;
-import com.scribassu.tracto.domain.EducationForm;
 import com.scribassu.tracto.domain.FullTimeLesson;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.*;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Map;
 
+@Slf4j
 @Service
 public class ScheduleDailyNotificationService {
 
@@ -37,25 +43,33 @@ public class ScheduleDailyNotificationService {
         this.scheduleDailyNotificationRepository = scheduleDailyNotificationRepository;
     }
 
-    @Scheduled(cron = "${scheduled.daily-notification-service.cron}")
+    @Scheduled(cron = "${scheduled.schedule-daily-notification-service.cron}")
     public void sendSchedule() throws Exception {
         Calendar calendar = CalendarUtils.getCalendar();
+        int hourOfDay = calendar.get(Calendar.HOUR_OF_DAY);
+        log.info("Start to send full time schedule for hour {}", hourOfDay);
         List<ScheduleDailyNotification> scheduleDailyNotifications =
-                scheduleDailyNotificationRepository.findByHourForSendAndEnabled(calendar.get(Calendar.HOUR_OF_DAY));
+                scheduleDailyNotificationRepository.findByHourForSendAndEnabled(hourOfDay);
 
         if(!CollectionUtils.isEmpty(scheduleDailyNotifications)) {
+            log.info("Send full time schedule for hour {}", hourOfDay);
+            final String dayNumber = String.valueOf(CalendarUtils.getDayOfWeekStartsFromMonday(calendar));
             for(ScheduleDailyNotification notification : scheduleDailyNotifications) {
                 BotUser botUser = botUserRepository.findOneById(notification.getUserId());
                 if(BotMessageUtils.isBotUserFullTime(botUser)) {
-                    List<FullTimeLesson> lessons = callRestService.getFullTimeLessonsByDay(
+                    FullTimeLessonDto lessons = callRestService.getFullTimeLessonsByDay(
                             botUser.getDepartment(),
                             botUser.getGroupNumber(),
-                            String.valueOf(CalendarUtils.getDayOfWeekStartsFromMonday(calendar))
+                            dayNumber
                     );
-                    Map<String, String> botMessage = BotMessageUtils.getBotMessageForFullTimeLessons(lessons);
+                    Map<String, String> botMessage = BotMessageUtils.getBotMessageForFullTimeLessons(lessons, CommandText.TODAY);
                     messageSender.send(botMessage, botUser.getUserId());
                 }
             }
         }
+        else {
+            log.info("No need to send full time schedule for hour {}", hourOfDay);
+        }
+        log.info("Finish sending full time schedule for hour {}", hourOfDay);
     }
 }

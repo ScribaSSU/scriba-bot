@@ -1,5 +1,6 @@
 package com.scribassu.scribabot.entities;
 
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,7 +11,7 @@ import javax.persistence.Id;
 @Entity
 @Data
 @NoArgsConstructor
-public class ScheduleDailyNotification {
+public class ScheduleTomorrowNotification {
     @Id
     @GeneratedValue
     private Long id;
@@ -19,7 +20,7 @@ public class ScheduleDailyNotification {
     private boolean isEnabled;
     private Integer hourForSend;
 
-    public ScheduleDailyNotification(String userId, boolean isEnabled, int hourForSend) {
+    public ScheduleTomorrowNotification(String userId, boolean isEnabled, int hourForSend) {
         this.userId = userId;
         this.isEnabled = isEnabled;
         this.hourForSend = hourForSend;

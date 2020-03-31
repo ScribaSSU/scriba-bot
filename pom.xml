@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.scribassu</groupId>
 	<artifactId>scriba-bot</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.4-SNAPSHOT</version>
 	<name>scriba-bot</name>
 	<description>Scriba bot</description>
 
@@ -35,7 +35,7 @@
 		<dependency>
 			<groupId>com.github.ScribaSSU</groupId>
 			<artifactId>tracto-domain</artifactId>
-			<version>1.0.0</version>
+			<version>1.0.1</version>
 		</dependency>
 
 		<dependency>
@@ -50,18 +50,14 @@
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
+            <version>5.1.45</version>
 			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.postgresql</groupId>
-			<artifactId>postgresql</artifactId>
-			<version>42.2.8</version>
 		</dependency>
 
 		<dependency>
-			<groupId>com.vk.api</groupId>
-			<artifactId>sdk</artifactId>
-			<version>1.0.2</version>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.9</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>

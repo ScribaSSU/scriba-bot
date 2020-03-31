@@ -3,6 +3,7 @@ package com.scribassu.scribabot.controllers;
 import com.scribassu.scribabot.services.messages.MessageHandler;
 import com.scribassu.scribabot.services.messages.MessageParser;
 import com.scribassu.scribabot.services.messages.MessageSender;
+import com.scribassu.scribabot.text.Command;
 import com.scribassu.scribabot.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,8 +44,11 @@ public class VkController {
 
             if(parsedMessage.containsKey(Constants.KEY_MESSAGE)) {
                 String userId = parsedMessage.get(Constants.KEY_USER_ID);
-                String message = parsedMessage.get(Constants.KEY_MESSAGE);
-                Map<String, String> botMessage = messageHandler.getBotMessage(message, userId);
+                Command command = new Command(
+                        parsedMessage.get(Constants.KEY_MESSAGE),
+                        parsedMessage.getOrDefault(Constants.KEY_PAYLOAD, ""),
+                        userId);
+                Map<String, String> botMessage = messageHandler.getBotMessage(command);
                 messageSender.send(botMessage, userId);
             }
         }

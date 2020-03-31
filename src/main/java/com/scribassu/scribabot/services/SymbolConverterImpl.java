@@ -1,5 +1,6 @@
 package com.scribassu.scribabot.services;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -10,6 +11,7 @@ public class SymbolConverterImpl implements SymbolConverter {
 
     private final CustomFileReader customFileReader;
 
+    @Autowired
     public SymbolConverterImpl(CustomFileReader customFileReader) {
         this.customFileReader = customFileReader;
         initSymbols();

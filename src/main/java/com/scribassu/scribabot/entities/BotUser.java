@@ -3,6 +3,7 @@ package com.scribassu.scribabot.entities;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
@@ -17,7 +18,11 @@ public class BotUser {
     private String groupNumber;
     private String educationForm;
 
+    @Column(length = 500)
+    private String previousUserMessage;
+
     public BotUser(String userId) {
         this.userId = userId;
+        this.previousUserMessage = "";
     }
 }

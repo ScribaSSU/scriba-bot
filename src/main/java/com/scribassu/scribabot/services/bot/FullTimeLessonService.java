@@ -1,18 +1,16 @@
 package com.scribassu.scribabot.services.bot;
 
-import com.scribassu.scribabot.commands.CommandText;
+import com.scribassu.scribabot.dto.FullTimeLessonDto;
 import com.scribassu.scribabot.entities.BotUser;
 import com.scribassu.scribabot.services.CallRestService;
+import com.scribassu.scribabot.text.CommandText;
 import com.scribassu.scribabot.util.BotMessageUtils;
 import com.scribassu.scribabot.util.CalendarUtils;
-import com.scribassu.scribabot.util.CalendarUtils;
-import com.scribassu.tracto.domain.EducationForm;
-import com.scribassu.tracto.domain.FullTimeLesson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
-import java.util.*;
+import java.util.Calendar;
+import java.util.Map;
 
 @Service
 public class FullTimeLessonService implements BotMessageService {
@@ -27,8 +25,11 @@ public class FullTimeLessonService implements BotMessageService {
     @Override
     public Map<String, String> getBotMessage(String message, BotUser botUser) {
         Calendar calendar = CalendarUtils.getCalendar();
-        List<FullTimeLesson> lessons = new ArrayList<>();
+        FullTimeLessonDto lessons = new FullTimeLessonDto();
         boolean isBotUserFullTime = false;
+        boolean isToday = false;
+        boolean isTomorrow = false;
+        boolean isYesterday = false;
 
         switch(message) {
             case CommandText.MONDAY:
@@ -92,30 +93,56 @@ public class FullTimeLessonService implements BotMessageService {
                 }
                 break;
             case CommandText.TODAY:
+                String day = String.valueOf(CalendarUtils.getDayOfWeekStartsFromMonday(calendar));
                 if(BotMessageUtils.isBotUserFullTime(botUser)) {
                     lessons = callRestService.getFullTimeLessonsByDay(
                             botUser.getDepartment(),
                             botUser.getGroupNumber(),
-                            String.valueOf(CalendarUtils.getDayOfWeekStartsFromMonday(calendar))
+                            day
                     );
                     isBotUserFullTime = true;
+                    isToday = true;
                 }
                 break;
             case CommandText.TOMORROW:
                 calendar.add(Calendar.DAY_OF_WEEK, 1);
+                day = String.valueOf(CalendarUtils.getDayOfWeekStartsFromMonday(calendar));
                 if(BotMessageUtils.isBotUserFullTime(botUser)) {
                     lessons = callRestService.getFullTimeLessonsByDay(
                             botUser.getDepartment(),
                             botUser.getGroupNumber(),
-                            String.valueOf(CalendarUtils.getDayOfWeekStartsFromMonday(calendar))
+                            day
                     );
                     isBotUserFullTime = true;
+                    isTomorrow = true;
+                }
+                break;
+            case CommandText.YESTERDAY:
+                calendar.add(Calendar.DAY_OF_WEEK, -1);
+                day = String.valueOf(CalendarUtils.getDayOfWeekStartsFromMonday(calendar));
+                if(BotMessageUtils.isBotUserFullTime(botUser)) {
+                    lessons = callRestService.getFullTimeLessonsByDay(
+                            botUser.getDepartment(),
+                            botUser.getGroupNumber(),
+                            day
+                    );
+                    isBotUserFullTime = true;
+                    isYesterday = true;
                 }
                 break;
         }
 
         if(isBotUserFullTime) {
-            return BotMessageUtils.getBotMessageForFullTimeLessons(lessons);
+            if(isToday) {
+                return BotMessageUtils.getBotMessageForFullTimeLessons(lessons, CommandText.TODAY);
+            }
+            if(isTomorrow) {
+                return BotMessageUtils.getBotMessageForFullTimeLessons(lessons, CommandText.TOMORROW);
+            }
+            if(isYesterday) {
+                return BotMessageUtils.getBotMessageForFullTimeLessons(lessons, CommandText.YESTERDAY);
+            }
+            return BotMessageUtils.getBotMessageForFullTimeLessons(lessons, "");
         }
         else {
             return BotMessageUtils.getBotMessageForUnsupportedLessons();
