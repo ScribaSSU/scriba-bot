@@ -1,5 +1,6 @@
 package com.scribassu.scribabot.util;
 
+import com.scribassu.scribabot.dto.FullTimeLessonDto;
 import com.scribassu.scribabot.text.CommandText;
 import com.scribassu.tracto.domain.FullTimeLesson;
 import com.scribassu.tracto.domain.LessonType;
@@ -13,9 +14,8 @@ import java.util.List;
 
 public class Templates {
 
-    public static String makeTemplate(List<FullTimeLesson> fullTimeLessons,
-                                      String day,
-                                      String dayNumber)
+    public static String makeTemplate(FullTimeLessonDto fullTimeLessonDto,
+                                      String day)
     {
         StringBuilder stringBuilder = new StringBuilder();
         Calendar calendar = CalendarUtils.getCalendar();
@@ -32,7 +32,7 @@ public class Templates {
             calendar.add(Calendar.DAY_OF_MONTH, -1);
         }
 
-        stringBuilder.append(BotMessageUtils.getDayByDayNumber(dayNumber)).append(" ");
+        stringBuilder.append(fullTimeLessonDto.getDay().getWeekDay().getDay()).append(" ");
 
         String data = calendar.get(Calendar.DAY_OF_MONTH) + "-" + (calendar.get(Calendar.MONTH) + 1) + "-" + calendar.get(Calendar.YEAR);
 
@@ -42,14 +42,19 @@ public class Templates {
             stringBuilder.append(data);
         }
         stringBuilder.append("\n");
-        //stringBuilder.append("Сегодня ").append(fullTimeLessons.get(0).getDay().getWeekDay().getDay()).append("\nНеделя - ");
-        //stringBuilder.append(fullTimeLessons.get(0).getWeekType().getType()).append("\uD83D\uDD4A\n");
-        if(CollectionUtils.isEmpty(fullTimeLessons)) {
+        if(calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) { // for week type determination
+            calendar.add(Calendar.DAY_OF_MONTH, -1);
+        }
+        stringBuilder.append("Неделя: ").append(WeekTypeUtils.weekTypeToLongString(WeekTypeUtils.getWeekType(calendar))).append("\n");
+
+        stringBuilder.append("Группа № ").append(fullTimeLessonDto.getStudentGroup().getGroupNumber()).append("\n \n");
+
+        if(CollectionUtils.isEmpty(fullTimeLessonDto.getLessons())) {
             stringBuilder.append("А пар-то нету :)");
         }
         else {
+            List<FullTimeLesson> fullTimeLessons = fullTimeLessonDto.getLessons();
             fullTimeLessons.sort((o1, o2) -> (o1.getLessonTime().getLessonNumber() - o2.getLessonTime().getLessonNumber()));
-            stringBuilder.append("Группа № ").append(fullTimeLessons.get(0).getStudentGroup().getGroupNumber()).append("\n \n");
             for (FullTimeLesson fullTimeLesson : fullTimeLessons) {
                 stringBuilder.append(fullTimeLesson.getLessonTime().getTimeStart()).append(" - ")
                         .append(fullTimeLesson.getLessonTime().getTimeFinish()).append("\n")
