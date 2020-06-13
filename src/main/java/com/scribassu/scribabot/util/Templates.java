@@ -1,21 +1,20 @@
 package com.scribassu.scribabot.util;
 
+import com.scribassu.scribabot.dto.ExamPeriodEventDto;
 import com.scribassu.scribabot.dto.FullTimeLessonDto;
 import com.scribassu.scribabot.text.CommandText;
-import com.scribassu.tracto.domain.FullTimeLesson;
-import com.scribassu.tracto.domain.LessonType;
-import com.scribassu.tracto.domain.WeekType;
+import com.scribassu.tracto.domain.*;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Templates {
 
-    public static String makeTemplate(FullTimeLessonDto fullTimeLessonDto,
-                                      String day)
+    public static String makeFullTimeLessonTemplate(FullTimeLessonDto fullTimeLessonDto,
+                                                    String day, boolean filterWeekType)
     {
         StringBuilder stringBuilder = new StringBuilder();
         Calendar calendar = CalendarUtils.getCalendar();
@@ -45,15 +44,22 @@ public class Templates {
         if(calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) { // for week type determination
             calendar.add(Calendar.DAY_OF_MONTH, -1);
         }
-        stringBuilder.append("Неделя: ").append(WeekTypeUtils.weekTypeToLongString(WeekTypeUtils.getWeekType(calendar))).append("\n");
+        WeekType currentWeekType = WeekTypeUtils.getWeekType(calendar);
+        stringBuilder.append("Неделя: ").append(WeekTypeUtils.weekTypeToLongString(currentWeekType)).append("\n");
 
-        stringBuilder.append("Группа № ").append(fullTimeLessonDto.getStudentGroup().getGroupNumber()).append("\n \n");
+        stringBuilder.append("Группа № ").append(fullTimeLessonDto.getStudentGroup().getGroupNumberRus()).append("\n \n");
 
         if(CollectionUtils.isEmpty(fullTimeLessonDto.getLessons())) {
             stringBuilder.append("А пар-то нету :)");
         }
         else {
             List<FullTimeLesson> fullTimeLessons = fullTimeLessonDto.getLessons();
+            if(filterWeekType) {
+                fullTimeLessons = fullTimeLessons
+                        .stream()
+                        .filter(f -> f.getWeekType().equals(WeekType.FULL) || f.getWeekType().equals(currentWeekType))
+                        .collect(Collectors.toList());
+            }
             fullTimeLessons.sort((o1, o2) -> (o1.getLessonTime().getLessonNumber() - o2.getLessonTime().getLessonNumber()));
             for (FullTimeLesson fullTimeLesson : fullTimeLessons) {
                 stringBuilder.append(fullTimeLesson.getLessonTime().getTimeStart()).append(" - ")
@@ -68,16 +74,58 @@ public class Templates {
                 if(!fullTimeLesson.getWeekType().equals(WeekType.FULL)) {
                     stringBuilder.append(fullTimeLesson.getWeekType().getType()).append("\n");
                 }
-                if (!fullTimeLesson.getSubGroup().isEmpty())
+                if (!StringUtils.isEmpty(fullTimeLesson.getSubGroup())) {
                     stringBuilder.append(fullTimeLesson.getSubGroup().trim()).append("\n");
-                stringBuilder.append(fullTimeLesson.getName()).append("\n")
-                        .append(fullTimeLesson.getTeacher().getSurname()).append(" ")
-                        .append(fullTimeLesson.getTeacher().getName()).append(" ")
-                        .append(fullTimeLesson.getTeacher().getPatronymic()).append("\n")
-                        .append(fullTimeLesson.getPlace()).append("\n \n");
+                }
+                stringBuilder.append(fullTimeLesson.getName()).append("\n");
+                stringBuilder.append(appendTeacher(fullTimeLesson.getTeacher()));
+                stringBuilder.append(fullTimeLesson.getPlace()).append("\n \n");
             }
         }
 
         return stringBuilder.toString();
+    }
+
+    public static String makeFullTimeExamPeriodTemplate(ExamPeriodEventDto examPeriodEventDto) {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("Группа № ").append(examPeriodEventDto.getStudentGroup().getGroupNumberRus()).append("\n \n");
+
+        for(ExamPeriodEvent examPeriodEvent : examPeriodEventDto.getExamPeriodEvents()) {
+            stringBuilder
+                    .append(examPeriodEvent.getDay())
+                    .append(" ")
+                    .append(examPeriodEvent.getMonth())
+                    .append(examPeriodEvent.getYear())
+                    .append("\n");
+            stringBuilder
+                    .append(examPeriodEvent.getHour())
+                    .append(":")
+                    .append(examPeriodEvent.getMinute()).append("\n");
+            stringBuilder
+                    .append(examPeriodEvent.getExamPeriodEventType().getType())
+                    .append(" ");
+            if(examPeriodEvent.getExamPeriodEventType().equals(ExamPeriodEventType.MIDTERM)) {
+                stringBuilder.append("\uD83D\uDCA1");
+            }
+            if(examPeriodEvent.getExamPeriodEventType().equals(ExamPeriodEventType.CONSULTATION)) {
+                stringBuilder.append("\uD83D\uDCD3");
+            }
+            if(examPeriodEvent.getExamPeriodEventType().equals(ExamPeriodEventType.EXAM)) {
+                stringBuilder.append("\uD83C\uDF40");
+            }
+            stringBuilder.append("\n");
+            stringBuilder.append(examPeriodEvent.getSubjectName()).append("\n");
+            stringBuilder.append(appendTeacher(examPeriodEvent.getTeacher()));
+            stringBuilder.append(examPeriodEvent.getPlace()).append("\n \n");
+        }
+        return stringBuilder.toString();
+    }
+
+    private static String appendTeacher(Teacher teacher) {
+        return teacher.getSurname() + " " +
+                (StringUtils.isEmpty(teacher.getName()) ? " " : teacher.getName()) +
+                " " +
+                (StringUtils.isEmpty(teacher.getPatronymic()) ? " " : teacher.getPatronymic())
+                + "\n";
     }
 }

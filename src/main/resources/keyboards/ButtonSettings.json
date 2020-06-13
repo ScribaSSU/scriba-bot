@@ -60,6 +60,24 @@
 "action": {
 "type": "text",
 "payload": "{\"button\": \"1\"}",
+"label": "Вкл. фильтр по типу недели"
+},
+"color": "positive"
+},
+{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"1\"}",
+"label": "Выкл. фильтр по типу недели"
+},
+"color": "negative"
+}
+],
+[
+{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"1\"}",
 "label": "Выбрать факультет и т. д."
 },
 "color": "positive"

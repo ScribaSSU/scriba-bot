@@ -44,6 +44,14 @@
 "label": "5 курс"
 },
 "color": "primary"
+},
+{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"курс\"}",
+"label": "Другое"
+},
+"color": "primary"
 }
 ],
 [

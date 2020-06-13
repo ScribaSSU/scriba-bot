@@ -2,6 +2,7 @@ package com.scribassu.scribabot.entities;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,6 +21,8 @@ public class BotUser {
 
     @Column(length = 500)
     private String previousUserMessage;
+
+    private boolean filterNomDenom;
 
     public BotUser(String userId) {
         this.userId = userId;

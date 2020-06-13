@@ -134,15 +134,15 @@ public class FullTimeLessonService implements BotMessageService {
 
         if(isBotUserFullTime) {
             if(isToday) {
-                return BotMessageUtils.getBotMessageForFullTimeLessons(lessons, CommandText.TODAY);
+                return BotMessageUtils.getBotMessageForFullTimeLessons(lessons, CommandText.TODAY, botUser.isFilterNomDenom());
             }
             if(isTomorrow) {
-                return BotMessageUtils.getBotMessageForFullTimeLessons(lessons, CommandText.TOMORROW);
+                return BotMessageUtils.getBotMessageForFullTimeLessons(lessons, CommandText.TOMORROW, botUser.isFilterNomDenom());
             }
             if(isYesterday) {
-                return BotMessageUtils.getBotMessageForFullTimeLessons(lessons, CommandText.YESTERDAY);
+                return BotMessageUtils.getBotMessageForFullTimeLessons(lessons, CommandText.YESTERDAY, botUser.isFilterNomDenom());
             }
-            return BotMessageUtils.getBotMessageForFullTimeLessons(lessons, "");
+            return BotMessageUtils.getBotMessageForFullTimeLessons(lessons, "", botUser.isFilterNomDenom());
         }
         else {
             return BotMessageUtils.getBotMessageForUnsupportedLessons();

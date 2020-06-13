@@ -33,16 +33,31 @@ public class GetStudentGroupService implements BotMessageService {
     @Override
     public Map<String, String> getBotMessage(String message, BotUser botUser) {
         Map<String, String> botMessage = new HashMap<>();
-        String course = message.substring(0, 1);
-        if(botUser != null
-                && !StringUtils.isEmpty(botUser.getDepartment())
-                && !StringUtils.isEmpty(botUser.getEducationForm())) {
-            GroupNumbersDto groupNumbersDto =
-                    callRestService.getGroupNumbersByDepartmentUrlAndEducationFormAndCourse(
-                            botUser.getDepartment(),
-                            EducationForm.fromGroupType(botUser.getEducationForm()).toString(),
-                            course
-                    );
+        GroupNumbersDto groupNumbersDto = new GroupNumbersDto();
+        if(message.equalsIgnoreCase("Другое")) {
+            if(botUser != null
+                    && !StringUtils.isEmpty(botUser.getDepartment())
+                    && !StringUtils.isEmpty(botUser.getEducationForm())) {
+                groupNumbersDto =
+                        callRestService.getOtherGroupNumbersByDepartmentUrlAndEducationForm(
+                                botUser.getDepartment(),
+                                EducationForm.fromGroupType(botUser.getEducationForm()).toString()
+                        );
+            }
+        }
+        else {
+            String course = message.substring(0, 1);
+            if(botUser != null
+                    && !StringUtils.isEmpty(botUser.getDepartment())
+                    && !StringUtils.isEmpty(botUser.getEducationForm())) {
+                groupNumbersDto =
+                        callRestService.getGroupNumbersByDepartmentUrlAndEducationFormAndCourse(
+                                botUser.getDepartment(),
+                                EducationForm.fromGroupType(botUser.getEducationForm()).toString(),
+                                course
+                        );
+            }
+        }
             System.out.println(groupNumbersDto);
             if(CollectionUtils.isEmpty(groupNumbersDto.getGroupNumbers())) {
                 botMessage.put(
@@ -63,7 +78,6 @@ public class GetStudentGroupService implements BotMessageService {
                     botMessage.put(Constants.KEY_MESSAGE, "Не удалось загрузить список групп.");
                 }
             }
-        }
         return botMessage;
     }
 

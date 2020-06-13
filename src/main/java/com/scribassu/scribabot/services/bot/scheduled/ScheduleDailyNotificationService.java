@@ -62,7 +62,7 @@ public class ScheduleDailyNotificationService {
                             botUser.getGroupNumber(),
                             dayNumber
                     );
-                    Map<String, String> botMessage = BotMessageUtils.getBotMessageForFullTimeLessons(lessons, CommandText.TODAY);
+                    Map<String, String> botMessage = BotMessageUtils.getBotMessageForFullTimeLessons(lessons, CommandText.TODAY, botUser.isFilterNomDenom());
                     messageSender.send(botMessage, botUser.getUserId());
                 }
             }

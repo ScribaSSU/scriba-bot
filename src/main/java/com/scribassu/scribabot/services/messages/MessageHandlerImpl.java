@@ -3,6 +3,7 @@ package com.scribassu.scribabot.services.messages;
 import com.scribassu.scribabot.dto.FullTimeLessonDto;
 import com.scribassu.scribabot.entities.ScheduleTomorrowNotification;
 import com.scribassu.scribabot.repositories.ScheduleTomorrowNotificationRepository;
+import com.scribassu.scribabot.services.bot.ExamPeriodService;
 import com.scribassu.scribabot.services.bot.GetStudentGroupService;
 import com.scribassu.scribabot.text.Command;
 import com.scribassu.scribabot.text.CommandText;
@@ -35,6 +36,7 @@ public class MessageHandlerImpl implements MessageHandler {
     private final CallRestService callRestService;
     private final HelpService helpService;
     private final FullTimeLessonService fullTimeLessonService;
+    private final ExamPeriodService examPeriodService;
     private final BotUserRepository botUserRepository;
     private final ScheduleDailyNotificationRepository scheduleDailyNotificationRepository;
     private final ScheduleTomorrowNotificationRepository scheduleTomorrowNotificationRepository;
@@ -45,6 +47,7 @@ public class MessageHandlerImpl implements MessageHandler {
     public MessageHandlerImpl(CallRestService callRestService,
                               HelpService helpService,
                               FullTimeLessonService fullTimeLessonService,
+                              ExamPeriodService examPeriodService,
                               BotUserRepository botUserRepository,
                               ScheduleDailyNotificationRepository scheduleDailyNotificationRepository,
                               ScheduleTomorrowNotificationRepository scheduleTomorrowNotificationRepository,
@@ -53,6 +56,7 @@ public class MessageHandlerImpl implements MessageHandler {
         this.callRestService = callRestService;
         this.helpService = helpService;
         this.fullTimeLessonService = fullTimeLessonService;
+        this.examPeriodService = examPeriodService;
         this.botUserRepository = botUserRepository;
         this.scheduleDailyNotificationRepository = scheduleDailyNotificationRepository;
         this.scheduleTomorrowNotificationRepository = scheduleTomorrowNotificationRepository;
@@ -73,7 +77,9 @@ public class MessageHandlerImpl implements MessageHandler {
         switch(message) {
             case CommandText.HELLO:
                 if(botUser == null) {
-                    botUser = botUserRepository.save(new BotUser(userId));
+                    botUser = new BotUser(userId);
+                    botUser.setFilterNomDenom(false);
+                    botUser = botUserRepository.save(botUser);
                     botMessage.put(
                             Constants.KEY_MESSAGE,
                             MessageText.GREETING_WITH_CHOOSE_DEPARTMENT);
@@ -94,7 +100,9 @@ public class MessageHandlerImpl implements MessageHandler {
             case CommandText.MAIN_MENU:
             case CommandText.SHORT_MAIN_MENU:
                 if(botUser == null) {
-                    botUserRepository.save(new BotUser(userId));
+                    botUser = new BotUser(userId);
+                    botUser.setFilterNomDenom(false);
+                    botUser = botUserRepository.save(botUser);
                 }
                 botMessage.put(
                         Constants.KEY_MESSAGE,
@@ -198,13 +206,13 @@ public class MessageHandlerImpl implements MessageHandler {
             case CommandText.SET_SEND_SCHEDULE_TIME_TOMORROW:
             case CommandText.ENABLE_SEND_SCHEDULE_TOMORROW:
             case CommandText.DISABLE_SEND_SCHEDULE_TOMORROW:
+            case CommandText.ENABLE_FILTER_WEEK_TYPE:
+            case CommandText.DISABLE_FILTER_WEEK_TYPE:
             case CommandText.CURRENT_USER_SETTINGS:
                 botMessage = settingsService.getBotMessage(message, botUser);
                 break;
             case CommandText.EXAMS:
-                botMessage.put(
-                        Constants.KEY_MESSAGE,
-                        "Расписание сессии сделаем в скором времени.");
+                botMessage = examPeriodService.getBotMessage(message, botUser);
                 break;
             case "т":
                 botMessage.put(Constants.KEY_MESSAGE, "test");
@@ -258,8 +266,7 @@ public class MessageHandlerImpl implements MessageHandler {
                     KeyboardMap.keyboards.get(KeyboardType.ButtonGroupType).getJsonText());
         }
 
-        if(CommandText.COURSE_PATTERN.matcher(message).matches()) {
-            System.out.println("COURSE PATTERN MATCH");
+        if(CommandText.COURSE_PAYLOAD.equalsIgnoreCase(payload)) {
             botMessage = getStudentGroupService.getBotMessage(message, botUser);
         }
 
@@ -322,7 +329,7 @@ public class MessageHandlerImpl implements MessageHandler {
                         KeyboardMap.keyboards.get(KeyboardType.ButtonActions).getJsonText());
             }
             else {
-                botMessage.put(Constants.KEY_MESSAGE, Templates.makeTemplate(lessons, ""));
+                botMessage.put(Constants.KEY_MESSAGE, Templates.makeFullTimeLessonTemplate(lessons, "", botUser.isFilterNomDenom()));
                 botMessage.put(
                         Constants.KEY_KEYBOARD,
                         KeyboardMap.keyboards.get(KeyboardType.ButtonActions).getJsonText());

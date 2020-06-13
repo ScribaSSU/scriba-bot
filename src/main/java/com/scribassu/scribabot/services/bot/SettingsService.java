@@ -168,10 +168,29 @@ public class SettingsService implements BotMessageService {
                         Constants.KEY_KEYBOARD,
                         KeyboardMap.keyboards.get(KeyboardType.ButtonSettings).getJsonText());
                 break;
+            case CommandText.ENABLE_FILTER_WEEK_TYPE:
+                botUser.setFilterNomDenom(true);
+                botUserRepository.save(botUser);
+                botMessage.put(Constants.KEY_MESSAGE, "Включена фильтрация по типу недели.");
+                botMessage.put(
+                        Constants.KEY_KEYBOARD,
+                        KeyboardMap.keyboards.get(KeyboardType.ButtonSettings).getJsonText());
+                break;
+            case CommandText.DISABLE_FILTER_WEEK_TYPE:
+                botUser.setFilterNomDenom(false);
+                botUserRepository.save(botUser);
+                botMessage.put(Constants.KEY_MESSAGE, "Выключена фильтрация по типу недели.");
+                botMessage.put(
+                        Constants.KEY_KEYBOARD,
+                        KeyboardMap.keyboards.get(KeyboardType.ButtonSettings).getJsonText());
+                break;
             case CommandText.CURRENT_USER_SETTINGS:
                 String currentUserSettings = getStudentInfo(botUser) +
                         "\n" +
-                        getScheduleNotificationStatus(botUser.getUserId());
+                        getScheduleNotificationStatus(botUser.getUserId()) +
+                        "\n\n" +
+                        "Фильтрация по типу недели: " +
+                        (botUser.isFilterNomDenom() ? "вкл." : "выкл.");
                 botMessage.put(Constants.KEY_MESSAGE, currentUserSettings);
                 botMessage.put(
                         Constants.KEY_KEYBOARD,
