@@ -21,12 +21,12 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class GetStudentGroupService implements BotMessageService {
+public class StudentGroupService implements BotMessageService {
 
     private final CallRestService callRestService;
 
     @Autowired
-    public GetStudentGroupService(CallRestService callRestService) {
+    public StudentGroupService(CallRestService callRestService) {
         this.callRestService = callRestService;
     }
 
@@ -34,7 +34,7 @@ public class GetStudentGroupService implements BotMessageService {
     public Map<String, String> getBotMessage(String message, BotUser botUser) {
         Map<String, String> botMessage = new HashMap<>();
         GroupNumbersDto groupNumbersDto = new GroupNumbersDto();
-        if(message.equalsIgnoreCase("Другое")) {
+        if(message.equalsIgnoreCase("другое")) {
             if(botUser != null
                     && !StringUtils.isEmpty(botUser.getDepartment())
                     && !StringUtils.isEmpty(botUser.getEducationForm())) {

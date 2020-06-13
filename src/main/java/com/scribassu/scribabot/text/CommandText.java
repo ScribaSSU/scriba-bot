@@ -54,5 +54,5 @@ public class CommandText {
     public static final Pattern HOUR_PATTERN = Pattern.compile(HOUR);
     public static final Pattern COURSE_PATTERN = Pattern.compile(COURSE);
 
-    public static final String COURSE_PAYLOAD = "{\"button\": \"курс\"}";
+    public static final String COURSE_PAYLOAD = "курс";
 }

@@ -3,8 +3,8 @@ package com.scribassu.scribabot.services.messages;
 import com.scribassu.scribabot.dto.FullTimeLessonDto;
 import com.scribassu.scribabot.entities.ScheduleTomorrowNotification;
 import com.scribassu.scribabot.repositories.ScheduleTomorrowNotificationRepository;
-import com.scribassu.scribabot.services.bot.ExamPeriodService;
-import com.scribassu.scribabot.services.bot.GetStudentGroupService;
+import com.scribassu.scribabot.services.bot.*;
+import com.scribassu.scribabot.services.bot.StudentGroupService;
 import com.scribassu.scribabot.text.Command;
 import com.scribassu.scribabot.text.CommandText;
 import com.scribassu.scribabot.entities.BotUser;
@@ -14,9 +14,6 @@ import com.scribassu.scribabot.keyboard.KeyboardType;
 import com.scribassu.scribabot.repositories.BotUserRepository;
 import com.scribassu.scribabot.repositories.ScheduleDailyNotificationRepository;
 import com.scribassu.scribabot.services.CallRestService;
-import com.scribassu.scribabot.services.bot.FullTimeLessonService;
-import com.scribassu.scribabot.services.bot.HelpService;
-import com.scribassu.scribabot.services.bot.SettingsService;
 import com.scribassu.scribabot.text.MessageText;
 import com.scribassu.scribabot.util.BotMessageUtils;
 import com.scribassu.scribabot.util.Constants;
@@ -41,7 +38,7 @@ public class MessageHandlerImpl implements MessageHandler {
     private final ScheduleDailyNotificationRepository scheduleDailyNotificationRepository;
     private final ScheduleTomorrowNotificationRepository scheduleTomorrowNotificationRepository;
     private final SettingsService settingsService;
-    private final GetStudentGroupService getStudentGroupService;
+    private final StudentGroupService studentGroupService;
 
     @Autowired
     public MessageHandlerImpl(CallRestService callRestService,
@@ -52,7 +49,7 @@ public class MessageHandlerImpl implements MessageHandler {
                               ScheduleDailyNotificationRepository scheduleDailyNotificationRepository,
                               ScheduleTomorrowNotificationRepository scheduleTomorrowNotificationRepository,
                               SettingsService settingsService,
-                              GetStudentGroupService getStudentGroupService) {
+                              StudentGroupService studentGroupService) {
         this.callRestService = callRestService;
         this.helpService = helpService;
         this.fullTimeLessonService = fullTimeLessonService;
@@ -61,7 +58,7 @@ public class MessageHandlerImpl implements MessageHandler {
         this.scheduleDailyNotificationRepository = scheduleDailyNotificationRepository;
         this.scheduleTomorrowNotificationRepository = scheduleTomorrowNotificationRepository;
         this.settingsService = settingsService;
-        this.getStudentGroupService = getStudentGroupService;
+        this.studentGroupService = studentGroupService;
     }
 
     @Override
@@ -267,7 +264,7 @@ public class MessageHandlerImpl implements MessageHandler {
         }
 
         if(CommandText.COURSE_PAYLOAD.equalsIgnoreCase(payload)) {
-            botMessage = getStudentGroupService.getBotMessage(message, botUser);
+            botMessage = studentGroupService.getBotMessage(message, botUser);
         }
 
         if(CommandText.CHOOSE_STUDENT_GROUP.equalsIgnoreCase(payload)) {
