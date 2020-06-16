@@ -89,18 +89,26 @@ public class Templates {
     public static String makeFullTimeExamPeriodTemplate(ExamPeriodEventDto examPeriodEventDto) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("Группа № ").append(examPeriodEventDto.getStudentGroup().getGroupNumberRus()).append("\n \n");
+        List<ExamPeriodEvent> examPeriodEvents = examPeriodEventDto.getExamPeriodEvents();
+        examPeriodEvents.sort((e1, e2) -> (int) (e1.getId() - e2.getId()));
 
-        for(ExamPeriodEvent examPeriodEvent : examPeriodEventDto.getExamPeriodEvents()) {
+        for(ExamPeriodEvent examPeriodEvent : examPeriodEvents) {
             stringBuilder
                     .append(examPeriodEvent.getDay())
                     .append(" ")
                     .append(examPeriodEvent.getMonth())
+                    .append(" ")
                     .append(examPeriodEvent.getYear())
                     .append("\n");
             stringBuilder
                     .append(examPeriodEvent.getHour())
                     .append(":")
-                    .append(examPeriodEvent.getMinute()).append("\n");
+                    .append(
+                            (examPeriodEvent.getMinute() < 10 ?
+                                    "0" + examPeriodEvent.getMinute() :
+                                    examPeriodEvent.getMinute())
+                    )
+                    .append("\n");
             stringBuilder
                     .append(examPeriodEvent.getExamPeriodEventType().getType())
                     .append(" ");
