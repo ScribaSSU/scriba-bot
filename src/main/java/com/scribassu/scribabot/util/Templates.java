@@ -115,12 +115,16 @@ public class Templates {
             if(examPeriodEvent.getExamPeriodEventType().equals(ExamPeriodEventType.MIDTERM)) {
                 stringBuilder.append("\uD83D\uDCA1");
             }
+            if(examPeriodEvent.getExamPeriodEventType().equals(ExamPeriodEventType.MIDTERM_WITH_MARK)) {
+                stringBuilder.append("\uD83D\uDD25");
+            }
             if(examPeriodEvent.getExamPeriodEventType().equals(ExamPeriodEventType.CONSULTATION)) {
                 stringBuilder.append("\uD83D\uDCD3");
             }
             if(examPeriodEvent.getExamPeriodEventType().equals(ExamPeriodEventType.EXAM)) {
                 stringBuilder.append("\uD83C\uDF40");
             }
+
             stringBuilder.append("\n");
             stringBuilder.append(examPeriodEvent.getSubjectName()).append("\n");
             stringBuilder.append(appendTeacher(examPeriodEvent.getTeacher()));
