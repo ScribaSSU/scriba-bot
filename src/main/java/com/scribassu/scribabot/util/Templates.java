@@ -93,13 +93,18 @@ public class Templates {
         examPeriodEvents.sort((e1, e2) -> (int) (e1.getId() - e2.getId()));
 
         for(ExamPeriodEvent examPeriodEvent : examPeriodEvents) {
-            stringBuilder
-                    .append(examPeriodEvent.getDay())
-                    .append(" ")
-                    .append(examPeriodEvent.getMonth())
-                    .append(" ")
-                    .append(examPeriodEvent.getYear())
-                    .append("\n");
+            if(examPeriodEvent.getDay() != -1) {
+                stringBuilder
+                        .append(examPeriodEvent.getDay())
+                        .append(" ")
+                        .append(examPeriodEvent.getMonth())
+                        .append(" ")
+                        .append(examPeriodEvent.getYear())
+                        .append("\n");
+            }
+            else {
+                stringBuilder.append("\n");
+            }
             stringBuilder
                     .append(examPeriodEvent.getHour())
                     .append(":")
