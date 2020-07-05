@@ -217,40 +217,7 @@ public class MessageHandlerImpl implements MessageHandler {
         }
 
         if(CommandText.HOUR_PATTERN.matcher(message).matches()) {
-            int hourForSend = Integer.parseInt(message.substring(0, message.indexOf(" ")));
-
-            if(botUser != null && botUser.getPreviousUserMessage().equalsIgnoreCase(
-                    String.format(MessageText.CHOOSE_SCHEDULE_NOTIFICATION_TIME, "сегодня"))) {
-                ScheduleDailyNotification scheduleDailyNotification =
-                        scheduleDailyNotificationRepository.findByUserId(userId);
-
-                if(scheduleDailyNotification == null) {
-                    scheduleDailyNotification = new ScheduleDailyNotification(userId, true, hourForSend);
-                }
-                else {
-                    scheduleDailyNotification.setHourForSend(hourForSend);
-                }
-                scheduleDailyNotificationRepository.save(scheduleDailyNotification);
-            }
-            if(botUser != null && botUser.getPreviousUserMessage().equalsIgnoreCase(
-                    String.format(MessageText.CHOOSE_SCHEDULE_NOTIFICATION_TIME, "завтра"))) {
-                ScheduleTomorrowNotification scheduleTomorrowNotification =
-                        scheduleTomorrowNotificationRepository.findByUserId(userId);
-
-                if(scheduleTomorrowNotification == null) {
-                    scheduleTomorrowNotification = new ScheduleTomorrowNotification(userId, true, hourForSend);
-                }
-                else {
-                    scheduleTomorrowNotification.setHourForSend(hourForSend);
-                }
-                scheduleTomorrowNotificationRepository.save(scheduleTomorrowNotification);
-            }
-            botMessage.put(
-                    Constants.KEY_MESSAGE,
-                    "Теперь расписание будет приходить в " + hourForSend + " ч.");
-            botMessage.put(
-                    Constants.KEY_KEYBOARD,
-                    KeyboardMap.keyboards.get(KeyboardType.ButtonSettings).getJsonText());
+            botMessage = settingsService.getBotMessage(message, botUser);
         }
 
         if(CommandText.DEPARTMENT_PATTERN.matcher(message).matches()) {

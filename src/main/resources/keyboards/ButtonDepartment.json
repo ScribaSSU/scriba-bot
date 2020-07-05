@@ -5,7 +5,7 @@
 "action": {
 "type": "text",
 "payload": "{\"button\": \"1\"}",
-"label": "БИОЛОГ."
+"label": "БИОЛОГ"
 },
 "color": "primary"
 },
@@ -13,7 +13,7 @@
 "action": {
 "type": "text",
 "payload": "{\"button\": \"2\"}",
-"label": "ГЕОГРАФ."
+"label": "ГЕОГРАФ"
 },
 "color": "primary"
 },
@@ -21,7 +21,7 @@
 "action": {
 "type": "text",
 "payload": "{\"button\": \"2\"}",
-"label": "ГЕОЛОГ."
+"label": "ГЕОЛОГ"
 },
 "color": "primary"
 }
@@ -55,7 +55,7 @@
 "action": {
 "type": "text",
 "payload": "{\"button\": \"1\"}",
-"label": "И-Т ФИЗ. КУЛ."
+"label": "И-Т ФИЗ КУЛ"
 },
 "color": "primary"
 },
@@ -130,7 +130,7 @@
 "action": {
 "type": "text",
 "payload": "{\"button\": \"1\"}",
-"label": "ПСИХОЛОГ."
+"label": "ПСИХОЛОГ"
 },
 "color": "primary"
 },
@@ -155,7 +155,7 @@
 "action": {
 "type": "text",
 "payload": "{\"button\": \"1\"}",
-"label": "ФИЛОСОФ."
+"label": "ФИЛОСОФ"
 },
 "color": "primary"
 },
@@ -163,7 +163,7 @@
 "action": {
 "type": "text",
 "payload": "{\"button\": \"2\"}",
-"label": "ЭКОНОМ."
+"label": "ЭКОНОМ"
 },
 "color": "primary"
 },
@@ -172,6 +172,23 @@
 "type": "text",
 "payload": "{\"button\": \"2\"}",
 "label": "ЮРФАК"
+},
+"color": "primary"
+}
+],
+[{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"1\"}",
+"label": "ГЕОЛОГ К-Ж"
+},
+"color": "primary"
+},
+{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"2\"}",
+"label": "К-Ж ЯБЛОЧКОВА"
 },
 "color": "primary"
 }

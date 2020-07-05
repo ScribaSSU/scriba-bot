@@ -40,13 +40,13 @@ public class StartupEvents implements ApplicationListener<ContextRefreshedEvent>
             );
         }
 
-        DepartmentConverter.add("биолог.", "bf");
-        DepartmentConverter.add("географ.", "gf");
-        DepartmentConverter.add("геолог.", "gl");
+        DepartmentConverter.add("биолог", "bf");
+        DepartmentConverter.add("географ", "gf");
+        DepartmentConverter.add("геолог", "gl");
         DepartmentConverter.add("идпо", "idpo");
         DepartmentConverter.add("и-т искусств", "ii");
         DepartmentConverter.add("ииимо", "imo");
-        DepartmentConverter.add("и-т физ. кул.", "ifk");
+        DepartmentConverter.add("и-т физ кул", "ifk");
         DepartmentConverter.add("ифиж", "ifg");
         DepartmentConverter.add("и-т химии", "ih");
         DepartmentConverter.add("мехмат", "mm");
@@ -61,5 +61,7 @@ public class StartupEvents implements ApplicationListener<ContextRefreshedEvent>
         DepartmentConverter.add("эконом", "ef");
         DepartmentConverter.add("юрфак", "uf");
         DepartmentConverter.add("соцфак", "sf");
+        DepartmentConverter.add("геолог к-ж", "kgl");
+        DepartmentConverter.add("к-ж яблочкова", "cre");
     }
 }
