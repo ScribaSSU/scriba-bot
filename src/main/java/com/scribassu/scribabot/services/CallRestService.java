@@ -1,11 +1,13 @@
 package com.scribassu.scribabot.services;
 
-import com.scribassu.scribabot.dto.ExamPeriodEventDto;
-import com.scribassu.scribabot.dto.FullTimeLessonDto;
-import com.scribassu.scribabot.dto.GroupNumbersDto;
+import com.scribassu.scribabot.dto.*;
+import com.scribassu.tracto.domain.Teacher;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.List;
 
 @Service
 public class CallRestService {
@@ -20,6 +22,8 @@ public class CallRestService {
     private String FULL_EXAM_DEP_GROUP_URI = "exam/full/%s/%s";
 
     private String STUDENT_GROUP_NUMBER_URI = "group/number/%s/%s/%s";
+
+    private String TEACHER_URI = "teacher";
 
     public FullTimeLessonDto getFullTimeLessonsByDayAndLesson(String departmentUrl,
                                                               String groupNumber,
@@ -126,5 +130,26 @@ public class CallRestService {
         javax.net.ssl.HttpsURLConnection.setDefaultHostnameVerifier((hostname, sslSession) -> true);
 
         return restTemplate.getForObject(uri, GroupNumbersDto.class);
+    }
+
+    public TeacherListDto getTeachersByWord(String word) {
+        RestTemplate restTemplate = new RestTemplate();
+        String uri = prefix + TEACHER_URI + "/word";
+        HttpEntity<String> request = new HttpEntity<>(word);
+
+        //https://stackoverflow.com/questions/19540289/how-to-fix-the-java-security-cert-certificateexception-no-subject-alternative
+        javax.net.ssl.HttpsURLConnection.setDefaultHostnameVerifier((hostname, sslSession) -> true);
+
+        return restTemplate.postForObject(uri, request, TeacherListDto.class);
+    }
+
+    public TeacherFullTimeLessonDto getTeacherLessonsByDay(String teacherId, String day) {
+        RestTemplate restTemplate = new RestTemplate();
+        String uri = prefix + TEACHER_URI + "/" + teacherId + "/" + day;
+
+        //https://stackoverflow.com/questions/19540289/how-to-fix-the-java-security-cert-certificateexception-no-subject-alternative
+        javax.net.ssl.HttpsURLConnection.setDefaultHostnameVerifier((hostname, sslSession) -> true);
+
+        return restTemplate.getForObject(uri, TeacherFullTimeLessonDto.class);
     }
 }

@@ -58,26 +58,41 @@ public class StudentGroupService implements BotMessageService {
                         );
             }
         }
-            System.out.println(groupNumbersDto);
-            if(CollectionUtils.isEmpty(groupNumbersDto.getGroupNumbers())) {
-                botMessage.put(
-                        Constants.KEY_MESSAGE,
-                        "Группы не найдены.");
-                botMessage.put(
-                        Constants.KEY_KEYBOARD,
+        System.out.println(groupNumbersDto);
+        if(CollectionUtils.isEmpty(groupNumbersDto.getGroupNumbers())) {
+            botMessage.put(
+                    Constants.KEY_MESSAGE,
+                    "Группы не найдены.");
+            botMessage.put(
+                    Constants.KEY_KEYBOARD,
+                    KeyboardMap.keyboards.get(KeyboardType.ButtonCourse).getJsonText());
+        }
+        else if(groupNumbersDto.getGroupNumbers().size() > Constants.MAX_VK_KEYBOARD_SIZE) {
+            StringBuilder stringBuilder = new StringBuilder("Извините, нашлось слишком много групп, " +
+                    "и они не могут отобразиться через клавиатуру из-за ограничений VK. " +
+                    "Пожалуйста, введите номер группы в формате г номер, " +
+                    "чтобы бот все-таки записал вашу группу. Доступные номера по вашему запросу:\n\n");
+            for(String groupNumber : groupNumbersDto.getGroupNumbers()) {
+                stringBuilder.append(groupNumber).append(", ");
+            }
+            botMessage.put(
+                    Constants.KEY_MESSAGE,
+                     stringBuilder.toString());
+        }
+        else {
+            VkKeyboard vkKeyboard = buildVkKeyboardFromGroupNumbers(groupNumbersDto.getGroupNumbers());
+            ObjectMapper objectMapper = new ObjectMapper();
+            try {
+                botMessage.put(Constants.KEY_KEYBOARD, objectMapper.writeValueAsString(vkKeyboard));
+                botMessage.put(Constants.KEY_MESSAGE, "Выберите группу.");
+            }
+            catch(Exception e) {
+                botMessage.put(Constants.KEY_MESSAGE, "Не удалось загрузить список групп :(");
+                botMessage.put(Constants.KEY_KEYBOARD,
                         KeyboardMap.keyboards.get(KeyboardType.ButtonCourse).getJsonText());
             }
-            else {
-                VkKeyboard vkKeyboard = buildVkKeyboardFromGroupNumbers(groupNumbersDto.getGroupNumbers());
-                ObjectMapper objectMapper = new ObjectMapper();
-                try {
-                    botMessage.put(Constants.KEY_KEYBOARD, objectMapper.writeValueAsString(vkKeyboard));
-                    botMessage.put(Constants.KEY_MESSAGE, "Выберите группу.");
-                }
-                catch(Exception e) {
-                    botMessage.put(Constants.KEY_MESSAGE, "Не удалось загрузить список групп.");
-                }
-            }
+        }
+
         return botMessage;
     }
 

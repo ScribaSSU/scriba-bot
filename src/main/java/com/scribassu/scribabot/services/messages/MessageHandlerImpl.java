@@ -1,30 +1,31 @@
 package com.scribassu.scribabot.services.messages;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.scribassu.scribabot.dto.FullTimeLessonDto;
-import com.scribassu.scribabot.entities.ScheduleTomorrowNotification;
-import com.scribassu.scribabot.repositories.ScheduleTomorrowNotificationRepository;
-import com.scribassu.scribabot.services.bot.*;
-import com.scribassu.scribabot.services.bot.StudentGroupService;
-import com.scribassu.scribabot.text.Command;
-import com.scribassu.scribabot.text.CommandText;
+import com.scribassu.scribabot.dto.TeacherListDto;
+import com.scribassu.scribabot.dto.vkkeyboard.*;
 import com.scribassu.scribabot.entities.BotUser;
-import com.scribassu.scribabot.entities.ScheduleDailyNotification;
 import com.scribassu.scribabot.keyboard.KeyboardMap;
 import com.scribassu.scribabot.keyboard.KeyboardType;
 import com.scribassu.scribabot.repositories.BotUserRepository;
-import com.scribassu.scribabot.repositories.ScheduleDailyNotificationRepository;
 import com.scribassu.scribabot.services.CallRestService;
+import com.scribassu.scribabot.services.bot.*;
+import com.scribassu.scribabot.text.Command;
+import com.scribassu.scribabot.text.CommandText;
 import com.scribassu.scribabot.text.MessageText;
 import com.scribassu.scribabot.util.BotMessageUtils;
 import com.scribassu.scribabot.util.Constants;
 import com.scribassu.scribabot.util.DepartmentConverter;
 import com.scribassu.scribabot.util.Templates;
 import com.scribassu.tracto.domain.EducationForm;
+import com.scribassu.tracto.domain.Teacher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -35,8 +36,6 @@ public class MessageHandlerImpl implements MessageHandler {
     private final FullTimeLessonService fullTimeLessonService;
     private final ExamPeriodService examPeriodService;
     private final BotUserRepository botUserRepository;
-    private final ScheduleDailyNotificationRepository scheduleDailyNotificationRepository;
-    private final ScheduleTomorrowNotificationRepository scheduleTomorrowNotificationRepository;
     private final SettingsService settingsService;
     private final StudentGroupService studentGroupService;
 
@@ -46,8 +45,6 @@ public class MessageHandlerImpl implements MessageHandler {
                               FullTimeLessonService fullTimeLessonService,
                               ExamPeriodService examPeriodService,
                               BotUserRepository botUserRepository,
-                              ScheduleDailyNotificationRepository scheduleDailyNotificationRepository,
-                              ScheduleTomorrowNotificationRepository scheduleTomorrowNotificationRepository,
                               SettingsService settingsService,
                               StudentGroupService studentGroupService) {
         this.callRestService = callRestService;
@@ -55,8 +52,6 @@ public class MessageHandlerImpl implements MessageHandler {
         this.fullTimeLessonService = fullTimeLessonService;
         this.examPeriodService = examPeriodService;
         this.botUserRepository = botUserRepository;
-        this.scheduleDailyNotificationRepository = scheduleDailyNotificationRepository;
-        this.scheduleTomorrowNotificationRepository = scheduleTomorrowNotificationRepository;
         this.settingsService = settingsService;
         this.studentGroupService = studentGroupService;
     }
@@ -111,14 +106,6 @@ public class MessageHandlerImpl implements MessageHandler {
             case CommandText.HELP:
                 botMessage = helpService.getBotMessage(message, botUser);
                 break;
-            case CommandText.SCHEDULE:
-                botMessage.put(
-                        Constants.KEY_MESSAGE,
-                        "Хотите расписание пар или сессии?");
-                botMessage.put(
-                        Constants.KEY_KEYBOARD,
-                        KeyboardMap.keyboards.get(KeyboardType.ButtonSchedule).getJsonText());
-                break;
             case CommandText.THANKS:
                 botMessage.put(
                         Constants.KEY_MESSAGE,
@@ -127,11 +114,17 @@ public class MessageHandlerImpl implements MessageHandler {
                         Constants.KEY_KEYBOARD,
                         KeyboardMap.keyboards.get(KeyboardType.ButtonActions).getJsonText());
                 break;
-            case CommandText.LESSONS:
+            case CommandText.TEACHER_SCHEDULE:
+                botMessage.put(Constants.KEY_MESSAGE, "Введите полностью или частично что-либо из ФИО преподавателя. " +
+                        "Например, по запросу 'Ива' найдутся и 'Иванова', и 'Иван', и 'Иванович'. " +
+                        "По запросу 'Иванов Ев' найдется 'Иванов Евгений', но не 'Иванова Евгения'.");
+                botUser.setPreviousUserMessage(CommandText.TEACHER_SCHEDULE);
+                botUserRepository.save(botUser);
+            case CommandText.FULL_TIME_SCHEDULE:
                 if(BotMessageUtils.isBotUserFullTime(botUser)) {
                     botMessage.put(
                             Constants.KEY_MESSAGE,
-                            "Выберите день, для которого хотите узнать расписание.");
+                            "Выберите, для чего хотите узнать расписание.");
                     botMessage.put(
                             Constants.KEY_KEYBOARD,
                             KeyboardMap.keyboards.get(KeyboardType.ButtonFullTimeSchedule).getJsonText());
@@ -159,21 +152,21 @@ public class MessageHandlerImpl implements MessageHandler {
                 break;
             case CommandText.FULL_TIME:
                 botUserRepository.updateEducationForm(EducationForm.DO.getGroupType(), userId);
-                botMessage.put(Constants.KEY_MESSAGE, "Выберите курс.");
+                botMessage.put(Constants.KEY_MESSAGE, "Выберите курс. Если учитесь в колледже, выберите 'Другое'.");
                 botMessage.put(
                         Constants.KEY_KEYBOARD,
                         KeyboardMap.keyboards.get(KeyboardType.ButtonCourse).getJsonText());
                 break;
             case CommandText.EXTRAMURAL:
                 botUserRepository.updateEducationForm(EducationForm.ZO.getGroupType(), userId);
-                botMessage.put(Constants.KEY_MESSAGE, "Выберите курс.");
+                botMessage.put(Constants.KEY_MESSAGE, "Выберите курс. Если учитесь в колледже, выберите 'Другое'.");
                 botMessage.put(
                         Constants.KEY_KEYBOARD,
                         KeyboardMap.keyboards.get(KeyboardType.ButtonCourse).getJsonText());
                 break;
             case CommandText.EVENING:
                 botUserRepository.updateEducationForm(EducationForm.VO.getGroupType(), userId);
-                botMessage.put(Constants.KEY_MESSAGE, "Выберите курс.");
+                botMessage.put(Constants.KEY_MESSAGE, "Выберите курс. Если учитесь в колледже, выберите 'Другое'.");
                 botMessage.put(
                         Constants.KEY_KEYBOARD,
                         KeyboardMap.keyboards.get(KeyboardType.ButtonCourse).getJsonText());
@@ -187,7 +180,12 @@ public class MessageHandlerImpl implements MessageHandler {
             case CommandText.TODAY:
             case CommandText.TOMORROW:
             case CommandText.YESTERDAY:
-                botMessage = fullTimeLessonService.getBotMessage(message, botUser);
+                if(botUser.wantTeacherSchedule()) {
+                    botMessage = fullTimeLessonService.getBotMessage(message, botUser);
+                }
+                else {
+                    botMessage = fullTimeLessonService.getBotMessage(message, botUser);
+                }
                 break;
             case CommandText.SETTINGS:
                 botMessage.put(
@@ -252,7 +250,7 @@ public class MessageHandlerImpl implements MessageHandler {
                         "Хотите расписание пар или сессии?");
                 botMessage.put(
                         Constants.KEY_KEYBOARD,
-                        KeyboardMap.keyboards.get(KeyboardType.ButtonSchedule).getJsonText());
+                        KeyboardMap.keyboards.get(KeyboardType.ButtonFullTimeSchedule).getJsonText());
             }
         }
 
@@ -274,7 +272,7 @@ public class MessageHandlerImpl implements MessageHandler {
                         "Хотите расписание пар или сессии?");
                 botMessage.put(
                         Constants.KEY_KEYBOARD,
-                        KeyboardMap.keyboards.get(KeyboardType.ButtonSchedule).getJsonText());
+                        KeyboardMap.keyboards.get(KeyboardType.ButtonFullTimeSchedule).getJsonText());
             }
         }
 
@@ -300,6 +298,53 @@ public class MessageHandlerImpl implements MessageHandler {
             }
         }
 
+        if(botUser.getPreviousUserMessage().equalsIgnoreCase(CommandText.TEACHER_SCHEDULE)) {
+            TeacherListDto teacherListDto = callRestService.getTeachersByWord(message);
+            if(null != teacherListDto.getTeachers()) {
+                List<Teacher> teachers = teacherListDto.getTeachers();
+                if(teachers.size() > Constants.MAX_VK_KEYBOARD_SIZE) {
+                    botMessage.put(Constants.KEY_MESSAGE,
+                            "Искомый список преподавателей слишком большой для клавиатуры VK. " +
+                            "Попробуйте запросить точнее.");
+                    botMessage.put(
+                            Constants.KEY_KEYBOARD,
+                            KeyboardMap.keyboards.get(KeyboardType.ButtonActions).getJsonText());
+                }
+                else {
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    try {
+                        botMessage.put(Constants.KEY_MESSAGE, "Выберите, для какого преподавателя хотите узнать расписание.");
+                        botMessage.put(
+                                Constants.KEY_KEYBOARD,
+                                objectMapper.writeValueAsString(buildVkKeyboardFromTeachers(teachers)));
+                    }
+                    catch(Exception e) {
+                        botMessage.put(Constants.KEY_MESSAGE, "Не удалось получить список преподавателей.");
+                        botMessage.put(
+                                Constants.KEY_KEYBOARD,
+                                KeyboardMap.keyboards.get(KeyboardType.ButtonActions).getJsonText());
+                    }
+                }
+            }
+            else {
+                botMessage.put(Constants.KEY_MESSAGE, "Не удалось получить список преподавателей.");
+                botMessage.put(
+                        Constants.KEY_KEYBOARD,
+                        KeyboardMap.keyboards.get(KeyboardType.ButtonActions).getJsonText());
+            }
+        }
+
+        if(payload.startsWith(CommandText.TEACHER_ID_PAYLOAD)) {
+            botUser.setPreviousUserMessage(payload);
+            botUserRepository.save(botUser);
+            botMessage.put(
+                    Constants.KEY_MESSAGE,
+                    "Выберите, для чего хотите узнать расписание преподавателя.");
+            botMessage.put(
+                    Constants.KEY_KEYBOARD,
+                    KeyboardMap.keyboards.get(KeyboardType.ButtonFullTimeSchedule).getJsonText());
+        }
+
         if(botMessage.isEmpty()
                 || !botMessage.containsKey(Constants.KEY_MESSAGE)
                 && !botMessage.containsKey(Constants.KEY_KEYBOARD)) {
@@ -310,6 +355,42 @@ public class MessageHandlerImpl implements MessageHandler {
         }
 
         return botMessage;
+    }
+
+    private VkKeyboard buildVkKeyboardFromTeachers(List<Teacher> teachers) {
+        List<List<VkKeyboardButton>> vkKeyboardButtons = new ArrayList<>();
+
+        int i = 0;
+        int row = 0;
+        vkKeyboardButtons.add(new ArrayList<>());
+
+        while(i < teachers.size()) {
+            if(i % 5 == 4) {
+                row++;
+                vkKeyboardButtons.add(new ArrayList<>());
+            }
+            vkKeyboardButtons.get(row).add(
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    teachers.get(i).getSurname() + " " + teachers.get(i).getName() + " " + teachers.get(i).getPatronymic(),
+                                    String.format(Constants.PAYLOAD, CommandText.TEACHER_ID_PAYLOAD + " " + teachers.get(i).getId()),
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY)
+            );
+            i++;
+        }
+
+        vkKeyboardButtons.add(new ArrayList<>());
+        vkKeyboardButtons.get(vkKeyboardButtons.size() - 1).add(
+                new VkKeyboardButton(
+                        new VkKeyboardButtonActionText(
+                                "Главное меню",
+                                "",
+                                VkKeyboardButtonActionType.TEXT
+                        ), VkKeyboardButtonColor.POSITIVE)
+        );
+
+        return new VkKeyboard(vkKeyboardButtons, true);
     }
 
 }

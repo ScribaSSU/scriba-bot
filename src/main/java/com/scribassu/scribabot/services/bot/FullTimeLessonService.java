@@ -1,7 +1,9 @@
 package com.scribassu.scribabot.services.bot;
 
 import com.scribassu.scribabot.dto.FullTimeLessonDto;
+import com.scribassu.scribabot.dto.TeacherFullTimeLessonDto;
 import com.scribassu.scribabot.entities.BotUser;
+import com.scribassu.scribabot.repositories.BotUserRepository;
 import com.scribassu.scribabot.services.CallRestService;
 import com.scribassu.scribabot.text.CommandText;
 import com.scribassu.scribabot.util.BotMessageUtils;
@@ -16,14 +18,86 @@ import java.util.Map;
 public class FullTimeLessonService implements BotMessageService {
 
     private final CallRestService callRestService;
+    private final BotUserRepository botUserRepository;
 
     @Autowired
-    public FullTimeLessonService(CallRestService callRestService) {
+    public FullTimeLessonService(CallRestService callRestService,
+                                 BotUserRepository botUserRepository) {
         this.callRestService = callRestService;
+        this.botUserRepository = botUserRepository;
     }
 
     @Override
     public Map<String, String> getBotMessage(String message, BotUser botUser) {
+        if(botUser.wantTeacherSchedule()) {
+            return getTeacherBotMessage(message, botUser);
+        }
+        else {
+            return getStudentBotMessage(message, botUser);
+        }
+    }
+
+    private Map<String, String> getTeacherBotMessage(String message, BotUser botUser) {
+        Calendar calendar = CalendarUtils.getCalendar();
+        TeacherFullTimeLessonDto lessons = new TeacherFullTimeLessonDto();
+        boolean isToday = false;
+        boolean isTomorrow = false;
+        boolean isYesterday = false;
+        String teacherId = botUser.getPreviousUserMessage().split(" ")[3];
+        botUser.setPreviousUserMessage("");
+        botUserRepository.save(botUser);
+
+        switch(message) {
+            case CommandText.MONDAY:
+                lessons = callRestService.getTeacherLessonsByDay(teacherId, "1");
+                break;
+            case CommandText.TUESDAY:
+                lessons = callRestService.getTeacherLessonsByDay(teacherId, "2");
+                break;
+            case CommandText.WEDNESDAY:
+                lessons = callRestService.getTeacherLessonsByDay(teacherId, "3");
+                break;
+            case CommandText.THURSDAY:
+                lessons = callRestService.getTeacherLessonsByDay(teacherId, "4");
+                break;
+            case CommandText.FRIDAY:
+                lessons = callRestService.getTeacherLessonsByDay(teacherId, "5");
+                break;
+            case CommandText.SATURDAY:
+                lessons = callRestService.getTeacherLessonsByDay(teacherId, "6");
+                break;
+            case CommandText.TODAY:
+                String day = String.valueOf(CalendarUtils.getDayOfWeekStartsFromMonday(calendar));
+                lessons = callRestService.getTeacherLessonsByDay(teacherId, day);
+                isToday = true;
+                break;
+            case CommandText.TOMORROW:
+                calendar.add(Calendar.DAY_OF_WEEK, 1);
+                day = String.valueOf(CalendarUtils.getDayOfWeekStartsFromMonday(calendar));
+                lessons = callRestService.getTeacherLessonsByDay(teacherId, day);
+                isTomorrow = true;
+                break;
+            case CommandText.YESTERDAY:
+                calendar.add(Calendar.DAY_OF_WEEK, -1);
+                day = String.valueOf(CalendarUtils.getDayOfWeekStartsFromMonday(calendar));
+                lessons = callRestService.getTeacherLessonsByDay(teacherId, day);
+                isYesterday = true;
+                break;
+        }
+
+        if(isToday) {
+            return BotMessageUtils.getBotMessageForTeacherFullTimeLessons(lessons, CommandText.TODAY, botUser.isFilterNomDenom());
+        }
+        if(isTomorrow) {
+            return BotMessageUtils.getBotMessageForTeacherFullTimeLessons(lessons, CommandText.TOMORROW, botUser.isFilterNomDenom());
+        }
+        if(isYesterday) {
+            return BotMessageUtils.getBotMessageForTeacherFullTimeLessons(lessons, CommandText.YESTERDAY, botUser.isFilterNomDenom());
+        }
+        return BotMessageUtils.getBotMessageForTeacherFullTimeLessons(lessons, "", botUser.isFilterNomDenom());
+    }
+
+    private Map<String, String> getStudentBotMessage(String message, BotUser botUser) {
         Calendar calendar = CalendarUtils.getCalendar();
         FullTimeLessonDto lessons = new FullTimeLessonDto();
         boolean isBotUserFullTime = false;

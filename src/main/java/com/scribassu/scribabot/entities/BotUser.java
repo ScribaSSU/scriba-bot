@@ -1,5 +1,6 @@
 package com.scribassu.scribabot.entities;
 
+import com.scribassu.scribabot.text.CommandText;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
@@ -27,5 +28,9 @@ public class BotUser {
     public BotUser(String userId) {
         this.userId = userId;
         this.previousUserMessage = "";
+    }
+
+    public boolean wantTeacherSchedule() {
+        return previousUserMessage.startsWith(CommandText.TEACHER_ID_PAYLOAD);
     }
 }

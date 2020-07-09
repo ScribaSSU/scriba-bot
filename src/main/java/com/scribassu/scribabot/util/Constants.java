@@ -18,4 +18,6 @@ public class Constants {
     public static final String PAYLOAD = "{\"button\": \"%s\"}";
     public static final String PAYLOAD_START = "{\"button\": \"";
     public static final String PAYLOAD_END = "\"}";
+
+    public static final int MAX_VK_KEYBOARD_SIZE = 40;
 }

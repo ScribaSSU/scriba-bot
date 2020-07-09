@@ -5,7 +5,16 @@
 "action": {
 "type": "text",
 "payload": "{\"button\": \"1\"}",
-"label": "Расписание"
+"label": "Расписание очников"
+},
+"color": "positive"
+}
+],
+[{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"1\"}",
+"label": "Расписание преподавателей"
 },
 "color": "positive"
 }

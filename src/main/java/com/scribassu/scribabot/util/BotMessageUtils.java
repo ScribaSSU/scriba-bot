@@ -2,6 +2,7 @@ package com.scribassu.scribabot.util;
 
 import com.scribassu.scribabot.dto.ExamPeriodEventDto;
 import com.scribassu.scribabot.dto.FullTimeLessonDto;
+import com.scribassu.scribabot.dto.TeacherFullTimeLessonDto;
 import com.scribassu.scribabot.entities.BotUser;
 import com.scribassu.scribabot.keyboard.KeyboardMap;
 import com.scribassu.scribabot.keyboard.KeyboardType;
@@ -22,14 +23,14 @@ public class BotMessageUtils {
         botMessage.put(Constants.KEY_MESSAGE, Templates.makeFullTimeLessonTemplate(fullTimeLessonDto, day, filterWeekType));
         botMessage.put(
                 Constants.KEY_KEYBOARD,
-                KeyboardMap.keyboards.get(KeyboardType.ButtonSchedule).getJsonText());
+                KeyboardMap.keyboards.get(KeyboardType.ButtonFullTimeSchedule).getJsonText());
         return botMessage;
     }
 
     public static Map<String, String> getBotMessageForUnsupportedLessons() {
         Map<String, String> botMessage = new HashMap<>();
         botMessage.put(Constants.KEY_MESSAGE, "Ваш вид расписания пока не поддерживается или вы указали недостаточно информации для выдачи расписания.");
-        botMessage.put(Constants.KEY_KEYBOARD, KeyboardMap.keyboards.get(KeyboardType.ButtonSchedule).getJsonText());
+        botMessage.put(Constants.KEY_KEYBOARD, KeyboardMap.keyboards.get(KeyboardType.ButtonFullTimeSchedule).getJsonText());
         return botMessage;
     }
 
@@ -45,14 +46,25 @@ public class BotMessageUtils {
         botMessage.put(Constants.KEY_MESSAGE, Templates.makeFullTimeExamPeriodTemplate(examPeriodEventDto));
         botMessage.put(
                 Constants.KEY_KEYBOARD,
-                KeyboardMap.keyboards.get(KeyboardType.ButtonSchedule).getJsonText());
+                KeyboardMap.keyboards.get(KeyboardType.ButtonFullTimeSchedule).getJsonText());
         return botMessage;
     }
 
     public static Map<String, String> getBotMessageForEmptyFullTimeExamPeriod() {
         Map<String, String> botMessage = new HashMap<>();
         botMessage.put(Constants.KEY_MESSAGE, "Расписание сессии для вашей группы отсутствует.");
-        botMessage.put(Constants.KEY_KEYBOARD, KeyboardMap.keyboards.get(KeyboardType.ButtonSchedule).getJsonText());
+        botMessage.put(Constants.KEY_KEYBOARD, KeyboardMap.keyboards.get(KeyboardType.ButtonFullTimeSchedule).getJsonText());
+        return botMessage;
+    }
+
+    public static Map<String, String> getBotMessageForTeacherFullTimeLessons(TeacherFullTimeLessonDto fullTimeLessonDto,
+                                                                             String day,
+                                                                             boolean filterWeekType) {
+        Map<String, String> botMessage = new HashMap<>();
+        botMessage.put(Constants.KEY_MESSAGE, Templates.makeTeacherFullTimeLessonTemplate(fullTimeLessonDto, day, filterWeekType));
+        botMessage.put(
+                Constants.KEY_KEYBOARD,
+                KeyboardMap.keyboards.get(KeyboardType.ButtonFullTimeSchedule).getJsonText());
         return botMessage;
     }
 }

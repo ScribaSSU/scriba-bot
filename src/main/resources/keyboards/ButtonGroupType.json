@@ -8,7 +8,9 @@
 "label": "Дневная"
 },
 "color": "primary"
-},
+}
+],
+[
 {
 "action": {
 "type": "text",
@@ -25,14 +27,6 @@
 "label": "Вечерняя"
 },
 "color": "primary"
-},
-{
-"action": {
-"type": "text",
-"payload": "{\"button\": \"1\"}",
-"label": "Преподаватель"
-},
-"color": "secondary"
 }
 ]
 ]

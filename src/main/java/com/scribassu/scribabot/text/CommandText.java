@@ -5,15 +5,14 @@ import java.util.regex.Pattern;
 public class CommandText {
     public static final String HELLO = "привет";
     public static final String HELP = "справка";
-    public static final String SCHEDULE = "расписание";
+    public static final String FULL_TIME_SCHEDULE = "расписание очников";
+    public static final String TEACHER_SCHEDULE = "расписание преподавателей";
     public static final String SETTINGS = "настройки";
     public static final String MAIN_MENU = "главное меню";
     public static final String SHORT_MAIN_MENU = "меню";
     public static final String THANKS = "спасибо";
-
-    public static final String LESSONS = "занятия";
     public static final String EXAMS = "сессия";
-    public static final String CHOOSE_DEPARTMENT = "выбрать факультет и т. д.";
+    public static final String CHOOSE_DEPARTMENT = "выбрать факультет и группу";
     public static final String CHOOSE_STUDENT_GROUP = "выбор группы";
 
     public static final String GROUP_NUMBER_INPUT = "г ";
@@ -55,4 +54,5 @@ public class CommandText {
     public static final Pattern COURSE_PATTERN = Pattern.compile(COURSE);
 
     public static final String COURSE_PAYLOAD = "курс";
+    public static final String TEACHER_ID_PAYLOAD = "teacher id";
 }

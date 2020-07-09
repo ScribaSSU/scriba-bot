@@ -81,9 +81,19 @@
 "action": {
 "type": "text",
 "payload": "{\"button\": \"1\"}",
-"label": "Выбрать факультет и т. д."
+"label": "Сессия"
 },
 "color": "primary"
+}
+],
+[
+{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"1\"}",
+"label": "Выбрать факультет и группу"
+},
+"color": "positive"
 }
 ],
 [
