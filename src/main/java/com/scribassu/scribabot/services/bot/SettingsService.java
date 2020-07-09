@@ -11,6 +11,7 @@ import com.scribassu.scribabot.repositories.ScheduleTomorrowNotificationReposito
 import com.scribassu.scribabot.text.CommandText;
 import com.scribassu.scribabot.text.MessageText;
 import com.scribassu.scribabot.util.Constants;
+import com.scribassu.scribabot.util.DepartmentConverter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -198,11 +199,52 @@ public class SettingsService implements BotMessageService {
                 break;
         }
 
+        if(CommandText.HOUR_PATTERN.matcher(message).matches()) {
+            int hourForSend = Integer.parseInt(message.substring(0, message.indexOf(" ")));
+
+            if(botUser.getPreviousUserMessage().equalsIgnoreCase(
+                                String.format(MessageText.CHOOSE_SCHEDULE_NOTIFICATION_TIME, "сегодня"))) {
+                ScheduleDailyNotification scheduleDailyNotification =
+                        scheduleDailyNotificationRepository.findByUserId(userId);
+
+                if(scheduleDailyNotification == null) {
+                    scheduleDailyNotification = new ScheduleDailyNotification(userId, true, hourForSend);
+                }
+                else {
+                    scheduleDailyNotification.setHourForSend(hourForSend);
+                }
+                scheduleDailyNotificationRepository.save(scheduleDailyNotification);
+            }
+            if(botUser.getPreviousUserMessage().equalsIgnoreCase(
+                                String.format(MessageText.CHOOSE_SCHEDULE_NOTIFICATION_TIME, "завтра"))) {
+                ScheduleTomorrowNotification scheduleTomorrowNotification =
+                        scheduleTomorrowNotificationRepository.findByUserId(userId);
+
+                if(scheduleTomorrowNotification == null) {
+                    scheduleTomorrowNotification = new ScheduleTomorrowNotification(userId, true, hourForSend);
+                }
+                else {
+                    scheduleTomorrowNotification.setHourForSend(hourForSend);
+                }
+                scheduleTomorrowNotificationRepository.save(scheduleTomorrowNotification);
+            }
+            botMessage.put(
+                    Constants.KEY_MESSAGE,
+                    "Теперь расписание будет приходить в " + hourForSend + " ч.");
+            botMessage.put(
+                    Constants.KEY_KEYBOARD,
+                    KeyboardMap.keyboards.get(KeyboardType.ButtonSettings).getJsonText());
+        }
+
         return botMessage;
     }
 
     private String getStudentInfo(BotUser botUser) {
-        return "Факультет: " + firstNotEmpty(botUser.getDepartment()) + "\n" +
+        String department = firstNotEmpty(botUser.getDepartment());
+        department = department.equals("не указано")
+                ? department
+                : DepartmentConverter.getDepartmentByUrl(department);
+        return "Факультет: " + department + "\n" +
                 "Форма обучения: " + firstNotEmpty(botUser.getEducationForm()) + "\n" +
                 "Группа: " + firstNotEmpty(botUser.getGroupNumber()) + "\n";
     }
@@ -234,7 +276,7 @@ public class SettingsService implements BotMessageService {
 
         stringBuilder.append("\n\n");
 
-        System.out.println("SCHEDULE TOMORROW INFO START");
+        System.out.println("FULL_TIME_SCHEDULE TOMORROW INFO START");
 
         ScheduleTomorrowNotification scheduleTomorrowNotification =
                 scheduleTomorrowNotificationRepository.findByUserId(userId);
@@ -260,7 +302,7 @@ public class SettingsService implements BotMessageService {
             }
         }
 
-        System.out.println("SCHEDULE TOMORROW INFO END");
+        System.out.println("FULL_TIME_SCHEDULE TOMORROW INFO END");
 
         return stringBuilder.toString();
     }
