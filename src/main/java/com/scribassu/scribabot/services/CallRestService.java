@@ -1,12 +1,17 @@
 package com.scribassu.scribabot.services;
 
 import com.scribassu.scribabot.dto.*;
-import com.scribassu.tracto.domain.Teacher;
+import org.apache.commons.codec.Charsets;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -135,8 +140,12 @@ public class CallRestService {
     public TeacherListDto getTeachersByWord(String word) {
         RestTemplate restTemplate = new RestTemplate();
         String uri = prefix + TEACHER_URI + "/word";
-        HttpEntity<String> request = new HttpEntity<>(word);
-
+        HttpHeaders headers = new HttpHeaders();
+        List<Charset> charsets = new ArrayList<>();
+        charsets.add(Charsets.UTF_8);
+        headers.setAcceptCharset(charsets);
+        HttpEntity<String> request = new HttpEntity<>(word, headers);
+        restTemplate.getMessageConverters().add(0, new StringHttpMessageConverter(StandardCharsets.UTF_8));
         //https://stackoverflow.com/questions/19540289/how-to-fix-the-java-security-cert-certificateexception-no-subject-alternative
         javax.net.ssl.HttpsURLConnection.setDefaultHostnameVerifier((hostname, sslSession) -> true);
 

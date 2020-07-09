@@ -18,13 +18,10 @@ import java.util.Map;
 public class FullTimeLessonService implements BotMessageService {
 
     private final CallRestService callRestService;
-    private final BotUserRepository botUserRepository;
 
     @Autowired
-    public FullTimeLessonService(CallRestService callRestService,
-                                 BotUserRepository botUserRepository) {
+    public FullTimeLessonService(CallRestService callRestService) {
         this.callRestService = callRestService;
-        this.botUserRepository = botUserRepository;
     }
 
     @Override
@@ -43,9 +40,7 @@ public class FullTimeLessonService implements BotMessageService {
         boolean isToday = false;
         boolean isTomorrow = false;
         boolean isYesterday = false;
-        String teacherId = botUser.getPreviousUserMessage().split(" ")[3];
-        botUser.setPreviousUserMessage("");
-        botUserRepository.save(botUser);
+        String teacherId = botUser.getPreviousUserMessage().split(" ")[2];
 
         switch(message) {
             case CommandText.MONDAY:

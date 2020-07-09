@@ -214,10 +214,11 @@ public class Templates {
                     stringBuilder.append(fullTimeLesson.getWeekType().getType()).append("\n");
                 }
                 stringBuilder.append(fullTimeLesson.getName()).append("\n");
-                stringBuilder.append(fullTimeLesson.getStudentGroup().getGroupNumberRus());
+                stringBuilder.append(fullTimeLesson.getStudentGroup().getGroupNumberRus()).append(" ");
                 if (!StringUtils.isEmpty(fullTimeLesson.getSubGroup())) {
-                    stringBuilder.append(fullTimeLesson.getSubGroup().trim()).append("\n");
+                    stringBuilder.append(fullTimeLesson.getSubGroup().trim());
                 }
+                stringBuilder.append("\n");
                 stringBuilder.append(fullTimeLesson.getPlace()).append("\n \n");
             }
         }
