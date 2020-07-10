@@ -2,6 +2,7 @@ package com.scribassu.scribabot.util;
 
 import com.scribassu.scribabot.dto.ExamPeriodEventDto;
 import com.scribassu.scribabot.dto.FullTimeLessonDto;
+import com.scribassu.scribabot.dto.TeacherExamPeriodEventDto;
 import com.scribassu.scribabot.dto.TeacherFullTimeLessonDto;
 import com.scribassu.scribabot.entities.BotUser;
 import com.scribassu.scribabot.keyboard.KeyboardMap;
@@ -62,6 +63,15 @@ public class BotMessageUtils {
                                                                              boolean filterWeekType) {
         Map<String, String> botMessage = new HashMap<>();
         botMessage.put(Constants.KEY_MESSAGE, Templates.makeTeacherFullTimeLessonTemplate(fullTimeLessonDto, day, filterWeekType));
+        botMessage.put(
+                Constants.KEY_KEYBOARD,
+                KeyboardMap.keyboards.get(KeyboardType.ButtonFullTimeSchedule).getJsonText());
+        return botMessage;
+    }
+
+    public static Map<String, String> getBotMessageForTeacherExamPeriod(TeacherExamPeriodEventDto examPeriodEventDto) {
+        Map<String, String> botMessage = new HashMap<>();
+        botMessage.put(Constants.KEY_MESSAGE, Templates.makeTeacherExamPeriodTemplate(examPeriodEventDto));
         botMessage.put(
                 Constants.KEY_KEYBOARD,
                 KeyboardMap.keyboards.get(KeyboardType.ButtonFullTimeSchedule).getJsonText());

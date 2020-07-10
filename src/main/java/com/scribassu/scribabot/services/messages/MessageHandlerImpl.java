@@ -223,12 +223,7 @@ public class MessageHandlerImpl implements MessageHandler {
             case CommandText.TODAY:
             case CommandText.TOMORROW:
             case CommandText.YESTERDAY:
-                if(botUser.wantTeacherSchedule()) {
-                    botMessage = fullTimeLessonService.getBotMessage(message, botUser);
-                }
-                else {
-                    botMessage = fullTimeLessonService.getBotMessage(message, botUser);
-                }
+                botMessage = fullTimeLessonService.getBotMessage(message, botUser);
                 break;
             case CommandText.SETTINGS:
                 botMessage.put(

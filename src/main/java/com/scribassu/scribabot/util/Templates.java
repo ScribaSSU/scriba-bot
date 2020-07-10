@@ -2,6 +2,7 @@ package com.scribassu.scribabot.util;
 
 import com.scribassu.scribabot.dto.ExamPeriodEventDto;
 import com.scribassu.scribabot.dto.FullTimeLessonDto;
+import com.scribassu.scribabot.dto.TeacherExamPeriodEventDto;
 import com.scribassu.scribabot.dto.TeacherFullTimeLessonDto;
 import com.scribassu.scribabot.text.CommandText;
 import com.scribassu.tracto.domain.*;
@@ -16,8 +17,7 @@ public class Templates {
 
     public static String makeFullTimeLessonTemplate(FullTimeLessonDto fullTimeLessonDto,
                                                     String day,
-                                                    boolean filterWeekType)
-    {
+                                                    boolean filterWeekType) {
         StringBuilder stringBuilder = new StringBuilder();
         Calendar calendar = CalendarUtils.getCalendar();
 
@@ -64,8 +64,7 @@ public class Templates {
             }
             fullTimeLessons.sort((o1, o2) -> (o1.getLessonTime().getLessonNumber() - o2.getLessonTime().getLessonNumber()));
             for (FullTimeLesson fullTimeLesson : fullTimeLessons) {
-                stringBuilder.append(fullTimeLesson.getLessonTime().getTimeStart()).append(" - ")
-                        .append(fullTimeLesson.getLessonTime().getTimeFinish()).append("\n")
+                stringBuilder.append(appendTime(fullTimeLesson.getLessonTime())).append("\n")
                         .append(fullTimeLesson.getLessonType().getType());
                 if (fullTimeLesson.getLessonType().equals(LessonType.LECTURE))
                     stringBuilder.append(" \uD83D\uDCD7\n");
@@ -80,7 +79,7 @@ public class Templates {
                     stringBuilder.append(fullTimeLesson.getSubGroup().trim()).append("\n");
                 }
                 stringBuilder.append(fullTimeLesson.getName()).append("\n");
-                stringBuilder.append(appendTeacher(fullTimeLesson.getTeacher()));
+                stringBuilder.append(appendTeacher(fullTimeLesson.getTeacher())).append("\n");
                 stringBuilder.append(fullTimeLesson.getPlace()).append("\n \n");
             }
         }
@@ -134,18 +133,10 @@ public class Templates {
 
             stringBuilder.append("\n");
             stringBuilder.append(examPeriodEvent.getSubjectName()).append("\n");
-            stringBuilder.append(appendTeacher(examPeriodEvent.getTeacher()));
+            stringBuilder.append(appendTeacher(examPeriodEvent.getTeacher())).append("\n");
             stringBuilder.append(examPeriodEvent.getPlace()).append("\n \n");
         }
         return stringBuilder.toString();
-    }
-
-    private static String appendTeacher(Teacher teacher) {
-        return teacher.getSurname() + " " +
-                (StringUtils.isEmpty(teacher.getName()) ? " " : teacher.getName()) +
-                " " +
-                (StringUtils.isEmpty(teacher.getPatronymic()) ? " " : teacher.getPatronymic())
-                + "\n";
     }
 
     public static String makeTeacherFullTimeLessonTemplate(TeacherFullTimeLessonDto fullTimeLessonDto,
@@ -183,10 +174,7 @@ public class Templates {
         stringBuilder.append("Неделя: ").append(WeekTypeUtils.weekTypeToLongString(currentWeekType)).append("\n");
 
         Teacher teacher = fullTimeLessonDto.getTeacher();
-        stringBuilder
-                .append(teacher.getSurname()).append(" ")
-                .append(teacher.getName()).append(" ")
-                .append(teacher.getPatronymic()).append("\n\n");
+        stringBuilder.append(appendTeacher(teacher)).append("\n\n");
 
         if(CollectionUtils.isEmpty(fullTimeLessonDto.getLessons())) {
             stringBuilder.append("А пар-то нету :)");
@@ -201,8 +189,7 @@ public class Templates {
             }
             fullTimeLessons.sort((o1, o2) -> (o1.getLessonTime().getLessonNumber() - o2.getLessonTime().getLessonNumber()));
             for (FullTimeLesson fullTimeLesson : fullTimeLessons) {
-                stringBuilder.append(fullTimeLesson.getLessonTime().getTimeStart()).append(" - ")
-                        .append(fullTimeLesson.getLessonTime().getTimeFinish()).append("\n")
+                stringBuilder.append(appendTime(fullTimeLesson.getLessonTime())).append("\n")
                         .append(fullTimeLesson.getLessonType().getType());
                 if (fullTimeLesson.getLessonType().equals(LessonType.LECTURE))
                     stringBuilder.append(" \uD83D\uDCD7\n");
@@ -214,7 +201,7 @@ public class Templates {
                     stringBuilder.append(fullTimeLesson.getWeekType().getType()).append("\n");
                 }
                 stringBuilder.append(fullTimeLesson.getName()).append("\n");
-                stringBuilder.append(fullTimeLesson.getStudentGroup().getGroupNumberRus()).append(" ");
+                stringBuilder.append("Группа № ").append(fullTimeLesson.getStudentGroup().getGroupNumberRus()).append(" ");
                 if (!StringUtils.isEmpty(fullTimeLesson.getSubGroup())) {
                     stringBuilder.append(fullTimeLesson.getSubGroup().trim());
                 }
@@ -223,6 +210,79 @@ public class Templates {
             }
         }
 
+        return stringBuilder.toString();
+    }
+
+    public static String makeTeacherExamPeriodTemplate(TeacherExamPeriodEventDto examPeriodEventDto) {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(appendTeacher(examPeriodEventDto.getTeacher())).append("\n\n");
+        List<ExamPeriodEvent> examPeriodEvents = examPeriodEventDto.getExamPeriodEvents();
+        examPeriodEvents.sort((e1, e2) -> (int) (e1.getId() - e2.getId()));
+
+        for(ExamPeriodEvent examPeriodEvent : examPeriodEvents) {
+            if(examPeriodEvent.getDay() != -1) {
+                stringBuilder
+                        .append(examPeriodEvent.getDay())
+                        .append(" ")
+                        .append(examPeriodEvent.getMonth())
+                        .append(" ")
+                        .append(examPeriodEvent.getYear())
+                        .append("\n");
+            }
+            else {
+                stringBuilder.append("\n");
+            }
+            stringBuilder
+                    .append(examPeriodEvent.getHour())
+                    .append(":")
+                    .append(
+                            (examPeriodEvent.getMinute() < 10 ?
+                                    "0" + examPeriodEvent.getMinute() :
+                                    examPeriodEvent.getMinute())
+                    )
+                    .append("\n");
+            stringBuilder
+                    .append(examPeriodEvent.getExamPeriodEventType().getType())
+                    .append(" ");
+            if(examPeriodEvent.getExamPeriodEventType().equals(ExamPeriodEventType.MIDTERM)) {
+                stringBuilder.append("\uD83D\uDCA1");
+            }
+            if(examPeriodEvent.getExamPeriodEventType().equals(ExamPeriodEventType.MIDTERM_WITH_MARK)) {
+                stringBuilder.append("\uD83D\uDD25");
+            }
+            if(examPeriodEvent.getExamPeriodEventType().equals(ExamPeriodEventType.CONSULTATION)) {
+                stringBuilder.append("\uD83D\uDCD3");
+            }
+            if(examPeriodEvent.getExamPeriodEventType().equals(ExamPeriodEventType.EXAM)) {
+                stringBuilder.append("\uD83C\uDF40");
+            }
+
+            stringBuilder.append("\n");
+            stringBuilder.append(examPeriodEvent.getSubjectName()).append("\n");
+            stringBuilder.append("Группа № ").append(examPeriodEvent.getStudentGroup().getGroupNumberRus()).append("\n");
+            stringBuilder.append(examPeriodEvent.getPlace()).append("\n \n");
+        }
+        return stringBuilder.toString();
+    }
+
+    private static String appendTeacher(Teacher teacher) {
+        return teacher.getSurname() + " " +
+                (StringUtils.isEmpty(teacher.getName()) ? " " : teacher.getName()) +
+                " " +
+                (StringUtils.isEmpty(teacher.getPatronymic()) ? " " : teacher.getPatronymic());
+    }
+
+    private static String appendTime(LessonTime lessonTime) {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(lessonTime.getHourStart()).append(":");
+        if(lessonTime.getMinuteStart() < 10) {
+            stringBuilder.append("0");
+        }
+        stringBuilder.append(lessonTime.getMinuteStart()).append(" - ").append(lessonTime.getHourEnd()).append(":");
+        if(lessonTime.getMinuteEnd() < 10) {
+            stringBuilder.append("0");
+        }
+        stringBuilder.append(lessonTime.getMinuteEnd());
         return stringBuilder.toString();
     }
 }

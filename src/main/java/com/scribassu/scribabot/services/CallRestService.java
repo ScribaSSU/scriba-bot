@@ -161,4 +161,14 @@ public class CallRestService {
 
         return restTemplate.getForObject(uri, TeacherFullTimeLessonDto.class);
     }
+
+    public TeacherExamPeriodEventDto getTeacherExamPeriodEvents(String teacherId) {
+        RestTemplate restTemplate = new RestTemplate();
+        String uri = prefix + TEACHER_URI + "/" + teacherId + "/exam";
+
+        //https://stackoverflow.com/questions/19540289/how-to-fix-the-java-security-cert-certificateexception-no-subject-alternative
+        javax.net.ssl.HttpsURLConnection.setDefaultHostnameVerifier((hostname, sslSession) -> true);
+
+        return restTemplate.getForObject(uri, TeacherExamPeriodEventDto.class);
+    }
 }
