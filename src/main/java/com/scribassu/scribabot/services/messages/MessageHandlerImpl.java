@@ -71,28 +71,36 @@ public class MessageHandlerImpl implements MessageHandler {
                 && botUser.getPreviousUserMessage().equalsIgnoreCase(CommandText.TEACHER_SCHEDULE)) {
             TeacherListDto teacherListDto = callRestService.getTeachersByWord(message);
             if(null != teacherListDto.getTeachers()) {
-                List<Teacher> teachers = teacherListDto.getTeachers();
-                if(teachers.size() > Constants.MAX_VK_KEYBOARD_SIZE) {
-                    botMessage.put(Constants.KEY_MESSAGE,
-                            "Искомый список преподавателей слишком большой для клавиатуры VK. " +
-                                    "Попробуйте запросить точнее.");
+                if(teacherListDto.getTeachers().isEmpty()) {
+                    botMessage.put(Constants.KEY_MESSAGE, "По вашему запросу ничего не нашлось.");
                     botMessage.put(
                             Constants.KEY_KEYBOARD,
                             KeyboardMap.keyboards.get(KeyboardType.ButtonActions).getJsonText());
                 }
                 else {
-                    ObjectMapper objectMapper = new ObjectMapper();
-                    try {
-                        botMessage.put(Constants.KEY_MESSAGE, "Выберите, для какого преподавателя хотите узнать расписание.");
-                        botMessage.put(
-                                Constants.KEY_KEYBOARD,
-                                objectMapper.writeValueAsString(buildVkKeyboardFromTeachers(teachers)));
-                    }
-                    catch(Exception e) {
-                        botMessage.put(Constants.KEY_MESSAGE, "Не удалось получить список преподавателей.");
+                    List<Teacher> teachers = teacherListDto.getTeachers();
+                    if(teachers.size() > Constants.MAX_VK_KEYBOARD_SIZE) {
+                        botMessage.put(Constants.KEY_MESSAGE,
+                                "Искомый список преподавателей слишком большой для клавиатуры VK. " +
+                                        "Попробуйте запросить точнее.");
                         botMessage.put(
                                 Constants.KEY_KEYBOARD,
                                 KeyboardMap.keyboards.get(KeyboardType.ButtonActions).getJsonText());
+                    }
+                    else {
+                        ObjectMapper objectMapper = new ObjectMapper();
+                        try {
+                            botMessage.put(Constants.KEY_MESSAGE, "Выберите, для какого преподавателя хотите узнать расписание.");
+                            botMessage.put(
+                                    Constants.KEY_KEYBOARD,
+                                    objectMapper.writeValueAsString(buildVkKeyboardFromTeachers(teachers)));
+                        }
+                        catch(Exception e) {
+                            botMessage.put(Constants.KEY_MESSAGE, "Не удалось получить список преподавателей.");
+                            botMessage.put(
+                                    Constants.KEY_KEYBOARD,
+                                    KeyboardMap.keyboards.get(KeyboardType.ButtonActions).getJsonText());
+                        }
                     }
                 }
             }
