@@ -19,5 +19,5 @@ public class Constants {
     public static final String PAYLOAD_START = "{\"button\": \"";
     public static final String PAYLOAD_END = "\"}";
 
-    public static final int MAX_VK_KEYBOARD_SIZE = 40;
+    public static final int MAX_VK_KEYBOARD_SIZE_FOR_LISTS = 38; //render lists without counting menu buttons
 }

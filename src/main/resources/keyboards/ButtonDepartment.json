@@ -4,7 +4,7 @@
 [{
 "action": {
 "type": "text",
-"payload": "{\"button\": \"1\"}",
+"payload": "{\"button\": \"dep\"}",
 "label": "БИОЛОГ"
 },
 "color": "primary"
@@ -12,7 +12,7 @@
 {
 "action": {
 "type": "text",
-"payload": "{\"button\": \"2\"}",
+"payload": "{\"button\": \"dep\"}",
 "label": "ГЕОГРАФ"
 },
 "color": "primary"
@@ -20,7 +20,7 @@
 {
 "action": {
 "type": "text",
-"payload": "{\"button\": \"2\"}",
+"payload": "{\"button\": \"dep\"}",
 "label": "ГЕОЛОГ"
 },
 "color": "primary"
@@ -29,7 +29,7 @@
 [{
 "action": {
 "type": "text",
-"payload": "{\"button\": \"1\"}",
+"payload": "{\"button\": \"dep\"}",
 "label": "ИДПО"
 },
 "color": "primary"
@@ -37,7 +37,7 @@
 {
 "action": {
 "type": "text",
-"payload": "{\"button\": \"2\"}",
+"payload": "{\"button\": \"dep\"}",
 "label": "И-Т ИСКУССТВ"
 },
 "color": "primary"
@@ -45,7 +45,7 @@
 {
 "action": {
 "type": "text",
-"payload": "{\"button\": \"2\"}",
+"payload": "{\"button\": \"dep\"}",
 "label": "ИИИМО"
 },
 "color": "primary"
@@ -54,7 +54,7 @@
 [{
 "action": {
 "type": "text",
-"payload": "{\"button\": \"1\"}",
+"payload": "{\"button\": \"dep\"}",
 "label": "И-Т ФИЗ КУЛ"
 },
 "color": "primary"
@@ -62,7 +62,7 @@
 {
 "action": {
 "type": "text",
-"payload": "{\"button\": \"2\"}",
+"payload": "{\"button\": \"dep\"}",
 "label": "ИФИЖ"
 },
 "color": "primary"
@@ -70,7 +70,7 @@
 {
 "action": {
 "type": "text",
-"payload": "{\"button\": \"2\"}",
+"payload": "{\"button\": \"dep\"}",
 "label": "И-Т ХИМИИ"
 },
 "color": "primary"
@@ -79,7 +79,7 @@
 [{
 "action": {
 "type": "text",
-"payload": "{\"button\": \"1\"}",
+"payload": "{\"button\": \"dep\"}",
 "label": "МЕХМАТ"
 },
 "color": "primary"
@@ -87,7 +87,7 @@
 {
 "action": {
 "type": "text",
-"payload": "{\"button\": \"2\"}",
+"payload": "{\"button\": \"dep\"}",
 "label": "СОЦФАК"
 },
 "color": "primary"
@@ -95,7 +95,7 @@
 {
 "action": {
 "type": "text",
-"payload": "{\"button\": \"2\"}",
+"payload": "{\"button\": \"dep\"}",
 "label": "ФИЯИЛ"
 },
 "color": "primary"
@@ -104,7 +104,7 @@
 [{
 "action": {
 "type": "text",
-"payload": "{\"button\": \"1\"}",
+"payload": "{\"button\": \"dep\"}",
 "label": "КНИИТ"
 },
 "color": "primary"
@@ -112,7 +112,7 @@
 {
 "action": {
 "type": "text",
-"payload": "{\"button\": \"2\"}",
+"payload": "{\"button\": \"dep\"}",
 "label": "ФНБМТ"
 },
 "color": "primary"
@@ -120,7 +120,7 @@
 {
 "action": {
 "type": "text",
-"payload": "{\"button\": \"2\"}",
+"payload": "{\"button\": \"dep\"}",
 "label": "ФНП"
 },
 "color": "primary"
@@ -129,7 +129,7 @@
 [{
 "action": {
 "type": "text",
-"payload": "{\"button\": \"1\"}",
+"payload": "{\"button\": \"dep\"}",
 "label": "ПСИХОЛОГ"
 },
 "color": "primary"
@@ -137,7 +137,7 @@
 {
 "action": {
 "type": "text",
-"payload": "{\"button\": \"2\"}",
+"payload": "{\"button\": \"dep\"}",
 "label": "ППИСО"
 },
 "color": "primary"
@@ -145,7 +145,7 @@
 {
 "action": {
 "type": "text",
-"payload": "{\"button\": \"2\"}",
+"payload": "{\"button\": \"dep\"}",
 "label": "ФИЗФАК"
 },
 "color": "primary"
@@ -154,7 +154,7 @@
 [{
 "action": {
 "type": "text",
-"payload": "{\"button\": \"1\"}",
+"payload": "{\"button\": \"dep\"}",
 "label": "ФИЛОСОФ"
 },
 "color": "primary"
@@ -162,7 +162,7 @@
 {
 "action": {
 "type": "text",
-"payload": "{\"button\": \"2\"}",
+"payload": "{\"button\": \"dep\"}",
 "label": "ЭКОНОМ"
 },
 "color": "primary"
@@ -170,7 +170,7 @@
 {
 "action": {
 "type": "text",
-"payload": "{\"button\": \"2\"}",
+"payload": "{\"button\": \"dep\"}",
 "label": "ЮРФАК"
 },
 "color": "primary"
@@ -179,7 +179,7 @@
 [{
 "action": {
 "type": "text",
-"payload": "{\"button\": \"1\"}",
+"payload": "{\"button\": \"dep\"}",
 "label": "ГЕОЛОГ К-Ж"
 },
 "color": "primary"
@@ -187,7 +187,7 @@
 {
 "action": {
 "type": "text",
-"payload": "{\"button\": \"2\"}",
+"payload": "{\"button\": \"dep\"}",
 "label": "К-Ж ЯБЛОЧКОВА"
 },
 "color": "primary"

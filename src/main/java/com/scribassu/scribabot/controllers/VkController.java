@@ -34,7 +34,7 @@ public class VkController {
         this.messageHandler = messageHandler;
     }
 
-    @PostMapping(value = "/scriba", consumes = {"application/json"})
+    @PostMapping(value = "${scriba-bot.vk-url}", consumes = {"application/json"})
     @ResponseStatus(HttpStatus.OK)
     public String getMessage(@RequestBody String incomingMessage) throws Exception {
         System.out.println("Get some message");

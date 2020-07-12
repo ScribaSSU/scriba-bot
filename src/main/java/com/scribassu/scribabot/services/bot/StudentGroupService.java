@@ -67,7 +67,7 @@ public class StudentGroupService implements BotMessageService {
                     Constants.KEY_KEYBOARD,
                     KeyboardMap.keyboards.get(KeyboardType.ButtonCourse).getJsonText());
         }
-        else if(groupNumbersDto.getGroupNumbers().size() > Constants.MAX_VK_KEYBOARD_SIZE) {
+        else if(groupNumbersDto.getGroupNumbers().size() > Constants.MAX_VK_KEYBOARD_SIZE_FOR_LISTS) {
             StringBuilder stringBuilder = new StringBuilder("Извините, нашлось слишком много групп, " +
                     "и они не могут отобразиться через клавиатуру из-за ограничений VK. " +
                     "Пожалуйста, введите номер группы в формате г номер, " +

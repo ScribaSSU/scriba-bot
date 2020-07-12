@@ -43,16 +43,13 @@ public class CommandText {
     public static final String DISABLE_FILTER_WEEK_TYPE = "выкл. фильтр по типу недели";
     public static final String CURRENT_USER_SETTINGS = "текущие настройки пользователя";
 
-    private static final String DEPARTMENT = "биолог|географ|геолог|идпо|и-т искусств|ииимо" +
-            "|и-т физ кул|ифиж|и-т химии|мехмат|фияил|книит|соцфак" +
-            "|фнбмт|фнп|психолог|пписо|физфак|философ|эконом|юрфак|геолог к-ж|к-ж яблочкова";
     private static final String HOUR = "^\\d*\\s*ч$";
     private static final String COURSE = "\\d{1}\\s*курс";
 
-    public static final Pattern DEPARTMENT_PATTERN = Pattern.compile(DEPARTMENT);
     public static final Pattern HOUR_PATTERN = Pattern.compile(HOUR);
     public static final Pattern COURSE_PATTERN = Pattern.compile(COURSE);
 
-    public static final String COURSE_PAYLOAD = "курс";
+    public static final String DEPARTMENT_PAYLOAD = "dep";
+    public static final String COURSE_PAYLOAD = "course";
     public static final String TEACHER_ID_PAYLOAD = "teacher id";
 }

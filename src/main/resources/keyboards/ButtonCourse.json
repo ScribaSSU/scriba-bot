@@ -4,7 +4,7 @@
 [{
 "action": {
 "type": "text",
-"payload": "{\"button\": \"курс\"}",
+"payload": "{\"button\": \"course\"}",
 "label": "1 курс"
 },
 "color": "primary"
@@ -12,7 +12,7 @@
 {
 "action": {
 "type": "text",
-"payload": "{\"button\": \"курс\"}",
+"payload": "{\"button\": \"course\"}",
 "label": "2 курс"
 },
 "color": "primary"
@@ -22,7 +22,7 @@
 {
 "action": {
 "type": "text",
-"payload": "{\"button\": \"курс\"}",
+"payload": "{\"button\": \"course\"}",
 "label": "3 курс"
 },
 "color": "primary"
@@ -30,7 +30,7 @@
 {
 "action": {
 "type": "text",
-"payload": "{\"button\": \"курс\"}",
+"payload": "{\"button\": \"course\"}",
 "label": "4 курс"
 },
 "color": "primary"
@@ -40,7 +40,7 @@
 {
 "action": {
 "type": "text",
-"payload": "{\"button\": \"курс\"}",
+"payload": "{\"button\": \"course\"}",
 "label": "5 курс"
 },
 "color": "primary"
@@ -48,7 +48,7 @@
 {
 "action": {
 "type": "text",
-"payload": "{\"button\": \"курс\"}",
+"payload": "{\"button\": \"course\"}",
 "label": "Другое"
 },
 "color": "primary"
@@ -58,7 +58,7 @@
 {
 "action": {
 "type": "text",
-"payload": "",
+"payload": "{\"button\": \"1\"}",
 "label": "Главное меню"
 },
 "color": "primary"

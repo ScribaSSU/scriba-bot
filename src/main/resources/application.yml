@@ -1,9 +1,10 @@
-scribabot:
+scriba-bot:
   token:
   secret:
   confirmation-code:
-  keyboards-folder: keyboards/
-  vk-api-version: "5.100"
+  keyboards-folder:
+  vk-api-version:
+  vk-url:
 
 call:
   rest:
@@ -11,9 +12,9 @@ call:
 
 scheduled:
   schedule-daily-notification-service:
-    cron: 1 0 * * * *
+    cron:
   schedule-tomorrow-notification-service:
-    cron: 5 0 * * * *
+    cron:
 
 week-type:
   access-token:
