@@ -1,17 +1,14 @@
 package com.scribassu.scribabot.services.messages;
 
-import com.scribassu.scribabot.dto.FullTimeLessonDto;
+import com.scribassu.scribabot.dto.BotMessage;
+import com.scribassu.scribabot.dto.rest.FullTimeLessonDto;
 import com.scribassu.scribabot.entities.BotUser;
-import com.scribassu.scribabot.keyboard.KeyboardMap;
-import com.scribassu.scribabot.keyboard.KeyboardType;
 import com.scribassu.scribabot.repositories.BotUserRepository;
 import com.scribassu.scribabot.services.CallRestService;
 import com.scribassu.scribabot.services.bot.*;
 import com.scribassu.scribabot.text.Command;
 import com.scribassu.scribabot.text.CommandText;
-import com.scribassu.scribabot.text.MessageText;
 import com.scribassu.scribabot.util.BotMessageUtils;
-import com.scribassu.scribabot.util.Constants;
 import com.scribassu.scribabot.util.DepartmentConverter;
 import com.scribassu.scribabot.util.Templates;
 import com.scribassu.tracto.domain.EducationForm;
@@ -19,8 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.HashMap;
-import java.util.Map;
+import static com.scribassu.scribabot.keyboard.KeyboardType.*;
+import static com.scribassu.scribabot.text.MessageText.*;
 
 @Service
 public class MessageHandlerImpl implements MessageHandler {
@@ -54,8 +51,8 @@ public class MessageHandlerImpl implements MessageHandler {
     }
 
     @Override
-    public Map<String, String> getBotMessage(Command command) {
-        Map<String, String> botMessage = new HashMap<>();
+    public BotMessage getBotMessage(Command command) {
+        BotMessage botMessage = new BotMessage();
         String message = command.getMessage().toLowerCase();
         String payload = command.getPayload().toLowerCase();
         String userId = command.getUserId();
@@ -75,21 +72,11 @@ public class MessageHandlerImpl implements MessageHandler {
                     botUser = new BotUser(userId);
                     botUser.setFilterNomDenom(false);
                     botUser = botUserRepository.save(botUser);
-                    botMessage.put(
-                            Constants.KEY_MESSAGE,
-                            MessageText.GREETING_WITH_CHOOSE_DEPARTMENT);
-                    botMessage.put(
-                            Constants.KEY_KEYBOARD,
-                            KeyboardMap.keyboards.get(KeyboardType.ButtonDepartment).getJsonText());
-                    botUserRepository.updatePreviousUserMessage(MessageText.GREETING_WITH_CHOOSE_DEPARTMENT, botUser.getUserId());
+                    botMessage = new BotMessage(GREETING_WITH_CHOOSE_DEPARTMENT, ButtonDepartment);
+                    botUserRepository.updatePreviousUserMessage(GREETING_WITH_CHOOSE_DEPARTMENT, botUser.getUserId());
                 }
                 else {
-                    botMessage.put(
-                            Constants.KEY_KEYBOARD,
-                            KeyboardMap.keyboards.get(KeyboardType.ButtonActions).getJsonText());
-                    botMessage.put(
-                            Constants.KEY_MESSAGE,
-                            "Привет!");
+                    botMessage = new BotMessage("Привет!", ButtonActions);
                 }
                 break;
             case CommandText.MAIN_MENU:
@@ -103,77 +90,45 @@ public class MessageHandlerImpl implements MessageHandler {
                     botUser.setPreviousUserMessage("");
                     botUserRepository.save(botUser);
                 }
-                botMessage.put(
-                        Constants.KEY_MESSAGE,
-                        "Возврат в главное меню.");
-                botMessage.put(
-                        Constants.KEY_KEYBOARD,
-                        KeyboardMap.keyboards.get(KeyboardType.ButtonActions).getJsonText());
+                botMessage = new BotMessage("Возврат в главное меню.", ButtonActions);
                 break;
             case CommandText.HELP:
                 botMessage = helpService.getBotMessage(message, botUser);
                 break;
             case CommandText.THANKS:
-                botMessage.put(
-                        Constants.KEY_MESSAGE,
-                        "Пожалуйста :)");
-                botMessage.put(
-                        Constants.KEY_KEYBOARD,
-                        KeyboardMap.keyboards.get(KeyboardType.ButtonActions).getJsonText());
+                botMessage = new BotMessage("Пожалуйста :)", ButtonActions);
                 break;
             case CommandText.TEACHER_SCHEDULE:
                 botMessage = teacherService.getBotMessage(message, botUser);
                 break;
             case CommandText.FULL_TIME_SCHEDULE:
                 if(BotMessageUtils.isBotUserFullTime(botUser)) {
-                    botMessage.put(
-                            Constants.KEY_MESSAGE,
-                            "Выберите, для чего хотите узнать расписание.");
-                    botMessage.put(
-                            Constants.KEY_KEYBOARD,
-                            KeyboardMap.keyboards.get(KeyboardType.ButtonFullTimeSchedule).getJsonText());
+                    botMessage = new BotMessage("Выберите, для чего хотите узнать расписание.", ButtonFullTimeSchedule);
                 }
                 else if(botUser != null
                     && botUser.getDepartment() == null
                     && botUser.getEducationForm() == null
                     && botUser.getGroupNumber() == null) {
-                    botMessage.put(Constants.KEY_MESSAGE, MessageText.CHOOSE_DEPARTMENT);
-                    botMessage.put(
-                            Constants.KEY_KEYBOARD,
-                            KeyboardMap.keyboards.get(KeyboardType.ButtonDepartment).getJsonText());
+                    botMessage = new BotMessage(CHOOSE_DEPARTMENT, ButtonDepartment);
                 }
                 else {
-                    botMessage.put(
-                            Constants.KEY_MESSAGE,
-                            "Извините, ваша форма обучения пока не поддерживается :(");
+                    botMessage = new BotMessage("Извините, ваша форма обучения пока не поддерживается :(", ButtonActions);
                 }
                 break;
             case CommandText.CHOOSE_DEPARTMENT:
-                botMessage.put(Constants.KEY_MESSAGE, MessageText.CHOOSE_DEPARTMENT);
-                botMessage.put(
-                        Constants.KEY_KEYBOARD,
-                        KeyboardMap.keyboards.get(KeyboardType.ButtonDepartment).getJsonText());
+                botMessage = new BotMessage(CHOOSE_DEPARTMENT, ButtonDepartment);
                 break;
             case CommandText.FULL_TIME:
                 botUserRepository.updateEducationForm(EducationForm.DO.getGroupType(), userId);
-                botMessage.put(Constants.KEY_MESSAGE, "Выберите курс. Если учитесь в колледже, выберите 'Другое'.");
-                botMessage.put(
-                        Constants.KEY_KEYBOARD,
-                        KeyboardMap.keyboards.get(KeyboardType.ButtonCourse).getJsonText());
+                botMessage = new BotMessage(CHOOSE_COURSE, ButtonCourse);
                 break;
             case CommandText.EXTRAMURAL:
                 botUserRepository.updateEducationForm(EducationForm.ZO.getGroupType(), userId);
-                botMessage.put(Constants.KEY_MESSAGE, "Выберите курс. Если учитесь в колледже, выберите 'Другое'.");
-                botMessage.put(
-                        Constants.KEY_KEYBOARD,
-                        KeyboardMap.keyboards.get(KeyboardType.ButtonCourse).getJsonText());
+                botMessage = new BotMessage(CHOOSE_COURSE, ButtonCourse);
                 break;
             case CommandText.EVENING:
                 botUserRepository.updateEducationForm(EducationForm.VO.getGroupType(), userId);
-                botMessage.put(Constants.KEY_MESSAGE, "Выберите курс. Если учитесь в колледже, выберите 'Другое'.");
-                botMessage.put(
-                        Constants.KEY_KEYBOARD,
-                        KeyboardMap.keyboards.get(KeyboardType.ButtonCourse).getJsonText());
+                botMessage = new BotMessage(CHOOSE_COURSE, ButtonCourse);
                 break;
             case CommandText.MONDAY:
             case CommandText.TUESDAY:
@@ -187,12 +142,7 @@ public class MessageHandlerImpl implements MessageHandler {
                 botMessage = fullTimeLessonService.getBotMessage(message, botUser);
                 break;
             case CommandText.SETTINGS:
-                botMessage.put(
-                        Constants.KEY_MESSAGE,
-                        "Здесь вы можете настроить некоторые функции бота.");
-                botMessage.put(
-                        Constants.KEY_KEYBOARD,
-                        KeyboardMap.keyboards.get(KeyboardType.ButtonSettings).getJsonText());
+                botMessage = new BotMessage("Здесь вы можете настроить некоторые функции бота.", ButtonSettings);
                 break;
             case CommandText.SET_SEND_SCHEDULE_TIME_TODAY:
             case CommandText.ENABLE_SEND_SCHEDULE_TODAY:
@@ -209,7 +159,7 @@ public class MessageHandlerImpl implements MessageHandler {
                 botMessage = examPeriodService.getBotMessage(message, botUser);
                 break;
             case "т":
-                botMessage.put(Constants.KEY_MESSAGE, "test");
+                botMessage = new BotMessage("test");
                 break;
         }
 
@@ -219,12 +169,7 @@ public class MessageHandlerImpl implements MessageHandler {
 
         if(CommandText.DEPARTMENT_PAYLOAD.equalsIgnoreCase(payload)) {
             botUserRepository.updateDepartment(DepartmentConverter.convertToUrl(message), userId);
-            botMessage.put(
-                    Constants.KEY_MESSAGE,
-                    "Выберите форму расписания.");
-            botMessage.put(
-                    Constants.KEY_KEYBOARD,
-                    KeyboardMap.keyboards.get(KeyboardType.ButtonGroupType).getJsonText());
+            botMessage = new BotMessage("Выберите форму расписания.", ButtonGroupType);
         }
 
         if(CommandText.COURSE_PAYLOAD.equalsIgnoreCase(payload)) {
@@ -234,44 +179,24 @@ public class MessageHandlerImpl implements MessageHandler {
         if(CommandText.CHOOSE_STUDENT_GROUP.equalsIgnoreCase(payload)) {
             botUserRepository.updateGroupNumber(message, userId);
             botUser = botUserRepository.findOneById(userId);
-            if(botUser.getPreviousUserMessage() != null && botUser.getPreviousUserMessage().equalsIgnoreCase(MessageText.GREETING_WITH_CHOOSE_DEPARTMENT)) {
-                botMessage.put(
-                        Constants.KEY_MESSAGE,
-                        "Это главное меню бота. Отсюда вы можете узнать расписание, задать настройки и не только.");
-                botMessage.put(
-                        Constants.KEY_KEYBOARD,
-                        KeyboardMap.keyboards.get(KeyboardType.ButtonActions).getJsonText());
+            if(botUser.getPreviousUserMessage() != null && botUser.getPreviousUserMessage().equalsIgnoreCase(GREETING_WITH_CHOOSE_DEPARTMENT)) {
+                botMessage = new BotMessage(THIS_IS_MAIN_MENU, ButtonActions);
                 botUserRepository.updatePreviousUserMessage("", botUser.getUserId());
             }
             else {
-                botMessage.put(
-                        Constants.KEY_MESSAGE,
-                        "Хотите расписание пар или сессии?");
-                botMessage.put(
-                        Constants.KEY_KEYBOARD,
-                        KeyboardMap.keyboards.get(KeyboardType.ButtonFullTimeSchedule).getJsonText());
+                botMessage = new BotMessage("Хотите расписание пар или сессии?", ButtonFullTimeSchedule);
             }
         }
 
         if(message.startsWith(CommandText.GROUP_NUMBER_INPUT)) {
             botUserRepository.updateGroupNumber(message.substring(2), userId);
             botUser = botUserRepository.findOneById(userId);
-            if(botUser.getPreviousUserMessage().equalsIgnoreCase(MessageText.GREETING_WITH_CHOOSE_DEPARTMENT)) {
-                botMessage.put(
-                        Constants.KEY_MESSAGE,
-                        "Это главное меню бота. Отсюда вы можете узнать расписание, задать настройки и не только.");
-                botMessage.put(
-                        Constants.KEY_KEYBOARD,
-                        KeyboardMap.keyboards.get(KeyboardType.ButtonActions).getJsonText());
+            if(botUser.getPreviousUserMessage().equalsIgnoreCase(GREETING_WITH_CHOOSE_DEPARTMENT)) {
+                botMessage = new BotMessage(THIS_IS_MAIN_MENU, ButtonActions);
                 botUserRepository.updatePreviousUserMessage("", botUser.getUserId());
             }
             else {
-                botMessage.put(
-                        Constants.KEY_MESSAGE,
-                        "Хотите расписание пар или сессии?");
-                botMessage.put(
-                        Constants.KEY_KEYBOARD,
-                        KeyboardMap.keyboards.get(KeyboardType.ButtonFullTimeSchedule).getJsonText());
+                botMessage = new BotMessage("Хотите расписание пар или сессии?", ButtonFullTimeSchedule);
             }
         }
 
@@ -284,16 +209,12 @@ public class MessageHandlerImpl implements MessageHandler {
             );
 
             if(CollectionUtils.isEmpty(lessons.getLessons())) {
-                botMessage.put(Constants.KEY_MESSAGE, "Информация отсутствует.");
-                botMessage.put(
-                        Constants.KEY_KEYBOARD,
-                        KeyboardMap.keyboards.get(KeyboardType.ButtonActions).getJsonText());
+                botMessage = new BotMessage("Информация отсутствует.", ButtonActions);
             }
             else {
-                botMessage.put(Constants.KEY_MESSAGE, Templates.makeFullTimeLessonTemplate(lessons, "", botUser.isFilterNomDenom()));
-                botMessage.put(
-                        Constants.KEY_KEYBOARD,
-                        KeyboardMap.keyboards.get(KeyboardType.ButtonActions).getJsonText());
+                botMessage = new BotMessage(
+                        Templates.makeFullTimeLessonTemplate(lessons, "", botUser.isFilterNomDenom()),
+                        ButtonActions);
             }
         }
 
@@ -301,13 +222,8 @@ public class MessageHandlerImpl implements MessageHandler {
             botMessage = teacherService.getBotMessage(payload, botUser);
         }
 
-        if(botMessage.isEmpty()
-                || !botMessage.containsKey(Constants.KEY_MESSAGE)
-                && !botMessage.containsKey(Constants.KEY_KEYBOARD)) {
-            botMessage.put(Constants.KEY_MESSAGE, "Сообщение не распознано или недостаточно данных :(");
-            botMessage.put(
-                    Constants.KEY_KEYBOARD,
-                    KeyboardMap.keyboards.get(KeyboardType.ButtonActions).getJsonText());
+        if(botMessage.isEmpty()) {
+            botMessage = new BotMessage("Сообщение не распознано или недостаточно данных :(", ButtonActions);
         }
 
         return botMessage;

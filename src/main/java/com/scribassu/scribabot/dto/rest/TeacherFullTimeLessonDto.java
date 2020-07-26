@@ -1,4 +1,4 @@
-package com.scribassu.scribabot.dto;
+package com.scribassu.scribabot.dto.rest;
 
 import com.scribassu.tracto.domain.Day;
 import com.scribassu.tracto.domain.FullTimeLesson;

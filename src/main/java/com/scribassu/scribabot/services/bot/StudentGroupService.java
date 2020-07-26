@@ -1,7 +1,8 @@
 package com.scribassu.scribabot.services.bot;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.scribassu.scribabot.dto.GroupNumbersDto;
+import com.scribassu.scribabot.dto.BotMessage;
+import com.scribassu.scribabot.dto.rest.GroupNumbersDto;
 import com.scribassu.scribabot.dto.vkkeyboard.*;
 import com.scribassu.scribabot.entities.BotUser;
 import com.scribassu.scribabot.keyboard.KeyboardMap;
@@ -20,6 +21,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.scribassu.scribabot.keyboard.KeyboardType.ButtonCourse;
+
 @Service
 public class StudentGroupService implements BotMessageService {
 
@@ -31,8 +34,8 @@ public class StudentGroupService implements BotMessageService {
     }
 
     @Override
-    public Map<String, String> getBotMessage(String message, BotUser botUser) {
-        Map<String, String> botMessage = new HashMap<>();
+    public BotMessage getBotMessage(String message, BotUser botUser) {
+        BotMessage botMessage;
         GroupNumbersDto groupNumbersDto = new GroupNumbersDto();
         if(message.equalsIgnoreCase("другое")) {
             if(botUser != null
@@ -58,14 +61,8 @@ public class StudentGroupService implements BotMessageService {
                         );
             }
         }
-        System.out.println(groupNumbersDto);
         if(CollectionUtils.isEmpty(groupNumbersDto.getGroupNumbers())) {
-            botMessage.put(
-                    Constants.KEY_MESSAGE,
-                    "Группы не найдены.");
-            botMessage.put(
-                    Constants.KEY_KEYBOARD,
-                    KeyboardMap.keyboards.get(KeyboardType.ButtonCourse).getJsonText());
+            botMessage = new BotMessage("Группы не найдены.", ButtonCourse);
         }
         else if(groupNumbersDto.getGroupNumbers().size() > Constants.MAX_VK_KEYBOARD_SIZE_FOR_LISTS) {
             StringBuilder stringBuilder = new StringBuilder("Извините, нашлось слишком много групп, " +
@@ -75,21 +72,16 @@ public class StudentGroupService implements BotMessageService {
             for(String groupNumber : groupNumbersDto.getGroupNumbers()) {
                 stringBuilder.append(groupNumber).append(", ");
             }
-            botMessage.put(
-                    Constants.KEY_MESSAGE,
-                     stringBuilder.toString());
+            botMessage = new BotMessage(stringBuilder.toString());
         }
         else {
             VkKeyboard vkKeyboard = buildVkKeyboardFromGroupNumbers(groupNumbersDto.getGroupNumbers());
             ObjectMapper objectMapper = new ObjectMapper();
             try {
-                botMessage.put(Constants.KEY_KEYBOARD, objectMapper.writeValueAsString(vkKeyboard));
-                botMessage.put(Constants.KEY_MESSAGE, "Выберите группу.");
+                botMessage = new BotMessage("Выберите группу.", objectMapper.writeValueAsString(vkKeyboard));
             }
             catch(Exception e) {
-                botMessage.put(Constants.KEY_MESSAGE, "Не удалось загрузить список групп :(");
-                botMessage.put(Constants.KEY_KEYBOARD,
-                        KeyboardMap.keyboards.get(KeyboardType.ButtonCourse).getJsonText());
+                botMessage = new BotMessage("Не удалось загрузить список групп :(", ButtonCourse);
             }
         }
 

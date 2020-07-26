@@ -1,5 +1,6 @@
 package com.scribassu.scribabot.services.bot;
 
+import com.scribassu.scribabot.dto.BotMessage;
 import com.scribassu.scribabot.entities.BotUser;
 import com.scribassu.scribabot.keyboard.KeyboardMap;
 import com.scribassu.scribabot.keyboard.KeyboardType;
@@ -19,14 +20,7 @@ public class HelpService implements BotMessageService {
             "На данный момент поддерживается только расписание очников. Мы работаем над другими видами расписаний, ждите.";
 
     @Override
-    public Map<String, String> getBotMessage(String message, BotUser botUser) {
-        Map<String, String> botMessage = new HashMap<>();
-        botMessage.put(
-                Constants.KEY_MESSAGE,
-                HELP);
-        botMessage.put(
-                Constants.KEY_KEYBOARD,
-                KeyboardMap.keyboards.get(KeyboardType.ButtonActions).getJsonText());
-        return botMessage;
+    public BotMessage getBotMessage(String message, BotUser botUser) {
+        return new BotMessage(HELP, KeyboardType.ButtonActions);
     }
 }

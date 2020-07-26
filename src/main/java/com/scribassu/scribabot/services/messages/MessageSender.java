@@ -1,7 +1,7 @@
 package com.scribassu.scribabot.services.messages;
 
-import java.util.Map;
+import com.scribassu.scribabot.dto.BotMessage;
 
 public interface MessageSender {
-    void send(Map<String, String> botMessage, String userId) throws Exception;
+    void send(BotMessage botMessage, String userId) throws Exception;
 }

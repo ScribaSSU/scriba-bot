@@ -1,6 +1,6 @@
 package com.scribassu.scribabot.services;
 
-import com.scribassu.scribabot.dto.*;
+import com.scribassu.scribabot.dto.rest.*;
 import org.apache.commons.codec.Charsets;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;

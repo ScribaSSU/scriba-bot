@@ -1,16 +1,14 @@
 package com.scribassu.scribabot.services.bot;
 
-import com.scribassu.scribabot.dto.ExamPeriodEventDto;
-import com.scribassu.scribabot.dto.TeacherExamPeriodEventDto;
+import com.scribassu.scribabot.dto.BotMessage;
+import com.scribassu.scribabot.dto.rest.ExamPeriodEventDto;
+import com.scribassu.scribabot.dto.rest.TeacherExamPeriodEventDto;
 import com.scribassu.scribabot.entities.BotUser;
 import com.scribassu.scribabot.services.CallRestService;
-import com.scribassu.scribabot.services.bot.BotMessageService;
 import com.scribassu.scribabot.text.CommandText;
 import com.scribassu.scribabot.util.BotMessageUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Map;
 
 @Service
 public class ExamPeriodService implements BotMessageService {
@@ -24,7 +22,7 @@ public class ExamPeriodService implements BotMessageService {
 
 
     @Override
-    public Map<String, String> getBotMessage(String message, BotUser botUser) {
+    public BotMessage getBotMessage(String message, BotUser botUser) {
         if(botUser.wantTeacherSchedule()) {
             return getTeacherBotMessage(message, botUser);
         }
@@ -34,7 +32,7 @@ public class ExamPeriodService implements BotMessageService {
 
     }
 
-    private Map<String, String> getTeacherBotMessage(String message, BotUser botUser) {
+    private BotMessage getTeacherBotMessage(String message, BotUser botUser) {
         String teacherId = botUser.getPreviousUserMessage().split(" ")[2];
         if(message.equalsIgnoreCase(CommandText.EXAMS)) {
             TeacherExamPeriodEventDto examPeriodEventDto = callRestService.getTeacherExamPeriodEvents(
@@ -52,7 +50,7 @@ public class ExamPeriodService implements BotMessageService {
         }
     }
 
-    private Map<String, String> getStudentBotMessage(String message, BotUser botUser) {
+    private BotMessage getStudentBotMessage(String message, BotUser botUser) {
         if(message.equalsIgnoreCase(CommandText.EXAMS)) {
             ExamPeriodEventDto examPeriodEventDto = callRestService.getFullTimeExamPeriodEvent(
                     botUser.getDepartment(),

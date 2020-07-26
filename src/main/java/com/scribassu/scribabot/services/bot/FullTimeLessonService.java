@@ -1,9 +1,9 @@
 package com.scribassu.scribabot.services.bot;
 
-import com.scribassu.scribabot.dto.FullTimeLessonDto;
-import com.scribassu.scribabot.dto.TeacherFullTimeLessonDto;
+import com.scribassu.scribabot.dto.BotMessage;
+import com.scribassu.scribabot.dto.rest.FullTimeLessonDto;
+import com.scribassu.scribabot.dto.rest.TeacherFullTimeLessonDto;
 import com.scribassu.scribabot.entities.BotUser;
-import com.scribassu.scribabot.repositories.BotUserRepository;
 import com.scribassu.scribabot.services.CallRestService;
 import com.scribassu.scribabot.text.CommandText;
 import com.scribassu.scribabot.util.BotMessageUtils;
@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Calendar;
-import java.util.Map;
 
 @Service
 public class FullTimeLessonService implements BotMessageService {
@@ -25,7 +24,7 @@ public class FullTimeLessonService implements BotMessageService {
     }
 
     @Override
-    public Map<String, String> getBotMessage(String message, BotUser botUser) {
+    public BotMessage getBotMessage(String message, BotUser botUser) {
         if(botUser.wantTeacherSchedule()) {
             return getTeacherBotMessage(message, botUser);
         }
@@ -34,7 +33,7 @@ public class FullTimeLessonService implements BotMessageService {
         }
     }
 
-    private Map<String, String> getTeacherBotMessage(String message, BotUser botUser) {
+    private BotMessage getTeacherBotMessage(String message, BotUser botUser) {
         Calendar calendar = CalendarUtils.getCalendar();
         TeacherFullTimeLessonDto lessons = new TeacherFullTimeLessonDto();
         boolean isToday = false;
@@ -92,7 +91,7 @@ public class FullTimeLessonService implements BotMessageService {
         return BotMessageUtils.getBotMessageForTeacherFullTimeLessons(lessons, "", botUser.isFilterNomDenom());
     }
 
-    private Map<String, String> getStudentBotMessage(String message, BotUser botUser) {
+    private BotMessage getStudentBotMessage(String message, BotUser botUser) {
         Calendar calendar = CalendarUtils.getCalendar();
         FullTimeLessonDto lessons = new FullTimeLessonDto();
         boolean isBotUserFullTime = false;

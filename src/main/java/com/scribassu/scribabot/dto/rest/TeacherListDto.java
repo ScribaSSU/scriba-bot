@@ -1,4 +1,4 @@
-package com.scribassu.scribabot.dto;
+package com.scribassu.scribabot.dto.rest;
 
 import com.scribassu.tracto.domain.Teacher;
 import lombok.Data;

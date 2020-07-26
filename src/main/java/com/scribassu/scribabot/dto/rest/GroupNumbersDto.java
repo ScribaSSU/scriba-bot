@@ -1,4 +1,4 @@
-package com.scribassu.scribabot.dto;
+package com.scribassu.scribabot.dto.rest;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

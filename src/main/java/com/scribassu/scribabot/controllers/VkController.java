@@ -1,5 +1,6 @@
 package com.scribassu.scribabot.controllers;
 
+import com.scribassu.scribabot.dto.BotMessage;
 import com.scribassu.scribabot.services.messages.MessageHandler;
 import com.scribassu.scribabot.services.messages.MessageParser;
 import com.scribassu.scribabot.services.messages.MessageSender;
@@ -39,7 +40,7 @@ public class VkController {
     public String getMessage(@RequestBody String incomingMessage) throws Exception {
         System.out.println("Get some message");
         Map<String, String> parsedMessage;
-        if(incomingMessage != null){
+        if(incomingMessage != null) {
             parsedMessage = messageParser.parseMessage(incomingMessage);
 
             if(parsedMessage.containsKey(Constants.KEY_MESSAGE)) {
@@ -48,7 +49,7 @@ public class VkController {
                         parsedMessage.get(Constants.KEY_MESSAGE),
                         parsedMessage.getOrDefault(Constants.KEY_PAYLOAD, ""),
                         userId);
-                Map<String, String> botMessage = messageHandler.getBotMessage(command);
+                BotMessage botMessage = messageHandler.getBotMessage(command);
                 messageSender.send(botMessage, userId);
             }
         }

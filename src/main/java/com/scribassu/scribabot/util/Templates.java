@@ -1,9 +1,9 @@
 package com.scribassu.scribabot.util;
 
-import com.scribassu.scribabot.dto.ExamPeriodEventDto;
-import com.scribassu.scribabot.dto.FullTimeLessonDto;
-import com.scribassu.scribabot.dto.TeacherExamPeriodEventDto;
-import com.scribassu.scribabot.dto.TeacherFullTimeLessonDto;
+import com.scribassu.scribabot.dto.rest.ExamPeriodEventDto;
+import com.scribassu.scribabot.dto.rest.FullTimeLessonDto;
+import com.scribassu.scribabot.dto.rest.TeacherExamPeriodEventDto;
+import com.scribassu.scribabot.dto.rest.TeacherFullTimeLessonDto;
 import com.scribassu.scribabot.text.CommandText;
 import com.scribassu.tracto.domain.*;
 import org.springframework.util.CollectionUtils;

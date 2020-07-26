@@ -1,11 +1,10 @@
 package com.scribassu.scribabot.services.bot;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.scribassu.scribabot.dto.TeacherListDto;
+import com.scribassu.scribabot.dto.BotMessage;
+import com.scribassu.scribabot.dto.rest.TeacherListDto;
 import com.scribassu.scribabot.dto.vkkeyboard.*;
 import com.scribassu.scribabot.entities.BotUser;
-import com.scribassu.scribabot.keyboard.KeyboardMap;
-import com.scribassu.scribabot.keyboard.KeyboardType;
 import com.scribassu.scribabot.repositories.BotUserRepository;
 import com.scribassu.scribabot.services.CallRestService;
 import com.scribassu.scribabot.text.CommandText;
@@ -15,9 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
+import static com.scribassu.scribabot.keyboard.KeyboardType.ButtonActions;
+import static com.scribassu.scribabot.keyboard.KeyboardType.ButtonFullTimeSchedule;
+import static com.scribassu.scribabot.text.MessageText.CANNOT_GET_TEACHERS;
 
 @Service
 public class TeacherService implements BotMessageService {
@@ -33,8 +34,8 @@ public class TeacherService implements BotMessageService {
     }
 
     @Override
-    public Map<String, String> getBotMessage(String message, BotUser botUser) {
-        Map<String, String> botMessage = new HashMap<>();
+    public BotMessage getBotMessage(String message, BotUser botUser) {
+        BotMessage botMessage = new BotMessage();
 
         if(null != botUser
                 && null != botUser.getPreviousUserMessage()
@@ -42,48 +43,37 @@ public class TeacherService implements BotMessageService {
             TeacherListDto teacherListDto = callRestService.getTeachersByWord(message);
             if(null != teacherListDto.getTeachers()) {
                 if(teacherListDto.getTeachers().isEmpty()) {
-                    botMessage.put(Constants.KEY_MESSAGE, "По вашему запросу ничего не нашлось.");
-                    botMessage.put(
-                            Constants.KEY_KEYBOARD,
-                            KeyboardMap.keyboards.get(KeyboardType.ButtonActions).getJsonText());
+                    botMessage = new BotMessage("По вашему запросу ничего не нашлось.", ButtonActions);
                 }
                 else {
                     List<Teacher> teachers = teacherListDto.getTeachers();
                     if(teachers.size() > Constants.MAX_VK_KEYBOARD_SIZE_FOR_LISTS) {
-                        botMessage.put(Constants.KEY_MESSAGE,
+                        botMessage = new BotMessage(
                                 "Искомый список преподавателей слишком большой для клавиатуры VK. " +
-                                        "Попробуйте запросить точнее.");
-                        botMessage.put(
-                                Constants.KEY_KEYBOARD,
-                                KeyboardMap.keyboards.get(KeyboardType.ButtonActions).getJsonText());
+                                        "Попробуйте запросить точнее.",
+                                ButtonActions);
                     }
                     else {
                         ObjectMapper objectMapper = new ObjectMapper();
                         try {
-                            botMessage.put(Constants.KEY_MESSAGE, "Выберите, для какого преподавателя хотите узнать расписание.");
-                            botMessage.put(
-                                    Constants.KEY_KEYBOARD,
+                            botMessage = new BotMessage(
+                                    "Выберите, для какого преподавателя хотите узнать расписание.",
                                     objectMapper.writeValueAsString(buildVkKeyboardFromTeachers(teachers)));
                         }
                         catch(Exception e) {
-                            botMessage.put(Constants.KEY_MESSAGE, "Не удалось получить список преподавателей.");
-                            botMessage.put(
-                                    Constants.KEY_KEYBOARD,
-                                    KeyboardMap.keyboards.get(KeyboardType.ButtonActions).getJsonText());
+                            botMessage = new BotMessage(CANNOT_GET_TEACHERS, ButtonActions);
                         }
                     }
                 }
             }
             else {
-                botMessage.put(Constants.KEY_MESSAGE, "Не удалось получить список преподавателей.");
-                botMessage.put(
-                        Constants.KEY_KEYBOARD,
-                        KeyboardMap.keyboards.get(KeyboardType.ButtonActions).getJsonText());
+                botMessage = new BotMessage(CANNOT_GET_TEACHERS, ButtonActions);
             }
         }
 
         if(message.equals(CommandText.TEACHER_SCHEDULE)) {
-            botMessage.put(Constants.KEY_MESSAGE, "Введите полностью или частично что-либо из ФИО преподавателя. " +
+            botMessage = new BotMessage(
+                    "Введите полностью или частично что-либо из ФИО преподавателя. " +
                     "Например, по запросу 'Ива' найдутся и 'Иванова', и 'Иван', и 'Иванович'. " +
                     "По запросу 'Иванов Ев' найдется 'Иванов Евгений', но не 'Иванова Евгения'.");
             botUser.setPreviousUserMessage(CommandText.TEACHER_SCHEDULE);
@@ -93,12 +83,9 @@ public class TeacherService implements BotMessageService {
         if(message.startsWith(CommandText.TEACHER_ID_PAYLOAD)) {
             botUser.setPreviousUserMessage(message);
             botUserRepository.save(botUser);
-            botMessage.put(
-                    Constants.KEY_MESSAGE,
-                    "Выберите, для чего хотите узнать расписание преподавателя.");
-            botMessage.put(
-                    Constants.KEY_KEYBOARD,
-                    KeyboardMap.keyboards.get(KeyboardType.ButtonFullTimeSchedule).getJsonText());
+            botMessage = new BotMessage(
+                    "Выберите, для чего хотите узнать расписание преподавателя.",
+                    ButtonFullTimeSchedule);
         }
 
         return botMessage;

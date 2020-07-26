@@ -1,6 +1,6 @@
 package com.scribassu.scribabot.services.bot.scheduled;
 
-import com.scribassu.scribabot.dto.FullTimeLessonDto;
+import com.scribassu.scribabot.dto.rest.FullTimeLessonDto;
 import com.scribassu.scribabot.text.CommandText;
 import com.scribassu.scribabot.entities.BotUser;
 import com.scribassu.scribabot.entities.ScheduleDailyNotification;
@@ -10,10 +10,7 @@ import com.scribassu.scribabot.services.CallRestService;
 import com.scribassu.scribabot.services.messages.MessageSender;
 import com.scribassu.scribabot.util.BotMessageUtils;
 import com.scribassu.scribabot.util.CalendarUtils;
-import com.scribassu.tracto.domain.FullTimeLesson;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;

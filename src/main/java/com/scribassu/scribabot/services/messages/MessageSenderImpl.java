@@ -1,5 +1,6 @@
 package com.scribassu.scribabot.services.messages;
 
+import com.scribassu.scribabot.dto.BotMessage;
 import com.scribassu.scribabot.util.Constants;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
@@ -31,22 +32,21 @@ public class MessageSenderImpl implements MessageSender {
     @Value("${scriba-bot.vk-api-version}")
     private String vkApiVersion;
 
-    public void send(Map<String, String> botMessage, String userId) throws Exception {
+    public void send(BotMessage botMessage, String userId) throws Exception {
         List<NameValuePair> postParameters = new ArrayList<>();
         postParameters.add(new BasicNameValuePair("access_token", token));
         postParameters.add(new BasicNameValuePair("v", vkApiVersion));
         postParameters.add(new BasicNameValuePair("user_id", userId));
         postParameters.add(new BasicNameValuePair("random_id", String.valueOf(random.nextInt())));
-        postParameters.add(new BasicNameValuePair("message", botMessage.get(Constants.KEY_MESSAGE)));
+        postParameters.add(new BasicNameValuePair("message", botMessage.getMessage()));
 
-        if(!StringUtils.isEmpty(botMessage.get(Constants.KEY_KEYBOARD))) {
-            postParameters.add(new BasicNameValuePair("keyboard", botMessage.get(Constants.KEY_KEYBOARD)));
+        if(botMessage.hasKeyboard()) {
+            postParameters.add(new BasicNameValuePair("keyboard", botMessage.getKeyboard()));
         }
 
         HttpPost postRequest = new HttpPost(VK_API_METHOD);
         postRequest.addHeader("accept", "application/x-www-form-urlencoded");
         postRequest.setEntity(new UrlEncodedFormEntity(postParameters, StandardCharsets.UTF_8));
-
         HttpClient client = HttpClientBuilder.create().build();
         HttpResponse response = client.execute(postRequest);
 
