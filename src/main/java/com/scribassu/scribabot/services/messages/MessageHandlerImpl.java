@@ -3,7 +3,9 @@ package com.scribassu.scribabot.services.messages;
 import com.scribassu.scribabot.dto.BotMessage;
 import com.scribassu.scribabot.dto.rest.FullTimeLessonDto;
 import com.scribassu.scribabot.entities.BotUser;
+import com.scribassu.scribabot.entities.UnrecognizedMessage;
 import com.scribassu.scribabot.repositories.BotUserRepository;
+import com.scribassu.scribabot.repositories.UnrecognizedMessageRepository;
 import com.scribassu.scribabot.services.CallRestService;
 import com.scribassu.scribabot.services.bot.*;
 import com.scribassu.scribabot.text.Command;
@@ -30,6 +32,7 @@ public class MessageHandlerImpl implements MessageHandler {
     private final SettingsService settingsService;
     private final StudentGroupService studentGroupService;
     private final TeacherService teacherService;
+    private final UnrecognizedMessageRepository unrecognizedMessageRepository;
 
     @Autowired
     public MessageHandlerImpl(CallRestService callRestService,
@@ -39,7 +42,8 @@ public class MessageHandlerImpl implements MessageHandler {
                               BotUserRepository botUserRepository,
                               SettingsService settingsService,
                               StudentGroupService studentGroupService,
-                              TeacherService teacherService) {
+                              TeacherService teacherService,
+                              UnrecognizedMessageRepository unrecognizedMessageRepository) {
         this.callRestService = callRestService;
         this.helpService = helpService;
         this.fullTimeLessonService = fullTimeLessonService;
@@ -48,6 +52,7 @@ public class MessageHandlerImpl implements MessageHandler {
         this.settingsService = settingsService;
         this.studentGroupService = studentGroupService;
         this.teacherService = teacherService;
+        this.unrecognizedMessageRepository = unrecognizedMessageRepository;
     }
 
     @Override
@@ -224,6 +229,7 @@ public class MessageHandlerImpl implements MessageHandler {
 
         if(botMessage.isEmpty()) {
             botMessage = new BotMessage("Сообщение не распознано или недостаточно данных :(", ButtonActions);
+            unrecognizedMessageRepository.save(new UnrecognizedMessage(command.toString(), botUser.toString()));
         }
 
         return botMessage;

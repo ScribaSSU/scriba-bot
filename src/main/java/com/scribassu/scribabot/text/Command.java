@@ -20,4 +20,13 @@ public class Command {
         this.payload = payload;
         this.userId = userId;
     }
+
+    @Override
+    public String toString() {
+        return "Command{" +
+                "message='" + message + '\'' +
+                ", payload='" + payload + '\'' +
+                ", userId='" + userId + '\'' +
+                '}';
+    }
 }

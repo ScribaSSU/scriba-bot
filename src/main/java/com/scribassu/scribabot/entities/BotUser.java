@@ -33,4 +33,16 @@ public class BotUser {
     public boolean wantTeacherSchedule() {
         return previousUserMessage.startsWith(CommandText.TEACHER_ID_PAYLOAD);
     }
+
+    @Override
+    public String toString() {
+        return "BotUser{" +
+                "userId='" + userId + '\'' +
+                ", department='" + department + '\'' +
+                ", groupNumber='" + groupNumber + '\'' +
+                ", educationForm='" + educationForm + '\'' +
+                ", previousUserMessage='" + previousUserMessage + '\'' +
+                ", filterNomDenom=" + filterNomDenom +
+                '}';
+    }
 }
