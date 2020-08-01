@@ -1,5 +1,6 @@
 package com.scribassu.scribabot.services.bot.scheduled;
 
+import com.scribassu.scribabot.dto.BotMessage;
 import com.scribassu.scribabot.dto.rest.FullTimeLessonDto;
 import com.scribassu.scribabot.entities.BotUser;
 import com.scribassu.scribabot.entities.ScheduleTomorrowNotification;
@@ -66,7 +67,7 @@ public class ScheduleTomorrowNotificationService {
                             botUser.getGroupNumber(),
                             dayNumber
                     );
-                    Map<String, String> botMessage = BotMessageUtils.getBotMessageForFullTimeLessons(lessons, CommandText.TOMORROW, botUser.isFilterNomDenom());
+                    BotMessage botMessage = BotMessageUtils.getBotMessageForFullTimeLessons(lessons, CommandText.TOMORROW, botUser.isFilterNomDenom());
                     messageSender.send(botMessage, botUser.getUserId());
                 }
             }
