@@ -9,25 +9,6 @@
 },
 "color": "primary"
 }
-],
-[
-{
-"action": {
-"type": "text",
-"payload": "{\"button\": \"2\"}",
-"label": "Заочная"
-},
-"color": "primary"
-}
-],
-[{
-"action": {
-"type": "text",
-"payload": "{\"button\": \"2\"}",
-"label": "Вечерняя"
-},
-"color": "primary"
-}
 ]
 ]
 }

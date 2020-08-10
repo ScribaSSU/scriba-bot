@@ -49,7 +49,7 @@ public class SettingsService implements BotMessageService {
                 ScheduleDailyNotification scheduleDailyNotificationEn =
                         scheduleDailyNotificationRepository.findByUserId(userId);
                 if(scheduleDailyNotificationEn != null && !scheduleDailyNotificationEn.isEnabled()) {
-                    scheduleDailyNotificationRepository.enableScheduleDailyNotificationByUserId(userId);
+                    scheduleDailyNotificationRepository.enableByUserId(userId);
                     botMessage = new BotMessage(String.format(MessageText.SCHEDULE_WILL_BE_SENT, "сегодня") +
                             scheduleDailyNotificationEn.getHourForSend() + " ч.");
                 }
@@ -70,7 +70,7 @@ public class SettingsService implements BotMessageService {
                 ScheduleDailyNotification scheduleDailyNotificationDis =
                         scheduleDailyNotificationRepository.findByUserId(userId);
                 if(scheduleDailyNotificationDis != null && scheduleDailyNotificationDis.isEnabled()) {
-                    scheduleDailyNotificationRepository.disableScheduleDailyNotificationByUserId(userId);
+                    scheduleDailyNotificationRepository.disableByUserId(userId);
                     botMessage = new BotMessage(String.format(MessageText.SCHEDULE_IS_DISABLED, "сегодня"));
                 }
                 else {
@@ -95,7 +95,7 @@ public class SettingsService implements BotMessageService {
                 ScheduleTomorrowNotification scheduleTomorrowNotificationEn =
                         scheduleTomorrowNotificationRepository.findByUserId(userId);
                 if(scheduleTomorrowNotificationEn != null && !scheduleTomorrowNotificationEn.isEnabled()) {
-                    scheduleTomorrowNotificationRepository.enableScheduleTomorrowNotificationByUserId(userId);
+                    scheduleTomorrowNotificationRepository.enableByUserId(userId);
                     botMessage = new BotMessage(String.format(MessageText.SCHEDULE_WILL_BE_SENT, "завтра") +
                             scheduleTomorrowNotificationEn.getHourForSend() + " ч.");
                 }
@@ -117,7 +117,7 @@ public class SettingsService implements BotMessageService {
                 ScheduleTomorrowNotification scheduleTomorrowNotificationDis =
                         scheduleTomorrowNotificationRepository.findByUserId(userId);
                 if(scheduleTomorrowNotificationDis != null && scheduleTomorrowNotificationDis.isEnabled()) {
-                    scheduleTomorrowNotificationRepository.disableScheduleTomorrowNotificationByUserId(userId);
+                    scheduleTomorrowNotificationRepository.disableByUserId(userId);
                     botMessage = new BotMessage(String.format(MessageText.SCHEDULE_IS_DISABLED, "завтра"));
                 }
                 else {

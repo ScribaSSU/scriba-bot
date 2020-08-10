@@ -10,6 +10,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -62,16 +63,14 @@ public class Templates {
                         .filter(f -> f.getWeekType().equals(WeekType.FULL) || f.getWeekType().equals(currentWeekType))
                         .collect(Collectors.toList());
             }
-            fullTimeLessons.sort((o1, o2) -> (o1.getLessonTime().getLessonNumber() - o2.getLessonTime().getLessonNumber()));
+            fullTimeLessons.sort(Comparator.comparingInt(o -> o.getLessonTime().getLessonNumber()));
             for (FullTimeLesson fullTimeLesson : fullTimeLessons) {
                 stringBuilder.append(appendTime(fullTimeLesson.getLessonTime())).append("\n")
-                        .append(fullTimeLesson.getLessonType().getType());
-                if (fullTimeLesson.getLessonType().equals(LessonType.LECTURE))
-                    stringBuilder.append(" \uD83D\uDCD7\n");
-                else if (fullTimeLesson.getLessonType().equals(LessonType.PRACTICE))
-                    stringBuilder.append(" \uD83D\uDCD8\n");
-                else if (fullTimeLesson.getLessonType().equals(LessonType.LABORATORY))
-                    stringBuilder.append(" \uD83D\uDCD5\n");
+                        .append(fullTimeLesson.getLessonType().getType()).append(fullTimeLesson.getLessonType().getType())
+                        .append(" ")
+                        .append(appendLessonType(fullTimeLesson))
+                        .append("\n");
+
                 if(!fullTimeLesson.getWeekType().equals(WeekType.FULL)) {
                     stringBuilder.append(fullTimeLesson.getWeekType().getType()).append("\n");
                 }
@@ -87,8 +86,18 @@ public class Templates {
         return stringBuilder.toString();
     }
 
-    public static String makeFullTimeExamPeriodTemplate(ExamPeriodEventDto examPeriodEventDto) {
+    public static String makeFullTimeExamPeriodTemplate(ExamPeriodEventDto examPeriodEventDto,
+                                                        String day) {
         StringBuilder stringBuilder = new StringBuilder();
+        if(day.equalsIgnoreCase(CommandText.TODAY)) {
+            stringBuilder.append("Сегодня").append("\n\n");
+        }
+        if(day.equalsIgnoreCase(CommandText.TOMORROW)) {
+            stringBuilder.append("Завтра").append("\n\n");
+        }
+        if(day.equalsIgnoreCase(CommandText.AFTER_TOMORROW)) {
+            stringBuilder.append("Послезавтра").append("\n\n");
+        }
         stringBuilder.append("Группа № ").append(examPeriodEventDto.getStudentGroup().getGroupNumberRus()).append("\n \n");
         List<ExamPeriodEvent> examPeriodEvents = examPeriodEventDto.getExamPeriodEvents();
         examPeriodEvents.sort((e1, e2) -> (int) (e1.getId() - e2.getId()));
@@ -98,7 +107,7 @@ public class Templates {
                 stringBuilder
                         .append(examPeriodEvent.getDay())
                         .append(" ")
-                        .append(examPeriodEvent.getMonth())
+                        .append(examPeriodEvent.getMonth().getRusGenitive())
                         .append(" ")
                         .append(examPeriodEvent.getYear())
                         .append("\n");
@@ -117,19 +126,8 @@ public class Templates {
                     .append("\n");
             stringBuilder
                     .append(examPeriodEvent.getExamPeriodEventType().getType())
-                    .append(" ");
-            if(examPeriodEvent.getExamPeriodEventType().equals(ExamPeriodEventType.MIDTERM)) {
-                stringBuilder.append("\uD83D\uDCA1");
-            }
-            if(examPeriodEvent.getExamPeriodEventType().equals(ExamPeriodEventType.MIDTERM_WITH_MARK)) {
-                stringBuilder.append("\uD83D\uDD25");
-            }
-            if(examPeriodEvent.getExamPeriodEventType().equals(ExamPeriodEventType.CONSULTATION)) {
-                stringBuilder.append("\uD83D\uDCD3");
-            }
-            if(examPeriodEvent.getExamPeriodEventType().equals(ExamPeriodEventType.EXAM)) {
-                stringBuilder.append("\uD83C\uDF40");
-            }
+                    .append(" ")
+                    .append(appendExamPeriodEventType(examPeriodEvent));
 
             stringBuilder.append("\n");
             stringBuilder.append(examPeriodEvent.getSubjectName()).append("\n");
@@ -187,16 +185,14 @@ public class Templates {
                         .filter(f -> f.getWeekType().equals(WeekType.FULL) || f.getWeekType().equals(currentWeekType))
                         .collect(Collectors.toList());
             }
-            fullTimeLessons.sort((o1, o2) -> (o1.getLessonTime().getLessonNumber() - o2.getLessonTime().getLessonNumber()));
+            fullTimeLessons.sort(Comparator.comparingInt(o -> o.getLessonTime().getLessonNumber()));
             for (FullTimeLesson fullTimeLesson : fullTimeLessons) {
                 stringBuilder.append(appendTime(fullTimeLesson.getLessonTime())).append("\n")
-                        .append(fullTimeLesson.getLessonType().getType());
-                if (fullTimeLesson.getLessonType().equals(LessonType.LECTURE))
-                    stringBuilder.append(" \uD83D\uDCD7\n");
-                else if (fullTimeLesson.getLessonType().equals(LessonType.PRACTICE))
-                    stringBuilder.append(" \uD83D\uDCD8\n");
-                else if (fullTimeLesson.getLessonType().equals(LessonType.LABORATORY))
-                    stringBuilder.append(" \uD83D\uDCD5\n");
+                        .append(fullTimeLesson.getLessonType().getType())
+                        .append(" ")
+                        .append(appendLessonType(fullTimeLesson))
+                        .append("\n");
+
                 if(!fullTimeLesson.getWeekType().equals(WeekType.FULL)) {
                     stringBuilder.append(fullTimeLesson.getWeekType().getType()).append("\n");
                 }
@@ -224,7 +220,7 @@ public class Templates {
                 stringBuilder
                         .append(examPeriodEvent.getDay())
                         .append(" ")
-                        .append(examPeriodEvent.getMonth())
+                        .append(examPeriodEvent.getMonth().getRusGenitive())
                         .append(" ")
                         .append(examPeriodEvent.getYear())
                         .append("\n");
@@ -243,21 +239,10 @@ public class Templates {
                     .append("\n");
             stringBuilder
                     .append(examPeriodEvent.getExamPeriodEventType().getType())
-                    .append(" ");
-            if(examPeriodEvent.getExamPeriodEventType().equals(ExamPeriodEventType.MIDTERM)) {
-                stringBuilder.append("\uD83D\uDCA1");
-            }
-            if(examPeriodEvent.getExamPeriodEventType().equals(ExamPeriodEventType.MIDTERM_WITH_MARK)) {
-                stringBuilder.append("\uD83D\uDD25");
-            }
-            if(examPeriodEvent.getExamPeriodEventType().equals(ExamPeriodEventType.CONSULTATION)) {
-                stringBuilder.append("\uD83D\uDCD3");
-            }
-            if(examPeriodEvent.getExamPeriodEventType().equals(ExamPeriodEventType.EXAM)) {
-                stringBuilder.append("\uD83C\uDF40");
-            }
+                    .append(" ")
+                    .append(appendExamPeriodEventType(examPeriodEvent))
+                    .append("\n");
 
-            stringBuilder.append("\n");
             stringBuilder.append(examPeriodEvent.getSubjectName()).append("\n");
             stringBuilder.append("Группа № ").append(examPeriodEvent.getStudentGroup().getGroupNumberRus()).append("\n");
             stringBuilder.append(examPeriodEvent.getPlace()).append("\n \n");
@@ -284,5 +269,27 @@ public class Templates {
         }
         stringBuilder.append(lessonTime.getMinuteEnd());
         return stringBuilder.toString();
+    }
+
+    private static String appendExamPeriodEventType(ExamPeriodEvent examPeriodEvent) {
+        if(examPeriodEvent.getExamPeriodEventType().equals(ExamPeriodEventType.MIDTERM))
+            return "\uD83D\uDCA1";
+        if(examPeriodEvent.getExamPeriodEventType().equals(ExamPeriodEventType.MIDTERM_WITH_MARK))
+            return "\uD83D\uDD25";
+        if(examPeriodEvent.getExamPeriodEventType().equals(ExamPeriodEventType.CONSULTATION))
+            return "\uD83D\uDCD3";
+        if(examPeriodEvent.getExamPeriodEventType().equals(ExamPeriodEventType.EXAM))
+            return "\uD83C\uDF40";
+        return "";
+    }
+
+    private static String appendLessonType(FullTimeLesson fullTimeLesson) {
+        if (fullTimeLesson.getLessonType().equals(LessonType.LECTURE))
+            return "\uD83D\uDCD7";
+        else if (fullTimeLesson.getLessonType().equals(LessonType.PRACTICE))
+            return "\uD83D\uDCD8";
+        else if (fullTimeLesson.getLessonType().equals(LessonType.LABORATORY))
+            return "\uD83D\uDCD5";
+        return "";
     }
 }

@@ -25,6 +25,7 @@ public class CallRestService {
     private String FULL_DEP_EDU_GROUP_DAY_LESSON_URI = "schedule/full/%s/%s/%s/%s";
 
     private String FULL_EXAM_DEP_GROUP_URI = "exam/full/%s/%s";
+    private String FULL_EXAM_DEP_GROUP_DAY_URI = "exam/full/%s/%s/%d/%d";
 
     private String STUDENT_GROUP_NUMBER_URI = "group/number/%s/%s/%s";
 
@@ -92,6 +93,26 @@ public class CallRestService {
                         FULL_EXAM_DEP_GROUP_URI,
                         departmentUrl,
                         groupNumber
+                );
+
+        //https://stackoverflow.com/questions/19540289/how-to-fix-the-java-security-cert-certificateexception-no-subject-alternative
+        javax.net.ssl.HttpsURLConnection.setDefaultHostnameVerifier((hostname, sslSession) -> true);
+
+        return restTemplate.getForObject(uri, ExamPeriodEventDto.class);
+    }
+
+    public ExamPeriodEventDto getFullTimeExamPeriodEventByDay(String departmentUrl,
+                                                              String groupNumber,
+                                                              Integer month,
+                                                              Integer day) {
+        RestTemplate restTemplate = new RestTemplate();
+        String uri = prefix +
+                String.format(
+                        FULL_EXAM_DEP_GROUP_DAY_URI,
+                        departmentUrl,
+                        groupNumber,
+                        month,
+                        day
                 );
 
         //https://stackoverflow.com/questions/19540289/how-to-fix-the-java-security-cert-certificateexception-no-subject-alternative

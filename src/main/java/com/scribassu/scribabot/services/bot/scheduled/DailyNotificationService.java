@@ -1,7 +1,10 @@
 package com.scribassu.scribabot.services.bot.scheduled;
 
 import com.scribassu.scribabot.dto.BotMessage;
+import com.scribassu.scribabot.dto.rest.ExamPeriodEventDto;
 import com.scribassu.scribabot.dto.rest.FullTimeLessonDto;
+import com.scribassu.scribabot.entities.ExamPeriodDailyNotification;
+import com.scribassu.scribabot.repositories.ExamPeriodDailyNotificationRepository;
 import com.scribassu.scribabot.text.CommandText;
 import com.scribassu.scribabot.entities.BotUser;
 import com.scribassu.scribabot.entities.ScheduleDailyNotification;
@@ -19,30 +22,37 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.Calendar;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @Service
-public class ScheduleDailyNotificationService {
+public class DailyNotificationService {
 
     private final MessageSender messageSender;
     private final CallRestService callRestService;
     private final BotUserRepository botUserRepository;
     private final ScheduleDailyNotificationRepository scheduleDailyNotificationRepository;
+    private final ExamPeriodDailyNotificationRepository examPeriodDailyNotificationRepository;
 
     @Autowired
-    public ScheduleDailyNotificationService(MessageSender messageSender,
-                                            CallRestService callRestService,
-                                            BotUserRepository botUserRepository,
-                                            ScheduleDailyNotificationRepository scheduleDailyNotificationRepository) {
+    public DailyNotificationService(MessageSender messageSender,
+                                    CallRestService callRestService,
+                                    BotUserRepository botUserRepository,
+                                    ScheduleDailyNotificationRepository scheduleDailyNotificationRepository,
+                                    ExamPeriodDailyNotificationRepository examPeriodDailyNotificationRepository) {
         this.messageSender = messageSender;
         this.callRestService = callRestService;
         this.botUserRepository = botUserRepository;
         this.scheduleDailyNotificationRepository = scheduleDailyNotificationRepository;
+        this.examPeriodDailyNotificationRepository = examPeriodDailyNotificationRepository;
     }
 
     @Scheduled(cron = "${scheduled.schedule-daily-notification-service.cron}")
     public void sendSchedule() throws Exception {
+        sendFullTimeSchedule();
+        sendExamPeriodSchedule();
+    }
+
+    private void sendFullTimeSchedule() throws Exception {
         Calendar calendar = CalendarUtils.getCalendar();
         int hourOfDay = calendar.get(Calendar.HOUR_OF_DAY);
         log.info("Start to send full time schedule for hour {}", hourOfDay);
@@ -62,6 +72,7 @@ public class ScheduleDailyNotificationService {
                     );
                     BotMessage botMessage = BotMessageUtils.getBotMessageForFullTimeLessons(lessons, CommandText.TODAY, botUser.isFilterNomDenom());
                     messageSender.send(botMessage, botUser.getUserId());
+                    Thread.sleep(51); //20 messages per second
                 }
             }
         }
@@ -69,5 +80,43 @@ public class ScheduleDailyNotificationService {
             log.info("No need to send full time schedule for hour {}", hourOfDay);
         }
         log.info("Finish sending full time schedule for hour {}", hourOfDay);
+    }
+
+    private void sendExamPeriodSchedule() throws Exception {
+        Calendar calendar = CalendarUtils.getCalendar();
+        int month = calendar.get(Calendar.MONTH) + 1;
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        int hourOfDay = calendar.get(Calendar.HOUR_OF_DAY);
+        log.info("Start to send exam period schedule for hour {}", hourOfDay);
+        List<ExamPeriodDailyNotification> examPeriodDailyNotifications =
+                examPeriodDailyNotificationRepository.findByHourForSendAndEnabled(hourOfDay);
+
+        if(!CollectionUtils.isEmpty(examPeriodDailyNotifications)) {
+            log.info("Send exam period schedule for hour {}", hourOfDay);
+            for(ExamPeriodDailyNotification notification : examPeriodDailyNotifications) {
+                BotUser botUser = botUserRepository.findOneById(notification.getUserId());
+                if(BotMessageUtils.isBotUserFullTime(botUser)) {
+                    ExamPeriodEventDto examPeriodEventDto = callRestService.getFullTimeExamPeriodEventByDay(
+                            botUser.getDepartment(),
+                            botUser.getGroupNumber(),
+                            month,
+                            day
+                    );
+                    BotMessage botMessage;
+                    if(examPeriodEventDto.getExamPeriodEvents().isEmpty()) {
+                        botMessage = BotMessageUtils.getBotMessageForEmptyFullTimeExamPeriod();
+                    }
+                    else {
+                        botMessage = BotMessageUtils.getBotMessageForFullTimeExamPeriod(examPeriodEventDto, CommandText.TODAY);
+                    }
+                    messageSender.send(botMessage, botUser.getUserId());
+                    Thread.sleep(51); //20 messages per second
+                }
+            }
+        }
+        else {
+            log.info("No need to send exam period schedule for hour {}", hourOfDay);
+        }
+        log.info("Finish sending exam period schedule for hour {}", hourOfDay);
     }
 }

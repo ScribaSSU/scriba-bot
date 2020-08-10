@@ -27,8 +27,8 @@ public class BotMessageUtils {
                 ButtonFullTimeSchedule);
     }
 
-    public static BotMessage getBotMessageForFullTimeExamPeriod(ExamPeriodEventDto examPeriodEventDto) {
-        return new BotMessage(Templates.makeFullTimeExamPeriodTemplate(examPeriodEventDto), ButtonFullTimeSchedule);
+    public static BotMessage getBotMessageForFullTimeExamPeriod(ExamPeriodEventDto examPeriodEventDto, String day) {
+        return new BotMessage(Templates.makeFullTimeExamPeriodTemplate(examPeriodEventDto, day), ButtonFullTimeSchedule);
     }
 
     public static BotMessage getBotMessageForEmptyFullTimeExamPeriod() {

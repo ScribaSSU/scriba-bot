@@ -5,7 +5,7 @@
 "action": {
 "type": "text",
 "payload": "{\"button\": \"1\"}",
-"label": "Расписание очников"
+"label": "Расписание студентов"
 },
 "color": "positive"
 }

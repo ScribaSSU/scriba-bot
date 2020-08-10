@@ -23,10 +23,10 @@ public interface ScheduleTomorrowNotificationRepository extends JpaRepository<Sc
     @Modifying
     @Transactional
     @Query("update ScheduleTomorrowNotification set isEnabled = true where userId = :userId")
-    void enableScheduleTomorrowNotificationByUserId(@Param("userId") String userId);
+    void enableByUserId(@Param("userId") String userId);
 
     @Modifying
     @Transactional
     @Query("update ScheduleTomorrowNotification set isEnabled = false where userId = :userId")
-    void disableScheduleTomorrowNotificationByUserId(@Param("userId") String userId);
+    void disableByUserId(@Param("userId") String userId);
 }

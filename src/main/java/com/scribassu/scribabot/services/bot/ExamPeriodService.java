@@ -60,7 +60,7 @@ public class ExamPeriodService implements BotMessageService {
                 return BotMessageUtils.getBotMessageForEmptyFullTimeExamPeriod();
             }
             else {
-                return BotMessageUtils.getBotMessageForFullTimeExamPeriod(examPeriodEventDto);
+                return BotMessageUtils.getBotMessageForFullTimeExamPeriod(examPeriodEventDto, "");
             }
         }
         else {

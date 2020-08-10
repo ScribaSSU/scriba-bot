@@ -4,7 +4,7 @@ import com.scribassu.scribabot.dto.BotMessage;
 import com.scribassu.scribabot.services.messages.MessageHandler;
 import com.scribassu.scribabot.services.messages.MessageParser;
 import com.scribassu.scribabot.services.messages.MessageSender;
-import com.scribassu.scribabot.text.Command;
+import com.scribassu.scribabot.dto.Command;
 import com.scribassu.scribabot.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,7 +38,6 @@ public class VkController {
     @PostMapping(value = "${scriba-bot.vk-url}", consumes = {"application/json"})
     @ResponseStatus(HttpStatus.OK)
     public String getMessage(@RequestBody String incomingMessage) throws Exception {
-        System.out.println("Get some message");
         Map<String, String> parsedMessage;
         if(incomingMessage != null) {
             parsedMessage = messageParser.parseMessage(incomingMessage);

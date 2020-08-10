@@ -1,6 +1,7 @@
 package com.scribassu.scribabot.services.messages;
 
 import com.scribassu.scribabot.dto.BotMessage;
+import com.scribassu.scribabot.dto.Command;
 import com.scribassu.scribabot.dto.rest.FullTimeLessonDto;
 import com.scribassu.scribabot.entities.BotUser;
 import com.scribassu.scribabot.entities.UnrecognizedMessage;
@@ -8,15 +9,12 @@ import com.scribassu.scribabot.repositories.BotUserRepository;
 import com.scribassu.scribabot.repositories.UnrecognizedMessageRepository;
 import com.scribassu.scribabot.services.CallRestService;
 import com.scribassu.scribabot.services.bot.*;
-import com.scribassu.scribabot.text.Command;
 import com.scribassu.scribabot.text.CommandText;
 import com.scribassu.scribabot.util.BotMessageUtils;
 import com.scribassu.scribabot.util.DepartmentConverter;
-import com.scribassu.scribabot.util.Templates;
 import com.scribassu.tracto.domain.EducationForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 import static com.scribassu.scribabot.keyboard.KeyboardType.*;
 import static com.scribassu.scribabot.text.MessageText.*;
@@ -61,7 +59,6 @@ public class MessageHandlerImpl implements MessageHandler {
         String message = command.getMessage().toLowerCase();
         String payload = command.getPayload().toLowerCase();
         String userId = command.getUserId();
-        System.out.println("Get message: " + message);
 
         BotUser botUser = botUserRepository.findOneById(userId);
 
@@ -213,14 +210,7 @@ public class MessageHandlerImpl implements MessageHandler {
                     params[3]
             );
 
-            if(CollectionUtils.isEmpty(lessons.getLessons())) {
-                botMessage = new BotMessage("Информация отсутствует.", ButtonActions);
-            }
-            else {
-                botMessage = new BotMessage(
-                        Templates.makeFullTimeLessonTemplate(lessons, "", botUser.isFilterNomDenom()),
-                        ButtonActions);
-            }
+            botMessage = BotMessageUtils.getBotMessageForFullTimeLessons(lessons, "", botUser.isFilterNomDenom());
         }
 
         if(payload.startsWith(CommandText.TEACHER_ID_PAYLOAD)) {

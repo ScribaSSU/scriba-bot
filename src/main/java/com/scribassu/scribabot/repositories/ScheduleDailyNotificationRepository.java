@@ -22,10 +22,10 @@ public interface ScheduleDailyNotificationRepository extends JpaRepository<Sched
     @Modifying
     @Transactional
     @Query("update ScheduleDailyNotification set isEnabled = true where userId = :userId")
-    void enableScheduleDailyNotificationByUserId(@Param("userId") String userId);
+    void enableByUserId(@Param("userId") String userId);
 
     @Modifying
     @Transactional
     @Query("update ScheduleDailyNotification set isEnabled = false where userId = :userId")
-    void disableScheduleDailyNotificationByUserId(@Param("userId") String userId);
+    void disableByUserId(@Param("userId") String userId);
 }

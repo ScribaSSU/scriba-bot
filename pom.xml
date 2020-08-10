@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.scribassu</groupId>
 	<artifactId>scriba-bot</artifactId>
-	<version>0.0.7-SNAPSHOT</version>
+	<version>0.0.8-SNAPSHOT</version>
 	<name>scriba-bot</name>
 	<description>Scriba bot</description>
 
@@ -35,7 +35,7 @@
 		<dependency>
 			<groupId>com.github.ScribaSSU</groupId>
 			<artifactId>tracto-domain</artifactId>
-			<version>1.0.7</version>
+			<version>1.0.10</version>
 		</dependency>
 
 		<dependency>
