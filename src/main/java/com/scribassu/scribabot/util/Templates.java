@@ -66,9 +66,9 @@ public class Templates {
             fullTimeLessons.sort(Comparator.comparingInt(o -> o.getLessonTime().getLessonNumber()));
             for (FullTimeLesson fullTimeLesson : fullTimeLessons) {
                 stringBuilder.append(appendTime(fullTimeLesson.getLessonTime())).append("\n")
-                        .append(fullTimeLesson.getLessonType().getType()).append(fullTimeLesson.getLessonType().getType())
+                        .append(fullTimeLesson.getLessonType().getType())
                         .append(" ")
-                        .append(appendLessonType(fullTimeLesson))
+                        .append(appendLessonTypeEmoji(fullTimeLesson))
                         .append("\n");
 
                 if(!fullTimeLesson.getWeekType().equals(WeekType.FULL)) {
@@ -127,7 +127,7 @@ public class Templates {
             stringBuilder
                     .append(examPeriodEvent.getExamPeriodEventType().getType())
                     .append(" ")
-                    .append(appendExamPeriodEventType(examPeriodEvent));
+                    .append(appendExamPeriodEventTypeEmoji(examPeriodEvent));
 
             stringBuilder.append("\n");
             stringBuilder.append(examPeriodEvent.getSubjectName()).append("\n");
@@ -190,7 +190,7 @@ public class Templates {
                 stringBuilder.append(appendTime(fullTimeLesson.getLessonTime())).append("\n")
                         .append(fullTimeLesson.getLessonType().getType())
                         .append(" ")
-                        .append(appendLessonType(fullTimeLesson))
+                        .append(appendLessonTypeEmoji(fullTimeLesson))
                         .append("\n");
 
                 if(!fullTimeLesson.getWeekType().equals(WeekType.FULL)) {
@@ -240,7 +240,7 @@ public class Templates {
             stringBuilder
                     .append(examPeriodEvent.getExamPeriodEventType().getType())
                     .append(" ")
-                    .append(appendExamPeriodEventType(examPeriodEvent))
+                    .append(appendExamPeriodEventTypeEmoji(examPeriodEvent))
                     .append("\n");
 
             stringBuilder.append(examPeriodEvent.getSubjectName()).append("\n");
@@ -271,7 +271,7 @@ public class Templates {
         return stringBuilder.toString();
     }
 
-    private static String appendExamPeriodEventType(ExamPeriodEvent examPeriodEvent) {
+    private static String appendExamPeriodEventTypeEmoji(ExamPeriodEvent examPeriodEvent) {
         if(examPeriodEvent.getExamPeriodEventType().equals(ExamPeriodEventType.MIDTERM))
             return "\uD83D\uDCA1";
         if(examPeriodEvent.getExamPeriodEventType().equals(ExamPeriodEventType.MIDTERM_WITH_MARK))
@@ -283,7 +283,7 @@ public class Templates {
         return "";
     }
 
-    private static String appendLessonType(FullTimeLesson fullTimeLesson) {
+    private static String appendLessonTypeEmoji(FullTimeLesson fullTimeLesson) {
         if (fullTimeLesson.getLessonType().equals(LessonType.LECTURE))
             return "\uD83D\uDCD7";
         else if (fullTimeLesson.getLessonType().equals(LessonType.PRACTICE))

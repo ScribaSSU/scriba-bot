@@ -43,6 +43,12 @@ public class SettingsService implements BotMessageService {
         String userId = botUser.getUserId();
 
         switch(message) {
+            case CommandText.SEND_EXAM_PERIOD:
+                botMessage = new BotMessage("Здесь вы можете настроить рассылку расписания сессии.", ButtonSettingsExamPeriodNotifications);
+                break;
+            case CommandText.SEND_SCHEDULE:
+                botMessage = new BotMessage("Здесь вы можете настроить рассылку расписания занятий.", ButtonSettingsScheduleNotifications);
+                break;
             case CommandText.SET_SEND_SCHEDULE_TIME_TODAY:
                 String formatSchedule = String.format(MessageText.CHOOSE_SCHEDULE_NOTIFICATION_TIME, "сегодня");
                 botMessage = new BotMessage(formatSchedule, ButtonHours);
@@ -322,6 +328,45 @@ public class SettingsService implements BotMessageService {
                 }
                 scheduleTomorrowNotificationRepository.save(scheduleTomorrowNotification);
             }
+            if(botUser.getPreviousUserMessage().equalsIgnoreCase(
+                    String.format(MessageText.CHOOSE_EXAM_PERIOD_NOTIFICATION_TIME, "сегодня"))) {
+                ExamPeriodDailyNotification examPeriodDailyNotification =
+                        examPeriodDailyNotificationRepository.findByUserId(userId);
+
+                if(examPeriodDailyNotification == null) {
+                    examPeriodDailyNotification = new ExamPeriodDailyNotification(userId, true, hourForSend);
+                }
+                else {
+                    examPeriodDailyNotification.setHourForSend(hourForSend);
+                }
+                examPeriodDailyNotificationRepository.save(examPeriodDailyNotification);
+            }
+            if(botUser.getPreviousUserMessage().equalsIgnoreCase(
+                    String.format(MessageText.CHOOSE_EXAM_PERIOD_NOTIFICATION_TIME, "завтра"))) {
+                ExamPeriodTomorrowNotification examPeriodTomorrowNotification =
+                        examPeriodTomorrowNotificationRepository.findByUserId(userId);
+
+                if(examPeriodTomorrowNotification == null) {
+                    examPeriodTomorrowNotification = new ExamPeriodTomorrowNotification(userId, true, hourForSend);
+                }
+                else {
+                    examPeriodTomorrowNotification.setHourForSend(hourForSend);
+                }
+                examPeriodTomorrowNotificationRepository.save(examPeriodTomorrowNotification);
+            }
+            if(botUser.getPreviousUserMessage().equalsIgnoreCase(
+                    String.format(MessageText.CHOOSE_EXAM_PERIOD_NOTIFICATION_TIME, "послезавтра"))) {
+                ExamPeriodAfterTomorrowNotification examPeriodAfterTomorrowNotification =
+                        examPeriodAfterTomorrowNotificationRepository.findByUserId(userId);
+
+                if(examPeriodAfterTomorrowNotification == null) {
+                    examPeriodAfterTomorrowNotification = new ExamPeriodAfterTomorrowNotification(userId, true, hourForSend);
+                }
+                else {
+                    examPeriodAfterTomorrowNotification.setHourForSend(hourForSend);
+                }
+                examPeriodAfterTomorrowNotificationRepository.save(examPeriodAfterTomorrowNotification);
+            }
             botMessage = new BotMessage("Теперь расписание будет приходить в " + hourForSend + " ч.", ButtonSettings);
         }
 
@@ -393,7 +438,7 @@ public class SettingsService implements BotMessageService {
 
         ExamPeriodDailyNotification examPeriodDailyNotification =
                 examPeriodDailyNotificationRepository.findByUserId(userId);
-        stringBuilder.append("Рассылка расписания на сегодня: ");
+        stringBuilder.append("Рассылка расписания сессии на сегодня: ");
 
         if(examPeriodDailyNotification == null) {
             stringBuilder.append("не подключена.");
@@ -418,7 +463,7 @@ public class SettingsService implements BotMessageService {
 
         ExamPeriodTomorrowNotification examPeriodTomorrowNotification =
                 examPeriodTomorrowNotificationRepository.findByUserId(userId);
-        stringBuilder.append("Рассылка расписания на сегодня: ");
+        stringBuilder.append("Рассылка расписания сессии на завтра: ");
 
         if(examPeriodTomorrowNotification == null) {
             stringBuilder.append("не подключена.");
@@ -443,7 +488,7 @@ public class SettingsService implements BotMessageService {
 
         ExamPeriodAfterTomorrowNotification examPeriodAfterTomorrowNotification =
                 examPeriodAfterTomorrowNotificationRepository.findByUserId(userId);
-        stringBuilder.append("Рассылка расписания на сегодня: ");
+        stringBuilder.append("Рассылка расписания сессии на послезавтра: ");
 
         if(examPeriodAfterTomorrowNotification == null) {
             stringBuilder.append("не подключена.");

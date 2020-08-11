@@ -5,7 +5,7 @@ import java.util.regex.Pattern;
 public class CommandText {
     public static final String HELLO = "привет";
     public static final String HELP = "справка";
-    public static final String FULL_TIME_SCHEDULE = "расписание очников";
+    public static final String FULL_TIME_SCHEDULE = "расписание студентов";
     public static final String TEACHER_SCHEDULE = "расписание преподавателей";
     public static final String SETTINGS = "настройки";
     public static final String MAIN_MENU = "главное меню";
@@ -47,7 +47,7 @@ public class CommandText {
     public static final String SET_SEND_EXAM_PERIOD_TIME_TOMORROW = "уст. время рассылки сессии на завтра";
     public static final String ENABLE_SEND_EXAM_PERIOD_TOMORROW = "вкл. рассылку сессии на завтра";
     public static final String DISABLE_SEND_EXAM_PERIOD_TOMORROW = "выкл. рассылку сессии на завтра";
-    public static final String SET_SEND_EXAM_PERIOD_TIME_AFTER_TOMORROW = "уст. время рассылки сессии на послезавтра";
+    public static final String SET_SEND_EXAM_PERIOD_TIME_AFTER_TOMORROW = "уст. время рас-ки сессии на послезавтра";
     public static final String ENABLE_SEND_EXAM_PERIOD_AFTER_TOMORROW = "вкл. рассылку сессии на послезавтра";
     public static final String DISABLE_SEND_EXAM_PERIOD_AFTER_TOMORROW = "выкл. рассылку сессии на послезавтра";
 
