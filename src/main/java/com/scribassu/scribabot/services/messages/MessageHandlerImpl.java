@@ -55,7 +55,7 @@ public class MessageHandlerImpl implements MessageHandler {
 
     @Override
     public BotMessage getBotMessage(Command command) {
-        BotMessage botMessage = new BotMessage();
+        BotMessage botMessage = new BotMessage("Сообщение не распознано или недостаточно данных :(", ButtonActions);
         String message = command.getMessage().toLowerCase();
         String payload = command.getPayload().toLowerCase();
         String userId = command.getUserId();
@@ -152,6 +152,17 @@ public class MessageHandlerImpl implements MessageHandler {
             case CommandText.SET_SEND_SCHEDULE_TIME_TOMORROW:
             case CommandText.ENABLE_SEND_SCHEDULE_TOMORROW:
             case CommandText.DISABLE_SEND_SCHEDULE_TOMORROW:
+            case CommandText.SET_SEND_EXAM_PERIOD_TIME_TODAY:
+            case CommandText.ENABLE_SEND_EXAM_PERIOD_TODAY:
+            case CommandText.DISABLE_SEND_EXAM_PERIOD_TODAY:
+            case CommandText.SET_SEND_EXAM_PERIOD_TIME_TOMORROW:
+            case CommandText.ENABLE_SEND_EXAM_PERIOD_TOMORROW:
+            case CommandText.DISABLE_SEND_EXAM_PERIOD_TOMORROW:
+            case CommandText.SET_SEND_EXAM_PERIOD_TIME_AFTER_TOMORROW:
+            case CommandText.ENABLE_SEND_EXAM_PERIOD_AFTER_TOMORROW:
+            case CommandText.DISABLE_SEND_EXAM_PERIOD_AFTER_TOMORROW:
+            case CommandText.SEND_EXAM_PERIOD:
+            case CommandText.SEND_SCHEDULE:
             case CommandText.ENABLE_FILTER_WEEK_TYPE:
             case CommandText.DISABLE_FILTER_WEEK_TYPE:
             case CommandText.CURRENT_USER_SETTINGS:
@@ -218,7 +229,6 @@ public class MessageHandlerImpl implements MessageHandler {
         }
 
         if(botMessage.isEmpty()) {
-            botMessage = new BotMessage("Сообщение не распознано или недостаточно данных :(", ButtonActions);
             unrecognizedMessageRepository.save(new UnrecognizedMessage(command.toString(), botUser.toString()));
         }
 

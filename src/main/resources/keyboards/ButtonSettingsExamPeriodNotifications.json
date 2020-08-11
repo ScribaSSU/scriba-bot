@@ -1,0 +1,106 @@
+{
+"one_time": true,
+"buttons": [
+[{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"1\"}",
+"label": "Уст. время рассылки сессии на сегодня"
+},
+"color": "primary"
+}
+],
+[
+{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"1\"}",
+"label": "Вкл. рассылку сессии на сегодня"
+},
+"color": "positive"
+},
+{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"1\"}",
+"label": "Выкл. рассылку сессии на сегодня"
+},
+"color": "negative"
+}
+],
+[{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"1\"}",
+"label": "Уст. время рассылки сессии на завтра"
+},
+"color": "primary"
+}
+],
+[
+{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"1\"}",
+"label": "Вкл. рассылку сессии на завтра"
+},
+"color": "positive"
+},
+{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"1\"}",
+"label": "Выкл. рассылку сессии на завтра"
+},
+"color": "negative"
+}
+],
+[{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"1\"}",
+"label": "Уст. время рассылки сессии на послезавтра"
+},
+"color": "primary"
+}
+],
+[
+{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"1\"}",
+"label": "Вкл. рассылку сессии на послезавтра"
+},
+"color": "positive"
+},
+{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"1\"}",
+"label": "Выкл. рассылку сессии на послезавтра"
+},
+"color": "negative"
+}
+],
+[
+{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"1\"}",
+"label": "Настройки"
+},
+"color": "primary"
+}
+],
+[
+{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"1\"}",
+"label": "Главное меню"
+},
+"color": "primary"
+}
+]
+]
+}

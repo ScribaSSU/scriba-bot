@@ -5,54 +5,18 @@
 "action": {
 "type": "text",
 "payload": "{\"button\": \"1\"}",
-"label": "Уст. время рассылки расп-я на сегодня"
+"label": "Рассылка расписания занятий"
 },
 "color": "primary"
-}
-],
-[
-{
-"action": {
-"type": "text",
-"payload": "{\"button\": \"1\"}",
-"label": "Вкл. рассылку расп-я на сегодня"
-},
-"color": "positive"
-},
-{
-"action": {
-"type": "text",
-"payload": "{\"button\": \"1\"}",
-"label": "Выкл. рассылку расп-я на сегодня"
-},
-"color": "negative"
 }
 ],
 [{
 "action": {
 "type": "text",
 "payload": "{\"button\": \"1\"}",
-"label": "Уст. время рассылки расп-я на завтра"
+"label": "Рассылка расписания сессии"
 },
 "color": "primary"
-}
-],
-[
-{
-"action": {
-"type": "text",
-"payload": "{\"button\": \"1\"}",
-"label": "Вкл. рассылку расп-я на завтра"
-},
-"color": "positive"
-},
-{
-"action": {
-"type": "text",
-"payload": "{\"button\": \"1\"}",
-"label": "Выкл. рассылку расп-я на завтра"
-},
-"color": "negative"
 }
 ],
 [

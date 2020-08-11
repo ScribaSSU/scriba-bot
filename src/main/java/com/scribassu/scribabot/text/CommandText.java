@@ -40,9 +40,22 @@ public class CommandText {
     public static final String SET_SEND_SCHEDULE_TIME_TOMORROW = "уст. время рассылки расп-я на завтра";
     public static final String ENABLE_SEND_SCHEDULE_TOMORROW = "вкл. рассылку расп-я на завтра";
     public static final String DISABLE_SEND_SCHEDULE_TOMORROW = "выкл. рассылку расп-я на завтра";
+
+    public static final String SET_SEND_EXAM_PERIOD_TIME_TODAY = "уст. время рассылки сессии на сегодня";
+    public static final String ENABLE_SEND_EXAM_PERIOD_TODAY = "вкл. рассылку сессии на сегодня";
+    public static final String DISABLE_SEND_EXAM_PERIOD_TODAY = "выкл. рассылку сессии на сегодня";
+    public static final String SET_SEND_EXAM_PERIOD_TIME_TOMORROW = "уст. время рассылки сессии на завтра";
+    public static final String ENABLE_SEND_EXAM_PERIOD_TOMORROW = "вкл. рассылку сессии на завтра";
+    public static final String DISABLE_SEND_EXAM_PERIOD_TOMORROW = "выкл. рассылку сессии на завтра";
+    public static final String SET_SEND_EXAM_PERIOD_TIME_AFTER_TOMORROW = "уст. время рассылки сессии на послезавтра";
+    public static final String ENABLE_SEND_EXAM_PERIOD_AFTER_TOMORROW = "вкл. рассылку сессии на послезавтра";
+    public static final String DISABLE_SEND_EXAM_PERIOD_AFTER_TOMORROW = "выкл. рассылку сессии на послезавтра";
+
     public static final String ENABLE_FILTER_WEEK_TYPE = "вкл. фильтр по типу недели";
     public static final String DISABLE_FILTER_WEEK_TYPE = "выкл. фильтр по типу недели";
     public static final String CURRENT_USER_SETTINGS = "текущие настройки пользователя";
+    public static final String SEND_EXAM_PERIOD = "рассылка расписания сессии";
+    public static final String SEND_SCHEDULE = "рассылка расписания занятий";
 
     private static final String HOUR = "^\\d*\\s*ч$";
     private static final String COURSE = "\\d{1}\\s*курс";

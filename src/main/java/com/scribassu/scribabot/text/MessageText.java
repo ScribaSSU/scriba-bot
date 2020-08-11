@@ -11,5 +11,10 @@ public class MessageText {
     public static final String SCHEDULE_IS_ENABLED_DOUBLE = "Рассылка расписания на %s уже включена.";
     public static final String SCHEDULE_IS_DISABLED_DOUBLE = "Рассылка расписания на %s уже выключена.";
     public static final String SCHEDULE_IS_DISABLED = "Рассылка расписания на %s выключена.";
+    public static final String CHOOSE_EXAM_PERIOD_NOTIFICATION_TIME = "Выберите удобное время для рассылки сессии на %s.";
+    public static final String EXAM_PERIOD_WILL_BE_SENT = "Теперь расписание сессии на %s будет приходить в ";
+    public static final String EXAM_PERIOD_IS_ENABLED_DOUBLE = "Рассылка расписания сессии на %s уже включена.";
+    public static final String EXAM_PERIOD_IS_DISABLED_DOUBLE = "Рассылка расписания сессии на %s уже выключена.";
+    public static final String EXAM_PERIOD_IS_DISABLED = "Рассылка расписания сессии на %s выключена.";
     public static final String CANNOT_GET_TEACHERS = "Не удалось получить список преподавателей.";
 }

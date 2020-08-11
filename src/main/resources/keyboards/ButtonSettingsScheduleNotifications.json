@@ -1,0 +1,79 @@
+{
+"one_time": true,
+"buttons": [
+[{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"1\"}",
+"label": "Уст. время рассылки расп-я на сегодня"
+},
+"color": "primary"
+}
+],
+[
+{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"1\"}",
+"label": "Вкл. рассылку расп-я на сегодня"
+},
+"color": "positive"
+},
+{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"1\"}",
+"label": "Выкл. рассылку расп-я на сегодня"
+},
+"color": "negative"
+}
+],
+[{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"1\"}",
+"label": "Уст. время рассылки расп-я на завтра"
+},
+"color": "primary"
+}
+],
+[
+{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"1\"}",
+"label": "Вкл. рассылку расп-я на завтра"
+},
+"color": "positive"
+},
+{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"1\"}",
+"label": "Выкл. рассылку расп-я на завтра"
+},
+"color": "negative"
+}
+],
+[
+{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"1\"}",
+"label": "Настройки"
+},
+"color": "primary"
+}
+],
+[
+{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"1\"}",
+"label": "Главное меню"
+},
+"color": "primary"
+}
+]
+]
+}
