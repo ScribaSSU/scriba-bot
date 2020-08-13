@@ -99,40 +99,57 @@ public class Templates {
             stringBuilder.append("Послезавтра").append("\n\n");
         }
         stringBuilder.append("Группа № ").append(examPeriodEventDto.getStudentGroup().getGroupNumberRus()).append("\n \n");
-        List<ExamPeriodEvent> examPeriodEvents = examPeriodEventDto.getExamPeriodEvents();
-        examPeriodEvents.sort((e1, e2) -> (int) (e1.getId() - e2.getId()));
 
-        for(ExamPeriodEvent examPeriodEvent : examPeriodEvents) {
-            if(examPeriodEvent.getDay() != -1) {
+        if(CollectionUtils.isEmpty(examPeriodEventDto.getExamPeriodEvents())) {
+            Calendar calendar = CalendarUtils.getCalendar();
+
+            if(day.equalsIgnoreCase(CommandText.TOMORROW)) {
+                calendar.add(Calendar.DAY_OF_MONTH, 1);
+            }
+            if(day.equalsIgnoreCase(CommandText.AFTER_TOMORROW)) {
+                calendar.add(Calendar.DAY_OF_MONTH, 2);
+            }
+
+            String data = calendar.get(Calendar.DAY_OF_MONTH) + "-" + (calendar.get(Calendar.MONTH) + 1) + "-" + calendar.get(Calendar.YEAR);
+            stringBuilder.append(data).append("\n");
+            stringBuilder.append("На этот день событий сессии не назначено.");
+        }
+        else {
+            List<ExamPeriodEvent> examPeriodEvents = examPeriodEventDto.getExamPeriodEvents();
+            examPeriodEvents.sort((e1, e2) -> (int) (e1.getId() - e2.getId()));
+
+            for(ExamPeriodEvent examPeriodEvent : examPeriodEvents) {
+                if(examPeriodEvent.getDay() != -1) {
+                    stringBuilder
+                            .append(examPeriodEvent.getDay())
+                            .append(" ")
+                            .append(examPeriodEvent.getMonth().getRusGenitive())
+                            .append(" ")
+                            .append(examPeriodEvent.getYear())
+                            .append("\n");
+                }
+                else {
+                    stringBuilder.append("\n");
+                }
                 stringBuilder
-                        .append(examPeriodEvent.getDay())
-                        .append(" ")
-                        .append(examPeriodEvent.getMonth().getRusGenitive())
-                        .append(" ")
-                        .append(examPeriodEvent.getYear())
+                        .append(examPeriodEvent.getHour())
+                        .append(":")
+                        .append(
+                                (examPeriodEvent.getMinute() < 10 ?
+                                        "0" + examPeriodEvent.getMinute() :
+                                        examPeriodEvent.getMinute())
+                        )
                         .append("\n");
-            }
-            else {
-                stringBuilder.append("\n");
-            }
-            stringBuilder
-                    .append(examPeriodEvent.getHour())
-                    .append(":")
-                    .append(
-                            (examPeriodEvent.getMinute() < 10 ?
-                                    "0" + examPeriodEvent.getMinute() :
-                                    examPeriodEvent.getMinute())
-                    )
-                    .append("\n");
-            stringBuilder
-                    .append(examPeriodEvent.getExamPeriodEventType().getType())
-                    .append(" ")
-                    .append(appendExamPeriodEventTypeEmoji(examPeriodEvent));
+                stringBuilder
+                        .append(examPeriodEvent.getExamPeriodEventType().getType())
+                        .append(" ")
+                        .append(appendExamPeriodEventTypeEmoji(examPeriodEvent));
 
-            stringBuilder.append("\n");
-            stringBuilder.append(examPeriodEvent.getSubjectName()).append("\n");
-            stringBuilder.append(appendTeacher(examPeriodEvent.getTeacher())).append("\n");
-            stringBuilder.append(examPeriodEvent.getPlace()).append("\n \n");
+                stringBuilder.append("\n");
+                stringBuilder.append(examPeriodEvent.getSubjectName()).append("\n");
+                stringBuilder.append(appendTeacher(examPeriodEvent.getTeacher())).append("\n");
+                stringBuilder.append(examPeriodEvent.getPlace()).append("\n \n");
+            }
         }
         return stringBuilder.toString();
     }

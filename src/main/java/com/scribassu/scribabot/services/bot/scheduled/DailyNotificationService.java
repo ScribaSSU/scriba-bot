@@ -103,12 +103,7 @@ public class DailyNotificationService {
                             day
                     );
                     BotMessage botMessage;
-                    if(examPeriodEventDto.getExamPeriodEvents().isEmpty()) {
-                        botMessage = BotMessageUtils.getBotMessageForEmptyFullTimeExamPeriod();
-                    }
-                    else {
-                        botMessage = BotMessageUtils.getBotMessageForFullTimeExamPeriod(examPeriodEventDto, CommandText.TODAY);
-                    }
+                    botMessage = BotMessageUtils.getBotMessageForFullTimeExamPeriod(examPeriodEventDto, CommandText.TODAY);
                     messageSender.send(botMessage, botUser.getUserId());
                     Thread.sleep(51); //20 messages per second
                 }

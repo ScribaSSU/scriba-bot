@@ -73,12 +73,7 @@ public class AfterTomorrowNotificationService {
                             day
                     );
                     BotMessage botMessage;
-                    if(examPeriodEventDto.getExamPeriodEvents().isEmpty()) {
-                        botMessage = BotMessageUtils.getBotMessageForEmptyFullTimeExamPeriod();
-                    }
-                    else {
-                        botMessage = BotMessageUtils.getBotMessageForFullTimeExamPeriod(examPeriodEventDto, CommandText.AFTER_TOMORROW);
-                    }
+                    botMessage = BotMessageUtils.getBotMessageForFullTimeExamPeriod(examPeriodEventDto, CommandText.AFTER_TOMORROW);
                     messageSender.send(botMessage, botUser.getUserId());
                     Thread.sleep(51); //20 messages per second
                 }
