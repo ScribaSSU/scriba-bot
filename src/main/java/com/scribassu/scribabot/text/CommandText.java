@@ -59,9 +59,13 @@ public class CommandText {
 
     private static final String HOUR = "^\\d*\\s*ч$";
     private static final String COURSE = "\\d{1}\\s*курс";
+    private static final String DEPARTMENT = "биолог|географ|геолог|идпо|и-т искусств|ииимо" +
+            "|и-т физ кул|ифиж|и-т химии|мехмат|фияил|книит|соцфак" +
+            "|фнбмт|фнп|психолог|пписо|физфак|философ|эконом|юрфак|геолог к-ж|к-ж яблочкова";
 
     public static final Pattern HOUR_PATTERN = Pattern.compile(HOUR);
     public static final Pattern COURSE_PATTERN = Pattern.compile(COURSE);
+    public static final Pattern DEPARTMENT_PATTERN = Pattern.compile(DEPARTMENT);
 
     public static final String DEPARTMENT_PAYLOAD = "dep";
     public static final String COURSE_PAYLOAD = "course";

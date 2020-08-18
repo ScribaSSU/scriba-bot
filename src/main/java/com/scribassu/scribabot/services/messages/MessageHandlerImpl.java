@@ -10,6 +10,7 @@ import com.scribassu.scribabot.repositories.UnrecognizedMessageRepository;
 import com.scribassu.scribabot.services.CallRestService;
 import com.scribassu.scribabot.services.bot.*;
 import com.scribassu.scribabot.text.CommandText;
+import com.scribassu.scribabot.text.MessageText;
 import com.scribassu.scribabot.util.BotMessageUtils;
 import com.scribassu.scribabot.util.DepartmentConverter;
 import com.scribassu.tracto.domain.EducationForm;
@@ -55,7 +56,7 @@ public class MessageHandlerImpl implements MessageHandler {
 
     @Override
     public BotMessage getBotMessage(Command command) {
-        BotMessage botMessage = new BotMessage("Сообщение не распознано или недостаточно данных :(", ButtonActions);
+        BotMessage botMessage = new BotMessage(MessageText.DEFAULT_MESSAGE, ButtonActions);
         String message = command.getMessage().toLowerCase();
         String payload = command.getPayload().toLowerCase();
         String userId = command.getUserId();
@@ -180,7 +181,8 @@ public class MessageHandlerImpl implements MessageHandler {
             botMessage = settingsService.getBotMessage(message, botUser);
         }
 
-        if(CommandText.DEPARTMENT_PAYLOAD.equalsIgnoreCase(payload)) {
+        if(CommandText.DEPARTMENT_PAYLOAD.equalsIgnoreCase(payload)
+            || CommandText.DEPARTMENT_PATTERN.matcher(message).matches()) {
             botUserRepository.updateDepartment(DepartmentConverter.convertToUrl(message), userId);
             botMessage = new BotMessage("Выберите форму расписания.", ButtonGroupType);
         }
@@ -228,7 +230,13 @@ public class MessageHandlerImpl implements MessageHandler {
             botMessage = teacherService.getBotMessage(payload, botUser);
         }
 
-        if(botMessage.isEmpty()) {
+        if(null == botUser) {
+            botMessage = new BotMessage("Для начала работы с ботом напишите 'Привет'.");
+            botUser = new BotUser();
+            botUser.setUserId(userId); //DON'T SAVE! It is only for unrecognized messages check
+        }
+
+        if(botMessage.isDefault()) {
             unrecognizedMessageRepository.save(new UnrecognizedMessage(command.toString(), botUser.toString()));
         }
 

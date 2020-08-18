@@ -2,6 +2,7 @@ package com.scribassu.scribabot.dto;
 
 import com.scribassu.scribabot.keyboard.KeyboardMap;
 import com.scribassu.scribabot.keyboard.KeyboardType;
+import com.scribassu.scribabot.text.MessageText;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -39,6 +40,11 @@ public class BotMessage {
 
     public boolean isEmpty() {
         return StringUtils.isEmpty(message);
+    }
+
+    public boolean isDefault() {
+        return message.equalsIgnoreCase(MessageText.DEFAULT_MESSAGE)
+                && keyboard.equalsIgnoreCase(KeyboardMap.get(KeyboardType.ButtonActions).getJsonText());
     }
 
     public boolean hasKeyboard() {

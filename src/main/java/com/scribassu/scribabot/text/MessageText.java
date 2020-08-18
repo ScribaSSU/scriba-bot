@@ -1,6 +1,7 @@
 package com.scribassu.scribabot.text;
 
 public class MessageText {
+    public static final String DEFAULT_MESSAGE = "Сообщение не распознано или недостаточно данных :(";
     public static final String GREETING_WITH_CHOOSE_DEPARTMENT = "Привет! Для начала работы с ботом нужно выбрать факультет.";
     public static final String THIS_IS_MAIN_MENU = "Это главное меню бота. Отсюда вы можете узнать расписание, задать настройки и не только.";
     public static final String CHOOSE_DEPARTMENT = "Выберите факультет.";
