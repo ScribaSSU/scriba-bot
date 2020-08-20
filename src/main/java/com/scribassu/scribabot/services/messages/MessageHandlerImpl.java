@@ -88,12 +88,14 @@ public class MessageHandlerImpl implements MessageHandler {
                     botUser = new BotUser(userId);
                     botUser.setFilterNomDenom(false);
                     botUser = botUserRepository.save(botUser);
+                    botMessage = new BotMessage(GREETING_WITH_CHOOSE_DEPARTMENT, ButtonDepartment);
+                    botUserRepository.updatePreviousUserMessage(GREETING_WITH_CHOOSE_DEPARTMENT, botUser.getUserId());
                 }
                 else {
                     botUser.setPreviousUserMessage("");
                     botUserRepository.save(botUser);
+                    botMessage = new BotMessage("Возврат в главное меню.", ButtonActions);
                 }
-                botMessage = new BotMessage("Возврат в главное меню.", ButtonActions);
                 break;
             case CommandText.HELP:
                 botMessage = helpService.getBotMessage(message, botUser);
@@ -194,7 +196,7 @@ public class MessageHandlerImpl implements MessageHandler {
         if(CommandText.CHOOSE_STUDENT_GROUP.equalsIgnoreCase(payload)) {
             botUserRepository.updateGroupNumber(message, userId);
             botUser = botUserRepository.findOneById(userId);
-            if(botUser.getPreviousUserMessage() != null && botUser.getPreviousUserMessage().equalsIgnoreCase(GREETING_WITH_CHOOSE_DEPARTMENT)) {
+            if(null != botUser.getPreviousUserMessage() && botUser.getPreviousUserMessage().equalsIgnoreCase(GREETING_WITH_CHOOSE_DEPARTMENT)) {
                 botMessage = new BotMessage(THIS_IS_MAIN_MENU, ButtonActions);
                 botUserRepository.updatePreviousUserMessage("", botUser.getUserId());
             }
@@ -217,12 +219,7 @@ public class MessageHandlerImpl implements MessageHandler {
 
         if(message.startsWith("р ")) {
             String[] params = message.split(" ");
-            FullTimeLessonDto lessons = callRestService.getFullTimeLessonsByDay(
-                    params[1],
-                    params[2],
-                    params[3]
-            );
-
+            FullTimeLessonDto lessons = callRestService.getFullTimeLessonsByDay(params[1], params[2], params[3]);
             botMessage = BotMessageUtils.getBotMessageForFullTimeLessons(lessons, "", botUser.isFilterNomDenom());
         }
 
@@ -230,8 +227,12 @@ public class MessageHandlerImpl implements MessageHandler {
             botMessage = teacherService.getBotMessage(payload, botUser);
         }
 
+        if(CommandText.COURSE_PATTERN.matcher(message).matches()) {
+            botMessage = studentGroupService.getBotMessage(message, botUser);
+        }
+
         if(null == botUser) {
-            botMessage = new BotMessage("Для начала работы с ботом напишите 'Привет'.");
+            botMessage = new BotMessage("Для начала работы с ботом напишите 'Привет', чтобы настроить факультет и группу.");
             botUser = new BotUser();
             botUser.setUserId(userId); //DON'T SAVE! It is only for unrecognized messages check
         }
