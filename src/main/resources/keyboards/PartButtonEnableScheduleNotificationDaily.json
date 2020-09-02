@@ -1,0 +1,8 @@
+{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"1\"}",
+"label": "Вкл. рассылку расп-я на сегодня"
+},
+"color": "positive"
+}

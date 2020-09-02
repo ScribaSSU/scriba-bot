@@ -3,7 +3,6 @@ package com.scribassu.scribabot.dto;
 import com.scribassu.scribabot.keyboard.KeyboardMap;
 import com.scribassu.scribabot.keyboard.KeyboardType;
 import com.scribassu.scribabot.text.MessageText;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -36,6 +35,10 @@ public class BotMessage {
 
     public void setKeyboard(KeyboardType keyboardType) {
         this.keyboard = KeyboardMap.get(keyboardType).getJsonText();
+    }
+
+    public void formatKeyboard(String replacedString, KeyboardType keyboardType) {
+        this.keyboard = this.keyboard.replace(replacedString, KeyboardMap.get(keyboardType).getJsonText());
     }
 
     public boolean isEmpty() {

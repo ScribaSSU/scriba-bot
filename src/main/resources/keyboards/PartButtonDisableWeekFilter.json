@@ -1,0 +1,8 @@
+{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"1\"}",
+"label": "Выкл. фильтр по типу недели"
+},
+"color": "negative"
+}

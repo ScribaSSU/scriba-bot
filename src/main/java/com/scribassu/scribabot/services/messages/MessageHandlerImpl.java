@@ -5,6 +5,8 @@ import com.scribassu.scribabot.dto.Command;
 import com.scribassu.scribabot.dto.rest.FullTimeLessonDto;
 import com.scribassu.scribabot.entities.BotUser;
 import com.scribassu.scribabot.entities.UnrecognizedMessage;
+import com.scribassu.scribabot.keyboard.FormatUtils;
+import com.scribassu.scribabot.keyboard.KeyboardFormatter;
 import com.scribassu.scribabot.repositories.BotUserRepository;
 import com.scribassu.scribabot.repositories.UnrecognizedMessageRepository;
 import com.scribassu.scribabot.services.CallRestService;
@@ -32,6 +34,7 @@ public class MessageHandlerImpl implements MessageHandler {
     private final StudentGroupService studentGroupService;
     private final TeacherService teacherService;
     private final UnrecognizedMessageRepository unrecognizedMessageRepository;
+    private final KeyboardFormatter keyboardFormatter;
 
     @Autowired
     public MessageHandlerImpl(CallRestService callRestService,
@@ -42,7 +45,8 @@ public class MessageHandlerImpl implements MessageHandler {
                               SettingsService settingsService,
                               StudentGroupService studentGroupService,
                               TeacherService teacherService,
-                              UnrecognizedMessageRepository unrecognizedMessageRepository) {
+                              UnrecognizedMessageRepository unrecognizedMessageRepository,
+                              KeyboardFormatter keyboardFormatter) {
         this.callRestService = callRestService;
         this.helpService = helpService;
         this.fullTimeLessonService = fullTimeLessonService;
@@ -52,6 +56,7 @@ public class MessageHandlerImpl implements MessageHandler {
         this.studentGroupService = studentGroupService;
         this.teacherService = teacherService;
         this.unrecognizedMessageRepository = unrecognizedMessageRepository;
+        this.keyboardFormatter = keyboardFormatter;
     }
 
     @Override
@@ -147,7 +152,8 @@ public class MessageHandlerImpl implements MessageHandler {
                 botMessage = fullTimeLessonService.getBotMessage(message, botUser);
                 break;
             case CommandText.SETTINGS:
-                botMessage = new BotMessage("Здесь вы можете настроить некоторые функции бота.", ButtonSettings);
+                botMessage = new BotMessage("Здесь вы можете настроить бота под себя.", ButtonSettings);
+                botMessage = keyboardFormatter.formatSettings(botMessage, botUser);
                 break;
             case CommandText.SET_SEND_SCHEDULE_TIME_TODAY:
             case CommandText.ENABLE_SEND_SCHEDULE_TODAY:

@@ -96,7 +96,7 @@ public class StudentGroupService implements BotMessageService {
         int i = 0;
         int row = 0;
         vkKeyboardButtons.add(new ArrayList<>());
-        int mod = groupNumbers.get(0).length() > 5 ? 4 : 5; //to make long numbers visible
+        int mod = groupNumbers.get(0).length() > 5 ? 3 : 5; //to make long numbers visible
         int mmod = mod - 1;
 
         while(i < groupNumbers.size()) {

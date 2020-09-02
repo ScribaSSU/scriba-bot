@@ -11,22 +11,7 @@
 }
 ],
 [
-{
-"action": {
-"type": "text",
-"payload": "{\"button\": \"1\"}",
-"label": "Вкл. рассылку сессии на сегодня"
-},
-"color": "positive"
-},
-{
-"action": {
-"type": "text",
-"payload": "{\"button\": \"1\"}",
-"label": "Выкл. рассылку сессии на сегодня"
-},
-"color": "negative"
-}
+EXAM_NOTIF_DAILY
 ],
 [{
 "action": {
@@ -38,22 +23,7 @@
 }
 ],
 [
-{
-"action": {
-"type": "text",
-"payload": "{\"button\": \"1\"}",
-"label": "Вкл. рассылку сессии на завтра"
-},
-"color": "positive"
-},
-{
-"action": {
-"type": "text",
-"payload": "{\"button\": \"1\"}",
-"label": "Выкл. рассылку сессии на завтра"
-},
-"color": "negative"
-}
+EXAM_NOTIF_TOMORROW
 ],
 [{
 "action": {
@@ -65,22 +35,7 @@
 }
 ],
 [
-{
-"action": {
-"type": "text",
-"payload": "{\"button\": \"1\"}",
-"label": "Вкл. рассылку сессии на послезавтра"
-},
-"color": "positive"
-},
-{
-"action": {
-"type": "text",
-"payload": "{\"button\": \"1\"}",
-"label": "Выкл. рассылку сессии на послезавтра"
-},
-"color": "negative"
-}
+EXAM_NOTIF_AFTER_TOMORROW
 ],
 [
 {

@@ -9,9 +9,21 @@ public enum KeyboardType {
     ButtonHours("ButtonHours.json"),
     ButtonCourse("ButtonCourse.json"),
     ButtonSettingsScheduleNotifications("ButtonSettingsScheduleNotifications.json"),
-    ButtonSettingsExamPeriodNotifications("ButtonSettingsExamPeriodNotifications.json");
+    ButtonSettingsExamPeriodNotifications("ButtonSettingsExamPeriodNotifications.json"),
+    PartButtonEnableWeekFilter("PartButtonEnableWeekFilter.json"),
+    PartButtonDisableWeekFilter("PartButtonDisableWeekFilter.json"),
+    PartButtonDisableExamNotificationAfterTomorrow("PartButtonDisableExamNotificationAfterTomorrow.json"),
+    PartButtonDisableExamNotificationDaily("PartButtonDisableExamNotificationDaily.json"),
+    PartButtonDisableExamNotificationTomorrow("PartButtonDisableExamNotificationTomorrow.json"),
+    PartButtonDisableScheduleNotificationDaily("PartButtonDisableScheduleNotificationDaily.json"),
+    PartButtonDisableScheduleNotificationTomorrow("PartButtonDisableScheduleNotificationTomorrow.json"),
+    PartButtonEnableExamNotificationAfterTomorrow("PartButtonEnableExamNotificationAfterTomorrow.json"),
+    PartButtonEnableExamNotificationDaily("PartButtonEnableExamNotificationDaily.json"),
+    PartButtonEnableExamNotificationTomorrow("PartButtonEnableExamNotificationTomorrow.json"),
+    PartButtonEnableScheduleNotificationDaily("PartButtonEnableScheduleNotificationDaily.json"),
+    PartButtonEnableScheduleNotificationTomorrow("PartButtonEnableScheduleNotificationTomorrow.json");
 
-    private String filename;
+    private final String filename;
 
     public String getFilename() {
         return filename;

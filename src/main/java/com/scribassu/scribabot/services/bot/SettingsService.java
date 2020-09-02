@@ -2,6 +2,8 @@ package com.scribassu.scribabot.services.bot;
 
 import com.scribassu.scribabot.dto.BotMessage;
 import com.scribassu.scribabot.entities.*;
+import com.scribassu.scribabot.keyboard.FormatUtils;
+import com.scribassu.scribabot.keyboard.KeyboardFormatter;
 import com.scribassu.scribabot.repositories.*;
 import com.scribassu.scribabot.text.CommandText;
 import com.scribassu.scribabot.text.MessageText;
@@ -21,6 +23,7 @@ public class SettingsService implements BotMessageService {
     private final ExamPeriodDailyNotificationRepository examPeriodDailyNotificationRepository;
     private final ExamPeriodTomorrowNotificationRepository examPeriodTomorrowNotificationRepository;
     private final ExamPeriodAfterTomorrowNotificationRepository examPeriodAfterTomorrowNotificationRepository;
+    private final KeyboardFormatter keyboardFormatter;
 
     @Autowired
     public SettingsService(BotUserRepository botUserRepository,
@@ -28,13 +31,15 @@ public class SettingsService implements BotMessageService {
                            ScheduleTomorrowNotificationRepository scheduleTomorrowNotificationRepository,
                            ExamPeriodDailyNotificationRepository examPeriodDailyNotificationRepository,
                            ExamPeriodTomorrowNotificationRepository examPeriodTomorrowNotificationRepository,
-                           ExamPeriodAfterTomorrowNotificationRepository examPeriodAfterTomorrowNotificationRepository) {
+                           ExamPeriodAfterTomorrowNotificationRepository examPeriodAfterTomorrowNotificationRepository,
+                           KeyboardFormatter keyboardFormatter) {
         this.botUserRepository = botUserRepository;
         this.scheduleDailyNotificationRepository = scheduleDailyNotificationRepository;
         this.scheduleTomorrowNotificationRepository = scheduleTomorrowNotificationRepository;
         this.examPeriodDailyNotificationRepository = examPeriodDailyNotificationRepository;
         this.examPeriodTomorrowNotificationRepository = examPeriodTomorrowNotificationRepository;
         this.examPeriodAfterTomorrowNotificationRepository = examPeriodAfterTomorrowNotificationRepository;
+        this.keyboardFormatter = keyboardFormatter;
     }
 
     @Override
@@ -45,9 +50,11 @@ public class SettingsService implements BotMessageService {
         switch(message) {
             case CommandText.SEND_EXAM_PERIOD:
                 botMessage = new BotMessage("Здесь вы можете настроить рассылку расписания сессии.", ButtonSettingsExamPeriodNotifications);
+                botMessage = keyboardFormatter.formatSettingsExamNotif(botMessage, botUser);
                 break;
             case CommandText.SEND_SCHEDULE:
                 botMessage = new BotMessage("Здесь вы можете настроить рассылку расписания занятий.", ButtonSettingsScheduleNotifications);
+                botMessage = keyboardFormatter.formatSettingsScheduleNotif(botMessage, botUser);
                 break;
             case CommandText.SET_SEND_SCHEDULE_TIME_TODAY:
                 String formatSchedule = String.format(MessageText.CHOOSE_SCHEDULE_NOTIFICATION_TIME, "сегодня");
@@ -74,6 +81,7 @@ public class SettingsService implements BotMessageService {
                     }
                 }
                 botMessage.setKeyboard(ButtonSettingsScheduleNotifications);
+                botMessage = keyboardFormatter.formatSettingsScheduleNotif(botMessage, botUser);
                 break;
             case CommandText.DISABLE_SEND_SCHEDULE_TODAY:
                 ScheduleDailyNotification scheduleDailyNotificationDis =
@@ -93,6 +101,7 @@ public class SettingsService implements BotMessageService {
                     }
                 }
                 botMessage.setKeyboard(ButtonSettingsScheduleNotifications);
+                botMessage = keyboardFormatter.formatSettingsScheduleNotif(botMessage, botUser);
                 break;
             case CommandText.SET_SEND_SCHEDULE_TIME_TOMORROW:
                 formatSchedule = String.format(MessageText.CHOOSE_SCHEDULE_NOTIFICATION_TIME, "завтра");
@@ -120,6 +129,7 @@ public class SettingsService implements BotMessageService {
                     }
                 }
                 botMessage.setKeyboard(ButtonSettingsScheduleNotifications);
+                botMessage = keyboardFormatter.formatSettingsScheduleNotif(botMessage, botUser);
                 break;
             case CommandText.DISABLE_SEND_SCHEDULE_TOMORROW:
                 ScheduleTomorrowNotification scheduleTomorrowNotificationDis =
@@ -139,6 +149,7 @@ public class SettingsService implements BotMessageService {
                     }
                 }
                 botMessage.setKeyboard(ButtonSettingsScheduleNotifications);
+                botMessage = keyboardFormatter.formatSettingsScheduleNotif(botMessage, botUser);
                 break;
             case CommandText.SET_SEND_EXAM_PERIOD_TIME_TODAY:
                 formatSchedule = String.format(MessageText.CHOOSE_EXAM_PERIOD_NOTIFICATION_TIME, "сегодня");
@@ -166,6 +177,7 @@ public class SettingsService implements BotMessageService {
                     }
                 }
                 botMessage.setKeyboard(ButtonSettingsExamPeriodNotifications);
+                botMessage = keyboardFormatter.formatSettingsExamNotif(botMessage, botUser);
                 break;
             case CommandText.DISABLE_SEND_EXAM_PERIOD_TODAY:
                 ExamPeriodDailyNotification examPeriodDailyNotificationDis =
@@ -185,6 +197,7 @@ public class SettingsService implements BotMessageService {
                     }
                 }
                 botMessage.setKeyboard(ButtonSettingsExamPeriodNotifications);
+                botMessage = keyboardFormatter.formatSettingsExamNotif(botMessage, botUser);
                 break;
             case CommandText.SET_SEND_EXAM_PERIOD_TIME_TOMORROW:
                 formatSchedule = String.format(MessageText.CHOOSE_EXAM_PERIOD_NOTIFICATION_TIME, "завтра");
@@ -212,6 +225,7 @@ public class SettingsService implements BotMessageService {
                     }
                 }
                 botMessage.setKeyboard(ButtonSettingsExamPeriodNotifications);
+                botMessage = keyboardFormatter.formatSettingsExamNotif(botMessage, botUser);
                 break;
             case CommandText.DISABLE_SEND_EXAM_PERIOD_TOMORROW:
                 ExamPeriodTomorrowNotification examPeriodTomorrowNotificationDis =
@@ -231,6 +245,7 @@ public class SettingsService implements BotMessageService {
                     }
                 }
                 botMessage.setKeyboard(ButtonSettingsExamPeriodNotifications);
+                botMessage = keyboardFormatter.formatSettingsExamNotif(botMessage, botUser);
                 break;
             case CommandText.SET_SEND_EXAM_PERIOD_TIME_AFTER_TOMORROW:
                 formatSchedule = String.format(MessageText.CHOOSE_EXAM_PERIOD_NOTIFICATION_TIME, "послезавтра");
@@ -258,6 +273,7 @@ public class SettingsService implements BotMessageService {
                     }
                 }
                 botMessage.setKeyboard(ButtonSettingsExamPeriodNotifications);
+                botMessage = keyboardFormatter.formatSettingsExamNotif(botMessage, botUser);
                 break;
             case CommandText.DISABLE_SEND_EXAM_PERIOD_AFTER_TOMORROW:
                 ExamPeriodAfterTomorrowNotification examPeriodAfterTomorrowNotificationDis =
@@ -277,16 +293,19 @@ public class SettingsService implements BotMessageService {
                     }
                 }
                 botMessage.setKeyboard(ButtonSettingsExamPeriodNotifications);
+                botMessage = keyboardFormatter.formatSettingsExamNotif(botMessage, botUser);
                 break;
             case CommandText.ENABLE_FILTER_WEEK_TYPE:
                 botUser.setFilterNomDenom(true);
                 botUserRepository.save(botUser);
                 botMessage = new BotMessage("Включена фильтрация по типу недели.", ButtonSettings);
+                botMessage = keyboardFormatter.formatSettings(botMessage, botUser);
                 break;
             case CommandText.DISABLE_FILTER_WEEK_TYPE:
                 botUser.setFilterNomDenom(false);
                 botUserRepository.save(botUser);
                 botMessage = new BotMessage("Выключена фильтрация по типу недели.", ButtonSettings);
+                botMessage = keyboardFormatter.formatSettings(botMessage, botUser);
                 break;
             case CommandText.CURRENT_USER_SETTINGS:
                 String currentUserSettings = getStudentInfo(botUser) +
@@ -296,6 +315,7 @@ public class SettingsService implements BotMessageService {
                         "Фильтрация по типу недели: " +
                         (botUser.isFilterNomDenom() ? "вкл." : "выкл.");
                 botMessage = new BotMessage(currentUserSettings, ButtonSettings);
+                botMessage = keyboardFormatter.formatSettings(botMessage, botUser);
                 break;
         }
 
@@ -368,6 +388,7 @@ public class SettingsService implements BotMessageService {
                 examPeriodAfterTomorrowNotificationRepository.save(examPeriodAfterTomorrowNotification);
             }
             botMessage = new BotMessage("Теперь расписание будет приходить в " + hourForSend + " ч.", ButtonSettings);
+            botMessage = keyboardFormatter.formatSettings(botMessage, botUser);
         }
 
         return botMessage;

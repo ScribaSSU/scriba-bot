@@ -11,22 +11,7 @@
 }
 ],
 [
-{
-"action": {
-"type": "text",
-"payload": "{\"button\": \"1\"}",
-"label": "Вкл. рассылку расп-я на сегодня"
-},
-"color": "positive"
-},
-{
-"action": {
-"type": "text",
-"payload": "{\"button\": \"1\"}",
-"label": "Выкл. рассылку расп-я на сегодня"
-},
-"color": "negative"
-}
+SCHEDULE_NOTIF_DAILY
 ],
 [{
 "action": {
@@ -38,22 +23,7 @@
 }
 ],
 [
-{
-"action": {
-"type": "text",
-"payload": "{\"button\": \"1\"}",
-"label": "Вкл. рассылку расп-я на завтра"
-},
-"color": "positive"
-},
-{
-"action": {
-"type": "text",
-"payload": "{\"button\": \"1\"}",
-"label": "Выкл. рассылку расп-я на завтра"
-},
-"color": "negative"
-}
+SCHEDULE_NOTIF_TOMORROW
 ],
 [
 {
