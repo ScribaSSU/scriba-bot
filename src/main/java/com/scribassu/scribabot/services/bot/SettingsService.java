@@ -2,7 +2,6 @@ package com.scribassu.scribabot.services.bot;
 
 import com.scribassu.scribabot.dto.BotMessage;
 import com.scribassu.scribabot.entities.*;
-import com.scribassu.scribabot.keyboard.FormatUtils;
 import com.scribassu.scribabot.keyboard.KeyboardFormatter;
 import com.scribassu.scribabot.repositories.*;
 import com.scribassu.scribabot.text.CommandText;
@@ -66,42 +65,52 @@ public class SettingsService implements BotMessageService {
                 ScheduleDailyNotification scheduleDailyNotificationEn =
                         scheduleDailyNotificationRepository.findByUserId(userId);
                 if(scheduleDailyNotificationEn != null && !scheduleDailyNotificationEn.isEnabled()) {
-                    scheduleDailyNotificationRepository.enableByUserId(userId);
+                    scheduleDailyNotificationEn.setEnabled(true);
+                    scheduleDailyNotificationRepository.save(scheduleDailyNotificationEn);
                     botMessage = new BotMessage(String.format(MessageText.SCHEDULE_WILL_BE_SENT, "сегодня") +
                             scheduleDailyNotificationEn.getHourForSend() + " ч.");
+                    botMessage.setKeyboard(ButtonSettingsScheduleNotifications);
+                    botMessage = keyboardFormatter.formatSettingsScheduleNotif(botMessage, botUser);
                 }
                 else {
                     if(scheduleDailyNotificationEn == null) {
                         botMessage = new BotMessage(
                                 "Вы еще не подключали рассылку расписания на сегодня. Подключите через '" +
                                 CommandText.SET_SEND_SCHEDULE_TIME_TODAY + "'.");
+                        botMessage.setKeyboard(ButtonSettingsScheduleNotifications);
+                        botMessage = keyboardFormatter.formatSettingsScheduleNotif(botMessage, botUser);
                     }
                     else {
                         botMessage = new BotMessage(String.format(MessageText.SCHEDULE_IS_ENABLED_DOUBLE, "сегодня"));
+                        botMessage.setKeyboard(ButtonSettingsScheduleNotifications);
+                        botMessage = keyboardFormatter.formatSettingsScheduleNotif(botMessage, botUser);
                     }
                 }
-                botMessage.setKeyboard(ButtonSettingsScheduleNotifications);
-                botMessage = keyboardFormatter.formatSettingsScheduleNotif(botMessage, botUser);
                 break;
             case CommandText.DISABLE_SEND_SCHEDULE_TODAY:
                 ScheduleDailyNotification scheduleDailyNotificationDis =
                         scheduleDailyNotificationRepository.findByUserId(userId);
                 if(scheduleDailyNotificationDis != null && scheduleDailyNotificationDis.isEnabled()) {
-                    scheduleDailyNotificationRepository.disableByUserId(userId);
+                    scheduleDailyNotificationDis.setEnabled(false);
+                    scheduleDailyNotificationRepository.save(scheduleDailyNotificationDis);
                     botMessage = new BotMessage(String.format(MessageText.SCHEDULE_IS_DISABLED, "сегодня"));
+                    botMessage.setKeyboard(ButtonSettingsScheduleNotifications);
+                    botMessage = keyboardFormatter.formatSettingsScheduleNotif(botMessage, botUser);
                 }
                 else {
                     if(scheduleDailyNotificationDis == null) {
                         botMessage = new BotMessage(
                                 "Вы еще не подключали рассылку расписания на сегодня. Подключите через '" +
                                 CommandText.SET_SEND_SCHEDULE_TIME_TODAY + "'.");
+                        botMessage.setKeyboard(ButtonSettingsScheduleNotifications);
+                        botMessage = keyboardFormatter.formatSettingsScheduleNotif(botMessage, botUser);
                     }
                     else {
                         botMessage = new BotMessage(String.format(MessageText.SCHEDULE_IS_DISABLED_DOUBLE, "сегодня"));
+                        botMessage.setKeyboard(ButtonSettingsScheduleNotifications);
+                        botMessage = keyboardFormatter.formatSettingsScheduleNotif(botMessage, botUser);
                     }
                 }
-                botMessage.setKeyboard(ButtonSettingsScheduleNotifications);
-                botMessage = keyboardFormatter.formatSettingsScheduleNotif(botMessage, botUser);
                 break;
             case CommandText.SET_SEND_SCHEDULE_TIME_TOMORROW:
                 formatSchedule = String.format(MessageText.CHOOSE_SCHEDULE_NOTIFICATION_TIME, "завтра");
@@ -113,9 +122,12 @@ public class SettingsService implements BotMessageService {
                 ScheduleTomorrowNotification scheduleTomorrowNotificationEn =
                         scheduleTomorrowNotificationRepository.findByUserId(userId);
                 if(scheduleTomorrowNotificationEn != null && !scheduleTomorrowNotificationEn.isEnabled()) {
-                    scheduleTomorrowNotificationRepository.enableByUserId(userId);
+                    scheduleTomorrowNotificationEn.setEnabled(true);
+                    scheduleTomorrowNotificationRepository.save(scheduleTomorrowNotificationEn);
                     botMessage = new BotMessage(String.format(MessageText.SCHEDULE_WILL_BE_SENT, "завтра") +
                             scheduleTomorrowNotificationEn.getHourForSend() + " ч.");
+                    botMessage.setKeyboard(ButtonSettingsScheduleNotifications);
+                    botMessage = keyboardFormatter.formatSettingsScheduleNotif(botMessage, botUser);
                 }
                 else {
                     if(scheduleTomorrowNotificationEn == null) {
@@ -123,33 +135,40 @@ public class SettingsService implements BotMessageService {
                                 "Вы еще не подключали рассылку расписания на завтра. Подключите через '" +
                                         CommandText.SET_SEND_SCHEDULE_TIME_TOMORROW + "'."
                         );
+                        botMessage.setKeyboard(ButtonSettingsScheduleNotifications);
+                        botMessage = keyboardFormatter.formatSettingsScheduleNotif(botMessage, botUser);
                     }
                     else {
                         botMessage = new BotMessage(String.format(MessageText.SCHEDULE_IS_ENABLED_DOUBLE, "завтра"));
+                        botMessage.setKeyboard(ButtonSettingsScheduleNotifications);
+                        botMessage = keyboardFormatter.formatSettingsScheduleNotif(botMessage, botUser);
                     }
                 }
-                botMessage.setKeyboard(ButtonSettingsScheduleNotifications);
-                botMessage = keyboardFormatter.formatSettingsScheduleNotif(botMessage, botUser);
                 break;
             case CommandText.DISABLE_SEND_SCHEDULE_TOMORROW:
                 ScheduleTomorrowNotification scheduleTomorrowNotificationDis =
                         scheduleTomorrowNotificationRepository.findByUserId(userId);
                 if(scheduleTomorrowNotificationDis != null && scheduleTomorrowNotificationDis.isEnabled()) {
-                    scheduleTomorrowNotificationRepository.disableByUserId(userId);
+                    scheduleTomorrowNotificationDis.setEnabled(false);
+                    scheduleTomorrowNotificationRepository.save(scheduleTomorrowNotificationDis);
                     botMessage = new BotMessage(String.format(MessageText.SCHEDULE_IS_DISABLED, "завтра"));
+                    botMessage.setKeyboard(ButtonSettingsScheduleNotifications);
+                    botMessage = keyboardFormatter.formatSettingsScheduleNotif(botMessage, botUser);
                 }
                 else {
                     if(scheduleTomorrowNotificationDis == null) {
                         botMessage = new BotMessage(
                                 "Вы еще не подключали рассылку расписания на завтра. Подключите через '" +
                                 CommandText.SET_SEND_SCHEDULE_TIME_TOMORROW + "'.");
+                        botMessage.setKeyboard(ButtonSettingsScheduleNotifications);
+                        botMessage = keyboardFormatter.formatSettingsScheduleNotif(botMessage, botUser);
                     }
                     else {
                         botMessage = new BotMessage(String.format(MessageText.SCHEDULE_IS_DISABLED_DOUBLE, "завтра"));
+                        botMessage.setKeyboard(ButtonSettingsScheduleNotifications);
+                        botMessage = keyboardFormatter.formatSettingsScheduleNotif(botMessage, botUser);
                     }
                 }
-                botMessage.setKeyboard(ButtonSettingsScheduleNotifications);
-                botMessage = keyboardFormatter.formatSettingsScheduleNotif(botMessage, botUser);
                 break;
             case CommandText.SET_SEND_EXAM_PERIOD_TIME_TODAY:
                 formatSchedule = String.format(MessageText.CHOOSE_EXAM_PERIOD_NOTIFICATION_TIME, "сегодня");
@@ -161,43 +180,52 @@ public class SettingsService implements BotMessageService {
                 ExamPeriodDailyNotification examPeriodDailyNotificationEn =
                         examPeriodDailyNotificationRepository.findByUserId(userId);
                 if(examPeriodDailyNotificationEn != null && !examPeriodDailyNotificationEn.isEnabled()) {
-                    examPeriodDailyNotificationRepository.enableByUserId(userId);
+                    examPeriodDailyNotificationEn.setEnabled(true);
+                    examPeriodDailyNotificationRepository.save(examPeriodDailyNotificationEn);
                     botMessage = new BotMessage(String.format(MessageText.EXAM_PERIOD_WILL_BE_SENT, "сегодня") +
                             examPeriodDailyNotificationEn.getHourForSend() + " ч.");
+                    botMessage.setKeyboard(ButtonSettingsExamPeriodNotifications);
+                    botMessage = keyboardFormatter.formatSettingsExamNotif(botMessage, botUser);
                 }
                 else {
                     if(examPeriodDailyNotificationEn == null) {
                         botMessage = new BotMessage(
                                 "Вы еще не подключали рассылку расписания сессии на сегодня. Подключите через '" +
-                                        CommandText.SET_SEND_EXAM_PERIOD_TIME_TODAY + "'."
-                        );
+                                        CommandText.SET_SEND_EXAM_PERIOD_TIME_TODAY + "'.");
+                        botMessage.setKeyboard(ButtonSettingsExamPeriodNotifications);
+                        botMessage = keyboardFormatter.formatSettingsExamNotif(botMessage, botUser);
                     }
                     else {
                         botMessage = new BotMessage(String.format(MessageText.EXAM_PERIOD_IS_ENABLED_DOUBLE, "сегодня"));
+                        botMessage.setKeyboard(ButtonSettingsExamPeriodNotifications);
+                        botMessage = keyboardFormatter.formatSettingsExamNotif(botMessage, botUser);
                     }
                 }
-                botMessage.setKeyboard(ButtonSettingsExamPeriodNotifications);
-                botMessage = keyboardFormatter.formatSettingsExamNotif(botMessage, botUser);
                 break;
             case CommandText.DISABLE_SEND_EXAM_PERIOD_TODAY:
                 ExamPeriodDailyNotification examPeriodDailyNotificationDis =
                         examPeriodDailyNotificationRepository.findByUserId(userId);
                 if(examPeriodDailyNotificationDis != null && examPeriodDailyNotificationDis.isEnabled()) {
-                    examPeriodTomorrowNotificationRepository.disableByUserId(userId);
+                    examPeriodDailyNotificationDis.setEnabled(false);
+                    examPeriodDailyNotificationRepository.save(examPeriodDailyNotificationDis);
                     botMessage = new BotMessage(String.format(MessageText.EXAM_PERIOD_IS_DISABLED, "сегодня"));
+                    botMessage.setKeyboard(ButtonSettingsExamPeriodNotifications);
+                    botMessage = keyboardFormatter.formatSettingsExamNotif(botMessage, botUser);
                 }
                 else {
                     if(examPeriodDailyNotificationDis == null) {
                         botMessage = new BotMessage(
                                 "Вы еще не подключали рассылку расписания сессии на сегодня. Подключите через '" +
                                         CommandText.SET_SEND_EXAM_PERIOD_TIME_TODAY + "'.");
+                        botMessage.setKeyboard(ButtonSettingsExamPeriodNotifications);
+                        botMessage = keyboardFormatter.formatSettingsExamNotif(botMessage, botUser);
                     }
                     else {
                         botMessage = new BotMessage(String.format(MessageText.EXAM_PERIOD_IS_DISABLED_DOUBLE, "сегодня"));
+                        botMessage.setKeyboard(ButtonSettingsExamPeriodNotifications);
+                        botMessage = keyboardFormatter.formatSettingsExamNotif(botMessage, botUser);
                     }
                 }
-                botMessage.setKeyboard(ButtonSettingsExamPeriodNotifications);
-                botMessage = keyboardFormatter.formatSettingsExamNotif(botMessage, botUser);
                 break;
             case CommandText.SET_SEND_EXAM_PERIOD_TIME_TOMORROW:
                 formatSchedule = String.format(MessageText.CHOOSE_EXAM_PERIOD_NOTIFICATION_TIME, "завтра");
@@ -209,43 +237,52 @@ public class SettingsService implements BotMessageService {
                 ExamPeriodTomorrowNotification examPeriodTomorrowNotificationEn =
                         examPeriodTomorrowNotificationRepository.findByUserId(userId);
                 if(examPeriodTomorrowNotificationEn != null && !examPeriodTomorrowNotificationEn.isEnabled()) {
-                    examPeriodTomorrowNotificationRepository.enableByUserId(userId);
+                    examPeriodTomorrowNotificationEn.setEnabled(true);
+                    examPeriodTomorrowNotificationRepository.save(examPeriodTomorrowNotificationEn);
                     botMessage = new BotMessage(String.format(MessageText.EXAM_PERIOD_WILL_BE_SENT, "завтра") +
                             examPeriodTomorrowNotificationEn.getHourForSend() + " ч.");
+                    botMessage.setKeyboard(ButtonSettingsExamPeriodNotifications);
+                    botMessage = keyboardFormatter.formatSettingsExamNotif(botMessage, botUser);
                 }
                 else {
                     if(examPeriodTomorrowNotificationEn == null) {
                         botMessage = new BotMessage(
                                 "Вы еще не подключали рассылку расписания сессии на завтра. Подключите через '" +
-                                        CommandText.SET_SEND_EXAM_PERIOD_TIME_TOMORROW + "'."
-                        );
+                                        CommandText.SET_SEND_EXAM_PERIOD_TIME_TOMORROW + "'.");
+                        botMessage.setKeyboard(ButtonSettingsExamPeriodNotifications);
+                        botMessage = keyboardFormatter.formatSettingsExamNotif(botMessage, botUser);
                     }
                     else {
                         botMessage = new BotMessage(String.format(MessageText.EXAM_PERIOD_IS_ENABLED_DOUBLE, "завтра"));
+                        botMessage.setKeyboard(ButtonSettingsExamPeriodNotifications);
+                        botMessage = keyboardFormatter.formatSettingsExamNotif(botMessage, botUser);
                     }
                 }
-                botMessage.setKeyboard(ButtonSettingsExamPeriodNotifications);
-                botMessage = keyboardFormatter.formatSettingsExamNotif(botMessage, botUser);
                 break;
             case CommandText.DISABLE_SEND_EXAM_PERIOD_TOMORROW:
                 ExamPeriodTomorrowNotification examPeriodTomorrowNotificationDis =
                         examPeriodTomorrowNotificationRepository.findByUserId(userId);
                 if(examPeriodTomorrowNotificationDis != null && examPeriodTomorrowNotificationDis.isEnabled()) {
-                    examPeriodTomorrowNotificationRepository.disableByUserId(userId);
+                    examPeriodTomorrowNotificationDis.setEnabled(false);
+                    examPeriodTomorrowNotificationRepository.save(examPeriodTomorrowNotificationDis);
                     botMessage = new BotMessage(String.format(MessageText.EXAM_PERIOD_IS_DISABLED, "завтра"));
+                    botMessage.setKeyboard(ButtonSettingsExamPeriodNotifications);
+                    botMessage = keyboardFormatter.formatSettingsExamNotif(botMessage, botUser);
                 }
                 else {
                     if(examPeriodTomorrowNotificationDis == null) {
                         botMessage = new BotMessage(
                                 "Вы еще не подключали рассылку расписания сессии на завтра. Подключите через '" +
                                         CommandText.SET_SEND_EXAM_PERIOD_TIME_TOMORROW + "'.");
+                        botMessage.setKeyboard(ButtonSettingsExamPeriodNotifications);
+                        botMessage = keyboardFormatter.formatSettingsExamNotif(botMessage, botUser);
                     }
                     else {
                         botMessage = new BotMessage(String.format(MessageText.EXAM_PERIOD_IS_DISABLED_DOUBLE, "завтра"));
+                        botMessage.setKeyboard(ButtonSettingsExamPeriodNotifications);
+                        botMessage = keyboardFormatter.formatSettingsExamNotif(botMessage, botUser);
                     }
                 }
-                botMessage.setKeyboard(ButtonSettingsExamPeriodNotifications);
-                botMessage = keyboardFormatter.formatSettingsExamNotif(botMessage, botUser);
                 break;
             case CommandText.SET_SEND_EXAM_PERIOD_TIME_AFTER_TOMORROW:
                 formatSchedule = String.format(MessageText.CHOOSE_EXAM_PERIOD_NOTIFICATION_TIME, "послезавтра");
@@ -257,43 +294,52 @@ public class SettingsService implements BotMessageService {
                 ExamPeriodAfterTomorrowNotification examPeriodAfterTomorrowNotificationEn =
                         examPeriodAfterTomorrowNotificationRepository.findByUserId(userId);
                 if(examPeriodAfterTomorrowNotificationEn != null && !examPeriodAfterTomorrowNotificationEn.isEnabled()) {
-                    examPeriodAfterTomorrowNotificationRepository.enableByUserId(userId);
+                    examPeriodAfterTomorrowNotificationEn.setEnabled(true);
+                    examPeriodAfterTomorrowNotificationRepository.save(examPeriodAfterTomorrowNotificationEn);
                     botMessage = new BotMessage(String.format(MessageText.EXAM_PERIOD_WILL_BE_SENT, "послезавтра") +
                             examPeriodAfterTomorrowNotificationEn.getHourForSend() + " ч.");
+                    botMessage.setKeyboard(ButtonSettingsExamPeriodNotifications);
+                    botMessage = keyboardFormatter.formatSettingsExamNotif(botMessage, botUser);
                 }
                 else {
                     if(examPeriodAfterTomorrowNotificationEn == null) {
                         botMessage = new BotMessage(
                                 "Вы еще не подключали рассылку расписания сессии на послезавтра. Подключите через '" +
-                                        CommandText.SET_SEND_EXAM_PERIOD_TIME_TOMORROW + "'."
-                        );
+                                        CommandText.SET_SEND_EXAM_PERIOD_TIME_TOMORROW + "'.");
+                        botMessage.setKeyboard(ButtonSettingsExamPeriodNotifications);
+                        botMessage = keyboardFormatter.formatSettingsExamNotif(botMessage, botUser);
                     }
                     else {
                         botMessage = new BotMessage(String.format(MessageText.EXAM_PERIOD_IS_ENABLED_DOUBLE, "послезавтра"));
+                        botMessage.setKeyboard(ButtonSettingsExamPeriodNotifications);
+                        botMessage = keyboardFormatter.formatSettingsExamNotif(botMessage, botUser);
                     }
                 }
-                botMessage.setKeyboard(ButtonSettingsExamPeriodNotifications);
-                botMessage = keyboardFormatter.formatSettingsExamNotif(botMessage, botUser);
                 break;
             case CommandText.DISABLE_SEND_EXAM_PERIOD_AFTER_TOMORROW:
                 ExamPeriodAfterTomorrowNotification examPeriodAfterTomorrowNotificationDis =
                         examPeriodAfterTomorrowNotificationRepository.findByUserId(userId);
                 if(examPeriodAfterTomorrowNotificationDis != null && examPeriodAfterTomorrowNotificationDis.isEnabled()) {
-                    examPeriodTomorrowNotificationRepository.disableByUserId(userId);
+                    examPeriodAfterTomorrowNotificationDis.setEnabled(false);
+                    examPeriodAfterTomorrowNotificationRepository.save(examPeriodAfterTomorrowNotificationDis);
                     botMessage = new BotMessage(String.format(MessageText.EXAM_PERIOD_IS_DISABLED, "послезавтра"));
+                    botMessage.setKeyboard(ButtonSettingsExamPeriodNotifications);
+                    botMessage = keyboardFormatter.formatSettingsExamNotif(botMessage, botUser);
                 }
                 else {
                     if(examPeriodAfterTomorrowNotificationDis == null) {
                         botMessage = new BotMessage(
                                 "Вы еще не подключали рассылку расписания сессии на послезавтра. Подключите через '" +
                                         CommandText.SET_SEND_EXAM_PERIOD_TIME_TOMORROW + "'.");
+                        botMessage.setKeyboard(ButtonSettingsExamPeriodNotifications);
+                        botMessage = keyboardFormatter.formatSettingsExamNotif(botMessage, botUser);
                     }
                     else {
                         botMessage = new BotMessage(String.format(MessageText.EXAM_PERIOD_IS_DISABLED_DOUBLE, "послезавтра"));
+                        botMessage.setKeyboard(ButtonSettingsExamPeriodNotifications);
+                        botMessage = keyboardFormatter.formatSettingsExamNotif(botMessage, botUser);
                     }
                 }
-                botMessage.setKeyboard(ButtonSettingsExamPeriodNotifications);
-                botMessage = keyboardFormatter.formatSettingsExamNotif(botMessage, botUser);
                 break;
             case CommandText.ENABLE_FILTER_WEEK_TYPE:
                 botUser.setFilterNomDenom(true);
