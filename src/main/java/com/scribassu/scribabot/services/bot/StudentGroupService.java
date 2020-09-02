@@ -9,6 +9,7 @@ import com.scribassu.scribabot.keyboard.KeyboardMap;
 import com.scribassu.scribabot.keyboard.KeyboardType;
 import com.scribassu.scribabot.services.CallRestService;
 import com.scribassu.scribabot.text.CommandText;
+import com.scribassu.scribabot.text.MessageText;
 import com.scribassu.scribabot.util.Constants;
 import com.scribassu.tracto.domain.EducationForm;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.scribassu.scribabot.keyboard.KeyboardType.ButtonCourse;
+import static com.scribassu.scribabot.keyboard.KeyboardType.ButtonDepartment;
 
 @Service
 public class StudentGroupService implements BotMessageService {
@@ -67,7 +69,7 @@ public class StudentGroupService implements BotMessageService {
         else if(groupNumbersDto.getGroupNumbers().size() > Constants.MAX_VK_KEYBOARD_SIZE_FOR_LISTS) {
             StringBuilder stringBuilder = new StringBuilder("Извините, нашлось слишком много групп, " +
                     "и они не могут отобразиться через клавиатуру из-за ограничений VK. " +
-                    "Пожалуйста, введите номер группы в формате г номер, " +
+                    "Пожалуйста, введите номер группы в формате Г НОМЕР, например, Г 123, " +
                     "чтобы бот все-таки записал вашу группу. Доступные номера по вашему запросу:\n\n");
             for(String groupNumber : groupNumbersDto.getGroupNumbers()) {
                 stringBuilder.append(groupNumber).append(", ");
@@ -94,9 +96,11 @@ public class StudentGroupService implements BotMessageService {
         int i = 0;
         int row = 0;
         vkKeyboardButtons.add(new ArrayList<>());
+        int mod = groupNumbers.get(0).length() > 5 ? 4 : 5; //to make long numbers visible
+        int mmod = mod - 1;
 
         while(i < groupNumbers.size()) {
-            if(i % 5 == 4) {
+            if(i % mod == mmod) {
                 row++;
                 vkKeyboardButtons.add(new ArrayList<>());
             }

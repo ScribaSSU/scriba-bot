@@ -117,7 +117,7 @@ public class MessageHandlerImpl implements MessageHandler {
                     botMessage = new BotMessage(CHOOSE_DEPARTMENT, ButtonDepartment);
                 }
                 else {
-                    botMessage = new BotMessage("Извините, ваша форма обучения пока не поддерживается :(", ButtonActions);
+                    botMessage = new BotMessage(MessageText.CANNOT_GET_SCHEDULE_GROUP_NOT_SET, ButtonDepartment);
                 }
                 break;
             case CommandText.CHOOSE_DEPARTMENT:
@@ -201,7 +201,7 @@ public class MessageHandlerImpl implements MessageHandler {
                 botUserRepository.updatePreviousUserMessage("", botUser.getUserId());
             }
             else {
-                botMessage = new BotMessage("Хотите расписание пар или сессии?", ButtonFullTimeSchedule);
+                botMessage = new BotMessage(MessageText.FINISH_SET_GROUP, ButtonFullTimeSchedule);
             }
         }
 
@@ -213,7 +213,7 @@ public class MessageHandlerImpl implements MessageHandler {
                 botUserRepository.updatePreviousUserMessage("", botUser.getUserId());
             }
             else {
-                botMessage = new BotMessage("Хотите расписание пар или сессии?", ButtonFullTimeSchedule);
+                botMessage = new BotMessage(MessageText.FINISH_SET_GROUP, ButtonFullTimeSchedule);
             }
         }
 
