@@ -84,7 +84,7 @@ public class TeacherService implements BotMessageService {
             botUser.setPreviousUserMessage(message);
             botUserRepository.save(botUser);
             botMessage = new BotMessage(
-                    "Выберите, для чего хотите узнать расписание преподавателя.",
+                    "Выберите, для чего хотите узнать расписание преподавателя. Для сброса поиска выберите на клавиатуре 'Главное меню' или введите вручную 'меню'.",
                     ButtonFullTimeSchedule);
         }
 
