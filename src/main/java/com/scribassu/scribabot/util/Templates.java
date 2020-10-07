@@ -48,6 +48,12 @@ public class Templates {
             calendar.add(Calendar.DAY_OF_MONTH, -1);
         }
         WeekType currentWeekType = WeekTypeUtils.getWeekType(calendar);
+
+        // kgl has another week type
+        if(fullTimeLessonDto.getStudentGroup().getDepartment().getURL().equalsIgnoreCase("kgl")) {
+            currentWeekType = currentWeekType.equals(WeekType.NOM) ? WeekType.DENOM : WeekType.NOM;
+        }
+
         stringBuilder.append("Неделя: ").append(WeekTypeUtils.weekTypeToLongString(currentWeekType)).append("\n");
 
         stringBuilder.append("Группа № ").append(fullTimeLessonDto.getStudentGroup().getGroupNumberRus()).append("\n \n");
@@ -58,9 +64,10 @@ public class Templates {
         else {
             List<FullTimeLesson> fullTimeLessons = fullTimeLessonDto.getLessons();
             if(filterWeekType) {
+                final WeekType finalCurrentWeekType = currentWeekType;
                 fullTimeLessons = fullTimeLessons
                         .stream()
-                        .filter(f -> f.getWeekType().equals(WeekType.FULL) || f.getWeekType().equals(currentWeekType))
+                        .filter(f -> f.getWeekType().equals(WeekType.FULL) || f.getWeekType().equals(finalCurrentWeekType))
                         .collect(Collectors.toList());
             }
             fullTimeLessons.sort(Comparator.comparingInt(o -> o.getLessonTime().getLessonNumber()));
