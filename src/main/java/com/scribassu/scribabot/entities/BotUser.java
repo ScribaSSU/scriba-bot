@@ -20,7 +20,7 @@ public class BotUser {
     private String groupNumber;
     private String educationForm;
 
-    @Column(length = 500)
+    @Column(length = 1000)
     private String previousUserMessage;
 
     private boolean filterNomDenom;

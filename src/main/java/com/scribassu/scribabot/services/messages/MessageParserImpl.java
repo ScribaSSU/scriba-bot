@@ -30,7 +30,7 @@ public class MessageParserImpl implements MessageParser {
         }
         if(type.equalsIgnoreCase(Constants.TYPE_MESSAGE_NEW)) {
             JsonObject object = requestJson.getAsJsonObject(Constants.KEY_OBJECT);
-            String userId = object.getAsJsonPrimitive(Constants.KEY_FROM_ID).getAsString();
+            String userId = object.getAsJsonPrimitive(Constants.KEY_PEER_ID).getAsString();
             String message = object.getAsJsonPrimitive(Constants.KEY_TEXT).getAsString();
             parsed.put(Constants.KEY_MESSAGE, message);
             parsed.put(Constants.KEY_USER_ID, userId);

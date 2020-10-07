@@ -5,6 +5,7 @@ import com.scribassu.scribabot.services.messages.MessageHandler;
 import com.scribassu.scribabot.services.messages.MessageParser;
 import com.scribassu.scribabot.services.messages.MessageSender;
 import com.scribassu.scribabot.dto.Command;
+import com.scribassu.scribabot.text.MessageText;
 import com.scribassu.scribabot.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -49,7 +50,10 @@ public class VkController {
                         parsedMessage.getOrDefault(Constants.KEY_PAYLOAD, ""),
                         userId);
                 BotMessage botMessage = messageHandler.getBotMessage(command);
-                messageSender.send(botMessage, userId);
+                //If somebody write command without bot name mention in chat, bot should keep the silence
+                if(!botMessage.getMessage().equalsIgnoreCase(MessageText.DO_NOT_SEND)) {
+                    messageSender.send(botMessage, userId);
+                }
             }
         }
         else {

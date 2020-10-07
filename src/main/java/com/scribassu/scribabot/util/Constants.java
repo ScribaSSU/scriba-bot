@@ -9,6 +9,7 @@ public class Constants {
     public static final String KEY_USER_ID = "userId";
     public static final String KEY_OBJECT = "object";
     public static final String KEY_FROM_ID = "from_id";
+    public static final String KEY_PEER_ID = "peer_id";
     public static final String KEY_TEXT = "text";
     public static final String KEY_PAYLOAD = "payload";
 
@@ -20,4 +21,5 @@ public class Constants {
     public static final String PAYLOAD_END = "\"}";
 
     public static final int MAX_VK_KEYBOARD_SIZE_FOR_LISTS = 38; //render lists without counting menu buttons
+    public static final long PEER_ID_SHIFT = 2000000000;
 }

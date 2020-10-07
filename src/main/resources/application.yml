@@ -5,6 +5,7 @@ scriba-bot:
   keyboards-folder:
   vk-api-version:
   vk-url:
+  mentioned-names: "example1,@example2"
 
 call:
   rest:

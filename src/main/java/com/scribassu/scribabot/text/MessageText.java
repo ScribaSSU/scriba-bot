@@ -22,4 +22,6 @@ public class MessageText {
     public static final String CANNOT_GET_TEACHERS = "Не удалось получить список преподавателей.";
     public static final String FINISH_SET_GROUP = "Отлично, вы настроили свою группу. Теперь вы можете узнавать расписание.";
     public static final String CANNOT_GET_SCHEDULE_GROUP_NOT_SET = "Извините, ваша форма обучения пока не поддерживается, или вы недонастроили группу :( Перенастройте, пожалуйста. Если вы заочник или вечерник, тогда ждите, работа с вашими расписаниями в разработке.";
+
+    public static final String DO_NOT_SEND = "DO NOT SEND";
 }

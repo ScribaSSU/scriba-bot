@@ -36,7 +36,7 @@ public class MessageSenderImpl implements MessageSender {
         List<NameValuePair> postParameters = new ArrayList<>();
         postParameters.add(new BasicNameValuePair("access_token", token));
         postParameters.add(new BasicNameValuePair("v", vkApiVersion));
-        postParameters.add(new BasicNameValuePair("user_id", userId));
+        postParameters.add(new BasicNameValuePair("peer_id", userId));
         postParameters.add(new BasicNameValuePair("random_id", String.valueOf(random.nextInt())));
         postParameters.add(new BasicNameValuePair("message", botMessage.getMessage()));
 

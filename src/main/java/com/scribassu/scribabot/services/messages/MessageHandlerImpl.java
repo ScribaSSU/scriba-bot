@@ -5,7 +5,6 @@ import com.scribassu.scribabot.dto.Command;
 import com.scribassu.scribabot.dto.rest.FullTimeLessonDto;
 import com.scribassu.scribabot.entities.BotUser;
 import com.scribassu.scribabot.entities.UnrecognizedMessage;
-import com.scribassu.scribabot.keyboard.FormatUtils;
 import com.scribassu.scribabot.keyboard.KeyboardFormatter;
 import com.scribassu.scribabot.repositories.BotUserRepository;
 import com.scribassu.scribabot.repositories.UnrecognizedMessageRepository;
@@ -14,10 +13,14 @@ import com.scribassu.scribabot.services.bot.*;
 import com.scribassu.scribabot.text.CommandText;
 import com.scribassu.scribabot.text.MessageText;
 import com.scribassu.scribabot.util.BotMessageUtils;
+import com.scribassu.scribabot.util.Constants;
 import com.scribassu.scribabot.util.DepartmentConverter;
 import com.scribassu.tracto.domain.EducationForm;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 import static com.scribassu.scribabot.keyboard.KeyboardType.*;
 import static com.scribassu.scribabot.text.MessageText.*;
@@ -35,6 +38,9 @@ public class MessageHandlerImpl implements MessageHandler {
     private final TeacherService teacherService;
     private final UnrecognizedMessageRepository unrecognizedMessageRepository;
     private final KeyboardFormatter keyboardFormatter;
+
+    @Value("#{'${scriba-bot.mentioned-names}'.split(',')}")
+    private List<String> mentionedNames;
 
     @Autowired
     public MessageHandlerImpl(CallRestService callRestService,
@@ -62,11 +68,28 @@ public class MessageHandlerImpl implements MessageHandler {
     @Override
     public BotMessage getBotMessage(Command command) {
         BotMessage botMessage = new BotMessage(MessageText.DEFAULT_MESSAGE, ButtonActions);
-        String message = command.getMessage().toLowerCase();
+        String message = command.getMessage(); // NO LOWER CASE HERE!
         String payload = command.getPayload().toLowerCase();
         String userId = command.getUserId();
-
         BotUser botUser = botUserRepository.findOneById(userId);
+        boolean isMentioned = false;
+
+        for(String mentionedName : mentionedNames) {
+            if(message.contains(mentionedName)) {
+                // 1 for ] char
+                message = message.substring(message.indexOf(mentionedName) + mentionedName.length() + 1);
+                isMentioned = true;
+                break;
+            }
+        }
+        message = message.trim().toLowerCase();
+
+        long userIdLong = Long.parseLong(userId);
+
+        // It is mandatory to mention bot name in chats
+        if(!isMentioned && userIdLong > Constants.PEER_ID_SHIFT) {
+            return new BotMessage(DO_NOT_SEND);
+        }
 
         if(null != botUser
                 && null != botUser.getPreviousUserMessage()
