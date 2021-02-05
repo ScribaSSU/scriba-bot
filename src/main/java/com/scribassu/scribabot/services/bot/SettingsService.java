@@ -363,6 +363,9 @@ public class SettingsService implements BotMessageService {
                 botMessage = new BotMessage(currentUserSettings, ButtonSettings);
                 botMessage = keyboardFormatter.formatSettings(botMessage, botUser);
                 break;
+            case CommandText.DELETE_PROFILE:
+                botMessage = new BotMessage(MessageText.DELETE_CONFIRRMATION, ButtonConfirmDeletion);
+                break;
         }
 
         if(CommandText.HOUR_PATTERN.matcher(message).matches()) {

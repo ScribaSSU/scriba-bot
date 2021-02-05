@@ -14,6 +14,7 @@ public class CommandText {
     public static final String EXAMS = "сессия";
     public static final String CHOOSE_DEPARTMENT = "выбрать факультет и группу";
     public static final String CHOOSE_STUDENT_GROUP = "выбор группы";
+    public static final String DELETE_PROFILE = "удалить профиль";
 
     public static final String GROUP_NUMBER_INPUT = "г ";
 
