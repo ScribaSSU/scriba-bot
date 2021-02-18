@@ -368,7 +368,7 @@ public class SettingsService implements BotMessageService {
                 botMessage = keyboardFormatter.formatSettings(botMessage, botUser);
                 break;
             case CommandText.NO:
-                botMessage = new BotMessage(null, ButtonSettings);
+                botMessage = new BotMessage("Спасибо, что остаётесь с нами!", ButtonSettings);
                 botMessage = keyboardFormatter.formatSettings(botMessage, botUser);
                 break;
             case CommandText.YES:
