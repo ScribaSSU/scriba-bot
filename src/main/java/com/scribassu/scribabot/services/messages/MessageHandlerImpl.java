@@ -91,6 +91,15 @@ public class MessageHandlerImpl implements MessageHandler {
             return new BotMessage(DO_NOT_SEND);
         }
 
+        if(null == botUser && !message.equals(CommandText.HELLO)
+                && !message.equals(CommandText.MAIN_MENU)
+                && !message.equals(CommandText.SHORT_MAIN_MENU)) {
+            botMessage = new BotMessage("Для начала работы с ботом напишите 'Привет', чтобы настроить факультет и группу.");
+            botUser = new BotUser();
+            botUser.setUserId(userId); //DON'T SAVE! It is only for unrecognized messages check
+            return botMessage;
+        }
+
         if(null != botUser
                 && null != botUser.getPreviousUserMessage()
                 && botUser.getPreviousUserMessage().equalsIgnoreCase(CommandText.TEACHER_SCHEDULE)) {
@@ -261,12 +270,6 @@ public class MessageHandlerImpl implements MessageHandler {
 
         if(CommandText.COURSE_PATTERN.matcher(message).matches()) {
             botMessage = studentGroupService.getBotMessage(message, botUser);
-        }
-
-        if(null == botUser) {
-            botMessage = new BotMessage("Для начала работы с ботом напишите 'Привет', чтобы настроить факультет и группу.");
-            botUser = new BotUser();
-            botUser.setUserId(userId); //DON'T SAVE! It is only for unrecognized messages check
         }
 
         if(botMessage.isDefault()) {
