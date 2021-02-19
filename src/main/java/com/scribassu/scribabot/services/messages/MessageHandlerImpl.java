@@ -198,6 +198,9 @@ public class MessageHandlerImpl implements MessageHandler {
             case CommandText.ENABLE_FILTER_WEEK_TYPE:
             case CommandText.DISABLE_FILTER_WEEK_TYPE:
             case CommandText.CURRENT_USER_SETTINGS:
+            case CommandText.DELETE_PROFILE:
+            case CommandText.YES:
+            case CommandText.NO:
                 botMessage = settingsService.getBotMessage(message, botUser);
                 break;
             case CommandText.EXAMS:

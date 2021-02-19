@@ -363,6 +363,18 @@ public class SettingsService implements BotMessageService {
                 botMessage = new BotMessage(currentUserSettings, ButtonSettings);
                 botMessage = keyboardFormatter.formatSettings(botMessage, botUser);
                 break;
+            case CommandText.DELETE_PROFILE:
+                botMessage = new BotMessage(MessageText.DELETE_CONFIRRMATION, ButtonConfirmDeletion);
+                botMessage = keyboardFormatter.formatSettings(botMessage, botUser);
+                break;
+            case CommandText.NO:
+                botMessage = new BotMessage("Спасибо, что остаётесь с нами!", ButtonSettings);
+                botMessage = keyboardFormatter.formatSettings(botMessage, botUser);
+                break;
+            case CommandText.YES:
+                botUserRepository.deleteOneById(userId);
+                botMessage = new BotMessage(MessageText.BYE_MESSAGE);
+                break;
         }
 
         if(CommandText.HOUR_PATTERN.matcher(message).matches()) {

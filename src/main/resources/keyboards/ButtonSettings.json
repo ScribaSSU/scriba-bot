@@ -45,6 +45,16 @@ WEEK_FILTER
 "action": {
 "type": "text",
 "payload": "{\"button\": \"1\"}",
+"label": "Удалить профиль"
+},
+"color": "negative"
+}
+],
+[
+{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"1\"}",
 "label": "Главное меню"
 },
 "color": "primary"
