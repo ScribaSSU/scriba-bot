@@ -36,12 +36,14 @@ public class MessageSenderImpl implements MessageSender {
     public void send(BotMessage botMessage, String userId) throws Exception {
             int startIndex = 0;
             String message;
+            int lastSpaceIndex = 0;
             while (startIndex < botMessage.getMessage().length()) {
                 if (botMessage.getMessage().length() - startIndex <= VK_LENGTH) {
                     message = botMessage.getMessage().substring(startIndex);
                 }
                 else {
-                    message = botMessage.getMessage().substring(startIndex, VK_LENGTH);
+                    lastSpaceIndex = botMessage.getMessage().lastIndexOf(' ', startIndex + VK_LENGTH);
+                    message = botMessage.getMessage().substring(startIndex, lastSpaceIndex);
                 }
                 List<NameValuePair> postParameters = new ArrayList<>();
                 postParameters.add(new BasicNameValuePair("access_token", token));
@@ -60,7 +62,13 @@ public class MessageSenderImpl implements MessageSender {
                 HttpClient client = HttpClientBuilder.create().build();
                 HttpResponse response = client.execute(postRequest);
 
-                startIndex += VK_LENGTH;
+                if (lastSpaceIndex > 0) {
+                    startIndex = lastSpaceIndex + 1;
+                    lastSpaceIndex = 0;
+                }
+                else {
+                    startIndex += VK_LENGTH;
+                }
 
                 System.out.println("RESPONSE: " + response);
                 System.out.println(response.getEntity().getContent());
