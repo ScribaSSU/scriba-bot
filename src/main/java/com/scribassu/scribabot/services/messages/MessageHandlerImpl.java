@@ -273,7 +273,7 @@ public class MessageHandlerImpl implements MessageHandler {
         }
 
         if(botMessage.isDefault()) {
-            unrecognizedMessageRepository.save(new UnrecognizedMessage(command.toString(), botUser.toString()));
+            unrecognizedMessageRepository.save(new UnrecognizedMessage(command, botUser));
         }
 
         return botMessage;
