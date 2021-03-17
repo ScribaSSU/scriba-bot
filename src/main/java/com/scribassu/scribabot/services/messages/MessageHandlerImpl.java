@@ -227,7 +227,7 @@ public class MessageHandlerImpl implements MessageHandler {
         if(CommandText.DEPARTMENT_PAYLOAD.equalsIgnoreCase(payload)
             || CommandText.DEPARTMENT_PATTERN.matcher(message).matches()) {
             botUserRepository.updateDepartment(DepartmentConverter.convertToUrl(message), userId);
-            botMessage = new BotMessage("Выберите форму расписания.", ButtonGroupType);
+            botMessage = new BotMessage(MessageText.CHOOSE_EDUCATION_FORM, ButtonGroupType);
         }
 
         if(CommandText.COURSE_PAYLOAD.equalsIgnoreCase(payload)) {

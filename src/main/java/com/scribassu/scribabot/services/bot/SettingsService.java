@@ -364,7 +364,7 @@ public class SettingsService implements BotMessageService {
                 botMessage = keyboardFormatter.formatSettings(botMessage, botUser);
                 break;
             case CommandText.DELETE_PROFILE:
-                botMessage = new BotMessage(MessageText.DELETE_CONFIRRMATION, ButtonConfirmDeletion);
+                botMessage = new BotMessage(MessageText.DELETE_CONFIRMATION, ButtonConfirmDeletion);
                 botMessage = keyboardFormatter.formatSettings(botMessage, botUser);
                 break;
             case CommandText.NO:

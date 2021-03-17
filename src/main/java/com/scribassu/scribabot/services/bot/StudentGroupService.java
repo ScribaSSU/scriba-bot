@@ -68,8 +68,8 @@ public class StudentGroupService implements BotMessageService {
         }
         else if(groupNumbersDto.getGroupNumbers().size() > Constants.MAX_VK_KEYBOARD_SIZE_FOR_LISTS) {
             StringBuilder stringBuilder = new StringBuilder("Извините, нашлось слишком много групп, " +
-                    "и они не могут отобразиться через клавиатуру из-за ограничений VK. " +
-                    "Пожалуйста, введите номер группы в формате Г НОМЕР, например, Г 123, " +
+                    "и они не могут отобразиться через клавиатуру из-за ограничений VK :( " +
+                    "Пожалуйста, введите номер группы в формате г номергруппы, например, г 123, " +
                     "чтобы бот все-таки записал вашу группу. Доступные номера по вашему запросу:\n\n");
             for(String groupNumber : groupNumbersDto.getGroupNumbers()) {
                 stringBuilder.append(groupNumber).append(", ");
@@ -80,7 +80,7 @@ public class StudentGroupService implements BotMessageService {
             VkKeyboard vkKeyboard = buildVkKeyboardFromGroupNumbers(groupNumbersDto.getGroupNumbers());
             ObjectMapper objectMapper = new ObjectMapper();
             try {
-                botMessage = new BotMessage("Выберите группу.", objectMapper.writeValueAsString(vkKeyboard));
+                botMessage = new BotMessage(MessageText.CHOOSE_STUDENT_GROUP, objectMapper.writeValueAsString(vkKeyboard));
             }
             catch(Exception e) {
                 botMessage = new BotMessage("Не удалось загрузить список групп :(", ButtonCourse);
