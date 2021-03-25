@@ -1,4 +1,5 @@
 package com.scribassu.scribabot.dto.rest;
+
 import com.scribassu.tracto.domain.ExtramuralEvent;
 import com.scribassu.tracto.domain.StudentGroup;
 import lombok.Data;

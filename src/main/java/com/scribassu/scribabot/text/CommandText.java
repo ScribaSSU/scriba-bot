@@ -6,6 +6,7 @@ public class CommandText {
     public static final String HELLO = "привет";
     public static final String HELP = "справка";
     public static final String FULL_TIME_SCHEDULE = "расписание студентов";
+    public static final String EXTRAMURAL_SCHEDULE = "расписание заочного отделения";
     public static final String TEACHER_SCHEDULE = "расписание преподавателей";
     public static final String SETTINGS = "настройки";
     public static final String MAIN_MENU = "главное меню";

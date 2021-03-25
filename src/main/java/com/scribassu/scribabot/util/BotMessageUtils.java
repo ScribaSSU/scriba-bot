@@ -1,14 +1,12 @@
 package com.scribassu.scribabot.util;
 
 import com.scribassu.scribabot.dto.BotMessage;
-import com.scribassu.scribabot.dto.rest.ExamPeriodEventDto;
-import com.scribassu.scribabot.dto.rest.FullTimeLessonDto;
-import com.scribassu.scribabot.dto.rest.TeacherExamPeriodEventDto;
-import com.scribassu.scribabot.dto.rest.TeacherFullTimeLessonDto;
+import com.scribassu.scribabot.dto.rest.*;
 import com.scribassu.scribabot.entities.BotUser;
 import com.scribassu.tracto.domain.EducationForm;
 import org.springframework.util.StringUtils;
 
+import static com.scribassu.scribabot.keyboard.KeyboardType.ButtonExtramuralSchedule;
 import static com.scribassu.scribabot.keyboard.KeyboardType.ButtonFullTimeSchedule;
 
 public class BotMessageUtils {
@@ -45,6 +43,17 @@ public class BotMessageUtils {
 
     public static BotMessage getBotMessageForTeacherExamPeriod(TeacherExamPeriodEventDto examPeriodEventDto) {
         return new BotMessage(Templates.makeTeacherExamPeriodTemplate(examPeriodEventDto), ButtonFullTimeSchedule);
+    }
+
+    public static BotMessage getBotMessageForExtramuralEvent(ExtramuralDto extramuralDto, String day) {
+        return new BotMessage(
+                Templates.makeExtramuralEventTemplate(extramuralDto, day),
+                ButtonExtramuralSchedule
+        );
+    }
+
+    public static BotMessage getBotMessageForEmptyExtramuralEvents() {
+        return new BotMessage("Расписание для вашей группы отсутствует.", ButtonExtramuralSchedule);
     }
 
     public static boolean isBotUserFullTime(BotUser botUser) {
