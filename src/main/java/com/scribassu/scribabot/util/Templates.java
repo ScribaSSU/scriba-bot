@@ -1,6 +1,7 @@
 package com.scribassu.scribabot.util;
 
 import com.scribassu.scribabot.dto.rest.ExamPeriodEventDto;
+import com.scribassu.scribabot.dto.rest.ExtramuralDto;
 import com.scribassu.scribabot.dto.rest.FullTimeLessonDto;
 import com.scribassu.scribabot.dto.rest.TeacherExamPeriodEventDto;
 import com.scribassu.scribabot.dto.rest.TeacherFullTimeLessonDto;
@@ -274,6 +275,86 @@ public class Templates {
         return stringBuilder.toString();
     }
 
+    public static String makeExtramuralEventTemplate(ExtramuralDto extramuralDto, String day) {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        if (day.equalsIgnoreCase(CommandText.TODAY)) {
+            stringBuilder.append("Сегодня").append("\n\n");
+        }
+        if (day.equalsIgnoreCase(CommandText.TOMORROW)) {
+            stringBuilder.append("Завтра").append("\n\n");
+        }
+        if (day.equalsIgnoreCase(CommandText.AFTER_TOMORROW)) {
+            stringBuilder.append("Послезавтра").append("\n\n");
+        }
+        stringBuilder.append("Группа № ").append(extramuralDto.getStudentGroup().getGroupNumberRus()).append("\n \n");
+
+        if (CollectionUtils.isEmpty(extramuralDto.getExtramuralEvents())) {
+            Calendar calendar = CalendarUtils.getCalendar();
+
+            if (day.equalsIgnoreCase(CommandText.TOMORROW)) {
+                calendar.add(Calendar.DAY_OF_MONTH, 1);
+            }
+            if (day.equalsIgnoreCase(CommandText.AFTER_TOMORROW)) {
+                calendar.add(Calendar.DAY_OF_MONTH, 2);
+            }
+
+            String data = calendar.get(Calendar.DAY_OF_MONTH) + "-" + (calendar.get(Calendar.MONTH) + 1) + "-" + calendar.get(Calendar.YEAR);
+            stringBuilder.append(data).append("\n");
+            stringBuilder.append("На этот день событий не назначено.");
+        } else {
+            List<ExtramuralEvent> extramuralEvents = extramuralDto.getExtramuralEvents();
+            extramuralEvents.sort(Comparator.comparingLong(ExtramuralEvent::getId));
+
+            for (ExtramuralEvent extramuralEvent : extramuralEvents) {
+                if (extramuralEvent.getDay() != -1) {
+                    stringBuilder
+                            .append(extramuralEvent.getDay())
+                            .append(" ")
+                            .append(extramuralEvent.getMonth().getRusGenitive())
+                            .append(" ")
+                            .append(extramuralEvent.getYear())
+                            .append("\n");
+                } else {
+                    stringBuilder.append("\n");
+                }
+                if (extramuralEvent.getStartHour() != -1) {
+                    stringBuilder.append(extramuralEvent.getStartHour());
+                    if (extramuralEvent.getStartMinute() != -1) {
+                        stringBuilder.append(":").append(extramuralEvent.getStartMinute() < 10 ?
+                                "0" + extramuralEvent.getStartMinute() :
+                                extramuralEvent.getStartMinute());
+                    } else {
+                        stringBuilder.append("ч.");
+                    }
+
+                    if (extramuralEvent.getEndHour() != -1) {
+                        stringBuilder.append(" - ").append(extramuralEvent.getEndHour());
+                        if (extramuralEvent.getEndMinute() != -1) {
+                            stringBuilder.append(":").append(extramuralEvent.getEndMinute() < 10 ?
+                                    "0" + extramuralEvent.getEndMinute() :
+                                    extramuralEvent.getEndMinute());
+                        } else {
+                            stringBuilder.append("ч");
+                        }
+                    }
+                    stringBuilder.append("\n");
+                }
+
+                stringBuilder
+                        .append(extramuralEvent.getEventType().getType())
+                        .append(" ")
+                        .append(appendExtramuralEventTypeEmoji(extramuralEvent));
+
+                stringBuilder.append("\n");
+                stringBuilder.append(extramuralEvent.getName()).append("\n");
+                stringBuilder.append(extramuralEvent.getTeacher()).append("\n");
+                stringBuilder.append(extramuralEvent.getPlace()).append("\n \n");
+            }
+        }
+        return stringBuilder.toString();
+    }
+
     private static String appendTeacher(Teacher teacher) {
         return teacher.getSurname() + " " +
                 (StringUtils.isEmpty(teacher.getName()) ? " " : teacher.getName()) +
@@ -315,5 +396,26 @@ public class Templates {
         else if (fullTimeLesson.getLessonType().equals(LessonType.LABORATORY))
             return "\uD83D\uDCD5";
         return "";
+    }
+
+    private static String appendExtramuralEventTypeEmoji(ExtramuralEvent extramuralEvent) {
+        switch (extramuralEvent.getEventType()) {
+            case EXAM:
+                return "\uD83C\uDF40";
+            case LECTURE:
+                return "\uD83D\uDCD7";
+            case MIDTERM:
+                return "\uD83D\uDCA1";
+            case PRACTICE:
+                return "\uD83D\uDCD8";
+            case LABORATORY:
+                return "\uD83D\uDCD5";
+            case CONSULTATION:
+                return "\uD83D\uDCD3";
+            case MIDTERM_WITH_MARK:
+                return "\uD83D\uDD25";
+            default:
+                return "";
+        }
     }
 }

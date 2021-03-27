@@ -2,9 +2,12 @@ package com.scribassu.scribabot.services.bot.scheduled;
 
 import com.scribassu.scribabot.dto.BotMessage;
 import com.scribassu.scribabot.dto.rest.ExamPeriodEventDto;
+import com.scribassu.scribabot.dto.rest.ExtramuralDto;
 import com.scribassu.scribabot.dto.rest.FullTimeLessonDto;
 import com.scribassu.scribabot.entities.ExamPeriodDailyNotification;
+import com.scribassu.scribabot.entities.ExtramuralEventDailyNotification;
 import com.scribassu.scribabot.repositories.ExamPeriodDailyNotificationRepository;
+import com.scribassu.scribabot.repositories.ExtramuralEventDailyNotificationRepository;
 import com.scribassu.scribabot.text.CommandText;
 import com.scribassu.scribabot.entities.BotUser;
 import com.scribassu.scribabot.entities.ScheduleDailyNotification;
@@ -32,24 +35,28 @@ public class DailyNotificationService {
     private final BotUserRepository botUserRepository;
     private final ScheduleDailyNotificationRepository scheduleDailyNotificationRepository;
     private final ExamPeriodDailyNotificationRepository examPeriodDailyNotificationRepository;
+    private final ExtramuralEventDailyNotificationRepository extramuralEventDailyNotificationRepository;
 
     @Autowired
     public DailyNotificationService(MessageSender messageSender,
                                     CallRestService callRestService,
                                     BotUserRepository botUserRepository,
                                     ScheduleDailyNotificationRepository scheduleDailyNotificationRepository,
-                                    ExamPeriodDailyNotificationRepository examPeriodDailyNotificationRepository) {
+                                    ExamPeriodDailyNotificationRepository examPeriodDailyNotificationRepository,
+                                    ExtramuralEventDailyNotificationRepository extramuralEventDailyNotificationRepository) {
         this.messageSender = messageSender;
         this.callRestService = callRestService;
         this.botUserRepository = botUserRepository;
         this.scheduleDailyNotificationRepository = scheduleDailyNotificationRepository;
         this.examPeriodDailyNotificationRepository = examPeriodDailyNotificationRepository;
+        this.extramuralEventDailyNotificationRepository = extramuralEventDailyNotificationRepository;
     }
 
     @Scheduled(cron = "${scheduled.schedule-daily-notification-service.cron}")
     public void sendSchedule() throws Exception {
         sendFullTimeSchedule();
         sendExamPeriodSchedule();
+        sendExtramuralSchedule();
     }
 
     private void sendFullTimeSchedule() throws Exception {
@@ -113,5 +120,37 @@ public class DailyNotificationService {
             log.info("No need to send exam period schedule for hour {}", hourOfDay);
         }
         log.info("Finish sending exam period schedule for hour {}", hourOfDay);
+    }
+
+    private void sendExtramuralSchedule() throws Exception {
+        Calendar calendar = CalendarUtils.getCalendar();
+        int month = calendar.get(Calendar.MONTH) + 1;
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        int hourOfDay = calendar.get(Calendar.HOUR_OF_DAY);
+        log.info("Start to send extramural schedule for hour {}", hourOfDay);
+        List<ExtramuralEventDailyNotification> extramuralEventDailyNotifications =
+                extramuralEventDailyNotificationRepository.findByHourForSendAndEnabled(hourOfDay);
+
+        if (!CollectionUtils.isEmpty(extramuralEventDailyNotifications)) {
+            log.info("Send extramural schedule for hour {}", hourOfDay);
+            for (ExtramuralEventDailyNotification notification : extramuralEventDailyNotifications) {
+                BotUser botUser = botUserRepository.findOneById(notification.getUserId());
+                if (!BotMessageUtils.isBotUserFullTime(botUser)) {
+                    ExtramuralDto extramuralDto = callRestService.getExtramuralEventsByDay(
+                            botUser.getDepartment(),
+                            botUser.getGroupNumber(),
+                            month,
+                            day
+                    );
+                    BotMessage botMessage;
+                    botMessage = BotMessageUtils.getBotMessageForExtramuralEvent(extramuralDto, CommandText.TODAY);
+                    messageSender.send(botMessage, botUser.getUserId());
+                    Thread.sleep(51); //20 messages per second
+                }
+            }
+        } else {
+            log.info("No need to send extramural schedule for hour {}", hourOfDay);
+        }
+        log.info("Finish sending extramural schedule for hour {}", hourOfDay);
     }
 }

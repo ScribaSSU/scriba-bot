@@ -6,6 +6,7 @@ public enum KeyboardType {
     ButtonDepartment("ButtonDepartment.json"),
     ButtonGroupType("ButtonGroupType.json"),
     ButtonFullTimeSchedule("ButtonFullTimeSchedule.json"),
+    ButtonExtramuralSchedule("ButtonExtramuralSchedule.json"),
     ButtonSettings("ButtonSettings.json"),
     ButtonHours("ButtonHours.json"),
     ButtonCourse("ButtonCourse.json"),
