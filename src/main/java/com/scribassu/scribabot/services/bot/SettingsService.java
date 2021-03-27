@@ -481,12 +481,20 @@ public class SettingsService implements BotMessageService {
                 botMessage = keyboardFormatter.formatSettings(botMessage, botUser);
                 break;
             case CommandText.CURRENT_USER_SETTINGS:
-                String currentUserSettings = getStudentInfo(botUser) +
-                        "\n" +
-                        getScheduleNotificationStatus(botUser.getUserId()) +
-                        "\n\n" +
-                        "Фильтрация по типу недели: " +
-                        (botUser.isFilterNomDenom() ? "вкл." : "выкл.");
+                String currentUserSettings = "";
+                if(BotMessageUtils.isBotUserFullTime(botUser)) {
+                    currentUserSettings = getStudentInfo(botUser) +
+                            "\n" +
+                            getFullTimeScheduleNotificationStatus(botUser.getUserId()) +
+                            "\n\n" +
+                            "Фильтрация по типу недели: " +
+                            (botUser.isFilterNomDenom() ? "вкл." : "выкл.");
+                }
+                else if(BotMessageUtils.isBotUserExtramural(botUser)) {
+                    currentUserSettings = getStudentInfo(botUser) +
+                            "\n" +
+                            getExtramuralScheduleNotificationStatus(botUser.getUserId());
+                }
                 botMessage = new BotMessage(currentUserSettings, ButtonSettings);
                 botMessage = keyboardFormatter.formatSettings(botMessage, botUser);
                 break;
@@ -617,7 +625,7 @@ public class SettingsService implements BotMessageService {
                 "Группа: " + firstNotEmpty(botUser.getGroupNumber()) + "\n";
     }
 
-    private String getScheduleNotificationStatus(String userId) {
+    private String getFullTimeScheduleNotificationStatus(String userId) {
         ScheduleDailyNotification scheduleDailyNotification =
                 scheduleDailyNotificationRepository.findByUserId(userId);
         StringBuilder stringBuilder = new StringBuilder();
@@ -740,6 +748,60 @@ public class SettingsService implements BotMessageService {
             }
             else {
                 stringBuilder.append(examPeriodAfterTomorrowNotification.getHourForSend()).append(" ч.");
+            }
+        }
+
+        return stringBuilder.toString();
+    }
+
+    private String getExtramuralScheduleNotificationStatus(String userId) {
+        ExtramuralEventDailyNotification extramuralEventDailyNotification =
+                extramuralEventDailyNotificationRepository.findByUserId(userId);
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("Рассылка расписания на сегодня: ");
+
+        if(null == extramuralEventDailyNotification) {
+            stringBuilder.append("не подключена.");
+        }
+        else {
+            if(extramuralEventDailyNotification.isEnabled()) {
+                stringBuilder.append("вкл, ");
+            }
+            else {
+                stringBuilder.append("выкл, ");
+            }
+
+            if(extramuralEventDailyNotification.getHourForSend() == null) {
+                stringBuilder.append("время не указано.");
+            }
+            else {
+                stringBuilder.append(extramuralEventDailyNotification.getHourForSend()).append(" ч.");
+            }
+        }
+
+        stringBuilder.append("\n\n");
+
+        ExtramuralEventTomorrowNotification extramuralEventTomorrowNotification =
+                extramuralEventTomorrowNotificationRepository.findByUserId(userId);
+
+        stringBuilder.append("Рассылка расписания на завтра: ");
+
+        if(null == extramuralEventTomorrowNotification) {
+            stringBuilder.append("не подключена.");
+        }
+        else {
+            if(extramuralEventTomorrowNotification.isEnabled()) {
+                stringBuilder.append("вкл, ");
+            }
+            else {
+                stringBuilder.append("выкл, ");
+            }
+
+            if(extramuralEventTomorrowNotification.getHourForSend() == null) {
+                stringBuilder.append("время не указано.");
+            }
+            else {
+                stringBuilder.append(extramuralEventTomorrowNotification.getHourForSend()).append(" ч.");
             }
         }
 
