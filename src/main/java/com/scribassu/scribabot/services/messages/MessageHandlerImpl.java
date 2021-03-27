@@ -260,7 +260,12 @@ public class MessageHandlerImpl implements MessageHandler {
                 botUserRepository.updatePreviousUserMessage("", botUser.getUserId());
             }
             else {
-                botMessage = new BotMessage(MessageText.FINISH_SET_GROUP, ButtonFullTimeSchedule);
+                if(BotMessageUtils.isBotUserFullTime(botUser)) {
+                    botMessage = new BotMessage(MessageText.FINISH_SET_GROUP, ButtonFullTimeSchedule);
+                }
+                else if(BotMessageUtils.isBotUserExtramural(botUser)) {
+                    botMessage = new BotMessage(FINISH_SET_GROUP, ButtonExtramuralSchedule);
+                }
             }
         }
 
