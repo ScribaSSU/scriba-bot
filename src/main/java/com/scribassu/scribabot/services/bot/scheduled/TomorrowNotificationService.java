@@ -153,7 +153,7 @@ public class TomorrowNotificationService {
                             day
                     );
                     BotMessage botMessage;
-                    botMessage = BotMessageUtils.getBotMessageForExtramuralEvent(extramuralDto, CommandText.TODAY);
+                    botMessage = BotMessageUtils.getBotMessageForExtramuralEvent(extramuralDto, CommandText.TOMORROW);
                     messageSender.send(botMessage, botUser.getUserId());
                     Thread.sleep(51); //20 messages per second
                 }
