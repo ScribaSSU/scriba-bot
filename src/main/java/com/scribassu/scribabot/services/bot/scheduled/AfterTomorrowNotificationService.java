@@ -49,6 +49,7 @@ public class AfterTomorrowNotificationService {
     @Scheduled(cron = "${scheduled.schedule-after-tomorrow-notification-service.cron}")
     public void sendSchedule() throws Exception {
         sendExamPeriodSchedule();
+        sendExtramuralSchedule();
     }
 
     private void sendExamPeriodSchedule() throws Exception {
@@ -101,7 +102,7 @@ public class AfterTomorrowNotificationService {
             log.info("Send extramural schedule for hour {}", hourOfDay);
             for (ExtramuralEventAfterTomorrowNotification notification : extramuralEventAfterTomorrowNotifications) {
                 BotUser botUser = botUserRepository.findOneById(notification.getUserId());
-                if (!BotMessageUtils.isBotUserFullTime(botUser)) {
+                if (BotMessageUtils.isBotUserExtramural(botUser)) {
                     ExtramuralDto extramuralDto = callRestService.getExtramuralEventsByDay(
                             botUser.getDepartment(),
                             botUser.getGroupNumber(),

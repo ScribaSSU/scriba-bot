@@ -1,11 +1,20 @@
 {
 "one_time": true,
 "buttons": [
-[{
+[
+{
 "action": {
 "type": "text",
 "payload": "{\"button\": \"1\"}",
 "label": "Дневная"
+},
+"color": "primary"
+},
+{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"1\"}",
+"label": "Заочная"
 },
 "color": "primary"
 }

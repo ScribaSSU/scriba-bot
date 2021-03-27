@@ -62,4 +62,11 @@ public class BotMessageUtils {
                 && EducationForm.DO.getGroupType().equalsIgnoreCase(botUser.getEducationForm())
                 && !StringUtils.isEmpty(botUser.getGroupNumber());
     }
+
+    public static boolean isBotUserExtramural(BotUser botUser) {
+        return botUser != null
+                && botUser.getEducationForm() != null
+                && EducationForm.ZO.getGroupType().equalsIgnoreCase(botUser.getEducationForm())
+                && !StringUtils.isEmpty(botUser.getGroupNumber());
+    }
 }
