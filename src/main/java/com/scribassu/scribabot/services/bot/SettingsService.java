@@ -58,18 +58,18 @@ public class SettingsService implements BotMessageService {
 
         switch(message) {
             case CommandText.SEND_EXAM_PERIOD:
-                botMessage = new BotMessage("Здесь вы можете настроить рассылку расписания сессии.", ButtonSettingsExamPeriodNotifications);
-                botMessage = keyboardFormatter.formatSettingsExamNotif(botMessage, botUser);
-                break;
-            case CommandText.SEND_SCHEDULE:
                 if(BotMessageUtils.isBotUserFullTime(botUser)) {
-                    botMessage = new BotMessage("Здесь вы можете настроить рассылку расписания занятий.", ButtonSettingsScheduleNotifications);
-                    botMessage = keyboardFormatter.formatSettingsScheduleNotif(botMessage, botUser);
+                    botMessage = new BotMessage("Здесь вы можете настроить рассылку расписания сессии.", ButtonSettingsExamPeriodNotifications);
+                    botMessage = keyboardFormatter.formatSettingsExamNotif(botMessage, botUser);
                 }
                 else if(BotMessageUtils.isBotUserExtramural(botUser)) {
                     botMessage = new BotMessage("У заочников нет отдельного расписания сессии, только расписание занятий.", ButtonSettings);
                     botMessage = keyboardFormatter.formatSettings(botMessage, botUser);
                 }
+                break;
+            case CommandText.SEND_SCHEDULE:
+                botMessage = new BotMessage("Здесь вы можете настроить рассылку расписания занятий.", ButtonSettingsScheduleNotifications);
+                botMessage = keyboardFormatter.formatSettingsScheduleNotif(botMessage, botUser);
                 break;
             case CommandText.SET_SEND_SCHEDULE_TIME_TODAY:
                 String formatSchedule = String.format(MessageText.CHOOSE_SCHEDULE_NOTIFICATION_TIME, "сегодня");
@@ -509,29 +509,57 @@ public class SettingsService implements BotMessageService {
 
             if(botUser.getPreviousUserMessage().equalsIgnoreCase(
                                 String.format(MessageText.CHOOSE_SCHEDULE_NOTIFICATION_TIME, "сегодня"))) {
-                ScheduleDailyNotification scheduleDailyNotification =
-                        scheduleDailyNotificationRepository.findByUserId(userId);
+                if(BotMessageUtils.isBotUserFullTime(botUser)) {
+                    ScheduleDailyNotification scheduleDailyNotification =
+                            scheduleDailyNotificationRepository.findByUserId(userId);
 
-                if(scheduleDailyNotification == null) {
-                    scheduleDailyNotification = new ScheduleDailyNotification(userId, true, hourForSend);
+                    if(scheduleDailyNotification == null) {
+                        scheduleDailyNotification = new ScheduleDailyNotification(userId, true, hourForSend);
+                    }
+                    else {
+                        scheduleDailyNotification.setHourForSend(hourForSend);
+                    }
+                    scheduleDailyNotificationRepository.save(scheduleDailyNotification);
                 }
-                else {
-                    scheduleDailyNotification.setHourForSend(hourForSend);
+                else if(BotMessageUtils.isBotUserExtramural(botUser)) {
+                    ExtramuralEventDailyNotification extramuralEventDailyNotification =
+                            extramuralEventDailyNotificationRepository.findByUserId(userId);
+
+                    if(null == extramuralEventDailyNotification) {
+                        extramuralEventDailyNotification = new ExtramuralEventDailyNotification(userId, true, hourForSend);
+                    }
+                    else {
+                        extramuralEventDailyNotification.setHourForSend(hourForSend);
+                    }
+                    extramuralEventDailyNotificationRepository.save(extramuralEventDailyNotification);
                 }
-                scheduleDailyNotificationRepository.save(scheduleDailyNotification);
             }
             if(botUser.getPreviousUserMessage().equalsIgnoreCase(
                                 String.format(MessageText.CHOOSE_SCHEDULE_NOTIFICATION_TIME, "завтра"))) {
-                ScheduleTomorrowNotification scheduleTomorrowNotification =
-                        scheduleTomorrowNotificationRepository.findByUserId(userId);
+                if(BotMessageUtils.isBotUserFullTime(botUser)) {
+                    ScheduleTomorrowNotification scheduleTomorrowNotification =
+                            scheduleTomorrowNotificationRepository.findByUserId(userId);
 
-                if(scheduleTomorrowNotification == null) {
-                    scheduleTomorrowNotification = new ScheduleTomorrowNotification(userId, true, hourForSend);
+                    if(scheduleTomorrowNotification == null) {
+                        scheduleTomorrowNotification = new ScheduleTomorrowNotification(userId, true, hourForSend);
+                    }
+                    else {
+                        scheduleTomorrowNotification.setHourForSend(hourForSend);
+                    }
+                    scheduleTomorrowNotificationRepository.save(scheduleTomorrowNotification);
                 }
-                else {
-                    scheduleTomorrowNotification.setHourForSend(hourForSend);
+                else if(BotMessageUtils.isBotUserExtramural(botUser)) {
+                    ExtramuralEventTomorrowNotification extramuralEventTomorrowNotification =
+                            extramuralEventTomorrowNotificationRepository.findByUserId(userId);
+
+                    if(extramuralEventTomorrowNotification == null) {
+                        extramuralEventTomorrowNotification = new ExtramuralEventTomorrowNotification(userId, true, hourForSend);
+                    }
+                    else {
+                        extramuralEventTomorrowNotification.setHourForSend(hourForSend);
+                    }
+                    extramuralEventTomorrowNotificationRepository.save(extramuralEventTomorrowNotification);
                 }
-                scheduleTomorrowNotificationRepository.save(scheduleTomorrowNotification);
             }
             if(botUser.getPreviousUserMessage().equalsIgnoreCase(
                     String.format(MessageText.CHOOSE_EXAM_PERIOD_NOTIFICATION_TIME, "сегодня"))) {

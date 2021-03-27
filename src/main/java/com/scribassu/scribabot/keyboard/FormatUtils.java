@@ -20,11 +20,19 @@ public class FormatUtils {
         return botMessage;
     }
 
-    public static BotMessage addScheduleNotifs(BotMessage botMessage,
-                                               ScheduleDailyNotification scheduleDailyNotification,
-                                               ScheduleTomorrowNotification scheduleTomorrowNotification) {
-        botMessage = addScheduleNotifDaily(botMessage, scheduleDailyNotification);
-        botMessage = addScheduleNotifTomorrow(botMessage, scheduleTomorrowNotification);
+    public static BotMessage addFullTimeScheduleNotifs(BotMessage botMessage,
+                                                       ScheduleDailyNotification scheduleDailyNotification,
+                                                       ScheduleTomorrowNotification scheduleTomorrowNotification) {
+        botMessage = addFullTimeScheduleNotifDaily(botMessage, scheduleDailyNotification);
+        botMessage = addFullTimeScheduleNotifTomorrow(botMessage, scheduleTomorrowNotification);
+        return botMessage;
+    }
+
+    public static BotMessage addExtramuralScheduleNotifs(BotMessage botMessage,
+                                                       ExtramuralEventDailyNotification extramuralEventDailyNotification,
+                                                       ExtramuralEventTomorrowNotification extramuralEventTomorrowNotification) {
+        botMessage = addExtramuralScheduleNotifDaily(botMessage, extramuralEventDailyNotification);
+        botMessage = addExtramuralScheduleNotifTomorrow(botMessage, extramuralEventTomorrowNotification);
         return botMessage;
     }
 
@@ -80,8 +88,8 @@ public class FormatUtils {
         return botMessage;
     }
 
-    public static BotMessage addScheduleNotifDaily(BotMessage botMessage,
-                                                   ScheduleDailyNotification scheduleDailyNotification) {
+    public static BotMessage addFullTimeScheduleNotifDaily(BotMessage botMessage,
+                                                           ScheduleDailyNotification scheduleDailyNotification) {
         if(null == scheduleDailyNotification) {
             botMessage.formatKeyboard(ReplacedConstants.SCHEDULE_NOTIF_DAILY, PartButtonEnableScheduleNotificationDaily);
         }
@@ -94,12 +102,40 @@ public class FormatUtils {
         return botMessage;
     }
 
-    public static BotMessage addScheduleNotifTomorrow(BotMessage botMessage,
-                                                      ScheduleTomorrowNotification scheduleTomorrowNotification) {
+    public static BotMessage addFullTimeScheduleNotifTomorrow(BotMessage botMessage,
+                                                              ScheduleTomorrowNotification scheduleTomorrowNotification) {
         if(null == scheduleTomorrowNotification) {
             botMessage.formatKeyboard(ReplacedConstants.SCHEDULE_NOTIF_TOMORROW, PartButtonEnableScheduleNotificationTomorrow);
         }
         else if(scheduleTomorrowNotification.isEnabled()) {
+            botMessage.formatKeyboard(ReplacedConstants.SCHEDULE_NOTIF_TOMORROW, PartButtonDisableScheduleNotificationTomorrow);
+        }
+        else {
+            botMessage.formatKeyboard(ReplacedConstants.SCHEDULE_NOTIF_TOMORROW, PartButtonEnableScheduleNotificationTomorrow);
+        }
+        return botMessage;
+    }
+
+    public static BotMessage addExtramuralScheduleNotifDaily(BotMessage botMessage,
+                                                             ExtramuralEventDailyNotification extramuralEventDailyNotification) {
+        if(null == extramuralEventDailyNotification) {
+            botMessage.formatKeyboard(ReplacedConstants.SCHEDULE_NOTIF_DAILY, PartButtonEnableScheduleNotificationDaily);
+        }
+        else if(extramuralEventDailyNotification.isEnabled()) {
+            botMessage.formatKeyboard(ReplacedConstants.SCHEDULE_NOTIF_DAILY, PartButtonDisableScheduleNotificationDaily);
+        }
+        else {
+            botMessage.formatKeyboard(ReplacedConstants.SCHEDULE_NOTIF_DAILY, PartButtonEnableScheduleNotificationDaily);
+        }
+        return botMessage;
+    }
+
+    public static BotMessage addExtramuralScheduleNotifTomorrow(BotMessage botMessage,
+                                                                ExtramuralEventTomorrowNotification extramuralEventTomorrowNotification) {
+        if(null == extramuralEventTomorrowNotification) {
+            botMessage.formatKeyboard(ReplacedConstants.SCHEDULE_NOTIF_TOMORROW, PartButtonEnableScheduleNotificationTomorrow);
+        }
+        else if(extramuralEventTomorrowNotification.isEnabled()) {
             botMessage.formatKeyboard(ReplacedConstants.SCHEDULE_NOTIF_TOMORROW, PartButtonDisableScheduleNotificationTomorrow);
         }
         else {
