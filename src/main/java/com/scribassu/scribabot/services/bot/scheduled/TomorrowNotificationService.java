@@ -85,7 +85,8 @@ public class TomorrowNotificationService {
                             dayNumber
                     );
                     BotMessage botMessage = BotMessageUtils.getBotMessageForFullTimeLessons(lessons, CommandText.TOMORROW, botUser.isFilterNomDenom());
-                    messageSender.send(botMessage, botUser.getUserId());
+                    if (botUser.isFilterLessonNotif() || !CollectionUtils.isEmpty(lessons.getLessons()))
+                        messageSender.send(botMessage, botUser.getUserId());
                 }
             }
         }
@@ -118,6 +119,7 @@ public class TomorrowNotificationService {
                             day
                     );
                     BotMessage botMessage;
+
                     botMessage = BotMessageUtils.getBotMessageForFullTimeExamPeriod(examPeriodEventDto, CommandText.TOMORROW);
                     messageSender.send(botMessage, botUser.getUserId());
                     Thread.sleep(51); //20 messages per second

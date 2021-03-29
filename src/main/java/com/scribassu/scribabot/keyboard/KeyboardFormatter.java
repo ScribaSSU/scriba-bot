@@ -31,6 +31,10 @@ public class KeyboardFormatter {
         return FormatUtils.addWeekFilter(botMessage, botUser);
     }
 
+    public BotMessage formatSettingsEmptyLesson(BotMessage botMessage, BotUser botUser) {
+        return FormatUtils.addEmptyLessonsFilter(botMessage, botUser);
+    }
+
     public BotMessage formatSettingsScheduleNotif(BotMessage botMessage, BotUser botUser) {
         if(null == botUser) {
             botMessage = FormatUtils.addScheduleNotifs(botMessage, null, null);

@@ -20,6 +20,19 @@ public class FormatUtils {
         return botMessage;
     }
 
+    public static BotMessage addEmptyLessonsFilter(BotMessage botMessage, BotUser botUser) {
+        if(null == botUser) {
+            botMessage.formatKeyboard(ReplacedConstants.EMPTY_LESSONS_FILTER, PartButtonEnableEmptyLessonsFilter);
+        }
+        else if(botUser.isFilterLessonNotif()) {
+            botMessage.formatKeyboard(ReplacedConstants.EMPTY_LESSONS_FILTER, PartButtonEnableEmptyLessonsFilter);
+        }
+        else {
+            botMessage.formatKeyboard(ReplacedConstants.EMPTY_LESSONS_FILTER, PartButtonDisableEmptyLessonsFilter);
+        }
+        return botMessage;
+    }
+
     public static BotMessage addScheduleNotifs(BotMessage botMessage,
                                                ScheduleDailyNotification scheduleDailyNotification,
                                                ScheduleTomorrowNotification scheduleTomorrowNotification) {

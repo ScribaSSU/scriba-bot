@@ -14,6 +14,8 @@ public enum KeyboardType {
     ButtonSettingsExamPeriodNotifications("ButtonSettingsExamPeriodNotifications.json"),
     PartButtonEnableWeekFilter("PartButtonEnableWeekFilter.json"),
     PartButtonDisableWeekFilter("PartButtonDisableWeekFilter.json"),
+    PartButtonEnableEmptyLessonsFilter("PartButtonEnableEmptyLessonsFilter.json"),
+    PartButtonDisableEmptyLessonsFilter("PartButtonDisableEmptyLessonsFilter.json"),
     PartButtonDisableExamNotificationAfterTomorrow("PartButtonDisableExamNotificationAfterTomorrow.json"),
     PartButtonDisableExamNotificationDaily("PartButtonDisableExamNotificationDaily.json"),
     PartButtonDisableExamNotificationTomorrow("PartButtonDisableExamNotificationTomorrow.json"),
