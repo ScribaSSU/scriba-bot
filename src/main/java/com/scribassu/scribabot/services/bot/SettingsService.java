@@ -353,6 +353,18 @@ public class SettingsService implements BotMessageService {
                 botMessage = new BotMessage("Выключена фильтрация по типу недели.", ButtonSettings);
                 botMessage = keyboardFormatter.formatSettings(botMessage, botUser);
                 break;
+            case CommandText.ENABLE_NOTIFICATION_EMPTY_LESSONS:
+                botUser.setFilterLessonNotif(true);
+                botUserRepository.save(botUser);
+                botMessage = new BotMessage("Если пар нет, придет сообщение \"а пар-то нету\"", ButtonSettings);
+                botMessage = keyboardFormatter.formatSettingsEmptyLesson(botMessage, botUser);
+                break;
+            case CommandText.DISABLE_NOTIFICATION_EMPTY_LESSONS:
+                botUser.setFilterLessonNotif(false);
+                botUserRepository.save(botUser);
+                botMessage = new BotMessage("Если пар нет, ничего не отправится", ButtonSettings);
+                botMessage = keyboardFormatter.formatSettingsEmptyLesson(botMessage, botUser);
+                break;
             case CommandText.CURRENT_USER_SETTINGS:
                 String currentUserSettings = getStudentInfo(botUser) +
                         "\n" +

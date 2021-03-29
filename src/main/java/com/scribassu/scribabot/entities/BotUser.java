@@ -24,6 +24,7 @@ public class BotUser {
     private String previousUserMessage;
 
     private boolean filterNomDenom;
+    private boolean filterLessonNotif;
 
     public BotUser(String userId) {
         this.userId = userId;
@@ -42,7 +43,8 @@ public class BotUser {
                 ", groupNumber='" + groupNumber + '\'' +
                 ", educationForm='" + educationForm + '\'' +
                 ", previousUserMessage='" + previousUserMessage + '\'' +
-                ", filterNomDenom=" + filterNomDenom +
+                ", filterNomDenom=" + filterNomDenom + '\'' +
+                ", filterLessonNotif=" + filterLessonNotif +
                 '}';
     }
 }

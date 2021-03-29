@@ -78,7 +78,8 @@ public class DailyNotificationService {
                             dayNumber
                     );
                     BotMessage botMessage = BotMessageUtils.getBotMessageForFullTimeLessons(lessons, CommandText.TODAY, botUser.isFilterNomDenom());
-                    messageSender.send(botMessage, botUser.getUserId());
+                    if (botUser.isFilterLessonNotif() || !CollectionUtils.isEmpty(lessons.getLessons()))
+                        messageSender.send(botMessage, botUser.getUserId());
                     Thread.sleep(51); //20 messages per second
                 }
             }

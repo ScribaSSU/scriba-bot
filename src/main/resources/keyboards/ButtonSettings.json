@@ -22,6 +22,9 @@
 [
 WEEK_FILTER
 ],
+  [
+    EMPTY_LESSONS_FILTER
+  ],
 [
 {
 "action": {

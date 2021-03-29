@@ -54,6 +54,8 @@ public class CommandText {
     public static final String SET_SEND_EXAM_PERIOD_TIME_AFTER_TOMORROW = "уст. время рас-ки сессии на послезавтра";
     public static final String ENABLE_SEND_EXAM_PERIOD_AFTER_TOMORROW = "вкл. рассылку сессии на послезавтра";
     public static final String DISABLE_SEND_EXAM_PERIOD_AFTER_TOMORROW = "выкл. рассылку сессии на послезавтра";
+    public static final String ENABLE_NOTIFICATION_EMPTY_LESSONS = "вкл. рассылку \"пар нет\"";
+    public static final String DISABLE_NOTIFICATION_EMPTY_LESSONS = "выкл. рассылку \"пар нет\"";
 
     public static final String ENABLE_FILTER_WEEK_TYPE = "вкл. фильтр по типу недели";
     public static final String DISABLE_FILTER_WEEK_TYPE = "выкл. фильтр по типу недели";

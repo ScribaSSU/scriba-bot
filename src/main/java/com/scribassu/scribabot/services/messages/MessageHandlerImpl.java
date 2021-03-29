@@ -111,6 +111,7 @@ public class MessageHandlerImpl implements MessageHandler {
                 if(botUser == null) {
                     botUser = new BotUser(userId);
                     botUser.setFilterNomDenom(false);
+                    botUser.setFilterLessonNotif(true);
                     botUser = botUserRepository.save(botUser);
                     botMessage = new BotMessage(GREETING_WITH_CHOOSE_DEPARTMENT, ButtonDepartment);
                     botUserRepository.updatePreviousUserMessage(GREETING_WITH_CHOOSE_DEPARTMENT, botUser.getUserId());
