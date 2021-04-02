@@ -1,10 +1,12 @@
 package com.scribassu.scribabot.services;
 
+import com.google.gson.JsonObject;
 import com.scribassu.scribabot.dto.rest.*;
 import org.apache.commons.codec.Charsets;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -84,7 +86,6 @@ public class CallRestService {
 
         return restTemplate.getForObject(uri, FullTimeLessonDto.class);
     }
-
     public ExamPeriodEventDto getFullTimeExamPeriodEvent(String departmentUrl,
                                                          String groupNumber) {
         RestTemplate restTemplate = new RestTemplate();
@@ -191,5 +192,20 @@ public class CallRestService {
         javax.net.ssl.HttpsURLConnection.setDefaultHostnameVerifier((hostname, sslSession) -> true);
 
         return restTemplate.getForObject(uri, TeacherExamPeriodEventDto.class);
+    }
+    public CsvDto getCsvSchedule(JsonObject jsonObject){
+        RestTemplate restTemplate = new RestTemplate();
+        String uri = prefix + "csvschedule";
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        List<Charset> charsets = new ArrayList<>();
+        charsets.add(Charsets.UTF_8);
+        headers.setAcceptCharset(charsets);
+        HttpEntity<JsonObject> request = new HttpEntity<>(jsonObject, headers);
+        restTemplate.getMessageConverters().add(0, new StringHttpMessageConverter(StandardCharsets.UTF_8));
+        //https://stackoverflow.com/questions/19540289/how-to-fix-the-java-security-cert-certificateexception-no-subject-alternative
+        javax.net.ssl.HttpsURLConnection.setDefaultHostnameVerifier((hostname, sslSession) -> true);
+
+        return restTemplate.postForObject(uri, request, CsvDto.class);
     }
 }
