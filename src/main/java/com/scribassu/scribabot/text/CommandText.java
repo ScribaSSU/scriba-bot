@@ -57,6 +57,8 @@ public class CommandText {
     public static final String SEND_EXAM_PERIOD = "рассылка расписания сессии";
     public static final String SEND_SCHEDULE = "рассылка расписания занятий";
 
+    public static final String CREATE_CSV = "создать .csv файл расписания";
+
     private static final String HOUR = "^\\d*\\s*ч$";
     private static final String COURSE = "\\d{1}\\s*курс";
     private static final String DEPARTMENT = "биолог|географ|геолог|идпо|и-т искусств|ииимо" +

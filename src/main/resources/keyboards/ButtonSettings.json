@@ -40,6 +40,15 @@ WEEK_FILTER
 "color": "primary"
 }
 ],
+[{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"1\"}",
+"label": "Выгрузить расписание в формате .csv"
+},
+"color": "primary"
+}
+],
 [
 {
 "action": {

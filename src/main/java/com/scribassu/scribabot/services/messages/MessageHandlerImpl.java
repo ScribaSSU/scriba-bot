@@ -9,6 +9,7 @@ import com.scribassu.scribabot.keyboard.KeyboardFormatter;
 import com.scribassu.scribabot.repositories.BotUserRepository;
 import com.scribassu.scribabot.repositories.UnrecognizedMessageRepository;
 import com.scribassu.scribabot.services.CallRestService;
+import com.scribassu.scribabot.services.ScheduleToCsvConverter;
 import com.scribassu.scribabot.services.bot.*;
 import com.scribassu.scribabot.text.CommandText;
 import com.scribassu.scribabot.text.MessageText;
@@ -38,6 +39,7 @@ public class MessageHandlerImpl implements MessageHandler {
     private final TeacherService teacherService;
     private final UnrecognizedMessageRepository unrecognizedMessageRepository;
     private final KeyboardFormatter keyboardFormatter;
+    private final ScheduleToCsvConverter scheduleToCsvConverter;
 
     @Value("#{'${scriba-bot.mentioned-names}'.split(',')}")
     private List<String> mentionedNames;
@@ -52,7 +54,8 @@ public class MessageHandlerImpl implements MessageHandler {
                               StudentGroupService studentGroupService,
                               TeacherService teacherService,
                               UnrecognizedMessageRepository unrecognizedMessageRepository,
-                              KeyboardFormatter keyboardFormatter) {
+                              KeyboardFormatter keyboardFormatter,
+                              ScheduleToCsvConverter scheduleToCsvConverter) {
         this.callRestService = callRestService;
         this.helpService = helpService;
         this.fullTimeLessonService = fullTimeLessonService;
@@ -63,6 +66,7 @@ public class MessageHandlerImpl implements MessageHandler {
         this.teacherService = teacherService;
         this.unrecognizedMessageRepository = unrecognizedMessageRepository;
         this.keyboardFormatter = keyboardFormatter;
+        this.scheduleToCsvConverter = scheduleToCsvConverter;
     }
 
     @Override
@@ -162,6 +166,10 @@ public class MessageHandlerImpl implements MessageHandler {
             case CommandText.EVENING:
                 botUserRepository.updateEducationForm(EducationForm.VO.getGroupType(), userId);
                 botMessage = new BotMessage(CHOOSE_COURSE, ButtonCourse);
+                break;
+            case CommandText.CREATE_CSV:
+                botMessage = scheduleToCsvConverter.urlToCsv(botUser.getDepartment(), botUser.getGroupNumber());
+                botMessage.setKeyboard(ButtonSettings);
                 break;
             case CommandText.MONDAY:
             case CommandText.TUESDAY:

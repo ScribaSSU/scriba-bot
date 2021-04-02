@@ -3,6 +3,7 @@ package com.scribassu.scribabot.services;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.scribassu.scribabot.dto.BotMessage;
 import com.scribassu.scribabot.dto.rest.CsvDto;
 import com.scribassu.scribabot.dto.rest.FullTimeLessonDto;
 import com.scribassu.tracto.domain.StudentGroup;
@@ -13,21 +14,21 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class ScheduleToCsvConverter {
     private CallRestService callRestService;
-    private StudentGroup studentGroup;
 
     @Autowired
     public ScheduleToCsvConverter() {
         callRestService = new CallRestService();
     }
 
-    public void convertScheduleToCsv() {
-        FullTimeLessonDto fullTimeLessonDto = callRestService.getFullTimeLessonsByGroup(studentGroup.getDepartment().getURL(),
-                                                                                        studentGroup.getGroupNumber());
+    public BotMessage urlToCsv(String departmentUrl, String groupNumber){
+        FullTimeLessonDto fullTimeLessonDto = callRestService.getFullTimeLessonsByGroup(departmentUrl, groupNumber);
         String json = new Gson().toJson(fullTimeLessonDto);
         JsonParser parser = new JsonParser();
         JsonObject jsonObject = parser.parse(json).getAsJsonObject();
 
         CsvDto csvDto = callRestService.getCsvSchedule(jsonObject);
-        String pathToFile = csvDto.getPathToFile();
+
+        return new BotMessage(csvDto.getPathToFile());
+
     }
 }
