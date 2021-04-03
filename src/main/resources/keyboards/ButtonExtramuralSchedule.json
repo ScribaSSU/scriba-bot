@@ -6,6 +6,16 @@
 "action": {
 "type": "text",
 "payload": "{\"button\": \"1\"}",
+"label": "Все занятия"
+},
+"color": "primary"
+}
+],
+[
+{
+"action": {
+"type": "text",
+"payload": "{\"button\": \"1\"}",
 "label": "Сегодня"
 },
 "color": "primary"

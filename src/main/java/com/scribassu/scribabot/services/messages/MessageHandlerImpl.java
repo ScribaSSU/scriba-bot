@@ -32,6 +32,7 @@ public class MessageHandlerImpl implements MessageHandler {
     private final HelpService helpService;
     private final FullTimeLessonService fullTimeLessonService;
     private final ExamPeriodService examPeriodService;
+    private final ExtramuralEventService extramuralEventService;
     private final BotUserRepository botUserRepository;
     private final SettingsService settingsService;
     private final StudentGroupService studentGroupService;
@@ -47,6 +48,7 @@ public class MessageHandlerImpl implements MessageHandler {
                               HelpService helpService,
                               FullTimeLessonService fullTimeLessonService,
                               ExamPeriodService examPeriodService,
+                              ExtramuralEventService extramuralEventService,
                               BotUserRepository botUserRepository,
                               SettingsService settingsService,
                               StudentGroupService studentGroupService,
@@ -57,6 +59,7 @@ public class MessageHandlerImpl implements MessageHandler {
         this.helpService = helpService;
         this.fullTimeLessonService = fullTimeLessonService;
         this.examPeriodService = examPeriodService;
+        this.extramuralEventService = extramuralEventService;
         this.botUserRepository = botUserRepository;
         this.settingsService = settingsService;
         this.studentGroupService = studentGroupService;
@@ -143,9 +146,12 @@ public class MessageHandlerImpl implements MessageHandler {
             case CommandText.TEACHER_SCHEDULE:
                 botMessage = teacherService.getBotMessage(message, botUser);
                 break;
-            case CommandText.FULL_TIME_SCHEDULE:
+            case CommandText.STUDENT_SCHEDULE:
                 if(BotMessageUtils.isBotUserFullTime(botUser)) {
                     botMessage = new BotMessage("Выберите, для чего хотите узнать расписание.", ButtonFullTimeSchedule);
+                }
+                else if(BotMessageUtils.isBotUserExtramural(botUser)) {
+                    botMessage = new BotMessage("Выберите, для чего хотите узнать расписание.", ButtonExtramuralSchedule);
                 }
                 else if(botUser != null
                     && botUser.getDepartment() == null
@@ -178,10 +184,22 @@ public class MessageHandlerImpl implements MessageHandler {
             case CommandText.THURSDAY:
             case CommandText.FRIDAY:
             case CommandText.SATURDAY:
+                botMessage = fullTimeLessonService.getBotMessage(message, botUser);
+                break;
             case CommandText.TODAY:
             case CommandText.TOMORROW:
             case CommandText.YESTERDAY:
-                botMessage = fullTimeLessonService.getBotMessage(message, botUser);
+                if(BotMessageUtils.isBotUserFullTime(botUser)) {
+                    botMessage = fullTimeLessonService.getBotMessage(message, botUser);
+                }
+                else if(BotMessageUtils.isBotUserExtramural(botUser)) {
+                    botMessage = extramuralEventService.getBotMessage(message, botUser);
+                }
+                break;
+            case CommandText.ALL_LESSONS:
+                if(BotMessageUtils.isBotUserExtramural(botUser)) {
+                    botMessage = extramuralEventService.getBotMessage(message, botUser);
+                }
                 break;
             case CommandText.SETTINGS:
                 botMessage = new BotMessage("Здесь вы можете настроить бота под себя.", ButtonSettings);
@@ -242,7 +260,12 @@ public class MessageHandlerImpl implements MessageHandler {
                 botUserRepository.updatePreviousUserMessage("", botUser.getUserId());
             }
             else {
-                botMessage = new BotMessage(MessageText.FINISH_SET_GROUP, ButtonFullTimeSchedule);
+                if(BotMessageUtils.isBotUserFullTime(botUser)) {
+                    botMessage = new BotMessage(MessageText.FINISH_SET_GROUP, ButtonFullTimeSchedule);
+                }
+                else if(BotMessageUtils.isBotUserExtramural(botUser)) {
+                    botMessage = new BotMessage(FINISH_SET_GROUP, ButtonExtramuralSchedule);
+                }
             }
         }
 
