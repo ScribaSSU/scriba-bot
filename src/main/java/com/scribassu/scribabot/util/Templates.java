@@ -6,6 +6,7 @@ import com.scribassu.scribabot.dto.rest.FullTimeLessonDto;
 import com.scribassu.scribabot.dto.rest.TeacherExamPeriodEventDto;
 import com.scribassu.scribabot.dto.rest.TeacherFullTimeLessonDto;
 import com.scribassu.scribabot.text.CommandText;
+import com.scribassu.scribabot.text.MessageText;
 import com.scribassu.tracto.domain.*;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -60,7 +61,7 @@ public class Templates {
         stringBuilder.append("Группа № ").append(fullTimeLessonDto.getStudentGroup().getGroupNumberRus()).append("\n \n");
 
         if(CollectionUtils.isEmpty(fullTimeLessonDto.getLessons())) {
-            stringBuilder.append("А пар-то нету :)");
+            stringBuilder.append(MessageText.NO_LESSONS);
         }
         else {
             List<FullTimeLesson> fullTimeLessons = fullTimeLessonDto.getLessons();
@@ -71,23 +72,28 @@ public class Templates {
                         .filter(f -> f.getWeekType().equals(WeekType.FULL) || f.getWeekType().equals(finalCurrentWeekType))
                         .collect(Collectors.toList());
             }
-            fullTimeLessons.sort(Comparator.comparingInt(o -> o.getLessonTime().getLessonNumber()));
-            for (FullTimeLesson fullTimeLesson : fullTimeLessons) {
-                stringBuilder.append(appendTime(fullTimeLesson.getLessonTime())).append("\n")
-                        .append(fullTimeLesson.getLessonType().getType())
-                        .append(" ")
-                        .append(appendLessonTypeEmoji(fullTimeLesson))
-                        .append("\n");
+            if (fullTimeLessons.isEmpty()) {
+                stringBuilder.append(MessageText.NO_LESSONS);
+            }
+            else {
+                fullTimeLessons.sort(Comparator.comparingInt(o -> o.getLessonTime().getLessonNumber()));
+                for (FullTimeLesson fullTimeLesson : fullTimeLessons) {
+                    stringBuilder.append(appendTime(fullTimeLesson.getLessonTime())).append("\n")
+                            .append(fullTimeLesson.getLessonType().getType())
+                            .append(" ")
+                            .append(appendLessonTypeEmoji(fullTimeLesson))
+                            .append("\n");
 
-                if(!fullTimeLesson.getWeekType().equals(WeekType.FULL)) {
-                    stringBuilder.append(fullTimeLesson.getWeekType().getType()).append("\n");
+                    if(!fullTimeLesson.getWeekType().equals(WeekType.FULL)) {
+                        stringBuilder.append(fullTimeLesson.getWeekType().getType()).append("\n");
+                    }
+                    if (!StringUtils.isEmpty(fullTimeLesson.getSubGroup())) {
+                        stringBuilder.append(fullTimeLesson.getSubGroup().trim()).append("\n");
+                    }
+                    stringBuilder.append(fullTimeLesson.getName()).append("\n");
+                    stringBuilder.append(appendTeacher(fullTimeLesson.getTeacher())).append("\n");
+                    stringBuilder.append(fullTimeLesson.getPlace()).append("\n \n");
                 }
-                if (!StringUtils.isEmpty(fullTimeLesson.getSubGroup())) {
-                    stringBuilder.append(fullTimeLesson.getSubGroup().trim()).append("\n");
-                }
-                stringBuilder.append(fullTimeLesson.getName()).append("\n");
-                stringBuilder.append(appendTeacher(fullTimeLesson.getTeacher())).append("\n");
-                stringBuilder.append(fullTimeLesson.getPlace()).append("\n \n");
             }
         }
 
@@ -200,7 +206,7 @@ public class Templates {
         stringBuilder.append(appendTeacher(teacher)).append("\n\n");
 
         if(CollectionUtils.isEmpty(fullTimeLessonDto.getLessons())) {
-            stringBuilder.append("А пар-то нету :)");
+            stringBuilder.append(MessageText.NO_LESSONS);
         }
         else {
             List<FullTimeLesson> fullTimeLessons = fullTimeLessonDto.getLessons();
@@ -210,24 +216,29 @@ public class Templates {
                         .filter(f -> f.getWeekType().equals(WeekType.FULL) || f.getWeekType().equals(currentWeekType))
                         .collect(Collectors.toList());
             }
-            fullTimeLessons.sort(Comparator.comparingInt(o -> o.getLessonTime().getLessonNumber()));
-            for (FullTimeLesson fullTimeLesson : fullTimeLessons) {
-                stringBuilder.append(appendTime(fullTimeLesson.getLessonTime())).append("\n")
-                        .append(fullTimeLesson.getLessonType().getType())
-                        .append(" ")
-                        .append(appendLessonTypeEmoji(fullTimeLesson))
-                        .append("\n");
+            if (fullTimeLessons.isEmpty()) {
+                stringBuilder.append(MessageText.NO_LESSONS);
+            }
+            else {
+                fullTimeLessons.sort(Comparator.comparingInt(o -> o.getLessonTime().getLessonNumber()));
+                for (FullTimeLesson fullTimeLesson : fullTimeLessons) {
+                    stringBuilder.append(appendTime(fullTimeLesson.getLessonTime())).append("\n")
+                            .append(fullTimeLesson.getLessonType().getType())
+                            .append(" ")
+                            .append(appendLessonTypeEmoji(fullTimeLesson))
+                            .append("\n");
 
-                if(!fullTimeLesson.getWeekType().equals(WeekType.FULL)) {
-                    stringBuilder.append(fullTimeLesson.getWeekType().getType()).append("\n");
+                    if(!fullTimeLesson.getWeekType().equals(WeekType.FULL)) {
+                        stringBuilder.append(fullTimeLesson.getWeekType().getType()).append("\n");
+                    }
+                    stringBuilder.append(fullTimeLesson.getName()).append("\n");
+                    stringBuilder.append("Группа № ").append(fullTimeLesson.getStudentGroup().getGroupNumberRus()).append(" ");
+                    if (!StringUtils.isEmpty(fullTimeLesson.getSubGroup())) {
+                        stringBuilder.append(fullTimeLesson.getSubGroup().trim());
+                    }
+                    stringBuilder.append("\n");
+                    stringBuilder.append(fullTimeLesson.getPlace()).append("\n \n");
                 }
-                stringBuilder.append(fullTimeLesson.getName()).append("\n");
-                stringBuilder.append("Группа № ").append(fullTimeLesson.getStudentGroup().getGroupNumberRus()).append(" ");
-                if (!StringUtils.isEmpty(fullTimeLesson.getSubGroup())) {
-                    stringBuilder.append(fullTimeLesson.getSubGroup().trim());
-                }
-                stringBuilder.append("\n");
-                stringBuilder.append(fullTimeLesson.getPlace()).append("\n \n");
             }
         }
 
