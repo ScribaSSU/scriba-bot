@@ -7,6 +7,7 @@ import com.scribassu.scribabot.services.messages.MessageSender;
 import com.scribassu.scribabot.dto.Command;
 import com.scribassu.scribabot.text.MessageText;
 import com.scribassu.scribabot.util.Constants;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -40,7 +41,7 @@ public class VkController {
     @ResponseStatus(HttpStatus.OK)
     public String getMessage(@RequestBody String incomingMessage) throws Exception {
         Map<String, String> parsedMessage;
-        if(incomingMessage != null) {
+        if(StringUtils.isNotEmpty(incomingMessage)) {
             parsedMessage = messageParser.parseMessage(incomingMessage);
 
             if(parsedMessage.containsKey(Constants.KEY_MESSAGE)) {
@@ -50,7 +51,7 @@ public class VkController {
                         parsedMessage.getOrDefault(Constants.KEY_PAYLOAD, ""),
                         userId);
                 BotMessage botMessage = messageHandler.getBotMessage(command);
-                //If somebody write command without bot name mention in chat, bot should keep the silence
+                //If somebody writes command without bot name mention in chat, bot should keep the silence
                 if(!botMessage.getMessage().equalsIgnoreCase(MessageText.DO_NOT_SEND)) {
                     messageSender.send(botMessage, userId);
                 }
