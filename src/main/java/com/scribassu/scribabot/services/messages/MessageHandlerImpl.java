@@ -1,11 +1,13 @@
 package com.scribassu.scribabot.services.messages;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.scribassu.scribabot.dto.BotMessage;
 import com.scribassu.scribabot.dto.Command;
 import com.scribassu.scribabot.dto.rest.FullTimeLessonDto;
 import com.scribassu.scribabot.entities.BotUser;
 import com.scribassu.scribabot.entities.UnrecognizedMessage;
 import com.scribassu.scribabot.keyboard.KeyboardFormatter;
+import com.scribassu.scribabot.keyboard.KeyboardGenerator;
 import com.scribassu.scribabot.repositories.BotUserRepository;
 import com.scribassu.scribabot.repositories.UnrecognizedMessageRepository;
 import com.scribassu.scribabot.services.CallRestService;
@@ -184,8 +186,9 @@ public class MessageHandlerImpl implements MessageHandler {
                 botMessage = fullTimeLessonService.getBotMessage(message, botUser);
                 break;
             case CommandText.SETTINGS:
-                botMessage = new BotMessage("Здесь вы можете настроить бота под себя.", ButtonSettings);
-                botMessage = keyboardFormatter.formatSettings(botMessage, botUser);
+                botMessage = new BotMessage(
+                        "Здесь вы можете настроить бота под себя.",
+                        KeyboardGenerator.buildSettings(botUser));
                 break;
             case CommandText.SET_SEND_SCHEDULE_TIME_TODAY:
             case CommandText.ENABLE_SEND_SCHEDULE_TODAY:

@@ -3,8 +3,8 @@ package com.scribassu.scribabot.services.bot;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.scribassu.scribabot.dto.BotMessage;
 import com.scribassu.scribabot.dto.rest.TeacherListDto;
-import com.scribassu.scribabot.dto.vkkeyboard.*;
 import com.scribassu.scribabot.entities.BotUser;
+import com.scribassu.scribabot.keyboard.KeyboardGenerator;
 import com.scribassu.scribabot.repositories.BotUserRepository;
 import com.scribassu.scribabot.services.CallRestService;
 import com.scribassu.scribabot.text.CommandText;
@@ -13,7 +13,6 @@ import com.scribassu.tracto.domain.Teacher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.scribassu.scribabot.keyboard.KeyboardType.ButtonActions;
@@ -58,7 +57,7 @@ public class TeacherService implements BotMessageService {
                         try {
                             botMessage = new BotMessage(
                                     "Выберите, для какого преподавателя хотите узнать расписание.",
-                                    objectMapper.writeValueAsString(buildVkKeyboardFromTeachers(teachers)));
+                                    objectMapper.writeValueAsString(KeyboardGenerator.buildTeachers(teachers)));
                         }
                         catch(Exception e) {
                             botMessage = new BotMessage(CANNOT_GET_TEACHERS, ButtonActions);
@@ -89,41 +88,5 @@ public class TeacherService implements BotMessageService {
         }
 
         return botMessage;
-    }
-
-    private VkKeyboard buildVkKeyboardFromTeachers(List<Teacher> teachers) {
-        List<List<VkKeyboardButton>> vkKeyboardButtons = new ArrayList<>();
-
-        int i = 0;
-        int row = 0;
-        vkKeyboardButtons.add(new ArrayList<>());
-
-        while(i < teachers.size()) {
-            if(i % 5 == 4) {
-                row++;
-                vkKeyboardButtons.add(new ArrayList<>());
-            }
-            vkKeyboardButtons.get(row).add(
-                    new VkKeyboardButton(
-                            new VkKeyboardButtonActionText(
-                                    teachers.get(i).getSurname() + " " + teachers.get(i).getName() + " " + teachers.get(i).getPatronymic(),
-                                    String.format(Constants.PAYLOAD, CommandText.TEACHER_ID_PAYLOAD + " " + teachers.get(i).getId()),
-                                    VkKeyboardButtonActionType.TEXT
-                            ), VkKeyboardButtonColor.PRIMARY)
-            );
-            i++;
-        }
-
-        vkKeyboardButtons.add(new ArrayList<>());
-        vkKeyboardButtons.get(vkKeyboardButtons.size() - 1).add(
-                new VkKeyboardButton(
-                        new VkKeyboardButtonActionText(
-                                "Главное меню",
-                                "",
-                                VkKeyboardButtonActionType.TEXT
-                        ), VkKeyboardButtonColor.POSITIVE)
-        );
-
-        return new VkKeyboard(vkKeyboardButtons, true);
     }
 }

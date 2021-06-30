@@ -1,5 +1,8 @@
 package com.scribassu.scribabot.dto;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.scribassu.scribabot.dto.vkkeyboard.VkKeyboard;
 import com.scribassu.scribabot.keyboard.KeyboardMap;
 import com.scribassu.scribabot.keyboard.KeyboardType;
 import com.scribassu.scribabot.text.MessageText;
@@ -19,14 +22,19 @@ public class BotMessage {
         this.message = message;
     }
 
+    public BotMessage(String message, String keyboard) {
+        this.message = message;
+        this.keyboard = keyboard;
+    }
+
     public BotMessage(String message, KeyboardType keyboardType) {
         this.message = message;
         setKeyboard(keyboardType);
     }
 
-    public BotMessage(String message, String keyboard) {
+    public BotMessage(String message, VkKeyboard keyboard) {
         this.message = message;
-        this.keyboard = keyboard;
+        setKeyboard(keyboard);
     }
 
     public void setMessage(String message) {
@@ -35,6 +43,16 @@ public class BotMessage {
 
     public void setKeyboard(KeyboardType keyboardType) {
         this.keyboard = KeyboardMap.get(keyboardType).getJsonText();
+    }
+
+    public void setKeyboard(VkKeyboard keyboard) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            this.keyboard = objectMapper.writeValueAsString(keyboard);
+        }
+        catch(JsonProcessingException e) {
+            setKeyboard(KeyboardType.ButtonActions);
+        }
     }
 
     public void formatKeyboard(String replacedString, KeyboardType keyboardType) {

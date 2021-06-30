@@ -1,8 +1,10 @@
 package com.scribassu.scribabot.services.bot;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.scribassu.scribabot.dto.BotMessage;
 import com.scribassu.scribabot.entities.*;
 import com.scribassu.scribabot.keyboard.KeyboardFormatter;
+import com.scribassu.scribabot.keyboard.KeyboardGenerator;
 import com.scribassu.scribabot.repositories.*;
 import com.scribassu.scribabot.text.CommandText;
 import com.scribassu.scribabot.text.MessageText;
@@ -344,14 +346,16 @@ public class SettingsService implements BotMessageService {
             case CommandText.ENABLE_FILTER_WEEK_TYPE:
                 botUser.setFilterNomDenom(true);
                 botUserRepository.save(botUser);
-                botMessage = new BotMessage("Включена фильтрация по типу недели.", ButtonSettings);
-                botMessage = keyboardFormatter.formatSettings(botMessage, botUser);
+                botMessage = new BotMessage(
+                        "Включена фильтрация по типу недели.",
+                        KeyboardGenerator.buildSettings(botUser));
                 break;
             case CommandText.DISABLE_FILTER_WEEK_TYPE:
                 botUser.setFilterNomDenom(false);
                 botUserRepository.save(botUser);
-                botMessage = new BotMessage("Выключена фильтрация по типу недели.", ButtonSettings);
-                botMessage = keyboardFormatter.formatSettings(botMessage, botUser);
+                botMessage = new BotMessage(
+                            "Выключена фильтрация по типу недели.",
+                            KeyboardGenerator.buildSettings(botUser));
                 break;
             case CommandText.CURRENT_USER_SETTINGS:
                 String currentUserSettings = getStudentInfo(botUser) +
@@ -360,16 +364,16 @@ public class SettingsService implements BotMessageService {
                         "\n\n" +
                         "Фильтрация по типу недели: " +
                         (botUser.isFilterNomDenom() ? "вкл." : "выкл.");
-                botMessage = new BotMessage(currentUserSettings, ButtonSettings);
-                botMessage = keyboardFormatter.formatSettings(botMessage, botUser);
+                botMessage = new BotMessage(currentUserSettings, KeyboardGenerator.buildSettings(botUser));
                 break;
             case CommandText.DELETE_PROFILE:
                 botMessage = new BotMessage(MessageText.DELETE_CONFIRMATION, ButtonConfirmDeletion);
                 botMessage = keyboardFormatter.formatSettings(botMessage, botUser);
                 break;
             case CommandText.NO:
-                botMessage = new BotMessage("Спасибо, что остаётесь с нами!", ButtonSettings);
-                botMessage = keyboardFormatter.formatSettings(botMessage, botUser);
+                botMessage = new BotMessage(
+                        "Спасибо, что остаётесь с нами!",
+                        KeyboardGenerator.buildSettings(botUser));
                 break;
             case CommandText.YES:
                 botUserRepository.deleteOneById(userId);
@@ -445,8 +449,9 @@ public class SettingsService implements BotMessageService {
                 }
                 examPeriodAfterTomorrowNotificationRepository.save(examPeriodAfterTomorrowNotification);
             }
-            botMessage = new BotMessage("Теперь расписание будет приходить в " + hourForSend + " ч.", ButtonSettings);
-            botMessage = keyboardFormatter.formatSettings(botMessage, botUser);
+            botMessage = new BotMessage(
+                    "Теперь расписание будет приходить в " + hourForSend + " ч.",
+                    KeyboardGenerator.buildSettings(botUser));
         }
 
         return botMessage;

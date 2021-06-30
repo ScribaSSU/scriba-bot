@@ -1,4 +1,4 @@
-package com.scribassu.scribabot.util;
+package com.scribassu.scribabot.text.generators;
 
 import com.scribassu.scribabot.dto.rest.ExamPeriodEventDto;
 import com.scribassu.scribabot.dto.rest.ExtramuralDto;
@@ -6,6 +6,8 @@ import com.scribassu.scribabot.dto.rest.FullTimeLessonDto;
 import com.scribassu.scribabot.dto.rest.TeacherExamPeriodEventDto;
 import com.scribassu.scribabot.dto.rest.TeacherFullTimeLessonDto;
 import com.scribassu.scribabot.text.CommandText;
+import com.scribassu.scribabot.util.CalendarUtils;
+import com.scribassu.scribabot.util.WeekTypeUtils;
 import com.scribassu.tracto.domain.*;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -15,7 +17,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Templates {
+public class MessageGenerator {
 
     public static String makeFullTimeLessonTemplate(FullTimeLessonDto fullTimeLessonDto,
                                                     String day,

@@ -3,6 +3,7 @@ package com.scribassu.scribabot.util;
 import com.scribassu.scribabot.dto.BotMessage;
 import com.scribassu.scribabot.dto.rest.*;
 import com.scribassu.scribabot.entities.BotUser;
+import com.scribassu.scribabot.text.generators.MessageGenerator;
 import com.scribassu.tracto.domain.EducationForm;
 import org.springframework.util.StringUtils;
 
@@ -15,7 +16,7 @@ public class BotMessageUtils {
                                                              String day,
                                                              boolean filterWeekType) {
         return new BotMessage(
-                Templates.makeFullTimeLessonTemplate(fullTimeLessonDto, day, filterWeekType),
+                MessageGenerator.makeFullTimeLessonTemplate(fullTimeLessonDto, day, filterWeekType),
                 ButtonFullTimeSchedule);
     }
 
@@ -26,7 +27,7 @@ public class BotMessageUtils {
     }
 
     public static BotMessage getBotMessageForFullTimeExamPeriod(ExamPeriodEventDto examPeriodEventDto, String day) {
-        return new BotMessage(Templates.makeFullTimeExamPeriodTemplate(examPeriodEventDto, day), ButtonFullTimeSchedule);
+        return new BotMessage(MessageGenerator.makeFullTimeExamPeriodTemplate(examPeriodEventDto, day), ButtonFullTimeSchedule);
     }
 
     public static BotMessage getBotMessageForEmptyFullTimeExamPeriod() {
@@ -37,17 +38,17 @@ public class BotMessageUtils {
                                                                     String day,
                                                                     boolean filterWeekType) {
         return new BotMessage(
-                Templates.makeTeacherFullTimeLessonTemplate(fullTimeLessonDto, day, filterWeekType),
+                MessageGenerator.makeTeacherFullTimeLessonTemplate(fullTimeLessonDto, day, filterWeekType),
                 ButtonFullTimeSchedule);
     }
 
     public static BotMessage getBotMessageForTeacherExamPeriod(TeacherExamPeriodEventDto examPeriodEventDto) {
-        return new BotMessage(Templates.makeTeacherExamPeriodTemplate(examPeriodEventDto), ButtonFullTimeSchedule);
+        return new BotMessage(MessageGenerator.makeTeacherExamPeriodTemplate(examPeriodEventDto), ButtonFullTimeSchedule);
     }
 
     public static BotMessage getBotMessageForExtramuralEvent(ExtramuralDto extramuralDto, String day) {
         return new BotMessage(
-                Templates.makeExtramuralEventTemplate(extramuralDto, day),
+                MessageGenerator.makeExtramuralEventTemplate(extramuralDto, day),
                 ButtonExtramuralSchedule
         );
     }
