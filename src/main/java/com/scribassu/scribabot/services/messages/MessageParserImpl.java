@@ -4,11 +4,13 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.scribassu.scribabot.util.Constants;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @Service
 public class MessageParserImpl implements MessageParser {
 
@@ -16,11 +18,9 @@ public class MessageParserImpl implements MessageParser {
 
     @Override
     public Map<String, String> parseMessage(String incomingJson) {
-        System.out.println(incomingJson);
+        log.info("Message: " + incomingJson);
         Map<String, String> parsed = new HashMap<>();
-
         JsonObject requestJson = gson.fromJson(incomingJson, JsonObject.class);
-
         String type = requestJson.get("type").getAsString();
 
         if(type.equalsIgnoreCase(Constants.TYPE_CONFIRMATION)) {
@@ -35,18 +35,15 @@ public class MessageParserImpl implements MessageParser {
             parsed.put(Constants.KEY_MESSAGE, message);
             parsed.put(Constants.KEY_USER_ID, userId);
 
-            String payload = "";
-            try {
-                payload = object.getAsJsonPrimitive(Constants.KEY_PAYLOAD).getAsString();
-                payload = payload.substring(Constants.PAYLOAD_START.length() - 1);
-                payload = payload.substring(0, payload.indexOf(Constants.PAYLOAD_END));
-                parsed.put(Constants.KEY_PAYLOAD, payload);
-                System.out.println("payload:"+payload+";");
+            if(object.has(Constants.KEY_PAYLOAD)) {
+                String payload = object.getAsJsonPrimitive(Constants.KEY_PAYLOAD).getAsString();
+                if(payload.startsWith(Constants.PAYLOAD_START) && payload.endsWith(Constants.PAYLOAD_END)) {
+                    payload = payload.substring(Constants.PAYLOAD_START.length());
+                    payload = payload.substring(0, payload.indexOf(Constants.PAYLOAD_END));
+                    parsed.put(Constants.KEY_PAYLOAD, payload);
+                }
             }
-            catch(Exception e) {
-                System.out.println("No payload");
-            }
-            System.out.println(userId + " message " + message );
+
             return parsed;
         }
         return new HashMap<>();

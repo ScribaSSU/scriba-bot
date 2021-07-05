@@ -1,8 +1,7 @@
 package com.scribassu.scribabot.services.messages;
 
 import com.scribassu.scribabot.dto.BotMessage;
-import com.scribassu.scribabot.util.Constants;
-import org.apache.commons.lang3.StringUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
@@ -11,15 +10,14 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
+@Slf4j
 @Service
 public class MessageSenderImpl implements MessageSender {
 
@@ -69,10 +67,7 @@ public class MessageSenderImpl implements MessageSender {
                 else {
                     startIndex += VK_LENGTH;
                 }
-
-                System.out.println("RESPONSE: " + response);
-                System.out.println(response.getEntity().getContent());
-                System.out.println("END OF RESPONSE");
+                log.info("Response: " + response);
             }
     }
 }
