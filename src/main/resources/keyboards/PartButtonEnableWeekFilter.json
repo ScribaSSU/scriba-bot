@@ -1,8 +1,0 @@
-{
-"action": {
-"type": "text",
-"payload": "{\"button\": \"1\"}",
-"label": "Вкл. фильтр по типу недели"
-},
-"color": "positive"
-}

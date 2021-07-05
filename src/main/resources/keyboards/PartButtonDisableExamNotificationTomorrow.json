@@ -1,8 +1,0 @@
-{
-"action": {
-"type": "text",
-"payload": "{\"button\": \"1\"}",
-"label": "Выкл. рассылку сессии на завтра"
-},
-"color": "negative"
-}

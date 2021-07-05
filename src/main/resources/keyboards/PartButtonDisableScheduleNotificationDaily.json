@@ -1,8 +1,0 @@
-{
-"action": {
-"type": "text",
-"payload": "{\"button\": \"1\"}",
-"label": "Выкл. рассылку расп-я на сегодня"
-},
-"color": "negative"
-}

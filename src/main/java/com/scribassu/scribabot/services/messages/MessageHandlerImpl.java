@@ -1,12 +1,10 @@
 package com.scribassu.scribabot.services.messages;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.scribassu.scribabot.dto.BotMessage;
 import com.scribassu.scribabot.dto.Command;
 import com.scribassu.scribabot.dto.rest.FullTimeLessonDto;
 import com.scribassu.scribabot.entities.BotUser;
 import com.scribassu.scribabot.entities.UnrecognizedMessage;
-import com.scribassu.scribabot.keyboard.KeyboardFormatter;
 import com.scribassu.scribabot.keyboard.KeyboardGenerator;
 import com.scribassu.scribabot.repositories.BotUserRepository;
 import com.scribassu.scribabot.repositories.UnrecognizedMessageRepository;
