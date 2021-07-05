@@ -1,6 +1,5 @@
 package com.scribassu.scribabot.repositories;
 
-import com.scribassu.scribabot.entities.ScheduleDailyNotification;
 import com.scribassu.scribabot.entities.ScheduleTomorrowNotification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

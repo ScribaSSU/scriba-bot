@@ -10,7 +10,7 @@ import javax.persistence.Id;
 @Entity
 @Data
 @NoArgsConstructor
-public class ExtramuralEventDailyNotification {
+public class ExamPeriodTodayNotification {
     @Id
     @GeneratedValue
     private Long id;
@@ -19,7 +19,7 @@ public class ExtramuralEventDailyNotification {
     private boolean isEnabled;
     private Integer hourForSend;
 
-    public ExtramuralEventDailyNotification(String userId, boolean isEnabled, int hourForSend) {
+    public ExamPeriodTodayNotification(String userId, boolean isEnabled, int hourForSend) {
         this.userId = userId;
         this.isEnabled = isEnabled;
         this.hourForSend = hourForSend;

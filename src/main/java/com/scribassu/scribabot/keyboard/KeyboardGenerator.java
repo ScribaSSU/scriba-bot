@@ -18,28 +18,28 @@ public class KeyboardGenerator {
 
     private final ExamPeriodAfterTomorrowNotificationRepository examPeriodAfterTomorrowNotificationRepository;
     private final ExamPeriodTomorrowNotificationRepository examPeriodTomorrowNotificationRepository;
-    private final ExamPeriodDailyNotificationRepository examPeriodDailyNotificationRepository;
-    private final ScheduleDailyNotificationRepository scheduleDailyNotificationRepository;
+    private final ExamPeriodTodayNotificationRepository examPeriodTodayNotificationRepository;
+    private final ScheduleTodayNotificationRepository scheduleTodayNotificationRepository;
     private final ScheduleTomorrowNotificationRepository scheduleTomorrowNotificationRepository;
-    private final ExtramuralEventDailyNotificationRepository extramuralEventDailyNotificationRepository;
+    private final ExtramuralEventTodayNotificationRepository extramuralEventTodayNotificationRepository;
     private final ExtramuralEventTomorrowNotificationRepository extramuralEventTomorrowNotificationRepository;
     private final ExtramuralEventAfterTomorrowNotificationRepository extramuralEventAfterTomorrowNotificationRepository;
 
     @Autowired
     public KeyboardGenerator(ExamPeriodAfterTomorrowNotificationRepository examPeriodAfterTomorrowNotificationRepository,
                              ExamPeriodTomorrowNotificationRepository examPeriodTomorrowNotificationRepository,
-                             ExamPeriodDailyNotificationRepository examPeriodDailyNotificationRepository,
-                             ScheduleDailyNotificationRepository scheduleDailyNotificationRepository,
+                             ExamPeriodTodayNotificationRepository examPeriodTodayNotificationRepository,
+                             ScheduleTodayNotificationRepository scheduleTodayNotificationRepository,
                              ScheduleTomorrowNotificationRepository scheduleTomorrowNotificationRepository,
-                             ExtramuralEventDailyNotificationRepository extramuralEventDailyNotificationRepository,
+                             ExtramuralEventTodayNotificationRepository extramuralEventTodayNotificationRepository,
                              ExtramuralEventTomorrowNotificationRepository extramuralEventTomorrowNotificationRepository,
                              ExtramuralEventAfterTomorrowNotificationRepository extramuralEventAfterTomorrowNotificationRepository) {
         this.examPeriodAfterTomorrowNotificationRepository = examPeriodAfterTomorrowNotificationRepository;
         this.examPeriodTomorrowNotificationRepository = examPeriodTomorrowNotificationRepository;
-        this.examPeriodDailyNotificationRepository = examPeriodDailyNotificationRepository;
-        this.scheduleDailyNotificationRepository = scheduleDailyNotificationRepository;
+        this.examPeriodTodayNotificationRepository = examPeriodTodayNotificationRepository;
+        this.scheduleTodayNotificationRepository = scheduleTodayNotificationRepository;
         this.scheduleTomorrowNotificationRepository = scheduleTomorrowNotificationRepository;
-        this.extramuralEventDailyNotificationRepository = extramuralEventDailyNotificationRepository;
+        this.extramuralEventTodayNotificationRepository = extramuralEventTodayNotificationRepository;
         this.extramuralEventTomorrowNotificationRepository = extramuralEventTomorrowNotificationRepository;
         this.extramuralEventAfterTomorrowNotificationRepository = extramuralEventAfterTomorrowNotificationRepository;
     }
@@ -246,11 +246,11 @@ public class KeyboardGenerator {
         );
 
         if(BotMessageUtils.isBotUserFullTime(botUser)) {
-            ExamPeriodDailyNotification examPeriodDailyNotification = examPeriodDailyNotificationRepository.findByUserId(userId);
+            ExamPeriodTodayNotification examPeriodTodayNotification = examPeriodTodayNotificationRepository.findByUserId(userId);
             ExamPeriodTomorrowNotification examPeriodTomorrowNotification = examPeriodTomorrowNotificationRepository.findByUserId(userId);
             ExamPeriodAfterTomorrowNotification examPeriodAfterTomorrowNotification = examPeriodAfterTomorrowNotificationRepository.findByUserId(userId);
 
-            if(null != examPeriodDailyNotification && examPeriodDailyNotification.isEnabled()) {
+            if(null != examPeriodTodayNotification && examPeriodTodayNotification.isEnabled()) {
                 vkKeyboardButtons.get(1).add(
                         new VkKeyboardButton(
                                 new VkKeyboardButtonActionText(
@@ -321,11 +321,11 @@ public class KeyboardGenerator {
         }
 
         if(BotMessageUtils.isBotUserExtramural(botUser)) {
-            ExtramuralEventDailyNotification extramuralEventDailyNotification = extramuralEventDailyNotificationRepository.findByUserId(userId);
+            ExtramuralEventTodayNotification extramuralEventTodayNotification = extramuralEventTodayNotificationRepository.findByUserId(userId);
             ExtramuralEventTomorrowNotification extramuralEventTomorrowNotification = extramuralEventTomorrowNotificationRepository.findByUserId(userId);
             ExtramuralEventAfterTomorrowNotification extramuralEventAfterTomorrowNotification = extramuralEventAfterTomorrowNotificationRepository.findByUserId(userId);
 
-            if(null != extramuralEventDailyNotification && extramuralEventDailyNotification.isEnabled()) {
+            if(null != extramuralEventTodayNotification && extramuralEventTodayNotification.isEnabled()) {
                 vkKeyboardButtons.get(1).add(
                         new VkKeyboardButton(
                                 new VkKeyboardButtonActionText(
@@ -409,7 +409,7 @@ public class KeyboardGenerator {
 
         String userId = botUser.getUserId();
 
-        ScheduleDailyNotification scheduleDailyNotification = scheduleDailyNotificationRepository.findByUserId(userId);
+        ScheduleTodayNotification scheduleTodayNotification = scheduleTodayNotificationRepository.findByUserId(userId);
         ScheduleTomorrowNotification scheduleTomorrowNotification = scheduleTomorrowNotificationRepository.findByUserId(userId);
 
         vkKeyboardButtons.get(0).add(
@@ -422,7 +422,7 @@ public class KeyboardGenerator {
                 )
         );
 
-        if(null != scheduleDailyNotification && scheduleDailyNotification.isEnabled()) {
+        if(null != scheduleTodayNotification && scheduleTodayNotification.isEnabled()) {
             vkKeyboardButtons.get(1).add(
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(

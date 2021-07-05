@@ -4,15 +4,15 @@ import com.scribassu.scribabot.dto.BotMessage;
 import com.scribassu.scribabot.dto.rest.ExamPeriodEventDto;
 import com.scribassu.scribabot.dto.rest.ExtramuralDto;
 import com.scribassu.scribabot.dto.rest.FullTimeLessonDto;
-import com.scribassu.scribabot.entities.ExamPeriodDailyNotification;
-import com.scribassu.scribabot.entities.ExtramuralEventDailyNotification;
-import com.scribassu.scribabot.repositories.ExamPeriodDailyNotificationRepository;
-import com.scribassu.scribabot.repositories.ExtramuralEventDailyNotificationRepository;
+import com.scribassu.scribabot.entities.ExamPeriodTodayNotification;
+import com.scribassu.scribabot.entities.ExtramuralEventTodayNotification;
+import com.scribassu.scribabot.repositories.ExamPeriodTodayNotificationRepository;
+import com.scribassu.scribabot.repositories.ExtramuralEventTodayNotificationRepository;
 import com.scribassu.scribabot.text.CommandText;
 import com.scribassu.scribabot.entities.BotUser;
-import com.scribassu.scribabot.entities.ScheduleDailyNotification;
+import com.scribassu.scribabot.entities.ScheduleTodayNotification;
 import com.scribassu.scribabot.repositories.BotUserRepository;
-import com.scribassu.scribabot.repositories.ScheduleDailyNotificationRepository;
+import com.scribassu.scribabot.repositories.ScheduleTodayNotificationRepository;
 import com.scribassu.scribabot.services.CallRestService;
 import com.scribassu.scribabot.services.messages.MessageSender;
 import com.scribassu.scribabot.util.BotMessageUtils;
@@ -33,23 +33,23 @@ public class DailyNotificationService {
     private final MessageSender messageSender;
     private final CallRestService callRestService;
     private final BotUserRepository botUserRepository;
-    private final ScheduleDailyNotificationRepository scheduleDailyNotificationRepository;
-    private final ExamPeriodDailyNotificationRepository examPeriodDailyNotificationRepository;
-    private final ExtramuralEventDailyNotificationRepository extramuralEventDailyNotificationRepository;
+    private final ScheduleTodayNotificationRepository scheduleTodayNotificationRepository;
+    private final ExamPeriodTodayNotificationRepository examPeriodTodayNotificationRepository;
+    private final ExtramuralEventTodayNotificationRepository extramuralEventTodayNotificationRepository;
 
     @Autowired
     public DailyNotificationService(MessageSender messageSender,
                                     CallRestService callRestService,
                                     BotUserRepository botUserRepository,
-                                    ScheduleDailyNotificationRepository scheduleDailyNotificationRepository,
-                                    ExamPeriodDailyNotificationRepository examPeriodDailyNotificationRepository,
-                                    ExtramuralEventDailyNotificationRepository extramuralEventDailyNotificationRepository) {
+                                    ScheduleTodayNotificationRepository scheduleTodayNotificationRepository,
+                                    ExamPeriodTodayNotificationRepository examPeriodTodayNotificationRepository,
+                                    ExtramuralEventTodayNotificationRepository extramuralEventTodayNotificationRepository) {
         this.messageSender = messageSender;
         this.callRestService = callRestService;
         this.botUserRepository = botUserRepository;
-        this.scheduleDailyNotificationRepository = scheduleDailyNotificationRepository;
-        this.examPeriodDailyNotificationRepository = examPeriodDailyNotificationRepository;
-        this.extramuralEventDailyNotificationRepository = extramuralEventDailyNotificationRepository;
+        this.scheduleTodayNotificationRepository = scheduleTodayNotificationRepository;
+        this.examPeriodTodayNotificationRepository = examPeriodTodayNotificationRepository;
+        this.extramuralEventTodayNotificationRepository = extramuralEventTodayNotificationRepository;
     }
 
     @Scheduled(cron = "${scheduled.schedule-daily-notification-service.cron}")
@@ -63,13 +63,13 @@ public class DailyNotificationService {
         Calendar calendar = CalendarUtils.getCalendar();
         int hourOfDay = calendar.get(Calendar.HOUR_OF_DAY);
         log.info("Start to send full time schedule for hour {}", hourOfDay);
-        List<ScheduleDailyNotification> scheduleDailyNotifications =
-                scheduleDailyNotificationRepository.findByHourForSendAndEnabled(hourOfDay);
+        List<ScheduleTodayNotification> scheduleTodayNotifications =
+                scheduleTodayNotificationRepository.findByHourForSendAndEnabled(hourOfDay);
 
-        if(!CollectionUtils.isEmpty(scheduleDailyNotifications)) {
+        if(!CollectionUtils.isEmpty(scheduleTodayNotifications)) {
             log.info("Send full time schedule for hour {}", hourOfDay);
             final String dayNumber = String.valueOf(CalendarUtils.getDayOfWeekStartsFromMonday(calendar));
-            for(ScheduleDailyNotification notification : scheduleDailyNotifications) {
+            for(ScheduleTodayNotification notification : scheduleTodayNotifications) {
                 BotUser botUser = botUserRepository.findOneById(notification.getUserId());
                 if(BotMessageUtils.isBotUserFullTime(botUser)) {
                     FullTimeLessonDto lessons = callRestService.getFullTimeLessonsByDay(
@@ -95,12 +95,12 @@ public class DailyNotificationService {
         int day = calendar.get(Calendar.DAY_OF_MONTH);
         int hourOfDay = calendar.get(Calendar.HOUR_OF_DAY);
         log.info("Start to send exam period schedule for hour {}", hourOfDay);
-        List<ExamPeriodDailyNotification> examPeriodDailyNotifications =
-                examPeriodDailyNotificationRepository.findByHourForSendAndEnabled(hourOfDay);
+        List<ExamPeriodTodayNotification> examPeriodTodayNotifications =
+                examPeriodTodayNotificationRepository.findByHourForSendAndEnabled(hourOfDay);
 
-        if(!CollectionUtils.isEmpty(examPeriodDailyNotifications)) {
+        if(!CollectionUtils.isEmpty(examPeriodTodayNotifications)) {
             log.info("Send exam period schedule for hour {}", hourOfDay);
-            for(ExamPeriodDailyNotification notification : examPeriodDailyNotifications) {
+            for(ExamPeriodTodayNotification notification : examPeriodTodayNotifications) {
                 BotUser botUser = botUserRepository.findOneById(notification.getUserId());
                 if(BotMessageUtils.isBotUserFullTime(botUser)) {
                     ExamPeriodEventDto examPeriodEventDto = callRestService.getFullTimeExamPeriodEventByDay(
@@ -128,12 +128,12 @@ public class DailyNotificationService {
         int day = calendar.get(Calendar.DAY_OF_MONTH);
         int hourOfDay = calendar.get(Calendar.HOUR_OF_DAY);
         log.info("Start to send extramural schedule for hour {}", hourOfDay);
-        List<ExtramuralEventDailyNotification> extramuralEventDailyNotifications =
-                extramuralEventDailyNotificationRepository.findByHourForSendAndEnabled(hourOfDay);
+        List<ExtramuralEventTodayNotification> extramuralEventTodayNotifications =
+                extramuralEventTodayNotificationRepository.findByHourForSendAndEnabled(hourOfDay);
 
-        if (!CollectionUtils.isEmpty(extramuralEventDailyNotifications)) {
+        if (!CollectionUtils.isEmpty(extramuralEventTodayNotifications)) {
             log.info("Send extramural schedule for hour {}", hourOfDay);
-            for (ExtramuralEventDailyNotification notification : extramuralEventDailyNotifications) {
+            for (ExtramuralEventTodayNotification notification : extramuralEventTodayNotifications) {
                 BotUser botUser = botUserRepository.findOneById(notification.getUserId());
                 if (!BotMessageUtils.isBotUserFullTime(botUser)) {
                     ExtramuralDto extramuralDto = callRestService.getExtramuralEventsByDay(
