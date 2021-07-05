@@ -5,8 +5,8 @@ import java.util.Map;
 
 public class DepartmentConverter {
 
-    private static Map<String, String> converterMap = new HashMap<>();
-    private static Map<String, String> invertedConverterMap = new HashMap<>();
+    private static final Map<String, String> converterMap = new HashMap<>();
+    private static final Map<String, String> invertedConverterMap = new HashMap<>();
 
     public static String convertToUrl(String department) {
         return converterMap.get(department);

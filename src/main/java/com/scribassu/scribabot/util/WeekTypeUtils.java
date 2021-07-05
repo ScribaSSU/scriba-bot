@@ -13,10 +13,10 @@ public class WeekTypeUtils {
     }
 
     public static String weekTypeToLongString(WeekType weekType) {
-        if(weekType.equals(WeekType.NOM)) {
+        if (weekType.equals(WeekType.NOM)) {
             return "числитель";
         }
-        if(weekType.equals(WeekType.DENOM)) {
+        if (weekType.equals(WeekType.DENOM)) {
             return "знаменатель";
         }
         return "";

@@ -49,8 +49,7 @@ public class BotMessage {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             this.keyboard = objectMapper.writeValueAsString(keyboard);
-        }
-        catch(JsonProcessingException e) {
+        } catch (JsonProcessingException e) {
             setKeyboard(KeyboardType.ButtonActions);
         }
     }

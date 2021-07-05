@@ -30,7 +30,7 @@ public class StartupEvents implements ApplicationListener<ContextRefreshedEvent>
 
     @Override
     public void onApplicationEvent(final ContextRefreshedEvent event) {
-        for(KeyboardType k : KeyboardType.values()) {
+        for (KeyboardType k : KeyboardType.values()) {
             KeyboardMap.keyboards.put(
                     k,
                     new Keyboard(

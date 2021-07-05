@@ -1,7 +1,6 @@
 package com.scribassu.scribabot.repositories;
 
 import com.scribassu.scribabot.entities.ExamPeriodAfterTomorrowNotification;
-import com.scribassu.scribabot.entities.ExamPeriodTomorrowNotification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

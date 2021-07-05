@@ -7,7 +7,7 @@ import java.util.HashMap;
 
 @Service
 public class SymbolConverterImpl implements SymbolConverter {
-    private HashMap<Character, String> symbols = new HashMap<>();
+    private final HashMap<Character, String> symbols = new HashMap<>();
 
     private final CustomFileReader customFileReader;
 
@@ -24,8 +24,7 @@ public class SymbolConverterImpl implements SymbolConverter {
             char symbol = string.charAt(i);
             if (symbols.containsKey(symbol)) {
                 stringBuilder.append(symbols.get(symbol));
-            }
-            else {
+            } else {
                 stringBuilder.append(symbol);
             }
         }

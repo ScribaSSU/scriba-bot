@@ -66,19 +66,18 @@ public class TomorrowNotificationService {
         List<ScheduleTomorrowNotification> scheduleTomorrowNotifications =
                 scheduleTomorrowNotificationRepository.findByHourForSendAndEnabled(hourOfDay);
 
-        if(!CollectionUtils.isEmpty(scheduleTomorrowNotifications)) {
+        if (!CollectionUtils.isEmpty(scheduleTomorrowNotifications)) {
             log.info("Send tomorrow full time schedule for hour {}", hourOfDay);
             int dayNumberInt = CalendarUtils.getDayOfWeekStartsFromMonday(calendar);
-            if(dayNumberInt == 7) {
+            if (dayNumberInt == 7) {
                 dayNumberInt = 1;
-            }
-            else {
+            } else {
                 dayNumberInt++;
             }
             final String dayNumber = String.valueOf(dayNumberInt);
-            for(ScheduleTomorrowNotification notification : scheduleTomorrowNotifications) {
+            for (ScheduleTomorrowNotification notification : scheduleTomorrowNotifications) {
                 BotUser botUser = botUserRepository.findOneById(notification.getUserId());
-                if(BotMessageUtils.isBotUserFullTime(botUser)) {
+                if (BotMessageUtils.isBotUserFullTime(botUser)) {
                     FullTimeLessonDto lessons = callRestService.getFullTimeLessonsByDay(
                             botUser.getDepartment(),
                             botUser.getGroupNumber(),
@@ -88,8 +87,7 @@ public class TomorrowNotificationService {
                     messageSender.send(botMessage, botUser.getUserId());
                 }
             }
-        }
-        else {
+        } else {
             log.info("No need to send tomorrow full time schedule for hour {}", hourOfDay);
         }
         log.info("Finish sending tomorrow full time schedule for hour {}", hourOfDay);
@@ -106,11 +104,11 @@ public class TomorrowNotificationService {
         List<ExamPeriodTomorrowNotification> examPeriodTomorrowNotifications =
                 examPeriodTomorrowNotificationRepository.findByHourForSendAndEnabled(hourOfDay);
 
-        if(!CollectionUtils.isEmpty(examPeriodTomorrowNotifications)) {
+        if (!CollectionUtils.isEmpty(examPeriodTomorrowNotifications)) {
             log.info("Send tomorrow exam period schedule for hour {}", hourOfDay);
-            for(ExamPeriodTomorrowNotification notification : examPeriodTomorrowNotifications) {
+            for (ExamPeriodTomorrowNotification notification : examPeriodTomorrowNotifications) {
                 BotUser botUser = botUserRepository.findOneById(notification.getUserId());
-                if(BotMessageUtils.isBotUserFullTime(botUser)) {
+                if (BotMessageUtils.isBotUserFullTime(botUser)) {
                     ExamPeriodEventDto examPeriodEventDto = callRestService.getFullTimeExamPeriodEventByDay(
                             botUser.getDepartment(),
                             botUser.getGroupNumber(),
@@ -123,8 +121,7 @@ public class TomorrowNotificationService {
                     Thread.sleep(51); //20 messages per second
                 }
             }
-        }
-        else {
+        } else {
             log.info("No need to send tomorrow exam period schedule for hour {}", hourOfDay);
         }
         log.info("Finish sending tomorrow exam period schedule for hour {}", hourOfDay);

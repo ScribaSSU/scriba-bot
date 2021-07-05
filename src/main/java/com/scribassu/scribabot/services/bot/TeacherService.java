@@ -39,50 +39,46 @@ public class TeacherService implements BotMessageService {
     public BotMessage getBotMessage(String message, BotUser botUser) {
         BotMessage botMessage = new BotMessage();
 
-        if(null != botUser
+        if (null != botUser
                 && null != botUser.getPreviousUserMessage()
                 && botUser.getPreviousUserMessage().equalsIgnoreCase(CommandText.TEACHER_SCHEDULE)) {
             TeacherListDto teacherListDto = callRestService.getTeachersByWord(message);
-            if(null != teacherListDto.getTeachers()) {
-                if(teacherListDto.getTeachers().isEmpty()) {
+            if (null != teacherListDto.getTeachers()) {
+                if (teacherListDto.getTeachers().isEmpty()) {
                     botMessage = new BotMessage("По вашему запросу ничего не нашлось.", ButtonActions);
-                }
-                else {
+                } else {
                     List<Teacher> teachers = teacherListDto.getTeachers();
-                    if(teachers.size() > Constants.MAX_VK_KEYBOARD_SIZE_FOR_LISTS) {
+                    if (teachers.size() > Constants.MAX_VK_KEYBOARD_SIZE_FOR_LISTS) {
                         botMessage = new BotMessage(
                                 "Искомый список преподавателей слишком большой для клавиатуры VK. " +
                                         "Попробуйте запросить точнее.",
                                 ButtonActions);
-                    }
-                    else {
+                    } else {
                         ObjectMapper objectMapper = new ObjectMapper();
                         try {
                             botMessage = new BotMessage(
                                     "Выберите, для какого преподавателя хотите узнать расписание.",
                                     objectMapper.writeValueAsString(keyboardGenerator.buildTeachers(teachers)));
-                        }
-                        catch(Exception e) {
+                        } catch (Exception e) {
                             botMessage = new BotMessage(CANNOT_GET_TEACHERS, ButtonActions);
                         }
                     }
                 }
-            }
-            else {
+            } else {
                 botMessage = new BotMessage(CANNOT_GET_TEACHERS, ButtonActions);
             }
         }
 
-        if(message.equals(CommandText.TEACHER_SCHEDULE)) {
+        if (message.equals(CommandText.TEACHER_SCHEDULE)) {
             botMessage = new BotMessage(
                     "Введите полностью или частично что-либо из ФИО преподавателя. " +
-                    "Например, по запросу 'Ива' найдутся и 'Иванова', и 'Иван', и 'Иванович'. " +
-                    "По запросу 'Иванов Ев' найдется 'Иванов Евгений', но не 'Иванова Евгения'.");
+                            "Например, по запросу 'Ива' найдутся и 'Иванова', и 'Иван', и 'Иванович'. " +
+                            "По запросу 'Иванов Ев' найдется 'Иванов Евгений', но не 'Иванова Евгения'.");
             botUser.setPreviousUserMessage(CommandText.TEACHER_SCHEDULE);
             botUserRepository.save(botUser);
         }
 
-        if(message.startsWith(CommandText.TEACHER_ID_PAYLOAD)) {
+        if (message.startsWith(CommandText.TEACHER_ID_PAYLOAD)) {
             botUser.setPreviousUserMessage(message);
             botUserRepository.save(botUser);
             botMessage = new BotMessage(

@@ -32,42 +32,40 @@ public class MessageSenderImpl implements MessageSender {
     private String vkApiVersion;
 
     public void send(BotMessage botMessage, String userId) throws Exception {
-            int startIndex = 0;
-            String message;
-            int lastSpaceIndex = 0;
-            while (startIndex < botMessage.getMessage().length()) {
-                if (botMessage.getMessage().length() - startIndex <= VK_LENGTH) {
-                    message = botMessage.getMessage().substring(startIndex);
-                }
-                else {
-                    lastSpaceIndex = botMessage.getMessage().lastIndexOf(' ', startIndex + VK_LENGTH);
-                    message = botMessage.getMessage().substring(startIndex, lastSpaceIndex);
-                }
-                List<NameValuePair> postParameters = new ArrayList<>();
-                postParameters.add(new BasicNameValuePair("access_token", token));
-                postParameters.add(new BasicNameValuePair("v", vkApiVersion));
-                postParameters.add(new BasicNameValuePair("peer_id", userId));
-                postParameters.add(new BasicNameValuePair("random_id", String.valueOf(random.nextInt())));
-                postParameters.add(new BasicNameValuePair("message", message));
-
-                if(botMessage.hasKeyboard()) {
-                    postParameters.add(new BasicNameValuePair("keyboard", botMessage.getKeyboard()));
-                }
-
-                HttpPost postRequest = new HttpPost(VK_API_METHOD);
-                postRequest.addHeader("accept", "application/x-www-form-urlencoded");
-                postRequest.setEntity(new UrlEncodedFormEntity(postParameters, StandardCharsets.UTF_8));
-                HttpClient client = HttpClientBuilder.create().build();
-                HttpResponse response = client.execute(postRequest);
-
-                if (lastSpaceIndex > 0) {
-                    startIndex = lastSpaceIndex + 1;
-                    lastSpaceIndex = 0;
-                }
-                else {
-                    startIndex += VK_LENGTH;
-                }
-                log.info("Response: " + response);
+        int startIndex = 0;
+        String message;
+        int lastSpaceIndex = 0;
+        while (startIndex < botMessage.getMessage().length()) {
+            if (botMessage.getMessage().length() - startIndex <= VK_LENGTH) {
+                message = botMessage.getMessage().substring(startIndex);
+            } else {
+                lastSpaceIndex = botMessage.getMessage().lastIndexOf(' ', startIndex + VK_LENGTH);
+                message = botMessage.getMessage().substring(startIndex, lastSpaceIndex);
             }
+            List<NameValuePair> postParameters = new ArrayList<>();
+            postParameters.add(new BasicNameValuePair("access_token", token));
+            postParameters.add(new BasicNameValuePair("v", vkApiVersion));
+            postParameters.add(new BasicNameValuePair("peer_id", userId));
+            postParameters.add(new BasicNameValuePair("random_id", String.valueOf(random.nextInt())));
+            postParameters.add(new BasicNameValuePair("message", message));
+
+            if (botMessage.hasKeyboard()) {
+                postParameters.add(new BasicNameValuePair("keyboard", botMessage.getKeyboard()));
+            }
+
+            HttpPost postRequest = new HttpPost(VK_API_METHOD);
+            postRequest.addHeader("accept", "application/x-www-form-urlencoded");
+            postRequest.setEntity(new UrlEncodedFormEntity(postParameters, StandardCharsets.UTF_8));
+            HttpClient client = HttpClientBuilder.create().build();
+            HttpResponse response = client.execute(postRequest);
+
+            if (lastSpaceIndex > 0) {
+                startIndex = lastSpaceIndex + 1;
+                lastSpaceIndex = 0;
+            } else {
+                startIndex += VK_LENGTH;
+            }
+            log.info("Response: " + response);
+        }
     }
 }

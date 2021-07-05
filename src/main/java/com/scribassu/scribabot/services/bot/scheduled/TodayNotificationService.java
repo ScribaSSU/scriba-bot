@@ -4,17 +4,17 @@ import com.scribassu.scribabot.dto.BotMessage;
 import com.scribassu.scribabot.dto.rest.ExamPeriodEventDto;
 import com.scribassu.scribabot.dto.rest.ExtramuralDto;
 import com.scribassu.scribabot.dto.rest.FullTimeLessonDto;
+import com.scribassu.scribabot.entities.BotUser;
 import com.scribassu.scribabot.entities.ExamPeriodTodayNotification;
 import com.scribassu.scribabot.entities.ExtramuralEventTodayNotification;
-import com.scribassu.scribabot.repositories.ExamPeriodTodayNotificationRepository;
-import com.scribassu.scribabot.repositories.ExtramuralEventTodayNotificationRepository;
-import com.scribassu.scribabot.text.CommandText;
-import com.scribassu.scribabot.entities.BotUser;
 import com.scribassu.scribabot.entities.ScheduleTodayNotification;
 import com.scribassu.scribabot.repositories.BotUserRepository;
+import com.scribassu.scribabot.repositories.ExamPeriodTodayNotificationRepository;
+import com.scribassu.scribabot.repositories.ExtramuralEventTodayNotificationRepository;
 import com.scribassu.scribabot.repositories.ScheduleTodayNotificationRepository;
 import com.scribassu.scribabot.services.CallRestService;
 import com.scribassu.scribabot.services.messages.MessageSender;
+import com.scribassu.scribabot.text.CommandText;
 import com.scribassu.scribabot.util.BotMessageUtils;
 import com.scribassu.scribabot.util.CalendarUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -66,12 +66,12 @@ public class TodayNotificationService {
         List<ScheduleTodayNotification> scheduleTodayNotifications =
                 scheduleTodayNotificationRepository.findByHourForSendAndEnabled(hourOfDay);
 
-        if(!CollectionUtils.isEmpty(scheduleTodayNotifications)) {
+        if (!CollectionUtils.isEmpty(scheduleTodayNotifications)) {
             log.info("Send full time schedule for hour {}", hourOfDay);
             final String dayNumber = String.valueOf(CalendarUtils.getDayOfWeekStartsFromMonday(calendar));
-            for(ScheduleTodayNotification notification : scheduleTodayNotifications) {
+            for (ScheduleTodayNotification notification : scheduleTodayNotifications) {
                 BotUser botUser = botUserRepository.findOneById(notification.getUserId());
-                if(BotMessageUtils.isBotUserFullTime(botUser)) {
+                if (BotMessageUtils.isBotUserFullTime(botUser)) {
                     FullTimeLessonDto lessons = callRestService.getFullTimeLessonsByDay(
                             botUser.getDepartment(),
                             botUser.getGroupNumber(),
@@ -82,8 +82,7 @@ public class TodayNotificationService {
                     Thread.sleep(51); //20 messages per second
                 }
             }
-        }
-        else {
+        } else {
             log.info("No need to send full time schedule for hour {}", hourOfDay);
         }
         log.info("Finish sending full time schedule for hour {}", hourOfDay);
@@ -98,11 +97,11 @@ public class TodayNotificationService {
         List<ExamPeriodTodayNotification> examPeriodTodayNotifications =
                 examPeriodTodayNotificationRepository.findByHourForSendAndEnabled(hourOfDay);
 
-        if(!CollectionUtils.isEmpty(examPeriodTodayNotifications)) {
+        if (!CollectionUtils.isEmpty(examPeriodTodayNotifications)) {
             log.info("Send exam period schedule for hour {}", hourOfDay);
-            for(ExamPeriodTodayNotification notification : examPeriodTodayNotifications) {
+            for (ExamPeriodTodayNotification notification : examPeriodTodayNotifications) {
                 BotUser botUser = botUserRepository.findOneById(notification.getUserId());
-                if(BotMessageUtils.isBotUserFullTime(botUser)) {
+                if (BotMessageUtils.isBotUserFullTime(botUser)) {
                     ExamPeriodEventDto examPeriodEventDto = callRestService.getFullTimeExamPeriodEventByDay(
                             botUser.getDepartment(),
                             botUser.getGroupNumber(),
@@ -115,8 +114,7 @@ public class TodayNotificationService {
                     Thread.sleep(51); //20 messages per second
                 }
             }
-        }
-        else {
+        } else {
             log.info("No need to send exam period schedule for hour {}", hourOfDay);
         }
         log.info("Finish sending exam period schedule for hour {}", hourOfDay);

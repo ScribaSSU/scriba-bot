@@ -20,18 +20,18 @@ public class CallRestService {
     @Value("${call.rest.prefix}")
     private String prefix;
 
-    private String FULL_DEP_EDU_GROUP_URI = "schedule/full/%s/%s";
-    private String FULL_DEP_EDU_GROUP_DAY_URI = "schedule/full/%s/%s/%s";
-    private String FULL_DEP_EDU_GROUP_DAY_LESSON_URI = "schedule/full/%s/%s/%s/%s";
+    private final String FULL_DEP_EDU_GROUP_URI = "schedule/full/%s/%s";
+    private final String FULL_DEP_EDU_GROUP_DAY_URI = "schedule/full/%s/%s/%s";
+    private final String FULL_DEP_EDU_GROUP_DAY_LESSON_URI = "schedule/full/%s/%s/%s/%s";
 
-    private String FULL_EXAM_DEP_GROUP_URI = "exam/full/%s/%s";
-    private String FULL_EXAM_DEP_GROUP_DAY_URI = "exam/full/%s/%s/%d/%d";
+    private final String FULL_EXAM_DEP_GROUP_URI = "exam/full/%s/%s";
+    private final String FULL_EXAM_DEP_GROUP_DAY_URI = "exam/full/%s/%s/%d/%d";
 
-    private String STUDENT_GROUP_NUMBER_URI = "group/number/%s/%s/%s";
+    private final String STUDENT_GROUP_NUMBER_URI = "group/number/%s/%s/%s";
 
-    private String TEACHER_URI = "teacher";
+    private final String TEACHER_URI = "teacher";
 
-    private String EXTR_EV_GROUP_URI = "schedule/extramural/%s/%s";
+    private final String EXTR_EV_GROUP_URI = "schedule/extramural/%s/%s";
 
     public FullTimeLessonDto getFullTimeLessonsByDayAndLesson(String departmentUrl,
                                                               String groupNumber,

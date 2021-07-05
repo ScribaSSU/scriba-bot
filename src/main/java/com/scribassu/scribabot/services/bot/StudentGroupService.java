@@ -5,8 +5,6 @@ import com.scribassu.scribabot.dto.BotMessage;
 import com.scribassu.scribabot.dto.rest.GroupNumbersDto;
 import com.scribassu.scribabot.dto.vkkeyboard.*;
 import com.scribassu.scribabot.entities.BotUser;
-import com.scribassu.scribabot.keyboard.KeyboardMap;
-import com.scribassu.scribabot.keyboard.KeyboardType;
 import com.scribassu.scribabot.services.CallRestService;
 import com.scribassu.scribabot.text.CommandText;
 import com.scribassu.scribabot.text.MessageText;
@@ -18,12 +16,9 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static com.scribassu.scribabot.keyboard.KeyboardType.ButtonCourse;
-import static com.scribassu.scribabot.keyboard.KeyboardType.ButtonDepartment;
 
 @Service
 public class StudentGroupService implements BotMessageService {
@@ -39,8 +34,8 @@ public class StudentGroupService implements BotMessageService {
     public BotMessage getBotMessage(String message, BotUser botUser) {
         BotMessage botMessage;
         GroupNumbersDto groupNumbersDto = new GroupNumbersDto();
-        if(message.equalsIgnoreCase("другое")) {
-            if(botUser != null
+        if (message.equalsIgnoreCase("другое")) {
+            if (botUser != null
                     && !StringUtils.isEmpty(botUser.getDepartment())
                     && !StringUtils.isEmpty(botUser.getEducationForm())) {
                 groupNumbersDto =
@@ -49,10 +44,9 @@ public class StudentGroupService implements BotMessageService {
                                 EducationForm.fromGroupType(botUser.getEducationForm()).toString()
                         );
             }
-        }
-        else {
+        } else {
             String course = message.substring(0, 1);
-            if(botUser != null
+            if (botUser != null
                     && !StringUtils.isEmpty(botUser.getDepartment())
                     && !StringUtils.isEmpty(botUser.getEducationForm())) {
                 groupNumbersDto =
@@ -63,26 +57,23 @@ public class StudentGroupService implements BotMessageService {
                         );
             }
         }
-        if(CollectionUtils.isEmpty(groupNumbersDto.getGroupNumbers())) {
+        if (CollectionUtils.isEmpty(groupNumbersDto.getGroupNumbers())) {
             botMessage = new BotMessage("Группы не найдены.", ButtonCourse);
-        }
-        else if(groupNumbersDto.getGroupNumbers().size() > Constants.MAX_VK_KEYBOARD_SIZE_FOR_LISTS) {
+        } else if (groupNumbersDto.getGroupNumbers().size() > Constants.MAX_VK_KEYBOARD_SIZE_FOR_LISTS) {
             StringBuilder stringBuilder = new StringBuilder("Извините, нашлось слишком много групп, " +
                     "и они не могут отобразиться через клавиатуру из-за ограничений VK :( " +
                     "Пожалуйста, введите номер группы в формате г номергруппы, например, г 123, " +
                     "чтобы бот все-таки записал вашу группу. Доступные номера по вашему запросу:\n\n");
-            for(String groupNumber : groupNumbersDto.getGroupNumbers()) {
+            for (String groupNumber : groupNumbersDto.getGroupNumbers()) {
                 stringBuilder.append(groupNumber).append(", ");
             }
             botMessage = new BotMessage(stringBuilder.toString());
-        }
-        else {
+        } else {
             VkKeyboard vkKeyboard = buildVkKeyboardFromGroupNumbers(groupNumbersDto.getGroupNumbers());
             ObjectMapper objectMapper = new ObjectMapper();
             try {
                 botMessage = new BotMessage(MessageText.CHOOSE_STUDENT_GROUP, objectMapper.writeValueAsString(vkKeyboard));
-            }
-            catch(Exception e) {
+            } catch (Exception e) {
                 botMessage = new BotMessage("Не удалось загрузить список групп :(", ButtonCourse);
             }
         }
@@ -99,8 +90,8 @@ public class StudentGroupService implements BotMessageService {
         int mod = groupNumbers.get(0).length() > 5 ? 3 : 5; //to make long numbers visible
         int mmod = mod - 1;
 
-        while(i < groupNumbers.size()) {
-            if(i % mod == mmod) {
+        while (i < groupNumbers.size()) {
+            if (i % mod == mmod) {
                 row++;
                 vkKeyboardButtons.add(new ArrayList<>());
             }

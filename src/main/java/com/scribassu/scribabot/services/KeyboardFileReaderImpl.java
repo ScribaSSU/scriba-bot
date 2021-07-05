@@ -12,9 +12,9 @@ public class KeyboardFileReaderImpl implements CustomFileReader {
 
     @Override
     public String readAsString(String path) {
-            InputStream is = this.getClass().getClassLoader().getResourceAsStream(path);
-            return new BufferedReader(new InputStreamReader(is))
-                    .lines()
-                    .collect(Collectors.joining("\n"));
+        InputStream is = this.getClass().getClassLoader().getResourceAsStream(path);
+        return new BufferedReader(new InputStreamReader(is))
+                .lines()
+                .collect(Collectors.joining("\n"));
     }
 }

@@ -1,10 +1,10 @@
 package com.scribassu.scribabot.controllers;
 
 import com.scribassu.scribabot.dto.BotMessage;
+import com.scribassu.scribabot.dto.Command;
 import com.scribassu.scribabot.services.messages.MessageHandler;
 import com.scribassu.scribabot.services.messages.MessageParser;
 import com.scribassu.scribabot.services.messages.MessageSender;
-import com.scribassu.scribabot.dto.Command;
 import com.scribassu.scribabot.text.MessageText;
 import com.scribassu.scribabot.util.Constants;
 import org.apache.commons.lang3.StringUtils;
@@ -41,10 +41,10 @@ public class VkController {
     @ResponseStatus(HttpStatus.OK)
     public String getMessage(@RequestBody String incomingMessage) throws Exception {
         Map<String, String> parsedMessage;
-        if(StringUtils.isNotEmpty(incomingMessage)) {
+        if (StringUtils.isNotEmpty(incomingMessage)) {
             parsedMessage = messageParser.parseMessage(incomingMessage);
 
-            if(parsedMessage.containsKey(Constants.KEY_MESSAGE)) {
+            if (parsedMessage.containsKey(Constants.KEY_MESSAGE)) {
                 String userId = parsedMessage.get(Constants.KEY_USER_ID);
                 Command command = new Command(
                         parsedMessage.get(Constants.KEY_MESSAGE),
@@ -52,18 +52,16 @@ public class VkController {
                         userId);
                 BotMessage botMessage = messageHandler.getBotMessage(command);
                 //If somebody writes command without bot name mention in chat, bot should keep the silence
-                if(!botMessage.getMessage().equalsIgnoreCase(MessageText.DO_NOT_SEND)) {
+                if (!botMessage.getMessage().equalsIgnoreCase(MessageText.DO_NOT_SEND)) {
                     messageSender.send(botMessage, userId);
                 }
             }
-        }
-        else {
+        } else {
             throw new IllegalArgumentException("Message was not received!");
         }
-        if(parsedMessage.containsKey(Constants.TYPE_CONFIRMATION)) {
+        if (parsedMessage.containsKey(Constants.TYPE_CONFIRMATION)) {
             return confirmationCode;
-        }
-        else {
+        } else {
             return Constants.OK;
         }
     }

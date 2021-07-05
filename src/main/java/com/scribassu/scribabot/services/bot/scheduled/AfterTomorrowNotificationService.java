@@ -63,11 +63,11 @@ public class AfterTomorrowNotificationService {
         List<ExamPeriodAfterTomorrowNotification> examPeriodAfterTomorrowNotifications =
                 examPeriodAfterTomorrowNotificationRepository.findByHourForSendAndEnabled(hourOfDay);
 
-        if(!CollectionUtils.isEmpty(examPeriodAfterTomorrowNotifications)) {
+        if (!CollectionUtils.isEmpty(examPeriodAfterTomorrowNotifications)) {
             log.info("Send after tomorrow exam period schedule for hour {}", hourOfDay);
-            for(ExamPeriodAfterTomorrowNotification notification : examPeriodAfterTomorrowNotifications) {
+            for (ExamPeriodAfterTomorrowNotification notification : examPeriodAfterTomorrowNotifications) {
                 BotUser botUser = botUserRepository.findOneById(notification.getUserId());
-                if(BotMessageUtils.isBotUserFullTime(botUser)) {
+                if (BotMessageUtils.isBotUserFullTime(botUser)) {
                     ExamPeriodEventDto examPeriodEventDto = callRestService.getFullTimeExamPeriodEventByDay(
                             botUser.getDepartment(),
                             botUser.getGroupNumber(),
@@ -80,8 +80,7 @@ public class AfterTomorrowNotificationService {
                     Thread.sleep(51); //20 messages per second
                 }
             }
-        }
-        else {
+        } else {
             log.info("No need to send after tomorrow exam period schedule for hour {}", hourOfDay);
         }
         log.info("Finish sending after tomorrow exam period schedule for hour {}", hourOfDay);

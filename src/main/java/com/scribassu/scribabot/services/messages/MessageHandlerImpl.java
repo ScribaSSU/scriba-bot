@@ -74,8 +74,8 @@ public class MessageHandlerImpl implements MessageHandler {
         BotUser botUser = botUserRepository.findOneById(userId);
         boolean isMentioned = false;
 
-        for(String mentionedName : mentionedNames) {
-            if(message.contains(mentionedName)) {
+        for (String mentionedName : mentionedNames) {
+            if (message.contains(mentionedName)) {
                 // 1 for ] char
                 message = message.substring(message.indexOf(mentionedName) + mentionedName.length() + 1);
                 isMentioned = true;
@@ -87,11 +87,11 @@ public class MessageHandlerImpl implements MessageHandler {
         long userIdLong = Long.parseLong(userId);
 
         // It is mandatory to mention bot name in chats
-        if(!isMentioned && userIdLong > Constants.PEER_ID_SHIFT) {
+        if (!isMentioned && userIdLong > Constants.PEER_ID_SHIFT) {
             return new BotMessage(DO_NOT_SEND);
         }
 
-        if(null == botUser && !message.equals(CommandText.HELLO)
+        if (null == botUser && !message.equals(CommandText.HELLO)
                 && !message.equals(CommandText.MAIN_MENU)
                 && !message.equals(CommandText.SHORT_MAIN_MENU)) {
             botMessage = new BotMessage("Для начала работы с ботом напишите 'Привет', чтобы настроить факультет и группу.");
@@ -100,35 +100,33 @@ public class MessageHandlerImpl implements MessageHandler {
             return botMessage;
         }
 
-        if(null != botUser
+        if (null != botUser
                 && null != botUser.getPreviousUserMessage()
                 && botUser.getPreviousUserMessage().equalsIgnoreCase(CommandText.TEACHER_SCHEDULE)) {
             botMessage = teacherService.getBotMessage(message, botUser);
         }
 
-        switch(message) {
+        switch (message) {
             case CommandText.HELLO:
-                if(botUser == null) {
+                if (botUser == null) {
                     botUser = new BotUser(userId);
                     botUser.setFilterNomDenom(false);
                     botUser = botUserRepository.save(botUser);
                     botMessage = new BotMessage(GREETING_WITH_CHOOSE_DEPARTMENT, ButtonDepartment);
                     botUserRepository.updatePreviousUserMessage(GREETING_WITH_CHOOSE_DEPARTMENT, botUser.getUserId());
-                }
-                else {
+                } else {
                     botMessage = new BotMessage("Привет!", ButtonActions);
                 }
                 break;
             case CommandText.MAIN_MENU:
             case CommandText.SHORT_MAIN_MENU:
-                if(botUser == null) {
+                if (botUser == null) {
                     botUser = new BotUser(userId);
                     botUser.setFilterNomDenom(false);
                     botUser = botUserRepository.save(botUser);
                     botMessage = new BotMessage(GREETING_WITH_CHOOSE_DEPARTMENT, ButtonDepartment);
                     botUserRepository.updatePreviousUserMessage(GREETING_WITH_CHOOSE_DEPARTMENT, botUser.getUserId());
-                }
-                else {
+                } else {
                     botUser.setPreviousUserMessage("");
                     botUserRepository.save(botUser);
                     botMessage = new BotMessage("Возврат в главное меню.", ButtonActions);
@@ -144,16 +142,14 @@ public class MessageHandlerImpl implements MessageHandler {
                 botMessage = teacherService.getBotMessage(message, botUser);
                 break;
             case CommandText.FULL_TIME_SCHEDULE:
-                if(BotMessageUtils.isBotUserFullTime(botUser)) {
+                if (BotMessageUtils.isBotUserFullTime(botUser)) {
                     botMessage = new BotMessage("Выберите, для чего хотите узнать расписание.", ButtonFullTimeSchedule);
-                }
-                else if(botUser != null
-                    && botUser.getDepartment() == null
-                    && botUser.getEducationForm() == null
-                    && botUser.getGroupNumber() == null) {
+                } else if (botUser != null
+                        && botUser.getDepartment() == null
+                        && botUser.getEducationForm() == null
+                        && botUser.getGroupNumber() == null) {
                     botMessage = new BotMessage(CHOOSE_DEPARTMENT, ButtonDepartment);
-                }
-                else {
+                } else {
                     botMessage = new BotMessage(MessageText.CANNOT_GET_SCHEDULE_GROUP_NOT_SET, ButtonDepartment);
                 }
                 break;
@@ -218,59 +214,57 @@ public class MessageHandlerImpl implements MessageHandler {
                 break;
         }
 
-        if(CommandText.HOUR_PATTERN.matcher(message).matches()) {
+        if (CommandText.HOUR_PATTERN.matcher(message).matches()) {
             botMessage = settingsService.getBotMessage(message, botUser);
         }
 
-        if(CommandText.DEPARTMENT_PAYLOAD.equalsIgnoreCase(payload)
-            || CommandText.DEPARTMENT_PATTERN.matcher(message).matches()) {
+        if (CommandText.DEPARTMENT_PAYLOAD.equalsIgnoreCase(payload)
+                || CommandText.DEPARTMENT_PATTERN.matcher(message).matches()) {
             botUserRepository.updateDepartment(DepartmentConverter.convertToUrl(message), userId);
             botMessage = new BotMessage(MessageText.CHOOSE_EDUCATION_FORM, ButtonGroupType);
         }
 
-        if(CommandText.COURSE_PAYLOAD.equalsIgnoreCase(payload)) {
+        if (CommandText.COURSE_PAYLOAD.equalsIgnoreCase(payload)) {
             botMessage = studentGroupService.getBotMessage(message, botUser);
         }
 
-        if(CommandText.CHOOSE_STUDENT_GROUP.equalsIgnoreCase(payload)) {
+        if (CommandText.CHOOSE_STUDENT_GROUP.equalsIgnoreCase(payload)) {
             botUserRepository.updateGroupNumber(message, userId);
             botUser = botUserRepository.findOneById(userId);
-            if(null != botUser.getPreviousUserMessage() && botUser.getPreviousUserMessage().equalsIgnoreCase(GREETING_WITH_CHOOSE_DEPARTMENT)) {
+            if (null != botUser.getPreviousUserMessage() && botUser.getPreviousUserMessage().equalsIgnoreCase(GREETING_WITH_CHOOSE_DEPARTMENT)) {
                 botMessage = new BotMessage(THIS_IS_MAIN_MENU, ButtonActions);
                 botUserRepository.updatePreviousUserMessage("", botUser.getUserId());
-            }
-            else {
+            } else {
                 botMessage = new BotMessage(MessageText.FINISH_SET_GROUP, ButtonFullTimeSchedule);
             }
         }
 
-        if(message.startsWith(CommandText.GROUP_NUMBER_INPUT)) {
+        if (message.startsWith(CommandText.GROUP_NUMBER_INPUT)) {
             botUserRepository.updateGroupNumber(message.substring(2), userId);
             botUser = botUserRepository.findOneById(userId);
-            if(botUser.getPreviousUserMessage().equalsIgnoreCase(GREETING_WITH_CHOOSE_DEPARTMENT)) {
+            if (botUser.getPreviousUserMessage().equalsIgnoreCase(GREETING_WITH_CHOOSE_DEPARTMENT)) {
                 botMessage = new BotMessage(THIS_IS_MAIN_MENU, ButtonActions);
                 botUserRepository.updatePreviousUserMessage("", botUser.getUserId());
-            }
-            else {
+            } else {
                 botMessage = new BotMessage(MessageText.FINISH_SET_GROUP, ButtonFullTimeSchedule);
             }
         }
 
-        if(message.startsWith("р ")) {
+        if (message.startsWith("р ")) {
             String[] params = message.split(" ");
             FullTimeLessonDto lessons = callRestService.getFullTimeLessonsByDay(params[1], params[2], params[3]);
             botMessage = BotMessageUtils.getBotMessageForFullTimeLessons(lessons, "", botUser.isFilterNomDenom());
         }
 
-        if(payload.startsWith(CommandText.TEACHER_ID_PAYLOAD)) {
+        if (payload.startsWith(CommandText.TEACHER_ID_PAYLOAD)) {
             botMessage = teacherService.getBotMessage(payload, botUser);
         }
 
-        if(CommandText.COURSE_PATTERN.matcher(message).matches()) {
+        if (CommandText.COURSE_PATTERN.matcher(message).matches()) {
             botMessage = studentGroupService.getBotMessage(message, botUser);
         }
 
-        if(botMessage.isDefault()) {
+        if (botMessage.isDefault()) {
             unrecognizedMessageRepository.save(new UnrecognizedMessage(command, botUser));
         }
 

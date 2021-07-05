@@ -18,16 +18,14 @@ public class WeekController {
     @GetMapping("/weekType")
     public ResponseEntity shiftWeekType(@RequestParam("shift") byte shift,
                                         @RequestParam("accessToken") String token) {
-        if(!StringUtils.isEmpty(token) && accessToken.equals(token)) {
-            if(shift >= 0 && shift <= 1) {
+        if (!StringUtils.isEmpty(token) && accessToken.equals(token)) {
+            if (shift >= 0 && shift <= 1) {
                 WeekTypeUtils.SHIFT_WEEK_TYPE = shift;
                 return ResponseEntity.ok().build();
-            }
-            else {
+            } else {
                 return ResponseEntity.badRequest().build();
             }
-        }
-        else {
+        } else {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
     }

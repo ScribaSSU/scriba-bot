@@ -1,10 +1,6 @@
 package com.scribassu.scribabot.text.generators;
 
-import com.scribassu.scribabot.dto.rest.ExamPeriodEventDto;
-import com.scribassu.scribabot.dto.rest.ExtramuralDto;
-import com.scribassu.scribabot.dto.rest.FullTimeLessonDto;
-import com.scribassu.scribabot.dto.rest.TeacherExamPeriodEventDto;
-import com.scribassu.scribabot.dto.rest.TeacherFullTimeLessonDto;
+import com.scribassu.scribabot.dto.rest.*;
 import com.scribassu.scribabot.text.CommandText;
 import com.scribassu.scribabot.util.CalendarUtils;
 import com.scribassu.scribabot.util.WeekTypeUtils;
@@ -25,14 +21,14 @@ public class MessageGenerator {
         StringBuilder stringBuilder = new StringBuilder();
         Calendar calendar = CalendarUtils.getCalendar();
 
-        if(day.equalsIgnoreCase(CommandText.TODAY)) {
+        if (day.equalsIgnoreCase(CommandText.TODAY)) {
             stringBuilder.append("Сегодня ");
         }
-        if(day.equalsIgnoreCase(CommandText.TOMORROW)) {
+        if (day.equalsIgnoreCase(CommandText.TOMORROW)) {
             stringBuilder.append("Завтра ");
             calendar.add(Calendar.DAY_OF_MONTH, 1);
         }
-        if(day.equalsIgnoreCase(CommandText.YESTERDAY)) {
+        if (day.equalsIgnoreCase(CommandText.YESTERDAY)) {
             stringBuilder.append("Вчера ");
             calendar.add(Calendar.DAY_OF_MONTH, -1);
         }
@@ -41,19 +37,19 @@ public class MessageGenerator {
 
         String data = calendar.get(Calendar.DAY_OF_MONTH) + "-" + (calendar.get(Calendar.MONTH) + 1) + "-" + calendar.get(Calendar.YEAR);
 
-        if(day.equalsIgnoreCase(CommandText.TODAY)
+        if (day.equalsIgnoreCase(CommandText.TODAY)
                 || day.equalsIgnoreCase(CommandText.TOMORROW)
                 || day.equalsIgnoreCase(CommandText.YESTERDAY)) {
             stringBuilder.append(data);
         }
         stringBuilder.append("\n");
-        if(calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) { // for week type determination
+        if (calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) { // for week type determination
             calendar.add(Calendar.DAY_OF_MONTH, -1);
         }
         WeekType currentWeekType = WeekTypeUtils.getWeekType(calendar);
 
         // kgl has another week type
-        if(fullTimeLessonDto.getStudentGroup().getDepartment().getURL().equalsIgnoreCase("kgl")) {
+        if (fullTimeLessonDto.getStudentGroup().getDepartment().getURL().equalsIgnoreCase("kgl")) {
             currentWeekType = currentWeekType.equals(WeekType.NOM) ? WeekType.DENOM : WeekType.NOM;
         }
 
@@ -61,12 +57,11 @@ public class MessageGenerator {
 
         stringBuilder.append("Группа № ").append(fullTimeLessonDto.getStudentGroup().getGroupNumberRus()).append("\n \n");
 
-        if(CollectionUtils.isEmpty(fullTimeLessonDto.getLessons())) {
+        if (CollectionUtils.isEmpty(fullTimeLessonDto.getLessons())) {
             stringBuilder.append("А пар-то нету :)");
-        }
-        else {
+        } else {
             List<FullTimeLesson> fullTimeLessons = fullTimeLessonDto.getLessons();
-            if(filterWeekType) {
+            if (filterWeekType) {
                 final WeekType finalCurrentWeekType = currentWeekType;
                 fullTimeLessons = fullTimeLessons
                         .stream()
@@ -81,7 +76,7 @@ public class MessageGenerator {
                         .append(appendLessonTypeEmoji(fullTimeLesson))
                         .append("\n");
 
-                if(!fullTimeLesson.getWeekType().equals(WeekType.FULL)) {
+                if (!fullTimeLesson.getWeekType().equals(WeekType.FULL)) {
                     stringBuilder.append(fullTimeLesson.getWeekType().getType()).append("\n");
                 }
                 if (!StringUtils.isEmpty(fullTimeLesson.getSubGroup())) {
@@ -99,37 +94,36 @@ public class MessageGenerator {
     public static String makeFullTimeExamPeriodTemplate(ExamPeriodEventDto examPeriodEventDto,
                                                         String day) {
         StringBuilder stringBuilder = new StringBuilder();
-        if(day.equalsIgnoreCase(CommandText.TODAY)) {
+        if (day.equalsIgnoreCase(CommandText.TODAY)) {
             stringBuilder.append("Сегодня").append("\n\n");
         }
-        if(day.equalsIgnoreCase(CommandText.TOMORROW)) {
+        if (day.equalsIgnoreCase(CommandText.TOMORROW)) {
             stringBuilder.append("Завтра").append("\n\n");
         }
-        if(day.equalsIgnoreCase(CommandText.AFTER_TOMORROW)) {
+        if (day.equalsIgnoreCase(CommandText.AFTER_TOMORROW)) {
             stringBuilder.append("Послезавтра").append("\n\n");
         }
         stringBuilder.append("Группа № ").append(examPeriodEventDto.getStudentGroup().getGroupNumberRus()).append("\n \n");
 
-        if(CollectionUtils.isEmpty(examPeriodEventDto.getExamPeriodEvents())) {
+        if (CollectionUtils.isEmpty(examPeriodEventDto.getExamPeriodEvents())) {
             Calendar calendar = CalendarUtils.getCalendar();
 
-            if(day.equalsIgnoreCase(CommandText.TOMORROW)) {
+            if (day.equalsIgnoreCase(CommandText.TOMORROW)) {
                 calendar.add(Calendar.DAY_OF_MONTH, 1);
             }
-            if(day.equalsIgnoreCase(CommandText.AFTER_TOMORROW)) {
+            if (day.equalsIgnoreCase(CommandText.AFTER_TOMORROW)) {
                 calendar.add(Calendar.DAY_OF_MONTH, 2);
             }
 
             String data = calendar.get(Calendar.DAY_OF_MONTH) + "-" + (calendar.get(Calendar.MONTH) + 1) + "-" + calendar.get(Calendar.YEAR);
             stringBuilder.append(data).append("\n");
             stringBuilder.append("На этот день событий сессии не назначено.");
-        }
-        else {
+        } else {
             List<ExamPeriodEvent> examPeriodEvents = examPeriodEventDto.getExamPeriodEvents();
             examPeriodEvents.sort((e1, e2) -> (int) (e1.getId() - e2.getId()));
 
-            for(ExamPeriodEvent examPeriodEvent : examPeriodEvents) {
-                if(examPeriodEvent.getDay() != -1) {
+            for (ExamPeriodEvent examPeriodEvent : examPeriodEvents) {
+                if (examPeriodEvent.getDay() != -1) {
                     stringBuilder
                             .append(examPeriodEvent.getDay())
                             .append(" ")
@@ -137,8 +131,7 @@ public class MessageGenerator {
                             .append(" ")
                             .append(examPeriodEvent.getYear())
                             .append("\n");
-                }
-                else {
+                } else {
                     stringBuilder.append("\n");
                 }
                 stringBuilder
@@ -170,14 +163,14 @@ public class MessageGenerator {
         StringBuilder stringBuilder = new StringBuilder();
         Calendar calendar = CalendarUtils.getCalendar();
 
-        if(day.equalsIgnoreCase(CommandText.TODAY)) {
+        if (day.equalsIgnoreCase(CommandText.TODAY)) {
             stringBuilder.append("Сегодня ");
         }
-        if(day.equalsIgnoreCase(CommandText.TOMORROW)) {
+        if (day.equalsIgnoreCase(CommandText.TOMORROW)) {
             stringBuilder.append("Завтра ");
             calendar.add(Calendar.DAY_OF_MONTH, 1);
         }
-        if(day.equalsIgnoreCase(CommandText.YESTERDAY)) {
+        if (day.equalsIgnoreCase(CommandText.YESTERDAY)) {
             stringBuilder.append("Вчера ");
             calendar.add(Calendar.DAY_OF_MONTH, -1);
         }
@@ -186,13 +179,13 @@ public class MessageGenerator {
 
         String data = calendar.get(Calendar.DAY_OF_MONTH) + "-" + (calendar.get(Calendar.MONTH) + 1) + "-" + calendar.get(Calendar.YEAR);
 
-        if(day.equalsIgnoreCase(CommandText.TODAY)
+        if (day.equalsIgnoreCase(CommandText.TODAY)
                 || day.equalsIgnoreCase(CommandText.TOMORROW)
                 || day.equalsIgnoreCase(CommandText.YESTERDAY)) {
             stringBuilder.append(data);
         }
         stringBuilder.append("\n");
-        if(calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) { // for week type determination
+        if (calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) { // for week type determination
             calendar.add(Calendar.DAY_OF_MONTH, -1);
         }
         WeekType currentWeekType = WeekTypeUtils.getWeekType(calendar);
@@ -201,12 +194,11 @@ public class MessageGenerator {
         Teacher teacher = fullTimeLessonDto.getTeacher();
         stringBuilder.append(appendTeacher(teacher)).append("\n\n");
 
-        if(CollectionUtils.isEmpty(fullTimeLessonDto.getLessons())) {
+        if (CollectionUtils.isEmpty(fullTimeLessonDto.getLessons())) {
             stringBuilder.append("А пар-то нету :)");
-        }
-        else {
+        } else {
             List<FullTimeLesson> fullTimeLessons = fullTimeLessonDto.getLessons();
-            if(filterWeekType) {
+            if (filterWeekType) {
                 fullTimeLessons = fullTimeLessons
                         .stream()
                         .filter(f -> f.getWeekType().equals(WeekType.FULL) || f.getWeekType().equals(currentWeekType))
@@ -220,7 +212,7 @@ public class MessageGenerator {
                         .append(appendLessonTypeEmoji(fullTimeLesson))
                         .append("\n");
 
-                if(!fullTimeLesson.getWeekType().equals(WeekType.FULL)) {
+                if (!fullTimeLesson.getWeekType().equals(WeekType.FULL)) {
                     stringBuilder.append(fullTimeLesson.getWeekType().getType()).append("\n");
                 }
                 stringBuilder.append(fullTimeLesson.getName()).append("\n");
@@ -242,8 +234,8 @@ public class MessageGenerator {
         List<ExamPeriodEvent> examPeriodEvents = examPeriodEventDto.getExamPeriodEvents();
         examPeriodEvents.sort((e1, e2) -> (int) (e1.getId() - e2.getId()));
 
-        for(ExamPeriodEvent examPeriodEvent : examPeriodEvents) {
-            if(examPeriodEvent.getDay() != -1) {
+        for (ExamPeriodEvent examPeriodEvent : examPeriodEvents) {
+            if (examPeriodEvent.getDay() != -1) {
                 stringBuilder
                         .append(examPeriodEvent.getDay())
                         .append(" ")
@@ -251,8 +243,7 @@ public class MessageGenerator {
                         .append(" ")
                         .append(examPeriodEvent.getYear())
                         .append("\n");
-            }
-            else {
+            } else {
                 stringBuilder.append("\n");
             }
             stringBuilder
@@ -367,11 +358,11 @@ public class MessageGenerator {
     private static String appendTime(LessonTime lessonTime) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(lessonTime.getHourStart()).append(":");
-        if(lessonTime.getMinuteStart() < 10) {
+        if (lessonTime.getMinuteStart() < 10) {
             stringBuilder.append("0");
         }
         stringBuilder.append(lessonTime.getMinuteStart()).append(" - ").append(lessonTime.getHourEnd()).append(":");
-        if(lessonTime.getMinuteEnd() < 10) {
+        if (lessonTime.getMinuteEnd() < 10) {
             stringBuilder.append("0");
         }
         stringBuilder.append(lessonTime.getMinuteEnd());
@@ -379,13 +370,13 @@ public class MessageGenerator {
     }
 
     private static String appendExamPeriodEventTypeEmoji(ExamPeriodEvent examPeriodEvent) {
-        if(examPeriodEvent.getExamPeriodEventType().equals(ExamPeriodEventType.MIDTERM))
+        if (examPeriodEvent.getExamPeriodEventType().equals(ExamPeriodEventType.MIDTERM))
             return "\uD83D\uDCA1";
-        if(examPeriodEvent.getExamPeriodEventType().equals(ExamPeriodEventType.MIDTERM_WITH_MARK))
+        if (examPeriodEvent.getExamPeriodEventType().equals(ExamPeriodEventType.MIDTERM_WITH_MARK))
             return "\uD83D\uDD25";
-        if(examPeriodEvent.getExamPeriodEventType().equals(ExamPeriodEventType.CONSULTATION))
+        if (examPeriodEvent.getExamPeriodEventType().equals(ExamPeriodEventType.CONSULTATION))
             return "\uD83D\uDCD3";
-        if(examPeriodEvent.getExamPeriodEventType().equals(ExamPeriodEventType.EXAM))
+        if (examPeriodEvent.getExamPeriodEventType().equals(ExamPeriodEventType.EXAM))
             return "\uD83C\uDF40";
         return "";
     }

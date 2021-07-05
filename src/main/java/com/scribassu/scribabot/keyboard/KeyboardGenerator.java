@@ -51,8 +51,8 @@ public class KeyboardGenerator {
         int row = 0;
         vkKeyboardButtons.add(new ArrayList<>());
 
-        while(i < teachers.size()) {
-            if(i % 5 == 4) {
+        while (i < teachers.size()) {
+            if (i % 5 == 4) {
                 row++;
                 vkKeyboardButtons.add(new ArrayList<>());
             }
@@ -101,7 +101,7 @@ public class KeyboardGenerator {
                 )
         );
 
-        if(user.isFilterNomDenom()) {
+        if (user.isFilterNomDenom()) {
             vkKeyboardButtons.get(2).add(
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
@@ -111,8 +111,7 @@ public class KeyboardGenerator {
                             ), VkKeyboardButtonColor.NEGATIVE
                     )
             );
-        }
-        else {
+        } else {
             vkKeyboardButtons.get(2).add(
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
@@ -164,7 +163,7 @@ public class KeyboardGenerator {
                 )
         );
 
-        if(!BotMessageUtils.isBotUserExtramural(user)) {
+        if (!BotMessageUtils.isBotUserExtramural(user)) {
             vkKeyboardButtons.get(0).add(
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
@@ -174,8 +173,7 @@ public class KeyboardGenerator {
                             ), VkKeyboardButtonColor.PRIMARY
                     )
             );
-        }
-        else {
+        } else {
             vkKeyboardButtons.remove(0);
         }
 
@@ -245,12 +243,12 @@ public class KeyboardGenerator {
                 )
         );
 
-        if(BotMessageUtils.isBotUserFullTime(botUser)) {
+        if (BotMessageUtils.isBotUserFullTime(botUser)) {
             ExamPeriodTodayNotification examPeriodTodayNotification = examPeriodTodayNotificationRepository.findByUserId(userId);
             ExamPeriodTomorrowNotification examPeriodTomorrowNotification = examPeriodTomorrowNotificationRepository.findByUserId(userId);
             ExamPeriodAfterTomorrowNotification examPeriodAfterTomorrowNotification = examPeriodAfterTomorrowNotificationRepository.findByUserId(userId);
 
-            if(null != examPeriodTodayNotification && examPeriodTodayNotification.isEnabled()) {
+            if (null != examPeriodTodayNotification && examPeriodTodayNotification.isEnabled()) {
                 vkKeyboardButtons.get(1).add(
                         new VkKeyboardButton(
                                 new VkKeyboardButtonActionText(
@@ -260,8 +258,7 @@ public class KeyboardGenerator {
                                 ), VkKeyboardButtonColor.NEGATIVE
                         )
                 );
-            }
-            else {
+            } else {
                 vkKeyboardButtons.get(1).add(
                         new VkKeyboardButton(
                                 new VkKeyboardButtonActionText(
@@ -273,7 +270,7 @@ public class KeyboardGenerator {
                 );
             }
 
-            if(null != examPeriodTomorrowNotification && examPeriodTomorrowNotification.isEnabled()) {
+            if (null != examPeriodTomorrowNotification && examPeriodTomorrowNotification.isEnabled()) {
                 vkKeyboardButtons.get(3).add(
                         new VkKeyboardButton(
                                 new VkKeyboardButtonActionText(
@@ -283,8 +280,7 @@ public class KeyboardGenerator {
                                 ), VkKeyboardButtonColor.NEGATIVE
                         )
                 );
-            }
-            else {
+            } else {
                 vkKeyboardButtons.get(3).add(
                         new VkKeyboardButton(
                                 new VkKeyboardButtonActionText(
@@ -296,7 +292,7 @@ public class KeyboardGenerator {
                 );
             }
 
-            if(null != examPeriodAfterTomorrowNotification && examPeriodAfterTomorrowNotification.isEnabled()) {
+            if (null != examPeriodAfterTomorrowNotification && examPeriodAfterTomorrowNotification.isEnabled()) {
                 vkKeyboardButtons.get(5).add(
                         new VkKeyboardButton(
                                 new VkKeyboardButtonActionText(
@@ -306,8 +302,7 @@ public class KeyboardGenerator {
                                 ), VkKeyboardButtonColor.NEGATIVE
                         )
                 );
-            }
-            else {
+            } else {
                 vkKeyboardButtons.get(5).add(
                         new VkKeyboardButton(
                                 new VkKeyboardButtonActionText(
@@ -320,12 +315,12 @@ public class KeyboardGenerator {
             }
         }
 
-        if(BotMessageUtils.isBotUserExtramural(botUser)) {
+        if (BotMessageUtils.isBotUserExtramural(botUser)) {
             ExtramuralEventTodayNotification extramuralEventTodayNotification = extramuralEventTodayNotificationRepository.findByUserId(userId);
             ExtramuralEventTomorrowNotification extramuralEventTomorrowNotification = extramuralEventTomorrowNotificationRepository.findByUserId(userId);
             ExtramuralEventAfterTomorrowNotification extramuralEventAfterTomorrowNotification = extramuralEventAfterTomorrowNotificationRepository.findByUserId(userId);
 
-            if(null != extramuralEventTodayNotification && extramuralEventTodayNotification.isEnabled()) {
+            if (null != extramuralEventTodayNotification && extramuralEventTodayNotification.isEnabled()) {
                 vkKeyboardButtons.get(1).add(
                         new VkKeyboardButton(
                                 new VkKeyboardButtonActionText(
@@ -335,8 +330,7 @@ public class KeyboardGenerator {
                                 ), VkKeyboardButtonColor.NEGATIVE
                         )
                 );
-            }
-            else {
+            } else {
                 vkKeyboardButtons.get(1).add(
                         new VkKeyboardButton(
                                 new VkKeyboardButtonActionText(
@@ -348,7 +342,7 @@ public class KeyboardGenerator {
                 );
             }
 
-            if(null != extramuralEventTomorrowNotification && extramuralEventTomorrowNotification.isEnabled()) {
+            if (null != extramuralEventTomorrowNotification && extramuralEventTomorrowNotification.isEnabled()) {
                 vkKeyboardButtons.get(3).add(
                         new VkKeyboardButton(
                                 new VkKeyboardButtonActionText(
@@ -358,8 +352,7 @@ public class KeyboardGenerator {
                                 ), VkKeyboardButtonColor.NEGATIVE
                         )
                 );
-            }
-            else {
+            } else {
                 vkKeyboardButtons.get(3).add(
                         new VkKeyboardButton(
                                 new VkKeyboardButtonActionText(
@@ -371,7 +364,7 @@ public class KeyboardGenerator {
                 );
             }
 
-            if(null != extramuralEventAfterTomorrowNotification && extramuralEventAfterTomorrowNotification.isEnabled()) {
+            if (null != extramuralEventAfterTomorrowNotification && extramuralEventAfterTomorrowNotification.isEnabled()) {
                 vkKeyboardButtons.get(5).add(
                         new VkKeyboardButton(
                                 new VkKeyboardButtonActionText(
@@ -381,8 +374,7 @@ public class KeyboardGenerator {
                                 ), VkKeyboardButtonColor.NEGATIVE
                         )
                 );
-            }
-            else {
+            } else {
                 vkKeyboardButtons.get(5).add(
                         new VkKeyboardButton(
                                 new VkKeyboardButtonActionText(
@@ -422,7 +414,7 @@ public class KeyboardGenerator {
                 )
         );
 
-        if(null != scheduleTodayNotification && scheduleTodayNotification.isEnabled()) {
+        if (null != scheduleTodayNotification && scheduleTodayNotification.isEnabled()) {
             vkKeyboardButtons.get(1).add(
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
@@ -432,8 +424,7 @@ public class KeyboardGenerator {
                             ), VkKeyboardButtonColor.NEGATIVE
                     )
             );
-        }
-        else {
+        } else {
             vkKeyboardButtons.get(1).add(
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
@@ -455,7 +446,7 @@ public class KeyboardGenerator {
                 )
         );
 
-        if(null != scheduleTomorrowNotification && scheduleTomorrowNotification.isEnabled()) {
+        if (null != scheduleTomorrowNotification && scheduleTomorrowNotification.isEnabled()) {
             vkKeyboardButtons.get(3).add(
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
@@ -465,8 +456,7 @@ public class KeyboardGenerator {
                             ), VkKeyboardButtonColor.NEGATIVE
                     )
             );
-        }
-        else {
+        } else {
             vkKeyboardButtons.get(3).add(
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(

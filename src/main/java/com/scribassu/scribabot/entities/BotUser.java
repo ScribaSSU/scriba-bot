@@ -3,7 +3,6 @@ package com.scribassu.scribabot.entities;
 import com.scribassu.scribabot.text.CommandText;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
