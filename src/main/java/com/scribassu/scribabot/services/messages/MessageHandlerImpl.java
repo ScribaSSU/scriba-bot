@@ -39,7 +39,7 @@ public class MessageHandlerImpl implements MessageHandler {
     private final StudentGroupService studentGroupService;
     private final TeacherService teacherService;
     private final UnrecognizedMessageRepository unrecognizedMessageRepository;
-    private final KeyboardFormatter keyboardFormatter;
+    private final KeyboardGenerator keyboardGenerator;
 
     @Value("#{'${scriba-bot.mentioned-names}'.split(',')}")
     private List<String> mentionedNames;
@@ -54,7 +54,7 @@ public class MessageHandlerImpl implements MessageHandler {
                               StudentGroupService studentGroupService,
                               TeacherService teacherService,
                               UnrecognizedMessageRepository unrecognizedMessageRepository,
-                              KeyboardFormatter keyboardFormatter) {
+                              KeyboardGenerator keyboardGenerator) {
         this.callRestService = callRestService;
         this.helpService = helpService;
         this.fullTimeLessonService = fullTimeLessonService;
@@ -64,7 +64,7 @@ public class MessageHandlerImpl implements MessageHandler {
         this.studentGroupService = studentGroupService;
         this.teacherService = teacherService;
         this.unrecognizedMessageRepository = unrecognizedMessageRepository;
-        this.keyboardFormatter = keyboardFormatter;
+        this.keyboardGenerator = keyboardGenerator;
     }
 
     @Override
@@ -188,7 +188,7 @@ public class MessageHandlerImpl implements MessageHandler {
             case CommandText.SETTINGS:
                 botMessage = new BotMessage(
                         "Здесь вы можете настроить бота под себя.",
-                        KeyboardGenerator.buildSettings(botUser));
+                        keyboardGenerator.buildSettings(botUser));
                 break;
             case CommandText.SET_SEND_SCHEDULE_TIME_TODAY:
             case CommandText.ENABLE_SEND_SCHEDULE_TODAY:
@@ -217,9 +217,6 @@ public class MessageHandlerImpl implements MessageHandler {
                 break;
             case CommandText.EXAMS:
                 botMessage = examPeriodService.getBotMessage(message, botUser);
-                break;
-            case "т":
-                botMessage = new BotMessage("test");
                 break;
         }
 

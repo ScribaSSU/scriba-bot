@@ -24,12 +24,15 @@ public class TeacherService implements BotMessageService {
 
     private final CallRestService callRestService;
     private final BotUserRepository botUserRepository;
+    private final KeyboardGenerator keyboardGenerator;
 
     @Autowired
     public TeacherService(CallRestService callRestService,
-                          BotUserRepository botUserRepository) {
+                          BotUserRepository botUserRepository,
+                          KeyboardGenerator keyboardGenerator) {
         this.callRestService = callRestService;
         this.botUserRepository = botUserRepository;
+        this.keyboardGenerator = keyboardGenerator;
     }
 
     @Override
@@ -57,7 +60,7 @@ public class TeacherService implements BotMessageService {
                         try {
                             botMessage = new BotMessage(
                                     "Выберите, для какого преподавателя хотите узнать расписание.",
-                                    objectMapper.writeValueAsString(KeyboardGenerator.buildTeachers(teachers)));
+                                    objectMapper.writeValueAsString(keyboardGenerator.buildTeachers(teachers)));
                         }
                         catch(Exception e) {
                             botMessage = new BotMessage(CANNOT_GET_TEACHERS, ButtonActions);
