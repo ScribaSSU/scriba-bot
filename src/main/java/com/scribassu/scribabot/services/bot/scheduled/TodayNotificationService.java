@@ -28,7 +28,7 @@ import java.util.List;
 
 @Slf4j
 @Service
-public class DailyNotificationService {
+public class TodayNotificationService {
 
     private final MessageSender messageSender;
     private final CallRestService callRestService;
@@ -38,7 +38,7 @@ public class DailyNotificationService {
     private final ExtramuralEventTodayNotificationRepository extramuralEventTodayNotificationRepository;
 
     @Autowired
-    public DailyNotificationService(MessageSender messageSender,
+    public TodayNotificationService(MessageSender messageSender,
                                     CallRestService callRestService,
                                     BotUserRepository botUserRepository,
                                     ScheduleTodayNotificationRepository scheduleTodayNotificationRepository,
@@ -52,7 +52,7 @@ public class DailyNotificationService {
         this.extramuralEventTodayNotificationRepository = extramuralEventTodayNotificationRepository;
     }
 
-    @Scheduled(cron = "${scheduled.schedule-daily-notification-service.cron}")
+    @Scheduled(cron = "${scheduled.schedule-today-notification-service.cron}")
     public void sendSchedule() throws Exception {
         sendFullTimeSchedule();
         sendExamPeriodSchedule();
@@ -135,7 +135,7 @@ public class DailyNotificationService {
             log.info("Send extramural schedule for hour {}", hourOfDay);
             for (ExtramuralEventTodayNotification notification : extramuralEventTodayNotifications) {
                 BotUser botUser = botUserRepository.findOneById(notification.getUserId());
-                if (!BotMessageUtils.isBotUserFullTime(botUser)) {
+                if (BotMessageUtils.isBotUserExtramural(botUser)) {
                     ExtramuralDto extramuralDto = callRestService.getExtramuralEventsByDay(
                             botUser.getDepartment(),
                             botUser.getGroupNumber(),

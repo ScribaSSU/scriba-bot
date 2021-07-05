@@ -145,15 +145,14 @@ public class TomorrowNotificationService {
             log.info("Send extramural schedule for hour {}", hourOfDay);
             for (ExtramuralEventTomorrowNotification notification : extramuralEventTomorrowNotifications) {
                 BotUser botUser = botUserRepository.findOneById(notification.getUserId());
-                if (!BotMessageUtils.isBotUserFullTime(botUser)) {
+                if (BotMessageUtils.isBotUserExtramural(botUser)) {
                     ExtramuralDto extramuralDto = callRestService.getExtramuralEventsByDay(
                             botUser.getDepartment(),
                             botUser.getGroupNumber(),
                             month,
                             day
                     );
-                    BotMessage botMessage;
-                    botMessage = BotMessageUtils.getBotMessageForExtramuralEvent(extramuralDto, CommandText.TODAY);
+                    BotMessage botMessage = BotMessageUtils.getBotMessageForExtramuralEvent(extramuralDto, CommandText.TODAY);
                     messageSender.send(botMessage, botUser.getUserId());
                     Thread.sleep(51); //20 messages per second
                 }
