@@ -21,6 +21,9 @@ public class KeyboardGenerator {
     private final ExamPeriodDailyNotificationRepository examPeriodDailyNotificationRepository;
     private final ScheduleDailyNotificationRepository scheduleDailyNotificationRepository;
     private final ScheduleTomorrowNotificationRepository scheduleTomorrowNotificationRepository;
+    private final ExtramuralEventDailyNotificationRepository extramuralEventDailyNotificationRepository;
+    private final ExtramuralEventTomorrowNotificationRepository extramuralEventTomorrowNotificationRepository;
+    private final ExtramuralEventAfterTomorrowNotificationRepository extramuralEventAfterTomorrowNotificationRepository;
 
     @Autowired
     public KeyboardGenerator(ExamPeriodAfterTomorrowNotificationRepository examPeriodAfterTomorrowNotificationRepository,
@@ -28,12 +31,17 @@ public class KeyboardGenerator {
                              ExamPeriodDailyNotificationRepository examPeriodDailyNotificationRepository,
                              ScheduleDailyNotificationRepository scheduleDailyNotificationRepository,
                              ScheduleTomorrowNotificationRepository scheduleTomorrowNotificationRepository,
-                             BotUserRepository botUserRepository) {
+                             ExtramuralEventDailyNotificationRepository extramuralEventDailyNotificationRepository,
+                             ExtramuralEventTomorrowNotificationRepository extramuralEventTomorrowNotificationRepository,
+                             ExtramuralEventAfterTomorrowNotificationRepository extramuralEventAfterTomorrowNotificationRepository) {
         this.examPeriodAfterTomorrowNotificationRepository = examPeriodAfterTomorrowNotificationRepository;
         this.examPeriodTomorrowNotificationRepository = examPeriodTomorrowNotificationRepository;
         this.examPeriodDailyNotificationRepository = examPeriodDailyNotificationRepository;
         this.scheduleDailyNotificationRepository = scheduleDailyNotificationRepository;
         this.scheduleTomorrowNotificationRepository = scheduleTomorrowNotificationRepository;
+        this.extramuralEventDailyNotificationRepository = extramuralEventDailyNotificationRepository;
+        this.extramuralEventTomorrowNotificationRepository = extramuralEventTomorrowNotificationRepository;
+        this.extramuralEventAfterTomorrowNotificationRepository = extramuralEventAfterTomorrowNotificationRepository;
     }
 
     public VkKeyboard buildTeachers(List<Teacher> teachers) {
@@ -187,10 +195,6 @@ public class KeyboardGenerator {
 
         String userId = botUser.getUserId();
 
-        ExamPeriodDailyNotification examPeriodDailyNotification = examPeriodDailyNotificationRepository.findByUserId(userId);
-        ExamPeriodTomorrowNotification examPeriodTomorrowNotification = examPeriodTomorrowNotificationRepository.findByUserId(userId);
-        ExamPeriodAfterTomorrowNotification examPeriodAfterTomorrowNotification = examPeriodAfterTomorrowNotificationRepository.findByUserId(userId);
-
         vkKeyboardButtons.get(0).add(
                 new VkKeyboardButton(
                         new VkKeyboardButtonActionText(
@@ -200,29 +204,6 @@ public class KeyboardGenerator {
                         ), VkKeyboardButtonColor.PRIMARY
                 )
         );
-
-        if(null != examPeriodDailyNotification && examPeriodDailyNotification.isEnabled()) {
-            vkKeyboardButtons.get(1).add(
-                    new VkKeyboardButton(
-                            new VkKeyboardButtonActionText(
-                                    "Выкл. рассылку сессии на сегодня",
-                                    "{\"button\": \"1\"}",
-                                    VkKeyboardButtonActionType.TEXT
-                            ), VkKeyboardButtonColor.NEGATIVE
-                    )
-            );
-        }
-        else {
-            vkKeyboardButtons.get(1).add(
-                    new VkKeyboardButton(
-                            new VkKeyboardButtonActionText(
-                                    "Вкл. рассылку сессии на сегодня",
-                                    "{\"button\": \"1\"}",
-                                    VkKeyboardButtonActionType.TEXT
-                            ), VkKeyboardButtonColor.POSITIVE
-                    )
-            );
-        }
 
         vkKeyboardButtons.get(2).add(
                 new VkKeyboardButton(
@@ -234,29 +215,6 @@ public class KeyboardGenerator {
                 )
         );
 
-        if(null != examPeriodTomorrowNotification && examPeriodTomorrowNotification.isEnabled()) {
-            vkKeyboardButtons.get(3).add(
-                    new VkKeyboardButton(
-                            new VkKeyboardButtonActionText(
-                                    "Выкл. рассылку сессии на завтра",
-                                    "{\"button\": \"1\"}",
-                                    VkKeyboardButtonActionType.TEXT
-                            ), VkKeyboardButtonColor.NEGATIVE
-                    )
-            );
-        }
-        else {
-            vkKeyboardButtons.get(3).add(
-                    new VkKeyboardButton(
-                            new VkKeyboardButtonActionText(
-                                    "Вкл. рассылку сессии на завтра",
-                                    "{\"button\": \"1\"}",
-                                    VkKeyboardButtonActionType.TEXT
-                            ), VkKeyboardButtonColor.POSITIVE
-                    )
-            );
-        }
-
         vkKeyboardButtons.get(4).add(
                 new VkKeyboardButton(
                         new VkKeyboardButtonActionText(
@@ -266,29 +224,6 @@ public class KeyboardGenerator {
                         ), VkKeyboardButtonColor.PRIMARY
                 )
         );
-
-        if(null != examPeriodAfterTomorrowNotification && examPeriodAfterTomorrowNotification.isEnabled()) {
-            vkKeyboardButtons.get(5).add(
-                    new VkKeyboardButton(
-                            new VkKeyboardButtonActionText(
-                                    "Выкл. рассылку сессии на послезавтра",
-                                    "{\"button\": \"1\"}",
-                                    VkKeyboardButtonActionType.TEXT
-                            ), VkKeyboardButtonColor.NEGATIVE
-                    )
-            );
-        }
-        else {
-            vkKeyboardButtons.get(5).add(
-                    new VkKeyboardButton(
-                            new VkKeyboardButtonActionText(
-                                    "Вкл. рассылку сессии на послезавтра",
-                                    "{\"button\": \"1\"}",
-                                    VkKeyboardButtonActionType.TEXT
-                            ), VkKeyboardButtonColor.POSITIVE
-                    )
-            );
-        }
 
         vkKeyboardButtons.get(6).add(
                 new VkKeyboardButton(
@@ -309,6 +244,156 @@ public class KeyboardGenerator {
                         ), VkKeyboardButtonColor.PRIMARY
                 )
         );
+
+        if(BotMessageUtils.isBotUserFullTime(botUser)) {
+            ExamPeriodDailyNotification examPeriodDailyNotification = examPeriodDailyNotificationRepository.findByUserId(userId);
+            ExamPeriodTomorrowNotification examPeriodTomorrowNotification = examPeriodTomorrowNotificationRepository.findByUserId(userId);
+            ExamPeriodAfterTomorrowNotification examPeriodAfterTomorrowNotification = examPeriodAfterTomorrowNotificationRepository.findByUserId(userId);
+
+            if(null != examPeriodDailyNotification && examPeriodDailyNotification.isEnabled()) {
+                vkKeyboardButtons.get(1).add(
+                        new VkKeyboardButton(
+                                new VkKeyboardButtonActionText(
+                                        "Выкл. рассылку сессии на сегодня",
+                                        "{\"button\": \"1\"}",
+                                        VkKeyboardButtonActionType.TEXT
+                                ), VkKeyboardButtonColor.NEGATIVE
+                        )
+                );
+            }
+            else {
+                vkKeyboardButtons.get(1).add(
+                        new VkKeyboardButton(
+                                new VkKeyboardButtonActionText(
+                                        "Вкл. рассылку сессии на сегодня",
+                                        "{\"button\": \"1\"}",
+                                        VkKeyboardButtonActionType.TEXT
+                                ), VkKeyboardButtonColor.POSITIVE
+                        )
+                );
+            }
+
+            if(null != examPeriodTomorrowNotification && examPeriodTomorrowNotification.isEnabled()) {
+                vkKeyboardButtons.get(3).add(
+                        new VkKeyboardButton(
+                                new VkKeyboardButtonActionText(
+                                        "Выкл. рассылку сессии на завтра",
+                                        "{\"button\": \"1\"}",
+                                        VkKeyboardButtonActionType.TEXT
+                                ), VkKeyboardButtonColor.NEGATIVE
+                        )
+                );
+            }
+            else {
+                vkKeyboardButtons.get(3).add(
+                        new VkKeyboardButton(
+                                new VkKeyboardButtonActionText(
+                                        "Вкл. рассылку сессии на завтра",
+                                        "{\"button\": \"1\"}",
+                                        VkKeyboardButtonActionType.TEXT
+                                ), VkKeyboardButtonColor.POSITIVE
+                        )
+                );
+            }
+
+            if(null != examPeriodAfterTomorrowNotification && examPeriodAfterTomorrowNotification.isEnabled()) {
+                vkKeyboardButtons.get(5).add(
+                        new VkKeyboardButton(
+                                new VkKeyboardButtonActionText(
+                                        "Выкл. рассылку сессии на послезавтра",
+                                        "{\"button\": \"1\"}",
+                                        VkKeyboardButtonActionType.TEXT
+                                ), VkKeyboardButtonColor.NEGATIVE
+                        )
+                );
+            }
+            else {
+                vkKeyboardButtons.get(5).add(
+                        new VkKeyboardButton(
+                                new VkKeyboardButtonActionText(
+                                        "Вкл. рассылку сессии на послезавтра",
+                                        "{\"button\": \"1\"}",
+                                        VkKeyboardButtonActionType.TEXT
+                                ), VkKeyboardButtonColor.POSITIVE
+                        )
+                );
+            }
+        }
+
+        if(BotMessageUtils.isBotUserExtramural(botUser)) {
+            ExtramuralEventDailyNotification extramuralEventDailyNotification = extramuralEventDailyNotificationRepository.findByUserId(userId);
+            ExtramuralEventTomorrowNotification extramuralEventTomorrowNotification = extramuralEventTomorrowNotificationRepository.findByUserId(userId);
+            ExtramuralEventAfterTomorrowNotification extramuralEventAfterTomorrowNotification = extramuralEventAfterTomorrowNotificationRepository.findByUserId(userId);
+
+            if(null != extramuralEventDailyNotification && extramuralEventDailyNotification.isEnabled()) {
+                vkKeyboardButtons.get(1).add(
+                        new VkKeyboardButton(
+                                new VkKeyboardButtonActionText(
+                                        "Выкл. рассылку сессии на сегодня",
+                                        "{\"button\": \"1\"}",
+                                        VkKeyboardButtonActionType.TEXT
+                                ), VkKeyboardButtonColor.NEGATIVE
+                        )
+                );
+            }
+            else {
+                vkKeyboardButtons.get(1).add(
+                        new VkKeyboardButton(
+                                new VkKeyboardButtonActionText(
+                                        "Вкл. рассылку сессии на сегодня",
+                                        "{\"button\": \"1\"}",
+                                        VkKeyboardButtonActionType.TEXT
+                                ), VkKeyboardButtonColor.POSITIVE
+                        )
+                );
+            }
+
+            if(null != extramuralEventTomorrowNotification && extramuralEventTomorrowNotification.isEnabled()) {
+                vkKeyboardButtons.get(3).add(
+                        new VkKeyboardButton(
+                                new VkKeyboardButtonActionText(
+                                        "Выкл. рассылку сессии на завтра",
+                                        "{\"button\": \"1\"}",
+                                        VkKeyboardButtonActionType.TEXT
+                                ), VkKeyboardButtonColor.NEGATIVE
+                        )
+                );
+            }
+            else {
+                vkKeyboardButtons.get(3).add(
+                        new VkKeyboardButton(
+                                new VkKeyboardButtonActionText(
+                                        "Вкл. рассылку сессии на завтра",
+                                        "{\"button\": \"1\"}",
+                                        VkKeyboardButtonActionType.TEXT
+                                ), VkKeyboardButtonColor.POSITIVE
+                        )
+                );
+            }
+
+            if(null != extramuralEventAfterTomorrowNotification && extramuralEventAfterTomorrowNotification.isEnabled()) {
+                vkKeyboardButtons.get(5).add(
+                        new VkKeyboardButton(
+                                new VkKeyboardButtonActionText(
+                                        "Выкл. рассылку сессии на послезавтра",
+                                        "{\"button\": \"1\"}",
+                                        VkKeyboardButtonActionType.TEXT
+                                ), VkKeyboardButtonColor.NEGATIVE
+                        )
+                );
+            }
+            else {
+                vkKeyboardButtons.get(5).add(
+                        new VkKeyboardButton(
+                                new VkKeyboardButtonActionText(
+                                        "Вкл. рассылку сессии на послезавтра",
+                                        "{\"button\": \"1\"}",
+                                        VkKeyboardButtonActionType.TEXT
+                                ), VkKeyboardButtonColor.POSITIVE
+                        )
+                );
+            }
+        }
 
         return new VkKeyboard(vkKeyboardButtons, false);
     }
