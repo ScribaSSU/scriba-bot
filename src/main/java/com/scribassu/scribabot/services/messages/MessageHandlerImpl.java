@@ -39,7 +39,7 @@ public class MessageHandlerImpl implements MessageHandler {
     private final UnrecognizedMessageRepository unrecognizedMessageRepository;
     private final KeyboardGenerator keyboardGenerator;
 
-    @Value("#{'${scriba-bot.mentioned-names}'.split(',')}")
+    @Value("#{'${scriba-bot.vk.mentioned-names}'.split(',')}")
     private List<String> mentionedNames;
 
     @Autowired
@@ -111,6 +111,7 @@ public class MessageHandlerImpl implements MessageHandler {
                 if (botUser == null) {
                     botUser = new BotUser(userId);
                     botUser.setFilterNomDenom(false);
+                    botUser.setSource(command.getBotUserSource());
                     botUser = botUserRepository.save(botUser);
                     botMessage = new BotMessage(GREETING_WITH_CHOOSE_DEPARTMENT, ButtonDepartment);
                     botUserRepository.updatePreviousUserMessage(GREETING_WITH_CHOOSE_DEPARTMENT, botUser.getUserId());
@@ -123,6 +124,7 @@ public class MessageHandlerImpl implements MessageHandler {
                 if (botUser == null) {
                     botUser = new BotUser(userId);
                     botUser.setFilterNomDenom(false);
+                    botUser.setSource(command.getBotUserSource());
                     botUser = botUserRepository.save(botUser);
                     botMessage = new BotMessage(GREETING_WITH_CHOOSE_DEPARTMENT, ButtonDepartment);
                     botUserRepository.updatePreviousUserMessage(GREETING_WITH_CHOOSE_DEPARTMENT, botUser.getUserId());
@@ -144,8 +146,7 @@ public class MessageHandlerImpl implements MessageHandler {
             case CommandText.FULL_TIME_SCHEDULE:
                 if (BotMessageUtils.isBotUserFullTime(botUser)) {
                     botMessage = new BotMessage("Выберите, для чего хотите узнать расписание.", ButtonFullTimeSchedule);
-                } else if (botUser != null
-                        && botUser.getDepartment() == null
+                } else if (botUser.getDepartment() == null
                         && botUser.getEducationForm() == null
                         && botUser.getGroupNumber() == null) {
                     botMessage = new BotMessage(CHOOSE_DEPARTMENT, ButtonDepartment);

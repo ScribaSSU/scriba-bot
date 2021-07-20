@@ -1,12 +1,11 @@
 package com.scribassu.scribabot.entities;
 
 import com.scribassu.scribabot.text.CommandText;
+import com.scribassu.scribabot.util.BotUserSource;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 @Data
@@ -14,6 +13,9 @@ import javax.persistence.Id;
 public class BotUser {
     @Id
     private String userId;
+
+    @Enumerated(EnumType.STRING)
+    private BotUserSource source;
 
     private String department;
     private String groupNumber;

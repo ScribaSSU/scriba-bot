@@ -18,7 +18,7 @@ public class StartupEvents implements ApplicationListener<ContextRefreshedEvent>
     private final SymbolConverter symbolConverter;
     private final CustomFileReader customFileReader;
 
-    @Value("${scriba-bot.keyboards-folder}")
+    @Value("${scriba-bot.vk.keyboards-folder}")
     private String keyboardsFolder;
 
     @Autowired

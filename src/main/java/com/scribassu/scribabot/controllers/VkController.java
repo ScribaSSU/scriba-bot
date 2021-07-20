@@ -6,6 +6,7 @@ import com.scribassu.scribabot.services.messages.MessageHandler;
 import com.scribassu.scribabot.services.messages.MessageParser;
 import com.scribassu.scribabot.services.messages.MessageSender;
 import com.scribassu.scribabot.text.MessageText;
+import com.scribassu.scribabot.util.BotUserSource;
 import com.scribassu.scribabot.util.Constants;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,7 @@ import java.util.Map;
 @RestController
 public class VkController {
 
-    @Value("${scriba-bot.confirmation-code}")
+    @Value("${scriba-bot.vk.confirmation-code}")
     private String confirmationCode;
 
     private final MessageParser messageParser;
@@ -37,7 +38,7 @@ public class VkController {
         this.messageHandler = messageHandler;
     }
 
-    @PostMapping(value = "${scriba-bot.vk-url}", consumes = {"application/json"})
+    @PostMapping(value = "${scriba-bot.vk.url}", consumes = {"application/json"})
     @ResponseStatus(HttpStatus.OK)
     public String getMessage(@RequestBody String incomingMessage) throws Exception {
         Map<String, String> parsedMessage;
@@ -49,7 +50,8 @@ public class VkController {
                 Command command = new Command(
                         parsedMessage.get(Constants.KEY_MESSAGE),
                         parsedMessage.getOrDefault(Constants.KEY_PAYLOAD, ""),
-                        userId);
+                        userId,
+                        BotUserSource.VK);
                 BotMessage botMessage = messageHandler.getBotMessage(command);
                 //If somebody writes command without bot name mention in chat, bot should keep the silence
                 if (!botMessage.getMessage().equalsIgnoreCase(MessageText.DO_NOT_SEND)) {

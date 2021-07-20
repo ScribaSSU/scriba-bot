@@ -25,10 +25,10 @@ public class MessageSenderImpl implements MessageSender {
     private static final String VK_API_METHOD = "https://api.vk.com/method/messages.send";
     private static final Random random = new Random();
 
-    @Value("${scriba-bot.token}")
+    @Value("${scriba-bot.vk.token}")
     private String token;
 
-    @Value("${scriba-bot.vk-api-version}")
+    @Value("${scriba-bot.vk.api-version}")
     private String vkApiVersion;
 
     public void send(BotMessage botMessage, String userId) throws Exception {
