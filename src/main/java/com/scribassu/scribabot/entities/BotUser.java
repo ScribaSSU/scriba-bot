@@ -35,6 +35,14 @@ public class BotUser {
         return previousUserMessage.startsWith(CommandText.TEACHER_ID_PAYLOAD);
     }
 
+    public boolean fromVk() {
+        return BotUserSource.VK.equals(source);
+    }
+
+    public boolean fromTg() {
+        return BotUserSource.TG.equals(source);
+    }
+
     @Override
     public String toString() {
         return "BotUser{" +

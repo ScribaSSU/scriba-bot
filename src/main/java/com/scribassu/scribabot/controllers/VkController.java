@@ -4,7 +4,7 @@ import com.scribassu.scribabot.dto.BotMessage;
 import com.scribassu.scribabot.dto.Command;
 import com.scribassu.scribabot.services.messages.MessageHandler;
 import com.scribassu.scribabot.services.messages.MessageParser;
-import com.scribassu.scribabot.services.messages.MessageSender;
+import com.scribassu.scribabot.services.messages.VkMessageSender;
 import com.scribassu.scribabot.text.MessageText;
 import com.scribassu.scribabot.util.BotUserSource;
 import com.scribassu.scribabot.util.Constants;
@@ -26,15 +26,15 @@ public class VkController {
     private String confirmationCode;
 
     private final MessageParser messageParser;
-    private final MessageSender messageSender;
+    private final VkMessageSender vkMessageSender;
     private final MessageHandler messageHandler;
 
     @Autowired
     public VkController(MessageParser messageParser,
-                        MessageSender messageSender,
+                        VkMessageSender vkMessageSender,
                         MessageHandler messageHandler) {
         this.messageParser = messageParser;
-        this.messageSender = messageSender;
+        this.vkMessageSender = vkMessageSender;
         this.messageHandler = messageHandler;
     }
 
@@ -55,7 +55,7 @@ public class VkController {
                 BotMessage botMessage = messageHandler.getBotMessage(command);
                 //If somebody writes command without bot name mention in chat, bot should keep the silence
                 if (!botMessage.getMessage().equalsIgnoreCase(MessageText.DO_NOT_SEND)) {
-                    messageSender.send(botMessage, userId);
+                    vkMessageSender.send(botMessage, userId);
                 }
             }
         } else {

@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class KeyboardGenerator {
+public class VkKeyboardGenerator {
 
     private final ExamPeriodAfterTomorrowNotificationRepository examPeriodAfterTomorrowNotificationRepository;
     private final ExamPeriodTomorrowNotificationRepository examPeriodTomorrowNotificationRepository;
@@ -26,14 +26,14 @@ public class KeyboardGenerator {
     private final ExtramuralEventAfterTomorrowNotificationRepository extramuralEventAfterTomorrowNotificationRepository;
 
     @Autowired
-    public KeyboardGenerator(ExamPeriodAfterTomorrowNotificationRepository examPeriodAfterTomorrowNotificationRepository,
-                             ExamPeriodTomorrowNotificationRepository examPeriodTomorrowNotificationRepository,
-                             ExamPeriodTodayNotificationRepository examPeriodTodayNotificationRepository,
-                             ScheduleTodayNotificationRepository scheduleTodayNotificationRepository,
-                             ScheduleTomorrowNotificationRepository scheduleTomorrowNotificationRepository,
-                             ExtramuralEventTodayNotificationRepository extramuralEventTodayNotificationRepository,
-                             ExtramuralEventTomorrowNotificationRepository extramuralEventTomorrowNotificationRepository,
-                             ExtramuralEventAfterTomorrowNotificationRepository extramuralEventAfterTomorrowNotificationRepository) {
+    public VkKeyboardGenerator(ExamPeriodAfterTomorrowNotificationRepository examPeriodAfterTomorrowNotificationRepository,
+                               ExamPeriodTomorrowNotificationRepository examPeriodTomorrowNotificationRepository,
+                               ExamPeriodTodayNotificationRepository examPeriodTodayNotificationRepository,
+                               ScheduleTodayNotificationRepository scheduleTodayNotificationRepository,
+                               ScheduleTomorrowNotificationRepository scheduleTomorrowNotificationRepository,
+                               ExtramuralEventTodayNotificationRepository extramuralEventTodayNotificationRepository,
+                               ExtramuralEventTomorrowNotificationRepository extramuralEventTomorrowNotificationRepository,
+                               ExtramuralEventAfterTomorrowNotificationRepository extramuralEventAfterTomorrowNotificationRepository) {
         this.examPeriodAfterTomorrowNotificationRepository = examPeriodAfterTomorrowNotificationRepository;
         this.examPeriodTomorrowNotificationRepository = examPeriodTomorrowNotificationRepository;
         this.examPeriodTodayNotificationRepository = examPeriodTodayNotificationRepository;
@@ -44,7 +44,322 @@ public class KeyboardGenerator {
         this.extramuralEventAfterTomorrowNotificationRepository = extramuralEventAfterTomorrowNotificationRepository;
     }
 
-    public VkKeyboard buildTeachers(List<Teacher> teachers) {
+    /*
+    TODO:
+    schedule fulltime
+    schedule extramural
+    hours
+
+    DONE:
+    main menu
+    teachers
+    settings
+    settings notification schedule
+    settings notification exams
+    education forms
+    courses
+    group numbers
+    departments
+    confirm deletion
+     */
+
+    public static final VkKeyboard mainMenu = new VkKeyboard(List.of(
+            List.of(
+                    new VkKeyboardButton(
+                    new VkKeyboardButtonActionText(
+                            "Расписание студентов",
+                            "{\"button\": \"1\"}",
+                            VkKeyboardButtonActionType.TEXT
+                    ), VkKeyboardButtonColor.POSITIVE)
+            ),
+            List.of(
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "Расписание преподавателей",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.POSITIVE)
+            ),
+            List.of(
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "Настройки",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY)
+            ),
+            List.of(
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "Справка",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY)
+            )
+    ), false);
+
+    public static final VkKeyboard confirmDeletion = new VkKeyboard(List.of(
+            List.of(
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "Да",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.POSITIVE),
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "Нет",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.NEGATIVE)
+            )
+    ), false);
+
+    public static final VkKeyboard educationForms = new VkKeyboard(List.of(
+            List.of(
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "Дневная",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY),
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "Заочная",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY)
+            ),
+            List.of(
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "Главное меню",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY)
+            )
+    ), false);
+
+    public static final VkKeyboard courses = new VkKeyboard(List.of(
+            List.of(
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "1 курс",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY),
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "2 курс",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY)
+            ),
+            List.of(
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "3 курс",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY),
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "4 курс",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY)
+            ),
+            List.of(
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "5 курс",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY),
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "Другое",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY)
+            ),
+            List.of(
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "Главное меню",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY)
+            )
+    ), false);
+
+
+    public static final VkKeyboard departments = new VkKeyboard(List.of(
+            List.of(
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "БИОЛОГ",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY),
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "ГЕОГРАФ",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY),
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "ГЕОЛОГ",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY)
+            ),
+            List.of(
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "ИДПО",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY),
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "И-Т ИСКУССТВ",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY),
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "ИИИМО",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY)
+            ),
+            List.of(
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "И-Т ФИЗ КУЛ",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY),
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "ИФИЖ",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY),
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "И-Т ХИМИИ",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY)
+            ),
+            List.of(
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "МЕХМАТ",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY),
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "СОЦФАК",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY),
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "ФИЯИЛ",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY)
+            ),
+            List.of(
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "КНИИТ",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY),
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "ФНБМТ",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY),
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "ФНП",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY)
+            ),
+            List.of(
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "ПСИХОЛОГ",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY),
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "ППИСО",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY),
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "ФИЗФАК",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY)
+            ),
+            List.of(
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "ФИЛОСОФ",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY),
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "ЭКОНОМ",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY),
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "ЮРФАК",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY)
+            ),
+            List.of(
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "ГЕОЛОГ К-Ж",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY),
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "К-Ж ЯБЛОЧКОВА",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY)
+            ),
+            List.of(
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "Главное меню",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY)
+            )
+    ), false);
+
+    public VkKeyboard teachers(List<Teacher> teachers) {
         List<List<VkKeyboardButton>> vkKeyboardButtons = new ArrayList<>();
 
         int i = 0;
@@ -77,10 +392,48 @@ public class KeyboardGenerator {
                         ), VkKeyboardButtonColor.POSITIVE)
         );
 
+        return new VkKeyboard(vkKeyboardButtons, false);
+    }
+
+    public VkKeyboard groupNumbers(List<String> groupNumbers) {
+        List<List<VkKeyboardButton>> vkKeyboardButtons = new ArrayList<>();
+
+        int i = 0;
+        int row = 0;
+        vkKeyboardButtons.add(new ArrayList<>());
+        int mod = groupNumbers.get(0).length() > 5 ? 3 : 5; //to make long numbers visible
+        int mmod = mod - 1;
+
+        while (i < groupNumbers.size()) {
+            if (i % mod == mmod) {
+                row++;
+                vkKeyboardButtons.add(new ArrayList<>());
+            }
+            vkKeyboardButtons.get(row).add(
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    groupNumbers.get(i),
+                                    String.format(Constants.PAYLOAD, CommandText.CHOOSE_STUDENT_GROUP),
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY)
+            );
+            i++;
+        }
+
+        vkKeyboardButtons.add(new ArrayList<>());
+        vkKeyboardButtons.get(vkKeyboardButtons.size() - 1).add(
+                new VkKeyboardButton(
+                        new VkKeyboardButtonActionText(
+                                "Главное меню",
+                                "",
+                                VkKeyboardButtonActionType.TEXT
+                        ), VkKeyboardButtonColor.POSITIVE)
+        );
+
         return new VkKeyboard(vkKeyboardButtons, true);
     }
 
-    public VkKeyboard buildSettings(BotUser user) {
+    public VkKeyboard settings(BotUser user) {
         List<List<VkKeyboardButton>> vkKeyboardButtons = new ArrayList<>();
         vkKeyboardButtons.add(new ArrayList<>());
         vkKeyboardButtons.add(new ArrayList<>());
@@ -180,7 +533,7 @@ public class KeyboardGenerator {
         return new VkKeyboard(vkKeyboardButtons, false);
     }
 
-    public VkKeyboard buildSettingsExamNotification(BotUser botUser) {
+    public VkKeyboard settingsExamNotification(BotUser botUser) {
         List<List<VkKeyboardButton>> vkKeyboardButtons = new ArrayList<>();
         vkKeyboardButtons.add(new ArrayList<>());
         vkKeyboardButtons.add(new ArrayList<>());
@@ -390,7 +743,7 @@ public class KeyboardGenerator {
         return new VkKeyboard(vkKeyboardButtons, false);
     }
 
-    public VkKeyboard buildSettingsScheduleNotification(BotUser botUser) {
+    public VkKeyboard settingsScheduleNotification(BotUser botUser) {
         List<List<VkKeyboardButton>> vkKeyboardButtons = new ArrayList<>();
         vkKeyboardButtons.add(new ArrayList<>());
         vkKeyboardButtons.add(new ArrayList<>());

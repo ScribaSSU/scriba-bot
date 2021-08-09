@@ -5,8 +5,9 @@ import com.scribassu.scribabot.dto.BotMessage;
 import com.scribassu.scribabot.dto.rest.GroupNumbersDto;
 import com.scribassu.scribabot.dto.vkkeyboard.*;
 import com.scribassu.scribabot.entities.BotUser;
+import com.scribassu.scribabot.keyboard.TgKeyboardGenerator;
+import com.scribassu.scribabot.keyboard.VkKeyboardGenerator;
 import com.scribassu.scribabot.services.CallRestService;
-import com.scribassu.scribabot.text.CommandText;
 import com.scribassu.scribabot.text.MessageText;
 import com.scribassu.scribabot.util.Constants;
 import com.scribassu.tracto.domain.EducationForm;
@@ -14,9 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 
 import static com.scribassu.scribabot.keyboard.KeyboardType.ButtonCourse;
 
@@ -24,10 +23,16 @@ import static com.scribassu.scribabot.keyboard.KeyboardType.ButtonCourse;
 public class StudentGroupService implements BotMessageService {
 
     private final CallRestService callRestService;
+    private final VkKeyboardGenerator vkKeyboardGenerator;
+    private final TgKeyboardGenerator tgKeyboardGenerator;
 
     @Autowired
-    public StudentGroupService(CallRestService callRestService) {
+    public StudentGroupService(CallRestService callRestService,
+                               VkKeyboardGenerator vkKeyboardGenerator,
+                               TgKeyboardGenerator tgKeyboardGenerator) {
         this.callRestService = callRestService;
+        this.vkKeyboardGenerator = vkKeyboardGenerator;
+        this.tgKeyboardGenerator = tgKeyboardGenerator;
     }
 
     @Override
@@ -58,7 +63,11 @@ public class StudentGroupService implements BotMessageService {
             }
         }
         if (CollectionUtils.isEmpty(groupNumbersDto.getGroupNumbers())) {
-            botMessage = new BotMessage("Группы не найдены.", ButtonCourse);
+            if(botUser.fromVk()) {
+                botMessage = new BotMessage("Группы не найдены.", VkKeyboardGenerator.courses);
+            } else {
+                botMessage = new BotMessage("Группы не найдены.", TgKeyboardGenerator.courses());
+            }
         } else if (groupNumbersDto.getGroupNumbers().size() > Constants.MAX_VK_KEYBOARD_SIZE_FOR_LISTS) {
             StringBuilder stringBuilder = new StringBuilder("Извините, нашлось слишком много групп, " +
                     "и они не могут отобразиться через клавиатуру из-за ограничений VK :( " +
@@ -69,53 +78,17 @@ public class StudentGroupService implements BotMessageService {
             }
             botMessage = new BotMessage(stringBuilder.toString());
         } else {
-            VkKeyboard vkKeyboard = buildVkKeyboardFromGroupNumbers(groupNumbersDto.getGroupNumbers());
-            ObjectMapper objectMapper = new ObjectMapper();
-            try {
-                botMessage = new BotMessage(MessageText.CHOOSE_STUDENT_GROUP, objectMapper.writeValueAsString(vkKeyboard));
-            } catch (Exception e) {
-                botMessage = new BotMessage("Не удалось загрузить список групп :(", ButtonCourse);
+            if(botUser.fromVk()) {
+                VkKeyboard vkKeyboard = vkKeyboardGenerator.groupNumbers(groupNumbersDto.getGroupNumbers());
+                botMessage = new BotMessage(MessageText.CHOOSE_STUDENT_GROUP, vkKeyboard);
+            } else {
+                ReplyKeyboardMarkup tgKeyboard = tgKeyboardGenerator.groupNumbers(groupNumbersDto.getGroupNumbers());
+                botMessage = new BotMessage(MessageText.CHOOSE_STUDENT_GROUP, tgKeyboard);
             }
         }
 
         return botMessage;
     }
 
-    private VkKeyboard buildVkKeyboardFromGroupNumbers(List<String> groupNumbers) {
-        List<List<VkKeyboardButton>> vkKeyboardButtons = new ArrayList<>();
 
-        int i = 0;
-        int row = 0;
-        vkKeyboardButtons.add(new ArrayList<>());
-        int mod = groupNumbers.get(0).length() > 5 ? 3 : 5; //to make long numbers visible
-        int mmod = mod - 1;
-
-        while (i < groupNumbers.size()) {
-            if (i % mod == mmod) {
-                row++;
-                vkKeyboardButtons.add(new ArrayList<>());
-            }
-            vkKeyboardButtons.get(row).add(
-                    new VkKeyboardButton(
-                            new VkKeyboardButtonActionText(
-                                    groupNumbers.get(i),
-                                    String.format(Constants.PAYLOAD, CommandText.CHOOSE_STUDENT_GROUP),
-                                    VkKeyboardButtonActionType.TEXT
-                            ), VkKeyboardButtonColor.PRIMARY)
-            );
-            i++;
-        }
-
-        vkKeyboardButtons.add(new ArrayList<>());
-        vkKeyboardButtons.get(vkKeyboardButtons.size() - 1).add(
-                new VkKeyboardButton(
-                        new VkKeyboardButtonActionText(
-                                "Главное меню",
-                                "",
-                                VkKeyboardButtonActionType.TEXT
-                        ), VkKeyboardButtonColor.POSITIVE)
-        );
-
-        return new VkKeyboard(vkKeyboardButtons, true);
-    }
 }

@@ -13,7 +13,8 @@ import com.scribassu.scribabot.repositories.ExamPeriodTomorrowNotificationReposi
 import com.scribassu.scribabot.repositories.ExtramuralEventTomorrowNotificationRepository;
 import com.scribassu.scribabot.repositories.ScheduleTomorrowNotificationRepository;
 import com.scribassu.scribabot.services.CallRestService;
-import com.scribassu.scribabot.services.messages.MessageSender;
+import com.scribassu.scribabot.services.messages.TgMessageSender;
+import com.scribassu.scribabot.services.messages.VkMessageSender;
 import com.scribassu.scribabot.text.CommandText;
 import com.scribassu.scribabot.util.BotMessageUtils;
 import com.scribassu.scribabot.util.CalendarUtils;
@@ -30,7 +31,8 @@ import java.util.List;
 @Service
 public class TomorrowNotificationService {
 
-    private final MessageSender messageSender;
+    private final VkMessageSender vkMessageSender;
+    private final TgMessageSender tgMessageSender;
     private final CallRestService callRestService;
     private final BotUserRepository botUserRepository;
     private final ScheduleTomorrowNotificationRepository scheduleTomorrowNotificationRepository;
@@ -38,13 +40,15 @@ public class TomorrowNotificationService {
     private final ExtramuralEventTomorrowNotificationRepository extramuralEventTomorrowNotificationRepository;
 
     @Autowired
-    public TomorrowNotificationService(MessageSender messageSender,
+    public TomorrowNotificationService(VkMessageSender vkMessageSender,
+                                       TgMessageSender tgMessageSender,
                                        CallRestService callRestService,
                                        BotUserRepository botUserRepository,
                                        ScheduleTomorrowNotificationRepository scheduleTomorrowNotificationRepository,
                                        ExamPeriodTomorrowNotificationRepository examPeriodTomorrowNotificationRepository,
                                        ExtramuralEventTomorrowNotificationRepository extramuralEventTomorrowNotificationRepository) {
-        this.messageSender = messageSender;
+        this.vkMessageSender = vkMessageSender;
+        this.tgMessageSender = tgMessageSender;
         this.callRestService = callRestService;
         this.botUserRepository = botUserRepository;
         this.scheduleTomorrowNotificationRepository = scheduleTomorrowNotificationRepository;
@@ -84,7 +88,11 @@ public class TomorrowNotificationService {
                             dayNumber
                     );
                     BotMessage botMessage = BotMessageUtils.getBotMessageForFullTimeLessons(lessons, CommandText.TOMORROW, botUser.isFilterNomDenom());
-                    messageSender.send(botMessage, botUser.getUserId());
+                    if(botUser.fromVk()) {
+                        vkMessageSender.send(botMessage, botUser.getUserId());
+                    } else {
+                        tgMessageSender.send(botMessage, botUser.getUserId());
+                    }
                 }
             }
         } else {
@@ -117,7 +125,11 @@ public class TomorrowNotificationService {
                     );
                     BotMessage botMessage;
                     botMessage = BotMessageUtils.getBotMessageForFullTimeExamPeriod(examPeriodEventDto, CommandText.TOMORROW);
-                    messageSender.send(botMessage, botUser.getUserId());
+                    if(botUser.fromVk()) {
+                        vkMessageSender.send(botMessage, botUser.getUserId());
+                    } else {
+                        tgMessageSender.send(botMessage, botUser.getUserId());
+                    }
                     Thread.sleep(51); //20 messages per second
                 }
             }
@@ -150,7 +162,11 @@ public class TomorrowNotificationService {
                             day
                     );
                     BotMessage botMessage = BotMessageUtils.getBotMessageForExtramuralEvent(extramuralDto, CommandText.TODAY);
-                    messageSender.send(botMessage, botUser.getUserId());
+                    if(botUser.fromVk()) {
+                        vkMessageSender.send(botMessage, botUser.getUserId());
+                    } else {
+                        tgMessageSender.send(botMessage, botUser.getUserId());
+                    }
                     Thread.sleep(51); //20 messages per second
                 }
             }

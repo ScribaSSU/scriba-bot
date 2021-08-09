@@ -5,57 +5,47 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.scribassu.scribabot.dto.vkkeyboard.VkKeyboard;
 import com.scribassu.scribabot.keyboard.KeyboardMap;
 import com.scribassu.scribabot.keyboard.KeyboardType;
+import com.scribassu.scribabot.keyboard.TgKeyboardGenerator;
+import com.scribassu.scribabot.keyboard.VkKeyboardGenerator;
 import com.scribassu.scribabot.text.MessageText;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 
-@Getter
+@Data
 @NoArgsConstructor
 public class BotMessage {
 
     private String message;
 
-    private String keyboard;
+    private VkKeyboard vkKeyboard;
+
+    private ReplyKeyboardMarkup tgKeyboard;
 
     public BotMessage(String message) {
         this.message = message;
     }
 
-    public BotMessage(String message, String keyboard) {
+    public BotMessage(String message, VkKeyboard vkKeyboard) {
         this.message = message;
-        this.keyboard = keyboard;
+        this.vkKeyboard = vkKeyboard;
     }
 
-    public BotMessage(String message, KeyboardType keyboardType) {
+    public BotMessage(String message, ReplyKeyboardMarkup tgKeyboard) {
         this.message = message;
-        setKeyboard(keyboardType);
+        this.tgKeyboard = tgKeyboard;
     }
 
-    public BotMessage(String message, VkKeyboard keyboard) {
+    public BotMessage(String message, VkKeyboard vkKeyboard, ReplyKeyboardMarkup tgKeyboard) {
         this.message = message;
-        setKeyboard(keyboard);
+        this.vkKeyboard = vkKeyboard;
+        this.tgKeyboard = tgKeyboard;
     }
 
     public void setMessage(String message) {
         this.message = message;
-    }
-
-    public void setKeyboard(KeyboardType keyboardType) {
-        this.keyboard = KeyboardMap.get(keyboardType).getJsonText();
-    }
-
-    public void setKeyboard(VkKeyboard keyboard) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            this.keyboard = objectMapper.writeValueAsString(keyboard);
-        } catch (JsonProcessingException e) {
-            setKeyboard(KeyboardType.ButtonActions);
-        }
-    }
-
-    public void formatKeyboard(String replacedString, KeyboardType keyboardType) {
-        this.keyboard = this.keyboard.replace(replacedString, KeyboardMap.get(keyboardType).getJsonText());
     }
 
     public boolean isEmpty() {
@@ -64,11 +54,17 @@ public class BotMessage {
 
     public boolean isDefault() {
         return message.equalsIgnoreCase(MessageText.DEFAULT_MESSAGE)
-                && keyboard.equalsIgnoreCase(KeyboardMap.get(KeyboardType.ButtonActions).getJsonText());
+                && (
+                VkKeyboardGenerator.mainMenu.equals(vkKeyboard) || TgKeyboardGenerator.mainMenu().equals(tgKeyboard)
+                );
     }
 
-    public boolean hasKeyboard() {
-        return StringUtils.isNotEmpty(keyboard);
+    public boolean hasVkKeyboard() {
+        return null != this.vkKeyboard;
+    }
+
+    public boolean hasTgKeyboard() {
+        return null != this.tgKeyboard;
     }
 }
 

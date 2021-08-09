@@ -4,7 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.scribassu.scribabot.dto.BotMessage;
 import com.scribassu.scribabot.dto.rest.TeacherListDto;
 import com.scribassu.scribabot.entities.BotUser;
-import com.scribassu.scribabot.keyboard.KeyboardGenerator;
+import com.scribassu.scribabot.keyboard.TgKeyboardGenerator;
+import com.scribassu.scribabot.keyboard.VkKeyboardGenerator;
 import com.scribassu.scribabot.repositories.BotUserRepository;
 import com.scribassu.scribabot.services.CallRestService;
 import com.scribassu.scribabot.text.CommandText;
@@ -15,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static com.scribassu.scribabot.keyboard.KeyboardType.ButtonActions;
 import static com.scribassu.scribabot.keyboard.KeyboardType.ButtonFullTimeSchedule;
 import static com.scribassu.scribabot.text.MessageText.CANNOT_GET_TEACHERS;
 
@@ -24,15 +24,18 @@ public class TeacherService implements BotMessageService {
 
     private final CallRestService callRestService;
     private final BotUserRepository botUserRepository;
-    private final KeyboardGenerator keyboardGenerator;
+    private final VkKeyboardGenerator vkKeyboardGenerator;
+    private final TgKeyboardGenerator tgKeyboardGenerator;
 
     @Autowired
     public TeacherService(CallRestService callRestService,
                           BotUserRepository botUserRepository,
-                          KeyboardGenerator keyboardGenerator) {
+                          VkKeyboardGenerator vkKeyboardGenerator,
+                          TgKeyboardGenerator tgKeyboardGenerator) {
         this.callRestService = callRestService;
         this.botUserRepository = botUserRepository;
-        this.keyboardGenerator = keyboardGenerator;
+        this.vkKeyboardGenerator = vkKeyboardGenerator;
+        this.tgKeyboardGenerator = tgKeyboardGenerator;
     }
 
     @Override
@@ -45,27 +48,50 @@ public class TeacherService implements BotMessageService {
             TeacherListDto teacherListDto = callRestService.getTeachersByWord(message);
             if (null != teacherListDto.getTeachers()) {
                 if (teacherListDto.getTeachers().isEmpty()) {
-                    botMessage = new BotMessage("По вашему запросу ничего не нашлось.", ButtonActions);
+                    botMessage = new BotMessage("По вашему запросу ничего не нашлось.");
+                    if(botUser.fromVk()) {
+                        botMessage.setVkKeyboard(VkKeyboardGenerator.mainMenu);
+                    } else {
+                        botMessage.setTgKeyboard(TgKeyboardGenerator.mainMenu());
+                    }
                 } else {
                     List<Teacher> teachers = teacherListDto.getTeachers();
                     if (teachers.size() > Constants.MAX_VK_KEYBOARD_SIZE_FOR_LISTS) {
                         botMessage = new BotMessage(
                                 "Искомый список преподавателей слишком большой для клавиатуры VK. " +
-                                        "Попробуйте запросить точнее.",
-                                ButtonActions);
+                                        "Попробуйте запросить точнее.");
+                        if(botUser.fromVk()) {
+                            botMessage.setVkKeyboard(VkKeyboardGenerator.mainMenu);
+                        } else {
+                            botMessage.setTgKeyboard(TgKeyboardGenerator.mainMenu());
+                        }
                     } else {
                         ObjectMapper objectMapper = new ObjectMapper();
                         try {
                             botMessage = new BotMessage(
-                                    "Выберите, для какого преподавателя хотите узнать расписание.",
-                                    objectMapper.writeValueAsString(keyboardGenerator.buildTeachers(teachers)));
+                                    "Выберите, для какого преподавателя хотите узнать расписание.");
+                            if(botUser.fromVk()) {
+                                botMessage.setVkKeyboard(vkKeyboardGenerator.teachers(teachers));
+                            } else {
+                                botMessage.setTgKeyboard(tgKeyboardGenerator.teachers(teachers));
+                            }
                         } catch (Exception e) {
-                            botMessage = new BotMessage(CANNOT_GET_TEACHERS, ButtonActions);
+                            botMessage = new BotMessage(CANNOT_GET_TEACHERS);
+                            if(botUser.fromVk()) {
+                                botMessage.setVkKeyboard(VkKeyboardGenerator.mainMenu);
+                            } else {
+                                botMessage.setTgKeyboard(TgKeyboardGenerator.mainMenu());
+                            }
                         }
                     }
                 }
             } else {
-                botMessage = new BotMessage(CANNOT_GET_TEACHERS, ButtonActions);
+                botMessage = new BotMessage(CANNOT_GET_TEACHERS);
+                if(botUser.fromVk()) {
+                    botMessage.setVkKeyboard(VkKeyboardGenerator.mainMenu);
+                } else {
+                    botMessage.setTgKeyboard(TgKeyboardGenerator.mainMenu());
+                }
             }
         }
 

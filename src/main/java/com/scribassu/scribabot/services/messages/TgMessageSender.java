@@ -23,7 +23,7 @@ import java.util.Locale;
 
 @Slf4j
 @Component
-public class TGMessageService extends TelegramLongPollingBot {
+public class TgMessageSender extends TelegramLongPollingBot implements MessageSender {
 
     @Autowired
     private MessageHandler messageHandler;
@@ -35,32 +35,6 @@ public class TGMessageService extends TelegramLongPollingBot {
     private String botToken;
 
     private static final String TG_MESSAGE_WITHOUT_EMOJI_REGEX = "^[А-Яа-я\\-\\.\\sA-Za-z\\d].*$";
-
-    private static ReplyKeyboardMarkup menu() {
-        ReplyKeyboardMarkup r = new ReplyKeyboardMarkup();
-        List<KeyboardRow> rows = new ArrayList<>();
-        for(int i = 0; i < 4; i++)
-            rows.add(new KeyboardRow());
-        //rows.get(0).add(new KeyboardButton("\uD83D\uDDD3 Расписание студентов \uD83D\uDDD3"));
-        //rows.get(1).add(new KeyboardButton("\uD83C\uDF93 Расписание преподавателей \uD83C\uDF93"));
-        rows.get(0).add(new KeyboardButton("\uD83C\uDF1A Расписание студентов \uD83C\uDF1A"));
-        rows.get(1).add(new KeyboardButton("\uD83C\uDF1D Расписание преподавателей \uD83C\uDF1D"));
-        rows.get(2).add(new KeyboardButton("⚙ Настройки ⚙"));
-        rows.get(3).add(new KeyboardButton("❓ Справка ❓"));
-        r.setKeyboard(rows);
-        return r;
-    }
-
-    private static ReplyKeyboardMarkup settings() {
-        ReplyKeyboardMarkup r = new ReplyKeyboardMarkup();
-        List<KeyboardRow> rows = new ArrayList<>();
-        for(int i = 0; i < 2; i++)
-            rows.add(new KeyboardRow());
-        rows.get(0).add(new KeyboardButton("✅ включить ✅"));
-        rows.get(1).add(new KeyboardButton("❌ выключить ❌"));
-        r.setKeyboard(rows);
-        return r;
-    }
 
     @Override
     public void onUpdateReceived(Update update) {
@@ -78,7 +52,7 @@ public class TGMessageService extends TelegramLongPollingBot {
             BotMessage botMessage = messageHandler.getBotMessage(command);
             execute(new SendMessage().setChatId(update.getMessage().getChatId())
                     .setText(botMessage.getMessage())
-                    .setReplyMarkup(settings()));
+                    .setReplyMarkup(botMessage.getTgKeyboard()));
         } catch (TelegramApiException e) {
             log.error("Telegram API Exception: " + e.getMessage());
         }
@@ -98,5 +72,19 @@ public class TGMessageService extends TelegramLongPollingBot {
     private String removeEmoji(String text) {
         text = text.substring(text.indexOf(" ") + 1);
         return text.substring(0, text.lastIndexOf(" "));
+    }
+
+    @Override
+    public void send(BotMessage botMessage, String userId) {
+        try {
+            execute(new SendMessage().setChatId(userId)
+                    .setText(botMessage.getMessage())
+                    .setReplyMarkup(botMessage.getTgKeyboard()));
+        } catch (TelegramApiException e) {
+            log.error("Telegram API Exception: " + e.getMessage());
+        }
+        catch (Exception e) {
+            log.error("Telegram Another Exception: " + e.getMessage());
+        }
     }
 }

@@ -3,6 +3,8 @@ package com.scribassu.scribabot.services.bot;
 import com.scribassu.scribabot.dto.BotMessage;
 import com.scribassu.scribabot.entities.BotUser;
 import com.scribassu.scribabot.keyboard.KeyboardType;
+import com.scribassu.scribabot.keyboard.TgKeyboardGenerator;
+import com.scribassu.scribabot.keyboard.VkKeyboardGenerator;
 import com.scribassu.scribabot.util.BotUserSource;
 import org.springframework.stereotype.Service;
 
@@ -45,9 +47,9 @@ public class HelpService implements BotMessageService {
 
     @Override
     public BotMessage getBotMessage(String message, BotUser botUser) {
-        if (botUser.getSource().equals(BotUserSource.VK))
-            return new BotMessage(HELP_VK, KeyboardType.ButtonActions);
+        if (botUser.fromVk())
+            return new BotMessage(HELP_VK, VkKeyboardGenerator.mainMenu);
         else
-            return new BotMessage(HELP_TG, KeyboardType.ButtonActions);
+            return new BotMessage(HELP_TG, TgKeyboardGenerator.mainMenu());
     }
 }

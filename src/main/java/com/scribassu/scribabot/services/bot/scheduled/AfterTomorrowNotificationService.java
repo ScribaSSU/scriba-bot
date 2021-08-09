@@ -10,7 +10,8 @@ import com.scribassu.scribabot.repositories.BotUserRepository;
 import com.scribassu.scribabot.repositories.ExamPeriodAfterTomorrowNotificationRepository;
 import com.scribassu.scribabot.repositories.ExtramuralEventAfterTomorrowNotificationRepository;
 import com.scribassu.scribabot.services.CallRestService;
-import com.scribassu.scribabot.services.messages.MessageSender;
+import com.scribassu.scribabot.services.messages.TgMessageSender;
+import com.scribassu.scribabot.services.messages.VkMessageSender;
 import com.scribassu.scribabot.text.CommandText;
 import com.scribassu.scribabot.util.BotMessageUtils;
 import com.scribassu.scribabot.util.CalendarUtils;
@@ -27,19 +28,22 @@ import java.util.List;
 @Service
 public class AfterTomorrowNotificationService {
 
-    private final MessageSender messageSender;
+    private final VkMessageSender vkMessageSender;
+    private final TgMessageSender tgMessageSender;
     private final CallRestService callRestService;
     private final BotUserRepository botUserRepository;
     private final ExamPeriodAfterTomorrowNotificationRepository examPeriodAfterTomorrowNotificationRepository;
     private final ExtramuralEventAfterTomorrowNotificationRepository extramuralEventAfterTomorrowNotificationRepository;
 
     @Autowired
-    public AfterTomorrowNotificationService(MessageSender messageSender,
+    public AfterTomorrowNotificationService(VkMessageSender vkMessageSender,
+                                            TgMessageSender tgMessageSender,
                                             CallRestService callRestService,
                                             BotUserRepository botUserRepository,
                                             ExamPeriodAfterTomorrowNotificationRepository examPeriodAfterTomorrowNotificationRepository,
                                             ExtramuralEventAfterTomorrowNotificationRepository extramuralEventAfterTomorrowNotificationRepository) {
-        this.messageSender = messageSender;
+        this.vkMessageSender = vkMessageSender;
+        this.tgMessageSender = tgMessageSender;
         this.callRestService = callRestService;
         this.botUserRepository = botUserRepository;
         this.examPeriodAfterTomorrowNotificationRepository = examPeriodAfterTomorrowNotificationRepository;
@@ -76,7 +80,11 @@ public class AfterTomorrowNotificationService {
                     );
                     BotMessage botMessage;
                     botMessage = BotMessageUtils.getBotMessageForFullTimeExamPeriod(examPeriodEventDto, CommandText.AFTER_TOMORROW);
-                    messageSender.send(botMessage, botUser.getUserId());
+                    if(botUser.fromVk()) {
+                        vkMessageSender.send(botMessage, botUser.getUserId());
+                    } else {
+                        tgMessageSender.send(botMessage, botUser.getUserId());
+                    }
                     Thread.sleep(51); //20 messages per second
                 }
             }
@@ -110,7 +118,11 @@ public class AfterTomorrowNotificationService {
                     );
                     BotMessage botMessage;
                     botMessage = BotMessageUtils.getBotMessageForExtramuralEvent(extramuralDto, CommandText.TODAY);
-                    messageSender.send(botMessage, botUser.getUserId());
+                    if(botUser.fromVk()) {
+                        vkMessageSender.send(botMessage, botUser.getUserId());
+                    } else {
+                        tgMessageSender.send(botMessage, botUser.getUserId());
+                    }
                     Thread.sleep(51); //20 messages per second
                 }
             }

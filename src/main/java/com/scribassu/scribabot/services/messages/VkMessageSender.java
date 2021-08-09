@@ -1,6 +1,9 @@
 package com.scribassu.scribabot.services.messages;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.scribassu.scribabot.dto.BotMessage;
+import com.scribassu.scribabot.keyboard.VkKeyboardGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -19,7 +22,7 @@ import java.util.Random;
 
 @Slf4j
 @Service
-public class MessageSenderImpl implements MessageSender {
+public class VkMessageSender implements MessageSender {
 
     private static final Integer VK_LENGTH = 4096;
     private static final String VK_API_METHOD = "https://api.vk.com/method/messages.send";
@@ -31,6 +34,7 @@ public class MessageSenderImpl implements MessageSender {
     @Value("${scriba-bot.vk.api-version}")
     private String vkApiVersion;
 
+    @Override
     public void send(BotMessage botMessage, String userId) throws Exception {
         int startIndex = 0;
         String message;
@@ -49,8 +53,15 @@ public class MessageSenderImpl implements MessageSender {
             postParameters.add(new BasicNameValuePair("random_id", String.valueOf(random.nextInt())));
             postParameters.add(new BasicNameValuePair("message", message));
 
-            if (botMessage.hasKeyboard()) {
-                postParameters.add(new BasicNameValuePair("keyboard", botMessage.getKeyboard()));
+            if (botMessage.hasVkKeyboard()) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                String keyboard;
+                try {
+                    keyboard = objectMapper.writeValueAsString(botMessage.getVkKeyboard());
+                } catch (JsonProcessingException e) {
+                    keyboard = objectMapper.writeValueAsString(VkKeyboardGenerator.mainMenu);
+                }
+                postParameters.add(new BasicNameValuePair("keyboard", keyboard));
             }
 
             HttpPost postRequest = new HttpPost(VK_API_METHOD);
