@@ -15,7 +15,7 @@ import java.time.OffsetDateTime;
 @Data
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-public class UnrecognizedMessage extends Command {
+public class VkUnrecognizedMessage extends Command {
 
     @Id
     @GeneratedValue
@@ -25,18 +25,18 @@ public class UnrecognizedMessage extends Command {
     private String payload;
 
     @ManyToOne
-    private BotUser botUser;
+    private VkBotUser botUser;
 
     @CreatedDate
     private OffsetDateTime createdDate;
 
-    public UnrecognizedMessage(Command command, BotUser botUser) {
+    public VkUnrecognizedMessage(Command command, VkBotUser botUser) {
         this.message = command.getMessage();
         this.payload = command.getPayload();
         this.botUser = botUser;
     }
 
-    public UnrecognizedMessage(String message, String payload, BotUser botUser) {
+    public VkUnrecognizedMessage(String message, String payload, VkBotUser botUser) {
         this.message = message;
         this.payload = payload;
         this.botUser = botUser;

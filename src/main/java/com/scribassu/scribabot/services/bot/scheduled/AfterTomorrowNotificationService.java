@@ -1,12 +1,12 @@
 package com.scribassu.scribabot.services.bot.scheduled;
 
 import com.scribassu.scribabot.dto.BotMessage;
+import com.scribassu.scribabot.dto.InnerBotUser;
 import com.scribassu.scribabot.dto.rest.ExamPeriodEventDto;
 import com.scribassu.scribabot.dto.rest.ExtramuralDto;
-import com.scribassu.scribabot.entities.BotUser;
-import com.scribassu.scribabot.entities.ExamPeriodAfterTomorrowNotification;
-import com.scribassu.scribabot.entities.ExtramuralEventAfterTomorrowNotification;
-import com.scribassu.scribabot.repositories.BotUserRepository;
+import com.scribassu.scribabot.entities.*;
+import com.scribassu.scribabot.repositories.TgBotUserRepository;
+import com.scribassu.scribabot.repositories.VkBotUserRepository;
 import com.scribassu.scribabot.repositories.ExamPeriodAfterTomorrowNotificationRepository;
 import com.scribassu.scribabot.repositories.ExtramuralEventAfterTomorrowNotificationRepository;
 import com.scribassu.scribabot.services.CallRestService;
@@ -14,6 +14,7 @@ import com.scribassu.scribabot.services.messages.TgMessageSender;
 import com.scribassu.scribabot.services.messages.VkMessageSender;
 import com.scribassu.scribabot.text.CommandText;
 import com.scribassu.scribabot.util.BotMessageUtils;
+import com.scribassu.scribabot.util.BotUserSource;
 import com.scribassu.scribabot.util.CalendarUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,8 @@ public class AfterTomorrowNotificationService {
     private final VkMessageSender vkMessageSender;
     private final TgMessageSender tgMessageSender;
     private final CallRestService callRestService;
-    private final BotUserRepository botUserRepository;
+    private final VkBotUserRepository vkBotUserRepository;
+    private final TgBotUserRepository tgBotUserRepository;
     private final ExamPeriodAfterTomorrowNotificationRepository examPeriodAfterTomorrowNotificationRepository;
     private final ExtramuralEventAfterTomorrowNotificationRepository extramuralEventAfterTomorrowNotificationRepository;
 
@@ -39,13 +41,15 @@ public class AfterTomorrowNotificationService {
     public AfterTomorrowNotificationService(VkMessageSender vkMessageSender,
                                             TgMessageSender tgMessageSender,
                                             CallRestService callRestService,
-                                            BotUserRepository botUserRepository,
+                                            VkBotUserRepository vkBotUserRepository,
+                                            TgBotUserRepository tgBotUserRepository,
                                             ExamPeriodAfterTomorrowNotificationRepository examPeriodAfterTomorrowNotificationRepository,
                                             ExtramuralEventAfterTomorrowNotificationRepository extramuralEventAfterTomorrowNotificationRepository) {
         this.vkMessageSender = vkMessageSender;
         this.tgMessageSender = tgMessageSender;
         this.callRestService = callRestService;
-        this.botUserRepository = botUserRepository;
+        this.vkBotUserRepository = vkBotUserRepository;
+        this.tgBotUserRepository = tgBotUserRepository;
         this.examPeriodAfterTomorrowNotificationRepository = examPeriodAfterTomorrowNotificationRepository;
         this.extramuralEventAfterTomorrowNotificationRepository = extramuralEventAfterTomorrowNotificationRepository;
     }
@@ -70,7 +74,14 @@ public class AfterTomorrowNotificationService {
         if (!CollectionUtils.isEmpty(examPeriodAfterTomorrowNotifications)) {
             log.info("Send after tomorrow exam period schedule for hour {}", hourOfDay);
             for (ExamPeriodAfterTomorrowNotification notification : examPeriodAfterTomorrowNotifications) {
-                BotUser botUser = botUserRepository.findOneById(notification.getUserId());
+                InnerBotUser botUser;
+                if (notification.fromVk()) {
+                    VkBotUser vkBotUser = vkBotUserRepository.findOneById(notification.getUserId());
+                    botUser = new InnerBotUser(vkBotUser);
+                } else {
+                    TgBotUser tgBotUser = tgBotUserRepository.findOneById(notification.getUserId());
+                    botUser = new InnerBotUser(tgBotUser);
+                }
                 if (BotMessageUtils.isBotUserFullTime(botUser)) {
                     ExamPeriodEventDto examPeriodEventDto = callRestService.getFullTimeExamPeriodEventByDay(
                             botUser.getDepartment(),
@@ -79,7 +90,7 @@ public class AfterTomorrowNotificationService {
                             day
                     );
                     BotMessage botMessage;
-                    botMessage = BotMessageUtils.getBotMessageForFullTimeExamPeriod(examPeriodEventDto, CommandText.AFTER_TOMORROW);
+                    botMessage = BotMessageUtils.getBotMessageForFullTimeExamPeriod(examPeriodEventDto, CommandText.AFTER_TOMORROW, botUser);
                     if(botUser.fromVk()) {
                         vkMessageSender.send(botMessage, botUser.getUserId());
                     } else {
@@ -108,7 +119,14 @@ public class AfterTomorrowNotificationService {
         if (!CollectionUtils.isEmpty(extramuralEventAfterTomorrowNotifications)) {
             log.info("Send extramural schedule for hour {}", hourOfDay);
             for (ExtramuralEventAfterTomorrowNotification notification : extramuralEventAfterTomorrowNotifications) {
-                BotUser botUser = botUserRepository.findOneById(notification.getUserId());
+                InnerBotUser botUser;
+                if (notification.fromVk()) {
+                    VkBotUser vkBotUser = vkBotUserRepository.findOneById(notification.getUserId());
+                    botUser = new InnerBotUser(vkBotUser);
+                } else {
+                    TgBotUser tgBotUser = tgBotUserRepository.findOneById(notification.getUserId());
+                    botUser = new InnerBotUser(tgBotUser);
+                }
                 if (BotMessageUtils.isBotUserExtramural(botUser)) {
                     ExtramuralDto extramuralDto = callRestService.getExtramuralEventsByDay(
                             botUser.getDepartment(),
@@ -117,7 +135,7 @@ public class AfterTomorrowNotificationService {
                             day
                     );
                     BotMessage botMessage;
-                    botMessage = BotMessageUtils.getBotMessageForExtramuralEvent(extramuralDto, CommandText.TODAY);
+                    botMessage = BotMessageUtils.getBotMessageForExtramuralEvent(extramuralDto, CommandText.TODAY, botUser);
                     if(botUser.fromVk()) {
                         vkMessageSender.send(botMessage, botUser.getUserId());
                     } else {

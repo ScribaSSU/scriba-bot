@@ -1,6 +1,7 @@
 package com.scribassu.scribabot.services.bot;
 
 import com.scribassu.scribabot.dto.BotMessage;
+import com.scribassu.scribabot.dto.InnerBotUser;
 import com.scribassu.scribabot.dto.rest.ExamPeriodEventDto;
 import com.scribassu.scribabot.dto.rest.TeacherExamPeriodEventDto;
 import com.scribassu.scribabot.entities.BotUser;
@@ -22,44 +23,41 @@ public class ExamPeriodService implements BotMessageService {
 
 
     @Override
-    public BotMessage getBotMessage(String message, BotUser botUser) {
+    public BotMessage getBotMessage(String message, InnerBotUser botUser) {
         if (botUser.wantTeacherSchedule()) {
             return getTeacherBotMessage(message, botUser);
         } else {
             return getStudentBotMessage(message, botUser);
         }
-
     }
 
-    private BotMessage getTeacherBotMessage(String message, BotUser botUser) {
+    private BotMessage getTeacherBotMessage(String message, InnerBotUser botUser) {
         String teacherId = botUser.getPreviousUserMessage().split(" ")[2];
         if (message.equalsIgnoreCase(CommandText.EXAMS)) {
-            TeacherExamPeriodEventDto examPeriodEventDto = callRestService.getTeacherExamPeriodEvents(
-                    teacherId
-            );
+            TeacherExamPeriodEventDto examPeriodEventDto = callRestService.getTeacherExamPeriodEvents(teacherId);
             if (examPeriodEventDto == null || examPeriodEventDto.getExamPeriodEvents().isEmpty()) {
-                return BotMessageUtils.getBotMessageForEmptyFullTimeExamPeriod();
+                return BotMessageUtils.getBotMessageForEmptyFullTimeExamPeriod(botUser);
             } else {
-                return BotMessageUtils.getBotMessageForTeacherExamPeriod(examPeriodEventDto);
+                return BotMessageUtils.getBotMessageForTeacherExamPeriod(examPeriodEventDto, botUser);
             }
         } else {
-            return BotMessageUtils.getBotMessageForEmptyFullTimeExamPeriod();
+            return BotMessageUtils.getBotMessageForEmptyFullTimeExamPeriod(botUser);
         }
     }
 
-    private BotMessage getStudentBotMessage(String message, BotUser botUser) {
+    private BotMessage getStudentBotMessage(String message, InnerBotUser botUser) {
         if (message.equalsIgnoreCase(CommandText.EXAMS)) {
             ExamPeriodEventDto examPeriodEventDto = callRestService.getFullTimeExamPeriodEvent(
                     botUser.getDepartment(),
                     botUser.getGroupNumber()
             );
             if (examPeriodEventDto == null || examPeriodEventDto.getExamPeriodEvents().isEmpty()) {
-                return BotMessageUtils.getBotMessageForEmptyFullTimeExamPeriod();
+                return BotMessageUtils.getBotMessageForEmptyFullTimeExamPeriod(botUser);
             } else {
-                return BotMessageUtils.getBotMessageForFullTimeExamPeriod(examPeriodEventDto, "");
+                return BotMessageUtils.getBotMessageForFullTimeExamPeriod(examPeriodEventDto, "", botUser);
             }
         } else {
-            return BotMessageUtils.getBotMessageForEmptyFullTimeExamPeriod();
+            return BotMessageUtils.getBotMessageForEmptyFullTimeExamPeriod(botUser);
         }
     }
 

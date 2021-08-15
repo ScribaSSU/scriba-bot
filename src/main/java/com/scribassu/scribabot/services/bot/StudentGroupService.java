@@ -2,6 +2,7 @@ package com.scribassu.scribabot.services.bot;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.scribassu.scribabot.dto.BotMessage;
+import com.scribassu.scribabot.dto.InnerBotUser;
 import com.scribassu.scribabot.dto.rest.GroupNumbersDto;
 import com.scribassu.scribabot.dto.vkkeyboard.*;
 import com.scribassu.scribabot.entities.BotUser;
@@ -36,7 +37,7 @@ public class StudentGroupService implements BotMessageService {
     }
 
     @Override
-    public BotMessage getBotMessage(String message, BotUser botUser) {
+    public BotMessage getBotMessage(String message, InnerBotUser botUser) {
         BotMessage botMessage;
         GroupNumbersDto groupNumbersDto = new GroupNumbersDto();
         if (message.equalsIgnoreCase("другое")) {
@@ -70,7 +71,7 @@ public class StudentGroupService implements BotMessageService {
             }
         } else if (groupNumbersDto.getGroupNumbers().size() > Constants.MAX_VK_KEYBOARD_SIZE_FOR_LISTS) {
             StringBuilder stringBuilder = new StringBuilder("Извините, нашлось слишком много групп, " +
-                    "и они не могут отобразиться через клавиатуру из-за ограничений VK :( " +
+                    "и они не могут отобразиться через клавиатуру из-за ограничений клавиатур ботов :( " +
                     "Пожалуйста, введите номер группы в формате г номергруппы, например, г 123, " +
                     "чтобы бот все-таки записал вашу группу. Доступные номера по вашему запросу:\n\n");
             for (String groupNumber : groupNumbersDto.getGroupNumbers()) {
@@ -89,6 +90,5 @@ public class StudentGroupService implements BotMessageService {
 
         return botMessage;
     }
-
 
 }

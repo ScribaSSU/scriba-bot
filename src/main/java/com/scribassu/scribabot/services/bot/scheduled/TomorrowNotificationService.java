@@ -1,17 +1,12 @@
 package com.scribassu.scribabot.services.bot.scheduled;
 
 import com.scribassu.scribabot.dto.BotMessage;
+import com.scribassu.scribabot.dto.InnerBotUser;
 import com.scribassu.scribabot.dto.rest.ExamPeriodEventDto;
 import com.scribassu.scribabot.dto.rest.ExtramuralDto;
 import com.scribassu.scribabot.dto.rest.FullTimeLessonDto;
-import com.scribassu.scribabot.entities.BotUser;
-import com.scribassu.scribabot.entities.ExamPeriodTomorrowNotification;
-import com.scribassu.scribabot.entities.ExtramuralEventTomorrowNotification;
-import com.scribassu.scribabot.entities.ScheduleTomorrowNotification;
-import com.scribassu.scribabot.repositories.BotUserRepository;
-import com.scribassu.scribabot.repositories.ExamPeriodTomorrowNotificationRepository;
-import com.scribassu.scribabot.repositories.ExtramuralEventTomorrowNotificationRepository;
-import com.scribassu.scribabot.repositories.ScheduleTomorrowNotificationRepository;
+import com.scribassu.scribabot.entities.*;
+import com.scribassu.scribabot.repositories.*;
 import com.scribassu.scribabot.services.CallRestService;
 import com.scribassu.scribabot.services.messages.TgMessageSender;
 import com.scribassu.scribabot.services.messages.VkMessageSender;
@@ -34,7 +29,8 @@ public class TomorrowNotificationService {
     private final VkMessageSender vkMessageSender;
     private final TgMessageSender tgMessageSender;
     private final CallRestService callRestService;
-    private final BotUserRepository botUserRepository;
+    private final VkBotUserRepository vkBotUserRepository;
+    private final TgBotUserRepository tgBotUserRepository;
     private final ScheduleTomorrowNotificationRepository scheduleTomorrowNotificationRepository;
     private final ExamPeriodTomorrowNotificationRepository examPeriodTomorrowNotificationRepository;
     private final ExtramuralEventTomorrowNotificationRepository extramuralEventTomorrowNotificationRepository;
@@ -43,14 +39,16 @@ public class TomorrowNotificationService {
     public TomorrowNotificationService(VkMessageSender vkMessageSender,
                                        TgMessageSender tgMessageSender,
                                        CallRestService callRestService,
-                                       BotUserRepository botUserRepository,
+                                       VkBotUserRepository vkBotUserRepository,
+                                       TgBotUserRepository tgBotUserRepository,
                                        ScheduleTomorrowNotificationRepository scheduleTomorrowNotificationRepository,
                                        ExamPeriodTomorrowNotificationRepository examPeriodTomorrowNotificationRepository,
                                        ExtramuralEventTomorrowNotificationRepository extramuralEventTomorrowNotificationRepository) {
         this.vkMessageSender = vkMessageSender;
         this.tgMessageSender = tgMessageSender;
         this.callRestService = callRestService;
-        this.botUserRepository = botUserRepository;
+        this.vkBotUserRepository = vkBotUserRepository;
+        this.tgBotUserRepository = tgBotUserRepository;
         this.scheduleTomorrowNotificationRepository = scheduleTomorrowNotificationRepository;
         this.examPeriodTomorrowNotificationRepository = examPeriodTomorrowNotificationRepository;
         this.extramuralEventTomorrowNotificationRepository = extramuralEventTomorrowNotificationRepository;
@@ -80,14 +78,21 @@ public class TomorrowNotificationService {
             }
             final String dayNumber = String.valueOf(dayNumberInt);
             for (ScheduleTomorrowNotification notification : scheduleTomorrowNotifications) {
-                BotUser botUser = botUserRepository.findOneById(notification.getUserId());
+                InnerBotUser botUser;
+                if (notification.fromVk()) {
+                    VkBotUser vkBotUser = vkBotUserRepository.findOneById(notification.getUserId());
+                    botUser = new InnerBotUser(vkBotUser);
+                } else {
+                    TgBotUser tgBotUser = tgBotUserRepository.findOneById(notification.getUserId());
+                    botUser = new InnerBotUser(tgBotUser);
+                }
                 if (BotMessageUtils.isBotUserFullTime(botUser)) {
                     FullTimeLessonDto lessons = callRestService.getFullTimeLessonsByDay(
                             botUser.getDepartment(),
                             botUser.getGroupNumber(),
                             dayNumber
                     );
-                    BotMessage botMessage = BotMessageUtils.getBotMessageForFullTimeLessons(lessons, CommandText.TOMORROW, botUser.isFilterNomDenom());
+                    BotMessage botMessage = BotMessageUtils.getBotMessageForFullTimeLessons(lessons, CommandText.TOMORROW, botUser.isFilterNomDenom(), botUser);
                     if(botUser.fromVk()) {
                         vkMessageSender.send(botMessage, botUser.getUserId());
                     } else {
@@ -115,7 +120,14 @@ public class TomorrowNotificationService {
         if (!CollectionUtils.isEmpty(examPeriodTomorrowNotifications)) {
             log.info("Send tomorrow exam period schedule for hour {}", hourOfDay);
             for (ExamPeriodTomorrowNotification notification : examPeriodTomorrowNotifications) {
-                BotUser botUser = botUserRepository.findOneById(notification.getUserId());
+                InnerBotUser botUser;
+                if (notification.fromVk()) {
+                    VkBotUser vkBotUser = vkBotUserRepository.findOneById(notification.getUserId());
+                    botUser = new InnerBotUser(vkBotUser);
+                } else {
+                    TgBotUser tgBotUser = tgBotUserRepository.findOneById(notification.getUserId());
+                    botUser = new InnerBotUser(tgBotUser);
+                }
                 if (BotMessageUtils.isBotUserFullTime(botUser)) {
                     ExamPeriodEventDto examPeriodEventDto = callRestService.getFullTimeExamPeriodEventByDay(
                             botUser.getDepartment(),
@@ -124,7 +136,7 @@ public class TomorrowNotificationService {
                             day
                     );
                     BotMessage botMessage;
-                    botMessage = BotMessageUtils.getBotMessageForFullTimeExamPeriod(examPeriodEventDto, CommandText.TOMORROW);
+                    botMessage = BotMessageUtils.getBotMessageForFullTimeExamPeriod(examPeriodEventDto, CommandText.TOMORROW, botUser);
                     if(botUser.fromVk()) {
                         vkMessageSender.send(botMessage, botUser.getUserId());
                     } else {
@@ -153,7 +165,14 @@ public class TomorrowNotificationService {
         if (!CollectionUtils.isEmpty(extramuralEventTomorrowNotifications)) {
             log.info("Send extramural schedule for hour {}", hourOfDay);
             for (ExtramuralEventTomorrowNotification notification : extramuralEventTomorrowNotifications) {
-                BotUser botUser = botUserRepository.findOneById(notification.getUserId());
+                InnerBotUser botUser;
+                if (notification.fromVk()) {
+                    VkBotUser vkBotUser = vkBotUserRepository.findOneById(notification.getUserId());
+                    botUser = new InnerBotUser(vkBotUser);
+                } else {
+                    TgBotUser tgBotUser = tgBotUserRepository.findOneById(notification.getUserId());
+                    botUser = new InnerBotUser(tgBotUser);
+                }
                 if (BotMessageUtils.isBotUserExtramural(botUser)) {
                     ExtramuralDto extramuralDto = callRestService.getExtramuralEventsByDay(
                             botUser.getDepartment(),
@@ -161,7 +180,7 @@ public class TomorrowNotificationService {
                             month,
                             day
                     );
-                    BotMessage botMessage = BotMessageUtils.getBotMessageForExtramuralEvent(extramuralDto, CommandText.TODAY);
+                    BotMessage botMessage = BotMessageUtils.getBotMessageForExtramuralEvent(extramuralDto, CommandText.TODAY, botUser);
                     if(botUser.fromVk()) {
                         vkMessageSender.send(botMessage, botUser.getUserId());
                     } else {

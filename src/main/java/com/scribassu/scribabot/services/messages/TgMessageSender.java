@@ -3,6 +3,7 @@ package com.scribassu.scribabot.services.messages;
 import com.scribassu.scribabot.dto.BotMessage;
 import com.scribassu.scribabot.dto.Command;
 import com.scribassu.scribabot.util.BotUserSource;
+import com.scribassu.scribabot.util.TgKeyboardEmoji;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,9 +18,12 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -34,15 +38,11 @@ public class TgMessageSender extends TelegramLongPollingBot implements MessageSe
     @Value("${scriba-bot.tg.token}")
     private String botToken;
 
-    private static final String TG_MESSAGE_WITHOUT_EMOJI_REGEX = "^[А-Яа-я\\-\\.\\sA-Za-z\\d].*$";
-
     @Override
     public void onUpdateReceived(Update update) {
         System.out.println(update);
         String text = update.getMessage().getText();
-        if(!text.matches(TG_MESSAGE_WITHOUT_EMOJI_REGEX)) {
-            text = removeEmoji(update.getMessage().getText());
-        }
+        text = removeEmoji(text);
         text = text.toLowerCase(Locale.ROOT);
         Command command = new Command(text,
                 "no payload",
@@ -70,8 +70,9 @@ public class TgMessageSender extends TelegramLongPollingBot implements MessageSe
     }
 
     private String removeEmoji(String text) {
-        text = text.substring(text.indexOf(" ") + 1);
-        return text.substring(0, text.lastIndexOf(" "));
+        for(String emoji: TgKeyboardEmoji.TG_EMOJIS)
+            text = text.replace(emoji, "");
+        return text.trim();
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.scribassu.scribabot.services.bot;
 
 import com.scribassu.scribabot.dto.BotMessage;
+import com.scribassu.scribabot.dto.InnerBotUser;
 import com.scribassu.scribabot.dto.rest.FullTimeLessonDto;
 import com.scribassu.scribabot.dto.rest.TeacherFullTimeLessonDto;
 import com.scribassu.scribabot.entities.BotUser;
@@ -24,7 +25,7 @@ public class FullTimeLessonService implements BotMessageService {
     }
 
     @Override
-    public BotMessage getBotMessage(String message, BotUser botUser) {
+    public BotMessage getBotMessage(String message, InnerBotUser botUser) {
         if (botUser.wantTeacherSchedule()) {
             return getTeacherBotMessage(message, botUser);
         } else {
@@ -32,7 +33,7 @@ public class FullTimeLessonService implements BotMessageService {
         }
     }
 
-    private BotMessage getTeacherBotMessage(String message, BotUser botUser) {
+    private BotMessage getTeacherBotMessage(String message, InnerBotUser botUser) {
         Calendar calendar = CalendarUtils.getCalendar();
         TeacherFullTimeLessonDto lessons = new TeacherFullTimeLessonDto();
         boolean isToday = false;
@@ -79,18 +80,18 @@ public class FullTimeLessonService implements BotMessageService {
         }
 
         if (isToday) {
-            return BotMessageUtils.getBotMessageForTeacherFullTimeLessons(lessons, CommandText.TODAY, botUser.isFilterNomDenom());
+            return BotMessageUtils.getBotMessageForTeacherFullTimeLessons(lessons, CommandText.TODAY, botUser.isFilterNomDenom(), botUser);
         }
         if (isTomorrow) {
-            return BotMessageUtils.getBotMessageForTeacherFullTimeLessons(lessons, CommandText.TOMORROW, botUser.isFilterNomDenom());
+            return BotMessageUtils.getBotMessageForTeacherFullTimeLessons(lessons, CommandText.TOMORROW, botUser.isFilterNomDenom(), botUser);
         }
         if (isYesterday) {
-            return BotMessageUtils.getBotMessageForTeacherFullTimeLessons(lessons, CommandText.YESTERDAY, botUser.isFilterNomDenom());
+            return BotMessageUtils.getBotMessageForTeacherFullTimeLessons(lessons, CommandText.YESTERDAY, botUser.isFilterNomDenom(), botUser);
         }
-        return BotMessageUtils.getBotMessageForTeacherFullTimeLessons(lessons, "", botUser.isFilterNomDenom());
+        return BotMessageUtils.getBotMessageForTeacherFullTimeLessons(lessons, "", botUser.isFilterNomDenom(), botUser);
     }
 
-    private BotMessage getStudentBotMessage(String message, BotUser botUser) {
+    private BotMessage getStudentBotMessage(String message, InnerBotUser botUser) {
         Calendar calendar = CalendarUtils.getCalendar();
         FullTimeLessonDto lessons = new FullTimeLessonDto();
         boolean isBotUserFullTime = false;
@@ -201,17 +202,17 @@ public class FullTimeLessonService implements BotMessageService {
 
         if (isBotUserFullTime) {
             if (isToday) {
-                return BotMessageUtils.getBotMessageForFullTimeLessons(lessons, CommandText.TODAY, botUser.isFilterNomDenom());
+                return BotMessageUtils.getBotMessageForFullTimeLessons(lessons, CommandText.TODAY, botUser.isFilterNomDenom(), botUser);
             }
             if (isTomorrow) {
-                return BotMessageUtils.getBotMessageForFullTimeLessons(lessons, CommandText.TOMORROW, botUser.isFilterNomDenom());
+                return BotMessageUtils.getBotMessageForFullTimeLessons(lessons, CommandText.TOMORROW, botUser.isFilterNomDenom(), botUser);
             }
             if (isYesterday) {
-                return BotMessageUtils.getBotMessageForFullTimeLessons(lessons, CommandText.YESTERDAY, botUser.isFilterNomDenom());
+                return BotMessageUtils.getBotMessageForFullTimeLessons(lessons, CommandText.YESTERDAY, botUser.isFilterNomDenom(), botUser);
             }
-            return BotMessageUtils.getBotMessageForFullTimeLessons(lessons, "", botUser.isFilterNomDenom());
+            return BotMessageUtils.getBotMessageForFullTimeLessons(lessons, "", botUser.isFilterNomDenom(), botUser);
         } else {
-            return BotMessageUtils.getBotMessageForUnsupportedLessons();
+            return BotMessageUtils.getBotMessageForUnsupportedLessons(botUser);
         }
     }
 }

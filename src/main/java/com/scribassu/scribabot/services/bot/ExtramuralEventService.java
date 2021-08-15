@@ -1,6 +1,7 @@
 package com.scribassu.scribabot.services.bot;
 
 import com.scribassu.scribabot.dto.BotMessage;
+import com.scribassu.scribabot.dto.InnerBotUser;
 import com.scribassu.scribabot.dto.rest.ExtramuralDto;
 import com.scribassu.scribabot.entities.BotUser;
 import com.scribassu.scribabot.services.CallRestService;
@@ -20,7 +21,7 @@ public class ExtramuralEventService implements BotMessageService {
     }
 
     @Override
-    public BotMessage getBotMessage(String message, BotUser botUser) {
+    public BotMessage getBotMessage(String message, InnerBotUser botUser) {
         if (message.equalsIgnoreCase(CommandText.EXTRAMURAL_SCHEDULE)) {
             ExtramuralDto extramuralDto = callRestService.getExtramuralEventsByGroup(
                     botUser.getDepartment(),
@@ -28,12 +29,12 @@ public class ExtramuralEventService implements BotMessageService {
             );
 
             if (extramuralDto == null || extramuralDto.getExtramuralEvents().isEmpty()) {
-                return BotMessageUtils.getBotMessageForEmptyFullTimeExamPeriod();
+                return BotMessageUtils.getBotMessageForEmptyFullTimeExamPeriod(botUser);
             } else {
-                return BotMessageUtils.getBotMessageForExtramuralEvent(extramuralDto, "");
+                return BotMessageUtils.getBotMessageForExtramuralEvent(extramuralDto, "", botUser);
             }
         } else {
-            return BotMessageUtils.getBotMessageForEmptyExtramuralEvents();
+            return BotMessageUtils.getBotMessageForEmptyExtramuralEvents(botUser);
         }
     }
 }

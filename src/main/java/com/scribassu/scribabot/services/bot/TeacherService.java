@@ -1,12 +1,14 @@
 package com.scribassu.scribabot.services.bot;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.scribassu.scribabot.dto.BotMessage;
+import com.scribassu.scribabot.dto.InnerBotUser;
 import com.scribassu.scribabot.dto.rest.TeacherListDto;
-import com.scribassu.scribabot.entities.BotUser;
+import com.scribassu.scribabot.entities.TgBotUser;
+import com.scribassu.scribabot.entities.VkBotUser;
 import com.scribassu.scribabot.keyboard.TgKeyboardGenerator;
 import com.scribassu.scribabot.keyboard.VkKeyboardGenerator;
-import com.scribassu.scribabot.repositories.BotUserRepository;
+import com.scribassu.scribabot.repositories.TgBotUserRepository;
+import com.scribassu.scribabot.repositories.VkBotUserRepository;
 import com.scribassu.scribabot.services.CallRestService;
 import com.scribassu.scribabot.text.CommandText;
 import com.scribassu.scribabot.util.Constants;
@@ -16,30 +18,32 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static com.scribassu.scribabot.keyboard.KeyboardType.ButtonFullTimeSchedule;
 import static com.scribassu.scribabot.text.MessageText.CANNOT_GET_TEACHERS;
 
 @Service
 public class TeacherService implements BotMessageService {
 
     private final CallRestService callRestService;
-    private final BotUserRepository botUserRepository;
+    private final VkBotUserRepository vkBotUserRepository;
+    private final TgBotUserRepository tgBotUserRepository;
     private final VkKeyboardGenerator vkKeyboardGenerator;
     private final TgKeyboardGenerator tgKeyboardGenerator;
 
     @Autowired
     public TeacherService(CallRestService callRestService,
-                          BotUserRepository botUserRepository,
+                          VkBotUserRepository vkBotUserRepository,
+                          TgBotUserRepository tgBotUserRepository,
                           VkKeyboardGenerator vkKeyboardGenerator,
                           TgKeyboardGenerator tgKeyboardGenerator) {
         this.callRestService = callRestService;
-        this.botUserRepository = botUserRepository;
+        this.vkBotUserRepository = vkBotUserRepository;
+        this.tgBotUserRepository = tgBotUserRepository;
         this.vkKeyboardGenerator = vkKeyboardGenerator;
         this.tgKeyboardGenerator = tgKeyboardGenerator;
     }
 
     @Override
-    public BotMessage getBotMessage(String message, BotUser botUser) {
+    public BotMessage getBotMessage(String message, InnerBotUser botUser) {
         BotMessage botMessage = new BotMessage();
 
         if (null != botUser
@@ -66,7 +70,6 @@ public class TeacherService implements BotMessageService {
                             botMessage.setTgKeyboard(TgKeyboardGenerator.mainMenu());
                         }
                     } else {
-                        ObjectMapper objectMapper = new ObjectMapper();
                         try {
                             botMessage = new BotMessage(
                                     "Выберите, для какого преподавателя хотите узнать расписание.");
@@ -100,16 +103,33 @@ public class TeacherService implements BotMessageService {
                     "Введите полностью или частично что-либо из ФИО преподавателя. " +
                             "Например, по запросу 'Ива' найдутся и 'Иванова', и 'Иван', и 'Иванович'. " +
                             "По запросу 'Иванов Ев' найдется 'Иванов Евгений', но не 'Иванова Евгения'.");
-            botUser.setPreviousUserMessage(CommandText.TEACHER_SCHEDULE);
-            botUserRepository.save(botUser);
+            if (botUser.fromVk()) {
+                VkBotUser vkBotUser = vkBotUserRepository.findOneById(botUser.getUserId());
+                vkBotUser.setPreviousUserMessage(CommandText.TEACHER_SCHEDULE);
+                vkBotUserRepository.save(vkBotUser);
+            } else {
+                TgBotUser tgBotUser = tgBotUserRepository.findOneById(botUser.getUserId());
+                tgBotUser.setPreviousUserMessage(CommandText.TEACHER_SCHEDULE);
+                tgBotUserRepository.save(tgBotUser);
+            }
         }
 
         if (message.startsWith(CommandText.TEACHER_ID_PAYLOAD)) {
-            botUser.setPreviousUserMessage(message);
-            botUserRepository.save(botUser);
-            botMessage = new BotMessage(
-                    "Выберите, для чего хотите узнать расписание преподавателя. Для сброса поиска выберите на клавиатуре 'Главное меню' или введите вручную 'меню'.",
-                    ButtonFullTimeSchedule);
+            if (botUser.fromVk()) {
+                VkBotUser vkBotUser = vkBotUserRepository.findOneById(botUser.getUserId());
+                vkBotUser.setPreviousUserMessage(message);
+                vkBotUserRepository.save(vkBotUser);
+                botMessage = new BotMessage(
+                        "Выберите, для чего хотите узнать расписание преподавателя. Для сброса поиска выберите на клавиатуре 'Главное меню' или введите вручную 'меню'.",
+                        VkKeyboardGenerator.fullTimeSchedule);
+            } else {
+                TgBotUser tgBotUser = tgBotUserRepository.findOneById(botUser.getUserId());
+                tgBotUser.setPreviousUserMessage(message);
+                tgBotUserRepository.save(tgBotUser);
+                botMessage = new BotMessage(
+                        "Выберите, для чего хотите узнать расписание преподавателя. Для сброса поиска выберите на клавиатуре 'Главное меню' или введите вручную 'меню'.",
+                        TgKeyboardGenerator.fullTimeSchedule());
+            }
         }
 
         return botMessage;

@@ -1,6 +1,7 @@
 package com.scribassu.scribabot.services.bot;
 
 import com.scribassu.scribabot.dto.BotMessage;
+import com.scribassu.scribabot.dto.InnerBotUser;
 import com.scribassu.scribabot.entities.BotUser;
 import com.scribassu.scribabot.keyboard.KeyboardType;
 import com.scribassu.scribabot.keyboard.TgKeyboardGenerator;
@@ -46,10 +47,9 @@ public class HelpService implements BotMessageService {
             "Желаю продуктивной учебы!";
 
     @Override
-    public BotMessage getBotMessage(String message, BotUser botUser) {
-        if (botUser.fromVk())
-            return new BotMessage(HELP_VK, VkKeyboardGenerator.mainMenu);
-        else
-            return new BotMessage(HELP_TG, TgKeyboardGenerator.mainMenu());
+    public BotMessage getBotMessage(String message, InnerBotUser botUser) {
+        return botUser.fromVk() ?
+                new BotMessage(HELP_VK, VkKeyboardGenerator.mainMenu)
+                : new BotMessage(HELP_TG, TgKeyboardGenerator.mainMenu());
     }
 }

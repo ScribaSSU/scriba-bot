@@ -1,10 +1,12 @@
 package com.scribassu.scribabot.keyboard;
 
+import com.scribassu.scribabot.dto.InnerBotUser;
 import com.scribassu.scribabot.dto.vkkeyboard.*;
 import com.scribassu.scribabot.entities.*;
 import com.scribassu.scribabot.repositories.*;
 import com.scribassu.scribabot.text.CommandText;
 import com.scribassu.scribabot.util.BotMessageUtils;
+import com.scribassu.scribabot.util.BotUserSource;
 import com.scribassu.scribabot.util.Constants;
 import com.scribassu.tracto.domain.Teacher;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,11 +46,40 @@ public class VkKeyboardGenerator {
         this.extramuralEventAfterTomorrowNotificationRepository = extramuralEventAfterTomorrowNotificationRepository;
     }
 
+    private static final VkKeyboardButton MAIN_MENU_BUTTON = new VkKeyboardButton(
+            new VkKeyboardButtonActionText(
+                    "Главное меню","{\"button\": \"1\"}", VkKeyboardButtonActionType.TEXT
+            ), VkKeyboardButtonColor.PRIMARY);
+
+    private static final VkKeyboardButton SETTINGS_BUTTON = new VkKeyboardButton(
+            new VkKeyboardButtonActionText(
+                    "Настройки", "{\"button\": \"1\"}", VkKeyboardButtonActionType.TEXT
+            ), VkKeyboardButtonColor.PRIMARY);
+
+    private static final VkKeyboardButton CHOOSE_DEPARTMENT_AND_GROUP_BUTTON = new VkKeyboardButton(
+            new VkKeyboardButtonActionText(
+                    "Выбрать факультет и группу", "{\"button\": \"1\"}", VkKeyboardButtonActionType.TEXT
+            ), VkKeyboardButtonColor.POSITIVE);
+
+    private static final VkKeyboardButton TODAY_SCHEDULE_BUTTON = new VkKeyboardButton(
+            new VkKeyboardButtonActionText(
+                    "Сегодня", "{\"button\": \"1\"}", VkKeyboardButtonActionType.TEXT
+            ), VkKeyboardButtonColor.PRIMARY);
+
+    private static final VkKeyboardButton TOMORROW_SCHEDULE_BUTTON = new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+            "Завтра", "{\"button\": \"1\"}", VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY);
+
+    private static final VkKeyboardButton YESTERDAY_SCHEDULE_BUTTON = new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+            "Вчера","{\"button\": \"1\"}", VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY);
+
     /*
     TODO:
-    schedule fulltime
-    schedule extramural
-    hours
+    UPDATE TEACHER KEYBOARD AS TG
+
 
     DONE:
     main menu
@@ -61,6 +92,9 @@ public class VkKeyboardGenerator {
     group numbers
     departments
     confirm deletion
+    hours
+    schedule fulltime
+    schedule extramural
      */
 
     public static final VkKeyboard mainMenu = new VkKeyboard(List.of(
@@ -80,14 +114,7 @@ public class VkKeyboardGenerator {
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.POSITIVE)
             ),
-            List.of(
-                    new VkKeyboardButton(
-                            new VkKeyboardButtonActionText(
-                                    "Настройки",
-                                    "{\"button\": \"1\"}",
-                                    VkKeyboardButtonActionType.TEXT
-                            ), VkKeyboardButtonColor.PRIMARY)
-            ),
+            List.of(SETTINGS_BUTTON),
             List.of(
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
@@ -105,14 +132,18 @@ public class VkKeyboardGenerator {
                                     "Да",
                                     "{\"button\": \"1\"}",
                                     VkKeyboardButtonActionType.TEXT
-                            ), VkKeyboardButtonColor.POSITIVE),
+                            ), VkKeyboardButtonColor.POSITIVE)
+            ),
+            List.of(
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "Нет",
                                     "{\"button\": \"1\"}",
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.NEGATIVE)
-            )
+            ),
+            List.of(SETTINGS_BUTTON),
+            List.of(MAIN_MENU_BUTTON)
     ), false);
 
     public static final VkKeyboard educationForms = new VkKeyboard(List.of(
@@ -130,14 +161,7 @@ public class VkKeyboardGenerator {
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY)
             ),
-            List.of(
-                    new VkKeyboardButton(
-                            new VkKeyboardButtonActionText(
-                                    "Главное меню",
-                                    "{\"button\": \"1\"}",
-                                    VkKeyboardButtonActionType.TEXT
-                            ), VkKeyboardButtonColor.PRIMARY)
-            )
+            List.of(MAIN_MENU_BUTTON)
     ), false);
 
     public static final VkKeyboard courses = new VkKeyboard(List.of(
@@ -183,14 +207,7 @@ public class VkKeyboardGenerator {
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY)
             ),
-            List.of(
-                    new VkKeyboardButton(
-                            new VkKeyboardButtonActionText(
-                                    "Главное меню",
-                                    "{\"button\": \"1\"}",
-                                    VkKeyboardButtonActionType.TEXT
-                            ), VkKeyboardButtonColor.PRIMARY)
-            )
+            List.of(MAIN_MENU_BUTTON)
     ), false);
 
 
@@ -349,14 +366,243 @@ public class VkKeyboardGenerator {
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY)
             ),
+            List.of(MAIN_MENU_BUTTON)
+    ), false);
+
+    public static final VkKeyboard hours = new VkKeyboard(List.of(
             List.of(
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
-                                    "Главное меню",
+                                    "1 ч",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY),
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "2 ч",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY),
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "3 ч",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY),
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "4 ч",
                                     "{\"button\": \"1\"}",
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY)
-            )
+            ),
+            List.of(
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "5 ч",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY),
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "6 ч",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY),
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "7 ч",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY),
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "8 ч",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY)
+            ),
+            List.of(
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "9 ч",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY),
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "10 ч",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY),
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "11 ч",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY),
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "12 ч",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY)
+            ),
+            List.of(
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "13 ч",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY),
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "14 ч",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY),
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "15 ч",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY),
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "16 ч",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY)
+            ),
+            List.of(
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "17 ч",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY),
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "18 ч",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY),
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "19 ч",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY),
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "20 ч",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY)
+            ),
+            List.of(
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "21 ч",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY),
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "22 ч",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY),
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "23 ч",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY),
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "0 ч",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY)
+            ),
+            List.of(MAIN_MENU_BUTTON)
+    ), false);
+
+    public static final VkKeyboard fullTimeSchedule = new VkKeyboard(List.of(
+            List.of(
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "Все занятия",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY)
+            ),
+            List.of(TODAY_SCHEDULE_BUTTON, TOMORROW_SCHEDULE_BUTTON, YESTERDAY_SCHEDULE_BUTTON),
+            List.of(
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "Пн",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY),
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "Вт",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY),
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "Ср",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY)
+            ),
+            List.of(
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "Чт",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY),
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "Пт",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY),
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "Сб",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY)
+            ),
+            List.of(
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "Сессия",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY)
+            ),
+            List.of(CHOOSE_DEPARTMENT_AND_GROUP_BUTTON),
+            List.of(MAIN_MENU_BUTTON)
+    ), false);
+
+    public static final VkKeyboard extramuralSchedule = new VkKeyboard(List.of(
+            List.of(
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "Все занятия",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY)
+            ),
+            List.of(TODAY_SCHEDULE_BUTTON, TOMORROW_SCHEDULE_BUTTON, YESTERDAY_SCHEDULE_BUTTON),
+            List.of(CHOOSE_DEPARTMENT_AND_GROUP_BUTTON),
+            List.of(MAIN_MENU_BUTTON)
     ), false);
 
     public VkKeyboard teachers(List<Teacher> teachers) {
@@ -383,14 +629,7 @@ public class VkKeyboardGenerator {
         }
 
         vkKeyboardButtons.add(new ArrayList<>());
-        vkKeyboardButtons.get(vkKeyboardButtons.size() - 1).add(
-                new VkKeyboardButton(
-                        new VkKeyboardButtonActionText(
-                                "Главное меню",
-                                "",
-                                VkKeyboardButtonActionType.TEXT
-                        ), VkKeyboardButtonColor.POSITIVE)
-        );
+        vkKeyboardButtons.get(vkKeyboardButtons.size() - 1).add(MAIN_MENU_BUTTON);
 
         return new VkKeyboard(vkKeyboardButtons, false);
     }
@@ -421,19 +660,12 @@ public class VkKeyboardGenerator {
         }
 
         vkKeyboardButtons.add(new ArrayList<>());
-        vkKeyboardButtons.get(vkKeyboardButtons.size() - 1).add(
-                new VkKeyboardButton(
-                        new VkKeyboardButtonActionText(
-                                "Главное меню",
-                                "",
-                                VkKeyboardButtonActionType.TEXT
-                        ), VkKeyboardButtonColor.POSITIVE)
-        );
+        vkKeyboardButtons.get(vkKeyboardButtons.size() - 1).add(MAIN_MENU_BUTTON);
 
         return new VkKeyboard(vkKeyboardButtons, true);
     }
 
-    public VkKeyboard settings(BotUser user) {
+    public VkKeyboard settings(InnerBotUser user) {
         List<List<VkKeyboardButton>> vkKeyboardButtons = new ArrayList<>();
         vkKeyboardButtons.add(new ArrayList<>());
         vkKeyboardButtons.add(new ArrayList<>());
@@ -476,15 +708,7 @@ public class VkKeyboardGenerator {
             );
         }
 
-        vkKeyboardButtons.get(3).add(
-                new VkKeyboardButton(
-                        new VkKeyboardButtonActionText(
-                                "Выбрать факультет и группу",
-                                "{\"button\": \"1\"}",
-                                VkKeyboardButtonActionType.TEXT
-                        ), VkKeyboardButtonColor.POSITIVE
-                )
-        );
+        vkKeyboardButtons.get(3).add(CHOOSE_DEPARTMENT_AND_GROUP_BUTTON);
 
         vkKeyboardButtons.get(3).add(
                 new VkKeyboardButton(
@@ -506,15 +730,7 @@ public class VkKeyboardGenerator {
                 )
         );
 
-        vkKeyboardButtons.get(5).add(
-                new VkKeyboardButton(
-                        new VkKeyboardButtonActionText(
-                                "Главное меню",
-                                "{\"button\": \"1\"}",
-                                VkKeyboardButtonActionType.TEXT
-                        ), VkKeyboardButtonColor.PRIMARY
-                )
-        );
+        vkKeyboardButtons.get(5).add(MAIN_MENU_BUTTON);
 
         if (!BotMessageUtils.isBotUserExtramural(user)) {
             vkKeyboardButtons.get(0).add(
@@ -533,7 +749,7 @@ public class VkKeyboardGenerator {
         return new VkKeyboard(vkKeyboardButtons, false);
     }
 
-    public VkKeyboard settingsExamNotification(BotUser botUser) {
+    public VkKeyboard settingsExamNotification(InnerBotUser botUser) {
         List<List<VkKeyboardButton>> vkKeyboardButtons = new ArrayList<>();
         vkKeyboardButtons.add(new ArrayList<>());
         vkKeyboardButtons.add(new ArrayList<>());
@@ -545,6 +761,7 @@ public class VkKeyboardGenerator {
         vkKeyboardButtons.add(new ArrayList<>());
 
         String userId = botUser.getUserId();
+        BotUserSource source = botUser.getSource();
 
         vkKeyboardButtons.get(0).add(
                 new VkKeyboardButton(
@@ -576,30 +793,13 @@ public class VkKeyboardGenerator {
                 )
         );
 
-        vkKeyboardButtons.get(6).add(
-                new VkKeyboardButton(
-                        new VkKeyboardButtonActionText(
-                                "Настройки",
-                                "{\"button\": \"1\"}",
-                                VkKeyboardButtonActionType.TEXT
-                        ), VkKeyboardButtonColor.PRIMARY
-                )
-        );
-
-        vkKeyboardButtons.get(7).add(
-                new VkKeyboardButton(
-                        new VkKeyboardButtonActionText(
-                                "Главное меню",
-                                "{\"button\": \"1\"}",
-                                VkKeyboardButtonActionType.TEXT
-                        ), VkKeyboardButtonColor.PRIMARY
-                )
-        );
+        vkKeyboardButtons.get(6).add(SETTINGS_BUTTON);
+        vkKeyboardButtons.get(7).add(MAIN_MENU_BUTTON);
 
         if (BotMessageUtils.isBotUserFullTime(botUser)) {
-            ExamPeriodTodayNotification examPeriodTodayNotification = examPeriodTodayNotificationRepository.findByUserId(userId);
-            ExamPeriodTomorrowNotification examPeriodTomorrowNotification = examPeriodTomorrowNotificationRepository.findByUserId(userId);
-            ExamPeriodAfterTomorrowNotification examPeriodAfterTomorrowNotification = examPeriodAfterTomorrowNotificationRepository.findByUserId(userId);
+            ExamPeriodTodayNotification examPeriodTodayNotification = examPeriodTodayNotificationRepository.findByUserIdAndUserSource(userId, source);
+            ExamPeriodTomorrowNotification examPeriodTomorrowNotification = examPeriodTomorrowNotificationRepository.findByUserIdAndUserSource(userId, source);
+            ExamPeriodAfterTomorrowNotification examPeriodAfterTomorrowNotification = examPeriodAfterTomorrowNotificationRepository.findByUserIdAndUserSource(userId, source);
 
             if (null != examPeriodTodayNotification && examPeriodTodayNotification.isEnabled()) {
                 vkKeyboardButtons.get(1).add(
@@ -669,9 +869,9 @@ public class VkKeyboardGenerator {
         }
 
         if (BotMessageUtils.isBotUserExtramural(botUser)) {
-            ExtramuralEventTodayNotification extramuralEventTodayNotification = extramuralEventTodayNotificationRepository.findByUserId(userId);
-            ExtramuralEventTomorrowNotification extramuralEventTomorrowNotification = extramuralEventTomorrowNotificationRepository.findByUserId(userId);
-            ExtramuralEventAfterTomorrowNotification extramuralEventAfterTomorrowNotification = extramuralEventAfterTomorrowNotificationRepository.findByUserId(userId);
+            ExtramuralEventTodayNotification extramuralEventTodayNotification = extramuralEventTodayNotificationRepository.findByUserIdAndUserSource(userId, source);
+            ExtramuralEventTomorrowNotification extramuralEventTomorrowNotification = extramuralEventTomorrowNotificationRepository.findByUserIdAndUserSource(userId, source);
+            ExtramuralEventAfterTomorrowNotification extramuralEventAfterTomorrowNotification = extramuralEventAfterTomorrowNotificationRepository.findByUserIdAndUserSource(userId, source);
 
             if (null != extramuralEventTodayNotification && extramuralEventTodayNotification.isEnabled()) {
                 vkKeyboardButtons.get(1).add(
@@ -743,7 +943,7 @@ public class VkKeyboardGenerator {
         return new VkKeyboard(vkKeyboardButtons, false);
     }
 
-    public VkKeyboard settingsScheduleNotification(BotUser botUser) {
+    public VkKeyboard settingsScheduleNotification(InnerBotUser botUser) {
         List<List<VkKeyboardButton>> vkKeyboardButtons = new ArrayList<>();
         vkKeyboardButtons.add(new ArrayList<>());
         vkKeyboardButtons.add(new ArrayList<>());
@@ -753,9 +953,10 @@ public class VkKeyboardGenerator {
         vkKeyboardButtons.add(new ArrayList<>());
 
         String userId = botUser.getUserId();
+        BotUserSource source = botUser.getSource();
 
-        ScheduleTodayNotification scheduleTodayNotification = scheduleTodayNotificationRepository.findByUserId(userId);
-        ScheduleTomorrowNotification scheduleTomorrowNotification = scheduleTomorrowNotificationRepository.findByUserId(userId);
+        ScheduleTodayNotification scheduleTodayNotification = scheduleTodayNotificationRepository.findByUserIdAndUserSource(userId, source);
+        ScheduleTomorrowNotification scheduleTomorrowNotification = scheduleTomorrowNotificationRepository.findByUserIdAndUserSource(userId, source);
 
         vkKeyboardButtons.get(0).add(
                 new VkKeyboardButton(
@@ -803,7 +1004,7 @@ public class VkKeyboardGenerator {
             vkKeyboardButtons.get(3).add(
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
-                                    "Выкл. рассылку сессии на завтра",
+                                    "Выкл. рассылку расп-я на завтра",
                                     "{\"button\": \"1\"}",
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.NEGATIVE
@@ -821,25 +1022,8 @@ public class VkKeyboardGenerator {
             );
         }
 
-        vkKeyboardButtons.get(4).add(
-                new VkKeyboardButton(
-                        new VkKeyboardButtonActionText(
-                                "Настройки",
-                                "{\"button\": \"1\"}",
-                                VkKeyboardButtonActionType.TEXT
-                        ), VkKeyboardButtonColor.PRIMARY
-                )
-        );
-
-        vkKeyboardButtons.get(5).add(
-                new VkKeyboardButton(
-                        new VkKeyboardButtonActionText(
-                                "Главное меню",
-                                "{\"button\": \"1\"}",
-                                VkKeyboardButtonActionType.TEXT
-                        ), VkKeyboardButtonColor.PRIMARY
-                )
-        );
+        vkKeyboardButtons.get(4).add(SETTINGS_BUTTON);
+        vkKeyboardButtons.get(5).add(MAIN_MENU_BUTTON);
 
         return new VkKeyboard(vkKeyboardButtons, false);
     }

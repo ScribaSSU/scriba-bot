@@ -1,11 +1,10 @@
 package com.scribassu.scribabot.entities;
 
+import com.scribassu.scribabot.util.BotUserSource;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 @Data
@@ -16,12 +15,24 @@ public class ExtramuralEventTomorrowNotification {
     private Long id;
 
     private String userId;
+
+    @Enumerated(EnumType.STRING)
+    private BotUserSource userSource;
+
     private boolean isEnabled;
     private Integer hourForSend;
 
-    public ExtramuralEventTomorrowNotification(String userId, boolean isEnabled, int hourForSend) {
+    public ExtramuralEventTomorrowNotification(String userId,
+                                               BotUserSource userSource,
+                                               boolean isEnabled,
+                                               int hourForSend) {
         this.userId = userId;
+        this.userSource = userSource;
         this.isEnabled = isEnabled;
         this.hourForSend = hourForSend;
+    }
+
+    public boolean fromVk() {
+        return BotUserSource.VK.equals(this.userSource);
     }
 }

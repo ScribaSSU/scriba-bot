@@ -8,14 +8,13 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Entity
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @Data
 @NoArgsConstructor
-public class BotUser {
+public abstract class BotUser {
+
     @Id
     private String userId;
-
-    @Enumerated(EnumType.STRING)
-    private BotUserSource source;
 
     private String department;
     private String groupNumber;
@@ -29,18 +28,6 @@ public class BotUser {
     public BotUser(String userId) {
         this.userId = userId;
         this.previousUserMessage = "";
-    }
-
-    public boolean wantTeacherSchedule() {
-        return previousUserMessage.startsWith(CommandText.TEACHER_ID_PAYLOAD);
-    }
-
-    public boolean fromVk() {
-        return BotUserSource.VK.equals(source);
-    }
-
-    public boolean fromTg() {
-        return BotUserSource.TG.equals(source);
     }
 
     @Override
