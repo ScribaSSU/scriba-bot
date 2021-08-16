@@ -32,6 +32,7 @@ public class CallRestService {
     private final String TEACHER_URI = "teacher";
 
     private final String EXTR_EV_GROUP_URI = "schedule/extramural/%s/%s";
+    private final String EXTR_EV_GROUP_URI_MONTH_DAY = "schedule/extramural/%s/%s/%s/%s";
 
     public FullTimeLessonDto getFullTimeLessonsByDayAndLesson(String departmentUrl,
                                                               String groupNumber,
@@ -218,7 +219,7 @@ public class CallRestService {
         RestTemplate restTemplate = new RestTemplate();
         String uri = prefix +
                 String.format(
-                        EXTR_EV_GROUP_URI,
+                        EXTR_EV_GROUP_URI_MONTH_DAY,
                         departmentUrl,
                         groupNumber,
                         month,
