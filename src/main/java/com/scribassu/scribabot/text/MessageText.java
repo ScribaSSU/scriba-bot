@@ -12,13 +12,9 @@ public class MessageText {
     public static final String CHOOSE_STUDENT_GROUP = "Выберите группу. Также вы можете ввести номер группы вручную в формате 'г номергруппы', без кавычек. Например, г 123.";
     public static final String CHOOSE_SCHEDULE_NOTIFICATION_TIME = "Выберите удобное время для рассылки расписания на %s.";
     public static final String SCHEDULE_WILL_BE_SENT = "Теперь расписание на %s будет приходить в ";
-    public static final String SCHEDULE_IS_ENABLED_DOUBLE = "Рассылка расписания на %s уже включена.";
-    public static final String SCHEDULE_IS_DISABLED_DOUBLE = "Рассылка расписания на %s уже выключена.";
     public static final String SCHEDULE_IS_DISABLED = "Рассылка расписания на %s выключена.";
     public static final String CHOOSE_EXAM_PERIOD_NOTIFICATION_TIME = "Выберите удобное время для рассылки сессии на %s.";
     public static final String EXAM_PERIOD_WILL_BE_SENT = "Теперь расписание сессии на %s будет приходить в ";
-    public static final String EXAM_PERIOD_IS_ENABLED_DOUBLE = "Рассылка расписания сессии на %s уже включена.";
-    public static final String EXAM_PERIOD_IS_DISABLED_DOUBLE = "Рассылка расписания сессии на %s уже выключена.";
     public static final String EXAM_PERIOD_IS_DISABLED = "Рассылка расписания сессии на %s выключена.";
     public static final String CANNOT_GET_TEACHERS = "Не удалось получить список преподавателей.";
     public static final String FINISH_SET_GROUP = "Отлично, вы настроили свою группу. Теперь вы можете узнавать расписание.";

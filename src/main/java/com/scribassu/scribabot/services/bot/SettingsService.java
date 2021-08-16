@@ -533,45 +533,44 @@ public class SettingsService implements BotMessageService {
                 String formatSchedule = String.format(MessageText.CHOOSE_SCHEDULE_NOTIFICATION_TIME, "завтра");
                 if (botUser.fromVk()) {
                     botMessage = new BotMessage(formatSchedule, VkKeyboardGenerator.hours);
-                    vkBotUserRepository.updatePreviousUserMessage(formatSchedule, userId);
+                    VkBotUser vkBotUser = vkBotUserRepository.findOneById(userId);
+                    vkBotUser.setPreviousUserMessage(formatSchedule);
+                    vkBotUserRepository.save(vkBotUser);
                 } else {
                     botMessage = new BotMessage(formatSchedule, TgKeyboardGenerator.hours());
-                    tgBotUserRepository.updatePreviousUserMessage(formatSchedule, userId);
+                    TgBotUser tgBotUser = tgBotUserRepository.findOneById(userId);
+                    tgBotUser.setPreviousUserMessage(formatSchedule);
+                    tgBotUserRepository.save(tgBotUser);
                 }
                 break;
             case CommandText.ENABLE_SEND_SCHEDULE_TOMORROW:
                 ScheduleTomorrowNotification scheduleTomorrowNotificationEn =
                         scheduleTomorrowNotificationRepository.findByUserIdAndUserSource(userId, source);
-                if (scheduleTomorrowNotificationEn != null && !scheduleTomorrowNotificationEn.isEnabled()) {
+                if (null != scheduleTomorrowNotificationEn) {
                     scheduleTomorrowNotificationEn.setEnabled(true);
                     scheduleTomorrowNotificationRepository.save(scheduleTomorrowNotificationEn);
-                    botMessage = new BotMessage(
-                            String.format(MessageText.SCHEDULE_WILL_BE_SENT, "завтра") +
-                                    scheduleTomorrowNotificationEn.getHourForSend() + " ч.",
-                            vkKeyboardGenerator.settingsScheduleNotification(botUser));
-                } else {
-                    if (null == scheduleTomorrowNotificationEn) {
-                        if (botUser.fromVk()) {
-                            botMessage = new BotMessage(
-                                    "Вы еще не подключали рассылку расписания на завтра. Подключите через '" +
-                                            CommandText.SET_SEND_SCHEDULE_TIME_TOMORROW + "'.",
-                                    vkKeyboardGenerator.settingsScheduleNotification(botUser));
-                        } else {
-                            botMessage = new BotMessage(
-                                    "Вы еще не подключали рассылку расписания на завтра. Подключите через '" +
-                                            CommandText.SET_SEND_SCHEDULE_TIME_TOMORROW + "'.",
-                                    tgKeyboardGenerator.settingsScheduleNotification(botUser));
-                        }
+                    String enableNotificationMessage = String.format(MessageText.SCHEDULE_WILL_BE_SENT, "завтра") +
+                            scheduleTomorrowNotificationEn.getHourForSend() + " ч.";
+                    if(botUser.fromVk()) {
+                        botMessage = new BotMessage(
+                                enableNotificationMessage,
+                                vkKeyboardGenerator.settingsScheduleNotification(botUser));
                     } else {
-                        if (botUser.fromVk()) {
-                            botMessage = new BotMessage(
-                                    String.format(MessageText.SCHEDULE_IS_ENABLED_DOUBLE, "завтра"),
-                                    vkKeyboardGenerator.settingsScheduleNotification(botUser));
-                        } else {
-                            botMessage = new BotMessage(
-                                    String.format(MessageText.SCHEDULE_IS_ENABLED_DOUBLE, "завтра"),
-                                    tgKeyboardGenerator.settingsScheduleNotification(botUser));
-                        }
+                        botMessage = new BotMessage(
+                                enableNotificationMessage,
+                                tgKeyboardGenerator.settingsScheduleNotification(botUser));
+                    }
+                } else {
+                    if (botUser.fromVk()) {
+                        botMessage = new BotMessage(
+                                "Вы еще не подключали рассылку расписания на завтра. Подключите через '" +
+                                        CommandText.SET_SEND_SCHEDULE_TIME_TOMORROW + "'.",
+                                vkKeyboardGenerator.settingsScheduleNotification(botUser));
+                    } else {
+                        botMessage = new BotMessage(
+                                "Вы еще не подключали рассылку расписания на завтра. Подключите через '" +
+                                        CommandText.SET_SEND_SCHEDULE_TIME_TOMORROW + "'.",
+                                tgKeyboardGenerator.settingsScheduleNotification(botUser));
                     }
                 }
                 break;
