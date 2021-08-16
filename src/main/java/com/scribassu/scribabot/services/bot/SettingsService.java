@@ -242,7 +242,7 @@ public class SettingsService implements BotMessageService {
                     ExamPeriodAfterTomorrowNotification examPeriodAfterTomorrowNotification =
                             examPeriodAfterTomorrowNotificationRepository.findByUserIdAndUserSource(userId, source);
 
-                    if (examPeriodAfterTomorrowNotification == null) {
+                    if (null == examPeriodAfterTomorrowNotification) {
                         examPeriodAfterTomorrowNotification = new ExamPeriodAfterTomorrowNotification(userId, source, true, hourForSend);
                     } else {
                         examPeriodAfterTomorrowNotification.setHourForSend(hourForSend);

@@ -35,7 +35,7 @@ public class ExamPeriodService implements BotMessageService {
         String teacherId = botUser.getPreviousUserMessage().split(" ")[2];
         if (message.equalsIgnoreCase(CommandText.EXAMS)) {
             TeacherExamPeriodEventDto examPeriodEventDto = callRestService.getTeacherExamPeriodEvents(teacherId);
-            if (examPeriodEventDto == null || examPeriodEventDto.getExamPeriodEvents().isEmpty()) {
+            if (null == examPeriodEventDto || examPeriodEventDto.getExamPeriodEvents().isEmpty()) {
                 return BotMessageUtils.getBotMessageForEmptyFullTimeExamPeriod(botUser);
             } else {
                 return BotMessageUtils.getBotMessageForTeacherExamPeriod(examPeriodEventDto, botUser);
@@ -51,7 +51,7 @@ public class ExamPeriodService implements BotMessageService {
                     botUser.getDepartment(),
                     botUser.getGroupNumber()
             );
-            if (examPeriodEventDto == null || examPeriodEventDto.getExamPeriodEvents().isEmpty()) {
+            if (null == examPeriodEventDto || examPeriodEventDto.getExamPeriodEvents().isEmpty()) {
                 return BotMessageUtils.getBotMessageForEmptyFullTimeExamPeriod(botUser);
             } else {
                 return BotMessageUtils.getBotMessageForFullTimeExamPeriod(examPeriodEventDto, "", botUser);

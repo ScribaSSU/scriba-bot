@@ -28,7 +28,7 @@ public class ExtramuralEventService implements BotMessageService {
                     botUser.getGroupNumber()
             );
 
-            if (extramuralDto == null || extramuralDto.getExtramuralEvents().isEmpty()) {
+            if (null == extramuralDto|| extramuralDto.getExtramuralEvents().isEmpty()) {
                 return BotMessageUtils.getBotMessageForEmptyFullTimeExamPeriod(botUser);
             } else {
                 return BotMessageUtils.getBotMessageForExtramuralEvent(extramuralDto, "", botUser);
