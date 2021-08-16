@@ -21,6 +21,36 @@ public class MessageText {
     public static final String CANNOT_GET_SCHEDULE_GROUP_NOT_SET = "Извините, ваша форма обучения пока не поддерживается, или вы недонастроили группу :( Перенастройте, пожалуйста. Если вы заочник или вечерник, тогда ждите, работа с вашими расписаниями в разработке.";
     public static final String DELETE_CONFIRMATION = "Текущее действие удалит ваши данные из базы Скрибы, но не сам диалог. Если вы захотите снова пользоваться Скрибой, напишите \"Привет\". Вы точно хотите удалить профиль?";
     public static final String BYE_MESSAGE = "Надеюсь, Скриба была полезной. До новых встреч!";
+    public static final String NOT_BYE_MESSAGE = "Спасибо, что остаётесь с нами!";
+    public static final String HERE_EXAM_PERIOD_NOTIFICATION = "Здесь вы можете настроить рассылку расписания сессии.";
+    public static final String HERE_SCHEDULE_NOTIFICATION = "Здесь вы можете настроить рассылку расписания занятий.";
+    public static final String ENABLE_FILTER_WEEK_TYPE = "Включена фильтрация по типу недели.";
+    public static final String DISABLE_FILTER_WEEK_TYPE = "Выключена фильтрация по типу недели.";
+    public static final String SCHEDULE_WILL_BE_SENT_ABSTRACT = "Теперь расписание будет приходить в ";
+
+    public static final String NOT_ENABLE_SCHEDULE_NOTIFICATION_TODAY = "Вы еще не подключали рассылку расписания на сегодня. Подключите через '";
+    public static final String NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_TODAY = "Вы еще не подключали рассылку расписания сессии на сегодня. Подключите через '";
+    public static final String NOT_ENABLE_SCHEDULE_NOTIFICATION_TOMORROW = "Вы еще не подключали рассылку расписания на завтра. Подключите через '";
+    public static final String NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_TOMORROW = "Вы еще не подключали рассылку расписания сессии на завтра. Подключите через '";
+    public static final String NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_AFTER_TOMORROW = "Вы еще не подключали рассылку расписания сессии на послезавтра. Подключите через '";
+    public static final String H_DOT = " ч.";
+    public static final String QUOTE_DOT = "'.";
+
+    public static final String NOT_ENABLE_SCHEDULE_NOTIFICATION_TODAY_FRMTD = NOT_ENABLE_SCHEDULE_NOTIFICATION_TODAY + CommandText.SET_SEND_SCHEDULE_TIME_TODAY + QUOTE_DOT;
+    public static final String NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_TODAY_FRMTD = NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_TODAY + CommandText.SET_SEND_EXAM_PERIOD_TIME_TODAY + QUOTE_DOT;
+    public static final String NOT_ENABLE_SCHEDULE_NOTIFICATION_TOMORROW_FRMTD = NOT_ENABLE_SCHEDULE_NOTIFICATION_TOMORROW + CommandText.SET_SEND_SCHEDULE_TIME_TOMORROW + QUOTE_DOT;
+    public static final String NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_TOMORROW_FRMTD = NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_TOMORROW + CommandText.SET_SEND_EXAM_PERIOD_TIME_TOMORROW + QUOTE_DOT;
+    public static final String NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_AFTER_TOMORROW_FRMTD = NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_AFTER_TOMORROW + CommandText.SET_SEND_EXAM_PERIOD_TIME_AFTER_TOMORROW + QUOTE_DOT;
+
+    public static final String TODAY = "сегодня";
+    public static final String TOMORROW = "завтра";
+    public static final String AFTER_TOMORROW = "послезавтра";
+
+    public static final String CHOOSE_SCHEDULE_NOTIFICATION_TIME_TODAY = String.format(CHOOSE_SCHEDULE_NOTIFICATION_TIME, TODAY);
+    public static final String CHOOSE_SCHEDULE_NOTIFICATION_TIME_TOMORROW = String.format(CHOOSE_SCHEDULE_NOTIFICATION_TIME, TOMORROW);
+    public static final String CHOOSE_EXAM_PERIOD_NOTIFICATION_TIME_TODAY = String.format(CHOOSE_EXAM_PERIOD_NOTIFICATION_TIME, TODAY);
+    public static final String CHOOSE_EXAM_PERIOD_NOTIFICATION_TIME_TOMORROW = String.format(CHOOSE_EXAM_PERIOD_NOTIFICATION_TIME, TOMORROW);
+    public static final String CHOOSE_EXAM_PERIOD_NOTIFICATION_TIME_AFTER_TOMORROW = String.format(CHOOSE_EXAM_PERIOD_NOTIFICATION_TIME, AFTER_TOMORROW);
 
     public static final String DO_NOT_SEND = "DO NOT SEND";
 }
