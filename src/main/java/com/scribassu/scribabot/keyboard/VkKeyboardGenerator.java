@@ -255,6 +255,12 @@ public class VkKeyboardGenerator {
             List.of(
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
+                                    "И-Т ФИЗИКИ",
+                                    "{\"button\": \"1\"}",
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY),
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
                                     "И-Т ФИЗ КУЛ",
                                     "{\"button\": \"1\"}",
                                     VkKeyboardButtonActionType.TEXT
@@ -264,15 +270,15 @@ public class VkKeyboardGenerator {
                                     "ИФИЖ",
                                     "{\"button\": \"1\"}",
                                     VkKeyboardButtonActionType.TEXT
-                            ), VkKeyboardButtonColor.PRIMARY),
+                            ), VkKeyboardButtonColor.PRIMARY)
+            ),
+            List.of(
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "И-Т ХИМИИ",
                                     "{\"button\": \"1\"}",
                                     VkKeyboardButtonActionType.TEXT
-                            ), VkKeyboardButtonColor.PRIMARY)
-            ),
-            List.of(
+                            ), VkKeyboardButtonColor.PRIMARY),
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "МЕХМАТ",
@@ -284,15 +290,15 @@ public class VkKeyboardGenerator {
                                     "СОЦФАК",
                                     "{\"button\": \"1\"}",
                                     VkKeyboardButtonActionType.TEXT
-                            ), VkKeyboardButtonColor.PRIMARY),
+                            ), VkKeyboardButtonColor.PRIMARY)
+            ),
+            List.of(
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "ФИЯИЛ",
                                     "{\"button\": \"1\"}",
                                     VkKeyboardButtonActionType.TEXT
-                            ), VkKeyboardButtonColor.PRIMARY)
-            ),
-            List.of(
+                            ), VkKeyboardButtonColor.PRIMARY),
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "КНИИТ",
@@ -304,15 +310,15 @@ public class VkKeyboardGenerator {
                                     "ФНБМТ",
                                     "{\"button\": \"1\"}",
                                     VkKeyboardButtonActionType.TEXT
-                            ), VkKeyboardButtonColor.PRIMARY),
+                            ), VkKeyboardButtonColor.PRIMARY)
+            ),
+            List.of(
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "ФНП",
                                     "{\"button\": \"1\"}",
                                     VkKeyboardButtonActionType.TEXT
-                            ), VkKeyboardButtonColor.PRIMARY)
-            ),
-            List.of(
+                            ), VkKeyboardButtonColor.PRIMARY),
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "ПСИХОЛОГ",
@@ -322,12 +328,6 @@ public class VkKeyboardGenerator {
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "ППИСО",
-                                    "{\"button\": \"1\"}",
-                                    VkKeyboardButtonActionType.TEXT
-                            ), VkKeyboardButtonColor.PRIMARY),
-                    new VkKeyboardButton(
-                            new VkKeyboardButtonActionText(
-                                    "ФИЗФАК",
                                     "{\"button\": \"1\"}",
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY)

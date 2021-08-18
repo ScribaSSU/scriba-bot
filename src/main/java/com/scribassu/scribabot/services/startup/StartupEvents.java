@@ -46,6 +46,7 @@ public class StartupEvents implements ApplicationListener<ContextRefreshedEvent>
         DepartmentConverter.add("идпо", "idpo");
         DepartmentConverter.add("и-т искусств", "ii");
         DepartmentConverter.add("ииимо", "imo");
+        DepartmentConverter.add("и-т физики", "ff");
         DepartmentConverter.add("и-т физ кул", "ifk");
         DepartmentConverter.add("ифиж", "ifg");
         DepartmentConverter.add("и-т химии", "ih");
@@ -56,7 +57,6 @@ public class StartupEvents implements ApplicationListener<ContextRefreshedEvent>
         DepartmentConverter.add("фнп", "fnp");
         DepartmentConverter.add("психолог", "fps");
         DepartmentConverter.add("пписо", "fppso");
-        DepartmentConverter.add("физфак", "ff");
         DepartmentConverter.add("философ", "fp");
         DepartmentConverter.add("эконом", "ef");
         DepartmentConverter.add("юрфак", "uf");

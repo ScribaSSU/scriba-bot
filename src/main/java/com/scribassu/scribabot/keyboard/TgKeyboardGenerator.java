@@ -131,21 +131,21 @@ public class TgKeyboardGenerator {
         rows.get(1).add(new KeyboardButton("И-Т ИСКУССТВ"));
         rows.get(1).add(new KeyboardButton("ИИИМО"));
 
+        rows.get(2).add(new KeyboardButton("И-Т ФИЗИКИ"));
         rows.get(2).add(new KeyboardButton("И-Т ФИЗ КУЛ"));
         rows.get(2).add(new KeyboardButton("ИФИЖ"));
-        rows.get(2).add(new KeyboardButton("И-Т ХИМИИ"));
 
+        rows.get(3).add(new KeyboardButton("И-Т ХИМИИ"));
         rows.get(3).add(new KeyboardButton("МЕХМАТ"));
         rows.get(3).add(new KeyboardButton("СОЦФАК"));
-        rows.get(3).add(new KeyboardButton("ФИЯИЛ"));
 
+        rows.get(4).add(new KeyboardButton("ФИЯИЛ"));
         rows.get(4).add(new KeyboardButton("КНИИТ"));
         rows.get(4).add(new KeyboardButton("ФНБМТ"));
-        rows.get(4).add(new KeyboardButton("ФНП"));
 
+        rows.get(5).add(new KeyboardButton("ФНП"));
         rows.get(5).add(new KeyboardButton("ПСИХОЛОГ"));
         rows.get(5).add(new KeyboardButton("ППИСО"));
-        rows.get(5).add(new KeyboardButton("ФИЗФАК"));
 
         rows.get(6).add(new KeyboardButton("ФИЛОСОФ"));
         rows.get(6).add(new KeyboardButton("ЭКОНОМ"));
