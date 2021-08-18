@@ -71,7 +71,7 @@ public class TeacherService implements BotMessageService {
                     } else {
                         try {
                             botMessage = new BotMessage(CHOOSE_TEACHER_TO_GET_SCHEDULE);
-                            if(botUser.fromVk()) {
+                            if (botUser.fromVk()) {
                                 vkBotUserRepository.updatePreviousUserMessage(CHOOSE_TEACHER_TO_GET_SCHEDULE, userId);
                                 botMessage.setVkKeyboard(vkKeyboardGenerator.teachers(teachers));
                             } else {

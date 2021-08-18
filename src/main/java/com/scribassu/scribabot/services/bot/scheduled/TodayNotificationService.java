@@ -79,14 +79,15 @@ public class TodayNotificationService {
                 } else {
                     TgBotUser tgBotUser = tgBotUserRepository.findOneById(notification.getUserId());
                     botUser = new InnerBotUser(tgBotUser);
-                }if (BotMessageUtils.isBotUserFullTime(botUser)) {
+                }
+                if (BotMessageUtils.isBotUserFullTime(botUser)) {
                     FullTimeLessonDto lessons = callRestService.getFullTimeLessonsByDay(
                             botUser.getDepartment(),
                             botUser.getGroupNumber(),
                             dayNumber
                     );
                     BotMessage botMessage = BotMessageUtils.getBotMessageForFullTimeLessons(lessons, CommandText.TODAY, botUser.isFilterNomDenom(), botUser);
-                    if(botUser.fromVk()) {
+                    if (botUser.fromVk()) {
                         vkMessageSender.send(botMessage, botUser.getUserId());
                     } else {
                         tgMessageSender.send(botMessage, botUser.getUserId());
@@ -129,7 +130,7 @@ public class TodayNotificationService {
                     );
                     BotMessage botMessage;
                     botMessage = BotMessageUtils.getBotMessageForFullTimeExamPeriod(examPeriodEventDto, CommandText.TODAY, botUser);
-                    if(botUser.fromVk()) {
+                    if (botUser.fromVk()) {
                         vkMessageSender.send(botMessage, botUser.getUserId());
                     } else {
                         tgMessageSender.send(botMessage, botUser.getUserId());
@@ -172,7 +173,7 @@ public class TodayNotificationService {
                     );
                     BotMessage botMessage;
                     botMessage = BotMessageUtils.getBotMessageForExtramuralEvent(extramuralDto, CommandText.TODAY, botUser);
-                    if(botUser.fromVk()) {
+                    if (botUser.fromVk()) {
                         vkMessageSender.send(botMessage, botUser.getUserId());
                     } else {
                         tgMessageSender.send(botMessage, botUser.getUserId());

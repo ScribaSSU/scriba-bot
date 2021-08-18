@@ -145,7 +145,7 @@ public class SettingsService implements BotMessageService {
                 break;
             case CommandText.DELETE_PROFILE:
                 botMessage = new BotMessage(DELETE_CONFIRMATION);
-                if(botUser.fromVk()) {
+                if (botUser.fromVk()) {
                     botMessage.setVkKeyboard(VkKeyboardGenerator.confirmDeletion);
                 } else {
                     botMessage.setTgKeyboard(TgKeyboardGenerator.confirmDeletion());
@@ -297,7 +297,7 @@ public class SettingsService implements BotMessageService {
                     scheduleTodayNotificationRepository.save(scheduleTodayNotificationEn);
                     String enableNotificationMessage = String.format(SCHEDULE_WILL_BE_SENT, TODAY) +
                             scheduleTodayNotificationEn.getHourForSend() + H_DOT;
-                    if(botUser.fromVk()) {
+                    if (botUser.fromVk()) {
                         botMessage = new BotMessage(
                                 enableNotificationMessage,
                                 vkKeyboardGenerator.settingsScheduleNotification(botUser));
@@ -513,7 +513,7 @@ public class SettingsService implements BotMessageService {
                     scheduleTomorrowNotificationRepository.save(scheduleTomorrowNotificationEn);
                     String enableNotificationMessage = String.format(SCHEDULE_WILL_BE_SENT, TOMORROW) +
                             scheduleTomorrowNotificationEn.getHourForSend() + H_DOT;
-                    if(botUser.fromVk()) {
+                    if (botUser.fromVk()) {
                         botMessage = new BotMessage(
                                 enableNotificationMessage,
                                 vkKeyboardGenerator.settingsScheduleNotification(botUser));

@@ -4,17 +4,19 @@ import com.scribassu.scribabot.dto.BotMessage;
 import com.scribassu.scribabot.dto.InnerBotUser;
 import com.scribassu.scribabot.dto.rest.ExamPeriodEventDto;
 import com.scribassu.scribabot.dto.rest.ExtramuralDto;
-import com.scribassu.scribabot.entities.*;
-import com.scribassu.scribabot.repositories.TgBotUserRepository;
-import com.scribassu.scribabot.repositories.VkBotUserRepository;
+import com.scribassu.scribabot.entities.ExamPeriodAfterTomorrowNotification;
+import com.scribassu.scribabot.entities.ExtramuralEventAfterTomorrowNotification;
+import com.scribassu.scribabot.entities.TgBotUser;
+import com.scribassu.scribabot.entities.VkBotUser;
 import com.scribassu.scribabot.repositories.ExamPeriodAfterTomorrowNotificationRepository;
 import com.scribassu.scribabot.repositories.ExtramuralEventAfterTomorrowNotificationRepository;
+import com.scribassu.scribabot.repositories.TgBotUserRepository;
+import com.scribassu.scribabot.repositories.VkBotUserRepository;
 import com.scribassu.scribabot.services.CallRestService;
 import com.scribassu.scribabot.services.messages.TgMessageSender;
 import com.scribassu.scribabot.services.messages.VkMessageSender;
 import com.scribassu.scribabot.text.CommandText;
 import com.scribassu.scribabot.util.BotMessageUtils;
-import com.scribassu.scribabot.util.BotUserSource;
 import com.scribassu.scribabot.util.CalendarUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,7 +93,7 @@ public class AfterTomorrowNotificationService {
                     );
                     BotMessage botMessage;
                     botMessage = BotMessageUtils.getBotMessageForFullTimeExamPeriod(examPeriodEventDto, CommandText.AFTER_TOMORROW, botUser);
-                    if(botUser.fromVk()) {
+                    if (botUser.fromVk()) {
                         vkMessageSender.send(botMessage, botUser.getUserId());
                     } else {
                         tgMessageSender.send(botMessage, botUser.getUserId());
@@ -136,7 +138,7 @@ public class AfterTomorrowNotificationService {
                     );
                     BotMessage botMessage;
                     botMessage = BotMessageUtils.getBotMessageForExtramuralEvent(extramuralDto, CommandText.TODAY, botUser);
-                    if(botUser.fromVk()) {
+                    if (botUser.fromVk()) {
                         vkMessageSender.send(botMessage, botUser.getUserId());
                     } else {
                         tgMessageSender.send(botMessage, botUser.getUserId());

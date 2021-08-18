@@ -75,8 +75,7 @@ public class TgMessageSender extends TelegramLongPollingBot implements MessageSe
             }
         } catch (TelegramApiException e) {
             log.error("Telegram API Exception: " + e.getMessage());
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.error("Telegram Another Exception: " + e.getMessage());
         }
     }
@@ -90,7 +89,7 @@ public class TgMessageSender extends TelegramLongPollingBot implements MessageSe
     }
 
     private String removeEmoji(String text) {
-        for(String emoji: TgKeyboardEmoji.TG_EMOJIS)
+        for (String emoji : TgKeyboardEmoji.TG_EMOJIS)
             text = text.replace(emoji, "");
         return text.trim();
     }
@@ -128,8 +127,7 @@ public class TgMessageSender extends TelegramLongPollingBot implements MessageSe
             }
         } catch (TelegramApiException e) {
             log.error("Telegram API Exception: " + e.getMessage());
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.error("Telegram Another Exception: " + e.getMessage());
         }
     }

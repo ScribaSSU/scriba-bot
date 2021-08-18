@@ -30,9 +30,9 @@ public class ExtramuralEventService implements BotMessageService {
         boolean isTomorrow = false;
         boolean isYesterday = false;
 
-        switch(message) {
+        switch (message) {
             case CommandText.ALL_LESSONS:
-                if(BotMessageUtils.isBotUserExtramural(botUser)) {
+                if (BotMessageUtils.isBotUserExtramural(botUser)) {
                     lessons = callRestService.getExtramuralEventsByGroup(
                             botUser.getDepartment(),
                             botUser.getGroupNumber()
@@ -42,7 +42,7 @@ public class ExtramuralEventService implements BotMessageService {
             case CommandText.TODAY:
                 int month = calendar.get(Calendar.MONTH) + 1;
                 int day = calendar.get(Calendar.DAY_OF_MONTH);
-                if(BotMessageUtils.isBotUserExtramural(botUser)) {
+                if (BotMessageUtils.isBotUserExtramural(botUser)) {
                     lessons = callRestService.getExtramuralEventsByDay(
                             botUser.getDepartment(),
                             botUser.getGroupNumber(),
@@ -56,7 +56,7 @@ public class ExtramuralEventService implements BotMessageService {
                 calendar.add(Calendar.DAY_OF_MONTH, 1);
                 month = calendar.get(Calendar.MONTH) + 1;
                 day = calendar.get(Calendar.DAY_OF_MONTH);
-                if(BotMessageUtils.isBotUserExtramural(botUser)) {
+                if (BotMessageUtils.isBotUserExtramural(botUser)) {
                     lessons = callRestService.getExtramuralEventsByDay(
                             botUser.getDepartment(),
                             botUser.getGroupNumber(),
@@ -70,7 +70,7 @@ public class ExtramuralEventService implements BotMessageService {
                 calendar.add(Calendar.DAY_OF_MONTH, -1);
                 month = calendar.get(Calendar.MONTH) + 1;
                 day = calendar.get(Calendar.DAY_OF_MONTH);
-                if(BotMessageUtils.isBotUserExtramural(botUser)) {
+                if (BotMessageUtils.isBotUserExtramural(botUser)) {
                     lessons = callRestService.getExtramuralEventsByDay(
                             botUser.getDepartment(),
                             botUser.getGroupNumber(),
@@ -85,13 +85,13 @@ public class ExtramuralEventService implements BotMessageService {
         if (null == lessons || null == lessons.getExtramuralEvents() || lessons.getExtramuralEvents().isEmpty()) {
             return BotMessageUtils.getBotMessageForEmptyExtramuralEvents(botUser);
         } else {
-            if(isToday) {
+            if (isToday) {
                 return BotMessageUtils.getBotMessageForExtramuralEvent(lessons, CommandText.TODAY, botUser);
             }
-            if(isTomorrow) {
+            if (isTomorrow) {
                 return BotMessageUtils.getBotMessageForExtramuralEvent(lessons, CommandText.TOMORROW, botUser);
             }
-            if(isYesterday) {
+            if (isYesterday) {
                 return BotMessageUtils.getBotMessageForExtramuralEvent(lessons, CommandText.YESTERDAY, botUser);
             }
             return BotMessageUtils.getBotMessageForExtramuralEvent(lessons, "", botUser);

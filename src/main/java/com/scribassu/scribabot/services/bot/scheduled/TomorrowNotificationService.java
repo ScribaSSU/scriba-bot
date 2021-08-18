@@ -93,7 +93,7 @@ public class TomorrowNotificationService {
                             dayNumber
                     );
                     BotMessage botMessage = BotMessageUtils.getBotMessageForFullTimeLessons(lessons, CommandText.TOMORROW, botUser.isFilterNomDenom(), botUser);
-                    if(botUser.fromVk()) {
+                    if (botUser.fromVk()) {
                         vkMessageSender.send(botMessage, botUser.getUserId());
                     } else {
                         tgMessageSender.send(botMessage, botUser.getUserId());
@@ -137,7 +137,7 @@ public class TomorrowNotificationService {
                     );
                     BotMessage botMessage;
                     botMessage = BotMessageUtils.getBotMessageForFullTimeExamPeriod(examPeriodEventDto, CommandText.TOMORROW, botUser);
-                    if(botUser.fromVk()) {
+                    if (botUser.fromVk()) {
                         vkMessageSender.send(botMessage, botUser.getUserId());
                     } else {
                         tgMessageSender.send(botMessage, botUser.getUserId());
@@ -181,7 +181,7 @@ public class TomorrowNotificationService {
                             day
                     );
                     BotMessage botMessage = BotMessageUtils.getBotMessageForExtramuralEvent(extramuralDto, CommandText.TODAY, botUser);
-                    if(botUser.fromVk()) {
+                    if (botUser.fromVk()) {
                         vkMessageSender.send(botMessage, botUser.getUserId());
                     } else {
                         tgMessageSender.send(botMessage, botUser.getUserId());

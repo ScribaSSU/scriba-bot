@@ -6,8 +6,8 @@ import com.scribassu.scribabot.dto.InnerBotUser;
 import com.scribassu.scribabot.dto.rest.FullTimeLessonDto;
 import com.scribassu.scribabot.entities.TgBotUser;
 import com.scribassu.scribabot.entities.TgUnrecognizedMessage;
-import com.scribassu.scribabot.entities.VkUnrecognizedMessage;
 import com.scribassu.scribabot.entities.VkBotUser;
+import com.scribassu.scribabot.entities.VkUnrecognizedMessage;
 import com.scribassu.scribabot.generators.TgKeyboardGenerator;
 import com.scribassu.scribabot.generators.VkKeyboardGenerator;
 import com.scribassu.scribabot.repositories.TgBotUserRepository;
@@ -96,7 +96,7 @@ public class MessageHandlerImpl implements MessageHandler {
         InnerBotUser botUser;
         VkBotUser vkBotUser = null;
         TgBotUser tgBotUser = null;
-        if(BotUserSource.VK.equals(source)) {
+        if (BotUserSource.VK.equals(source)) {
             vkBotUser = vkBotUserRepository.findOneById(userId);
             if (null == vkBotUser) {
                 botUser = new InnerBotUser(source);
@@ -151,7 +151,7 @@ public class MessageHandlerImpl implements MessageHandler {
         switch (message) {
             case CommandText.HELLO:
                 if (botUser.notRegistered()) {
-                    if(botUser.fromVk()) {
+                    if (botUser.fromVk()) {
                         vkBotUser = new VkBotUser(userId);
                         vkBotUser.setFilterNomDenom(false);
                         vkBotUser = vkBotUserRepository.save(vkBotUser);
@@ -165,7 +165,7 @@ public class MessageHandlerImpl implements MessageHandler {
                         tgBotUserRepository.updatePreviousUserMessage(GREETING_WITH_CHOOSE_DEPARTMENT, tgBotUser.getUserId());
                     }
                 } else {
-                    if(botUser.fromVk()) {
+                    if (botUser.fromVk()) {
                         botMessage = new BotMessage(GREETING, VkKeyboardGenerator.mainMenu);
                     } else {
                         botMessage = new BotMessage(GREETING, TgKeyboardGenerator.mainMenu());
@@ -175,7 +175,7 @@ public class MessageHandlerImpl implements MessageHandler {
             case CommandText.MAIN_MENU:
             case CommandText.SHORT_MAIN_MENU:
                 if (botUser.notRegistered()) {
-                    if(botUser.fromVk()) {
+                    if (botUser.fromVk()) {
                         vkBotUser = new VkBotUser(userId);
                         vkBotUser.setFilterNomDenom(false);
                         vkBotUser = vkBotUserRepository.save(vkBotUser);
@@ -189,7 +189,7 @@ public class MessageHandlerImpl implements MessageHandler {
                         tgBotUserRepository.updatePreviousUserMessage(GREETING_WITH_CHOOSE_DEPARTMENT, tgBotUser.getUserId());
                     }
                 } else {
-                    if(botUser.fromVk()) {
+                    if (botUser.fromVk()) {
                         vkBotUserRepository.updatePreviousUserMessage("", botUser.getUserId());
                         botMessage = new BotMessage(RETURN_MAIN_MENU, VkKeyboardGenerator.mainMenu);
                     } else {
@@ -202,7 +202,7 @@ public class MessageHandlerImpl implements MessageHandler {
                 botMessage = helpService.getBotMessage(message, botUser);
                 break;
             case CommandText.THANKS:
-                if(botUser.fromVk()) {
+                if (botUser.fromVk()) {
                     botMessage = new BotMessage(YOU_ARE_WELCOME, VkKeyboardGenerator.mainMenu);
                 } else {
                     botMessage = new BotMessage(YOU_ARE_WELCOME, TgKeyboardGenerator.mainMenu());
@@ -232,7 +232,7 @@ public class MessageHandlerImpl implements MessageHandler {
                         : new BotMessage(GREETING_WITH_CHOOSE_DEPARTMENT, TgKeyboardGenerator.departments());
                 break;
             case CommandText.FULL_TIME:
-                if(botUser.fromVk()) {
+                if (botUser.fromVk()) {
                     vkBotUserRepository.updateEducationForm(EducationForm.DO.getGroupType(), userId);
                     botMessage = new BotMessage(CHOOSE_COURSE, VkKeyboardGenerator.courses);
                 } else {
@@ -241,7 +241,7 @@ public class MessageHandlerImpl implements MessageHandler {
                 }
                 break;
             case CommandText.EXTRAMURAL:
-                if(botUser.fromVk()) {
+                if (botUser.fromVk()) {
                     vkBotUserRepository.updateEducationForm(EducationForm.ZO.getGroupType(), userId);
                     botMessage = new BotMessage(CHOOSE_COURSE, VkKeyboardGenerator.courses);
                 } else {
@@ -250,7 +250,7 @@ public class MessageHandlerImpl implements MessageHandler {
                 }
                 break;
             case CommandText.EVENING:
-                if(botUser.fromVk()) {
+                if (botUser.fromVk()) {
                     vkBotUserRepository.updateEducationForm(EducationForm.VO.getGroupType(), userId);
                     botMessage = new BotMessage(CHOOSE_COURSE, VkKeyboardGenerator.courses);
                 } else {
@@ -321,7 +321,7 @@ public class MessageHandlerImpl implements MessageHandler {
 
         if (CommandText.DEPARTMENT_PAYLOAD.equalsIgnoreCase(payload)
                 || CommandText.DEPARTMENT_PATTERN.matcher(message).matches()) {
-            if(botUser.fromVk()) {
+            if (botUser.fromVk()) {
                 vkBotUserRepository.updateDepartment(DepartmentConverter.convertToUrl(message), userId);
                 botMessage = new BotMessage(MessageText.CHOOSE_EDUCATION_FORM, VkKeyboardGenerator.educationForms);
             } else {
@@ -335,14 +335,14 @@ public class MessageHandlerImpl implements MessageHandler {
         }
 
         if (CommandText.CHOOSE_STUDENT_GROUP.equalsIgnoreCase(payload)) {
-            if(botUser.fromVk()) {
+            if (botUser.fromVk()) {
                 vkBotUserRepository.updateGroupNumber(message, userId);
             } else {
                 tgBotUserRepository.updateGroupNumber(message, userId);
             }
             if (null != botUser.getPreviousUserMessage()
                     && botUser.getPreviousUserMessage().equalsIgnoreCase(GREETING_WITH_CHOOSE_DEPARTMENT)) {
-                if(botUser.fromVk()) {
+                if (botUser.fromVk()) {
                     botMessage = new BotMessage(THIS_IS_MAIN_MENU, VkKeyboardGenerator.mainMenu);
                     vkBotUserRepository.updatePreviousUserMessage("", botUser.getUserId());
                 } else {
@@ -351,7 +351,7 @@ public class MessageHandlerImpl implements MessageHandler {
                 }
 
             } else {
-                if(botUser.fromVk()) {
+                if (botUser.fromVk()) {
                     botMessage = new BotMessage(MessageText.FINISH_SET_GROUP, VkKeyboardGenerator.fullTimeSchedule);
                 } else {
                     botMessage = new BotMessage(MessageText.FINISH_SET_GROUP, TgKeyboardGenerator.fullTimeSchedule());
@@ -360,14 +360,14 @@ public class MessageHandlerImpl implements MessageHandler {
         }
 
         if (message.startsWith(CommandText.GROUP_NUMBER_INPUT)) {
-            if(botUser.fromVk()) {
+            if (botUser.fromVk()) {
                 vkBotUserRepository.updateGroupNumber(message.substring(2), userId);
             } else {
                 tgBotUserRepository.updateGroupNumber(message.substring(2), userId);
             }
             if (null != botUser.getPreviousUserMessage()
                     && botUser.getPreviousUserMessage().equalsIgnoreCase(GREETING_WITH_CHOOSE_DEPARTMENT)) {
-                if(botUser.fromVk()) {
+                if (botUser.fromVk()) {
                     botMessage = new BotMessage(THIS_IS_MAIN_MENU, VkKeyboardGenerator.mainMenu);
                     vkBotUserRepository.updatePreviousUserMessage("", botUser.getUserId());
                 } else {
@@ -376,7 +376,7 @@ public class MessageHandlerImpl implements MessageHandler {
                 }
 
             } else {
-                if(botUser.fromVk()) {
+                if (botUser.fromVk()) {
                     botMessage = new BotMessage(MessageText.FINISH_SET_GROUP, VkKeyboardGenerator.fullTimeSchedule);
                 } else {
                     botMessage = new BotMessage(MessageText.FINISH_SET_GROUP, TgKeyboardGenerator.fullTimeSchedule());

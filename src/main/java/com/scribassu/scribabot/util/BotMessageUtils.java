@@ -3,9 +3,9 @@ package com.scribassu.scribabot.util;
 import com.scribassu.scribabot.dto.BotMessage;
 import com.scribassu.scribabot.dto.InnerBotUser;
 import com.scribassu.scribabot.dto.rest.*;
+import com.scribassu.scribabot.generators.MessageGenerator;
 import com.scribassu.scribabot.generators.TgKeyboardGenerator;
 import com.scribassu.scribabot.generators.VkKeyboardGenerator;
-import com.scribassu.scribabot.generators.MessageGenerator;
 import com.scribassu.tracto.domain.EducationForm;
 import org.springframework.util.StringUtils;
 
@@ -15,7 +15,7 @@ public class BotMessageUtils {
                                                              String day,
                                                              boolean filterWeekType,
                                                              InnerBotUser botUser) {
-        if(botUser.fromVk()) {
+        if (botUser.fromVk()) {
             return new BotMessage(
                     MessageGenerator.makeFullTimeLessonTemplate(fullTimeLessonDto, day, filterWeekType),
                     VkKeyboardGenerator.fullTimeSchedule);
@@ -27,7 +27,7 @@ public class BotMessageUtils {
     }
 
     public static BotMessage getBotMessageForUnsupportedLessons(InnerBotUser botUser) {
-        if(botUser.fromVk()) {
+        if (botUser.fromVk()) {
             return new BotMessage(
                     "Ваш вид расписания пока не поддерживается или вы указали недостаточно информации для выдачи расписания.",
                     VkKeyboardGenerator.fullTimeSchedule);
@@ -41,7 +41,7 @@ public class BotMessageUtils {
     public static BotMessage getBotMessageForFullTimeExamPeriod(ExamPeriodEventDto examPeriodEventDto,
                                                                 String day,
                                                                 InnerBotUser botUser) {
-        if(botUser.fromVk()) {
+        if (botUser.fromVk()) {
             return new BotMessage(
                     MessageGenerator.makeFullTimeExamPeriodTemplate(examPeriodEventDto, day),
                     VkKeyboardGenerator.fullTimeSchedule);
@@ -53,7 +53,7 @@ public class BotMessageUtils {
     }
 
     public static BotMessage getBotMessageForEmptyFullTimeExamPeriod(InnerBotUser botUser) {
-        if(botUser.fromVk()) {
+        if (botUser.fromVk()) {
             return new BotMessage(
                     "Расписание сессии для вашей группы отсутствует.",
                     VkKeyboardGenerator.fullTimeSchedule);
@@ -68,7 +68,7 @@ public class BotMessageUtils {
                                                                     String day,
                                                                     boolean filterWeekType,
                                                                     InnerBotUser botUser) {
-        if(botUser.fromVk()) {
+        if (botUser.fromVk()) {
             return new BotMessage(
                     MessageGenerator.makeTeacherFullTimeLessonTemplate(fullTimeLessonDto, day, filterWeekType),
                     VkKeyboardGenerator.fullTimeSchedule);
@@ -81,7 +81,7 @@ public class BotMessageUtils {
 
     public static BotMessage getBotMessageForTeacherExamPeriod(TeacherExamPeriodEventDto examPeriodEventDto,
                                                                InnerBotUser botUser) {
-        if(botUser.fromVk()) {
+        if (botUser.fromVk()) {
             return new BotMessage(
                     MessageGenerator.makeTeacherExamPeriodTemplate(examPeriodEventDto),
                     VkKeyboardGenerator.fullTimeSchedule);
@@ -95,7 +95,7 @@ public class BotMessageUtils {
     public static BotMessage getBotMessageForExtramuralEvent(ExtramuralDto extramuralDto,
                                                              String day,
                                                              InnerBotUser botUser) {
-        if(botUser.fromVk()) {
+        if (botUser.fromVk()) {
             return new BotMessage(
                     MessageGenerator.makeExtramuralEventTemplate(extramuralDto, day),
                     VkKeyboardGenerator.extramuralSchedule);
@@ -107,7 +107,7 @@ public class BotMessageUtils {
     }
 
     public static BotMessage getBotMessageForEmptyExtramuralEvents(InnerBotUser botUser) {
-        if(botUser.fromVk()) {
+        if (botUser.fromVk()) {
             return new BotMessage(
                     "Расписание для вашей группы отсутствует.",
                     VkKeyboardGenerator.extramuralSchedule);

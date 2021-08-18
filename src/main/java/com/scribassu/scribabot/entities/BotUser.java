@@ -1,7 +1,5 @@
 package com.scribassu.scribabot.entities;
 
-import com.scribassu.scribabot.text.CommandText;
-import com.scribassu.scribabot.util.BotUserSource;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

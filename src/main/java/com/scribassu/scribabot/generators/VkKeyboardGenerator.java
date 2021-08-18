@@ -51,7 +51,7 @@ public class VkKeyboardGenerator {
 
     private static final VkKeyboardButton MAIN_MENU_BUTTON = new VkKeyboardButton(
             new VkKeyboardButtonActionText(
-                    "Главное меню",DEFAULT_PAYLOAD, VkKeyboardButtonActionType.TEXT
+                    "Главное меню", DEFAULT_PAYLOAD, VkKeyboardButtonActionType.TEXT
             ), VkKeyboardButtonColor.PRIMARY);
 
     private static final VkKeyboardButton SETTINGS_BUTTON = new VkKeyboardButton(
@@ -70,14 +70,14 @@ public class VkKeyboardGenerator {
             ), VkKeyboardButtonColor.PRIMARY);
 
     private static final VkKeyboardButton TOMORROW_SCHEDULE_BUTTON = new VkKeyboardButton(
-                            new VkKeyboardButtonActionText(
-            "Завтра", DEFAULT_PAYLOAD, VkKeyboardButtonActionType.TEXT
-                            ), VkKeyboardButtonColor.PRIMARY);
+            new VkKeyboardButtonActionText(
+                    "Завтра", DEFAULT_PAYLOAD, VkKeyboardButtonActionType.TEXT
+            ), VkKeyboardButtonColor.PRIMARY);
 
     private static final VkKeyboardButton YESTERDAY_SCHEDULE_BUTTON = new VkKeyboardButton(
-                            new VkKeyboardButtonActionText(
-            "Вчера",DEFAULT_PAYLOAD, VkKeyboardButtonActionType.TEXT
-                            ), VkKeyboardButtonColor.PRIMARY);
+            new VkKeyboardButtonActionText(
+                    "Вчера", DEFAULT_PAYLOAD, VkKeyboardButtonActionType.TEXT
+            ), VkKeyboardButtonColor.PRIMARY);
 
     /*
     TODO:
@@ -101,11 +101,11 @@ public class VkKeyboardGenerator {
     public static final VkKeyboard mainMenu = new VkKeyboard(List.of(
             List.of(
                     new VkKeyboardButton(
-                    new VkKeyboardButtonActionText(
-                            "Расписание студентов",
-                            DEFAULT_PAYLOAD,
-                            VkKeyboardButtonActionType.TEXT
-                    ), VkKeyboardButtonColor.POSITIVE)
+                            new VkKeyboardButtonActionText(
+                                    "Расписание студентов",
+                                    DEFAULT_PAYLOAD,
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.POSITIVE)
             ),
             List.of(
                     new VkKeyboardButton(

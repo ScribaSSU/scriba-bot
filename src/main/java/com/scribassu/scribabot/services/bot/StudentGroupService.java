@@ -3,7 +3,7 @@ package com.scribassu.scribabot.services.bot;
 import com.scribassu.scribabot.dto.BotMessage;
 import com.scribassu.scribabot.dto.InnerBotUser;
 import com.scribassu.scribabot.dto.rest.GroupNumbersDto;
-import com.scribassu.scribabot.dto.vkkeyboard.*;
+import com.scribassu.scribabot.dto.vkkeyboard.VkKeyboard;
 import com.scribassu.scribabot.generators.TgKeyboardGenerator;
 import com.scribassu.scribabot.generators.VkKeyboardGenerator;
 import com.scribassu.scribabot.services.CallRestService;
@@ -60,7 +60,7 @@ public class StudentGroupService implements BotMessageService {
             }
         }
         if (CollectionUtils.isEmpty(groupNumbersDto.getGroupNumbers())) {
-            if(botUser.fromVk()) {
+            if (botUser.fromVk()) {
                 botMessage = new BotMessage("Группы не найдены.", VkKeyboardGenerator.courses);
             } else {
                 botMessage = new BotMessage("Группы не найдены.", TgKeyboardGenerator.courses());
@@ -75,7 +75,7 @@ public class StudentGroupService implements BotMessageService {
             }
             botMessage = new BotMessage(stringBuilder.toString());
         } else {
-            if(botUser.fromVk()) {
+            if (botUser.fromVk()) {
                 VkKeyboard vkKeyboard = vkKeyboardGenerator.groupNumbers(groupNumbersDto.getGroupNumbers());
                 botMessage = new BotMessage(MessageText.CHOOSE_STUDENT_GROUP, vkKeyboard);
             } else {

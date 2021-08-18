@@ -51,7 +51,7 @@ public class BotMessage {
         return message.equalsIgnoreCase(MessageText.DEFAULT_MESSAGE)
                 && (
                 VkKeyboardGenerator.mainMenu.equals(vkKeyboard) || TgKeyboardGenerator.mainMenu().equals(tgKeyboard)
-                );
+        );
     }
 
     public boolean hasVkKeyboard() {

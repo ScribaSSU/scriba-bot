@@ -79,7 +79,7 @@ public class TgKeyboardGenerator {
     public static ReplyKeyboardMarkup mainMenu() {
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
         List<KeyboardRow> rows = new ArrayList<>();
-        for(int i = 0; i < 4; i++)
+        for (int i = 0; i < 4; i++)
             rows.add(new KeyboardRow());
         //rows.get(0).add(new KeyboardButton("\uD83D\uDDD3 Расписание студентов \uD83D\uDDD3"));
         //rows.get(1).add(new KeyboardButton("\uD83C\uDF93 Расписание преподавателей \uD83C\uDF93"));
@@ -94,7 +94,7 @@ public class TgKeyboardGenerator {
     public static ReplyKeyboardMarkup educationForms() {
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
         List<KeyboardRow> rows = new ArrayList<>();
-        for(int i = 0; i < 2; i++)
+        for (int i = 0; i < 2; i++)
             rows.add(new KeyboardRow());
         rows.get(0).add(new KeyboardButton("Дневная"));
         rows.get(0).add(new KeyboardButton("Заочная"));
@@ -106,7 +106,7 @@ public class TgKeyboardGenerator {
     public static ReplyKeyboardMarkup courses() {
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
         List<KeyboardRow> rows = new ArrayList<>();
-        for(int i = 0; i < 4; i++)
+        for (int i = 0; i < 4; i++)
             rows.add(new KeyboardRow());
         rows.get(0).add(new KeyboardButton("1 курс"));
         rows.get(0).add(new KeyboardButton("2 курс"));
@@ -122,7 +122,7 @@ public class TgKeyboardGenerator {
     public static ReplyKeyboardMarkup departments() {
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
         List<KeyboardRow> rows = new ArrayList<>();
-        for(int i = 0; i < 9; i++)
+        for (int i = 0; i < 9; i++)
             rows.add(new KeyboardRow());
         rows.get(0).add(new KeyboardButton("БИОЛОГ"));
         rows.get(0).add(new KeyboardButton("ГЕОГРАФ"));
@@ -164,7 +164,7 @@ public class TgKeyboardGenerator {
     public static ReplyKeyboardMarkup confirmDeletion() {
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
         List<KeyboardRow> rows = new ArrayList<>();
-        for(int i = 0; i < 4; i++)
+        for (int i = 0; i < 4; i++)
             rows.add(new KeyboardRow());
         rows.get(0).add(new KeyboardButton(String.format("%1$s Да %1$s", YES_EMOJI)));
         rows.get(1).add(new KeyboardButton(String.format("%1$s Нет %1$s", NO_EMOJI)));
@@ -177,7 +177,7 @@ public class TgKeyboardGenerator {
     public static ReplyKeyboardMarkup fullTimeSchedule() {
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
         List<KeyboardRow> rows = new ArrayList<>();
-        for(int i = 0; i < 6; i++)
+        for (int i = 0; i < 6; i++)
             rows.add(new KeyboardRow());
         rows.get(0).add(TODAY_SCHEDULE_BUTTON);
         rows.get(0).add(TOMORROW_SCHEDULE_BUTTON);
@@ -204,7 +204,7 @@ public class TgKeyboardGenerator {
     public static ReplyKeyboardMarkup extramuralSchedule() {
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
         List<KeyboardRow> rows = new ArrayList<>();
-        for(int i = 0; i < 4; i++)
+        for (int i = 0; i < 4; i++)
             rows.add(new KeyboardRow());
         rows.get(0).add(new KeyboardButton("Все занятия"));
 
@@ -224,10 +224,10 @@ public class TgKeyboardGenerator {
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
         List<KeyboardRow> rows = new ArrayList<>();
         int hour = 1;
-        for(int i = 0; i < 6; i++) {
+        for (int i = 0; i < 6; i++) {
             rows.add(new KeyboardRow());
-            for(int k = 0; k < 4; k++) {
-                rows.get(i).add(new KeyboardButton( hour + " ч"));
+            for (int k = 0; k < 4; k++) {
+                rows.get(i).add(new KeyboardButton(hour + " ч"));
                 hour++;
             }
         }
@@ -299,7 +299,7 @@ public class TgKeyboardGenerator {
     public ReplyKeyboardMarkup settingsExamNotification(InnerBotUser botUser) {
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
         List<KeyboardRow> rows = new ArrayList<>();
-        for(int i = 0; i < 8; i++) {
+        for (int i = 0; i < 8; i++) {
             rows.add(new KeyboardRow());
         }
 
@@ -368,7 +368,7 @@ public class TgKeyboardGenerator {
     public ReplyKeyboardMarkup settingsScheduleNotification(InnerBotUser botUser) {
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
         List<KeyboardRow> rows = new ArrayList<>();
-        for(int i = 0; i < 6; i++) {
+        for (int i = 0; i < 6; i++) {
             rows.add(new KeyboardRow());
         }
 
@@ -404,7 +404,7 @@ public class TgKeyboardGenerator {
     public ReplyKeyboardMarkup settings(InnerBotUser user) {
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
         List<KeyboardRow> rows = new ArrayList<>();
-        for(int i = 0; i < 6; i++) {
+        for (int i = 0; i < 6; i++) {
             rows.add(new KeyboardRow());
         }
 

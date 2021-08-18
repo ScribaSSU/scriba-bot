@@ -4,7 +4,6 @@ import com.scribassu.scribabot.dto.BotMessage;
 import com.scribassu.scribabot.dto.InnerBotUser;
 import com.scribassu.scribabot.dto.rest.ExamPeriodEventDto;
 import com.scribassu.scribabot.dto.rest.TeacherExamPeriodEventDto;
-import com.scribassu.scribabot.entities.BotUser;
 import com.scribassu.scribabot.services.CallRestService;
 import com.scribassu.scribabot.text.CommandText;
 import com.scribassu.scribabot.util.BotMessageUtils;
