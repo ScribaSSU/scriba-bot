@@ -40,6 +40,8 @@ public class MessageText {
     public static final String TEACHER_NAME_PROMPT = "Введите полностью или частично что-либо из ФИО преподавателя. " +
             "Например, по запросу 'Ива' найдутся и 'Иванова', и 'Иван', и 'Иванович'. " +
             "По запросу 'Иванов Ев' найдется 'Иванов Евгений', но не 'Иванова Евгения'.";
+    public static final String UNSUPPORTED_LESSONS = "Ваш вид расписания пока не поддерживается или вы указали недостаточно информации для выдачи расписания.";
+    public static final String NO_EXAM_PERIOD_SCHEDULE = "Расписание сессии для вашей группы отсутствует.";
 
     public static final String NOT_ENABLE_SCHEDULE_NOTIFICATION_TODAY = "Вы еще не подключали рассылку расписания на сегодня. Подключите через '";
     public static final String NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_TODAY = "Вы еще не подключали рассылку расписания сессии на сегодня. Подключите через '";

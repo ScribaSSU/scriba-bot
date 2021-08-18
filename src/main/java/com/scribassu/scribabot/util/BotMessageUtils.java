@@ -9,6 +9,9 @@ import com.scribassu.scribabot.generators.VkKeyboardGenerator;
 import com.scribassu.tracto.domain.EducationForm;
 import org.springframework.util.StringUtils;
 
+import static com.scribassu.scribabot.text.MessageText.NO_EXAM_PERIOD_SCHEDULE;
+import static com.scribassu.scribabot.text.MessageText.UNSUPPORTED_LESSONS;
+
 public class BotMessageUtils {
 
     public static BotMessage getBotMessageForFullTimeLessons(FullTimeLessonDto fullTimeLessonDto,
@@ -27,15 +30,9 @@ public class BotMessageUtils {
     }
 
     public static BotMessage getBotMessageForUnsupportedLessons(InnerBotUser botUser) {
-        if (botUser.fromVk()) {
-            return new BotMessage(
-                    "Ваш вид расписания пока не поддерживается или вы указали недостаточно информации для выдачи расписания.",
-                    VkKeyboardGenerator.fullTimeSchedule);
-        } else {
-            return new BotMessage(
-                    "Ваш вид расписания пока не поддерживается или вы указали недостаточно информации для выдачи расписания.",
-                    TgKeyboardGenerator.fullTimeSchedule());
-        }
+        return botUser.fromVk() ?
+                new BotMessage(UNSUPPORTED_LESSONS, VkKeyboardGenerator.departments)
+                : new BotMessage(UNSUPPORTED_LESSONS, TgKeyboardGenerator.departments());
     }
 
     public static BotMessage getBotMessageForFullTimeExamPeriod(ExamPeriodEventDto examPeriodEventDto,
@@ -53,15 +50,9 @@ public class BotMessageUtils {
     }
 
     public static BotMessage getBotMessageForEmptyFullTimeExamPeriod(InnerBotUser botUser) {
-        if (botUser.fromVk()) {
-            return new BotMessage(
-                    "Расписание сессии для вашей группы отсутствует.",
-                    VkKeyboardGenerator.fullTimeSchedule);
-        } else {
-            return new BotMessage(
-                    "Расписание сессии для вашей группы отсутствует.",
-                    TgKeyboardGenerator.fullTimeSchedule());
-        }
+        return botUser.fromVk() ?
+                new BotMessage(NO_EXAM_PERIOD_SCHEDULE, VkKeyboardGenerator.fullTimeSchedule)
+                : new BotMessage(NO_EXAM_PERIOD_SCHEDULE, TgKeyboardGenerator.fullTimeSchedule());
     }
 
     public static BotMessage getBotMessageForTeacherFullTimeLessons(TeacherFullTimeLessonDto fullTimeLessonDto,
@@ -107,15 +98,9 @@ public class BotMessageUtils {
     }
 
     public static BotMessage getBotMessageForEmptyExtramuralEvents(InnerBotUser botUser) {
-        if (botUser.fromVk()) {
-            return new BotMessage(
-                    "Расписание для вашей группы отсутствует.",
-                    VkKeyboardGenerator.extramuralSchedule);
-        } else {
-            return new BotMessage(
-                    "Расписание для вашей группы отсутствует.",
-                    TgKeyboardGenerator.extramuralSchedule());
-        }
+        return botUser.fromVk() ?
+                new BotMessage(NO_EXAM_PERIOD_SCHEDULE, VkKeyboardGenerator.extramuralSchedule)
+                : new BotMessage(NO_EXAM_PERIOD_SCHEDULE, TgKeyboardGenerator.extramuralSchedule());
     }
 
     public static boolean isBotUserFullTime(InnerBotUser botUser) {
