@@ -8,8 +8,8 @@ import com.scribassu.scribabot.entities.TgBotUser;
 import com.scribassu.scribabot.entities.TgUnrecognizedMessage;
 import com.scribassu.scribabot.entities.VkUnrecognizedMessage;
 import com.scribassu.scribabot.entities.VkBotUser;
-import com.scribassu.scribabot.keyboard.TgKeyboardGenerator;
-import com.scribassu.scribabot.keyboard.VkKeyboardGenerator;
+import com.scribassu.scribabot.generators.TgKeyboardGenerator;
+import com.scribassu.scribabot.generators.VkKeyboardGenerator;
 import com.scribassu.scribabot.repositories.TgBotUserRepository;
 import com.scribassu.scribabot.repositories.TgUnrecognizedMessageRepository;
 import com.scribassu.scribabot.repositories.VkBotUserRepository;
@@ -26,15 +26,10 @@ import com.scribassu.tracto.domain.EducationForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.scribassu.scribabot.text.MessageText.*;
-import static com.scribassu.scribabot.util.TgKeyboardEmoji.BACK_EMOJI;
 
 @Service
 public class MessageHandlerImpl implements MessageHandler {

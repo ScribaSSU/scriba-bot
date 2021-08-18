@@ -1,13 +1,11 @@
 package com.scribassu.scribabot.services.bot;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.scribassu.scribabot.dto.BotMessage;
 import com.scribassu.scribabot.dto.InnerBotUser;
 import com.scribassu.scribabot.dto.rest.GroupNumbersDto;
 import com.scribassu.scribabot.dto.vkkeyboard.*;
-import com.scribassu.scribabot.entities.BotUser;
-import com.scribassu.scribabot.keyboard.TgKeyboardGenerator;
-import com.scribassu.scribabot.keyboard.VkKeyboardGenerator;
+import com.scribassu.scribabot.generators.TgKeyboardGenerator;
+import com.scribassu.scribabot.generators.VkKeyboardGenerator;
 import com.scribassu.scribabot.services.CallRestService;
 import com.scribassu.scribabot.text.MessageText;
 import com.scribassu.scribabot.util.Constants;
@@ -17,8 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
-
-import static com.scribassu.scribabot.keyboard.KeyboardType.ButtonCourse;
 
 @Service
 public class StudentGroupService implements BotMessageService {

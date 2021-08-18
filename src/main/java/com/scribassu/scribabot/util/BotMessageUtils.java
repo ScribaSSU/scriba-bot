@@ -3,15 +3,11 @@ package com.scribassu.scribabot.util;
 import com.scribassu.scribabot.dto.BotMessage;
 import com.scribassu.scribabot.dto.InnerBotUser;
 import com.scribassu.scribabot.dto.rest.*;
-import com.scribassu.scribabot.entities.BotUser;
-import com.scribassu.scribabot.keyboard.TgKeyboardGenerator;
-import com.scribassu.scribabot.keyboard.VkKeyboardGenerator;
-import com.scribassu.scribabot.text.generators.MessageGenerator;
+import com.scribassu.scribabot.generators.TgKeyboardGenerator;
+import com.scribassu.scribabot.generators.VkKeyboardGenerator;
+import com.scribassu.scribabot.generators.MessageGenerator;
 import com.scribassu.tracto.domain.EducationForm;
 import org.springframework.util.StringUtils;
-
-import static com.scribassu.scribabot.keyboard.KeyboardType.ButtonExtramuralSchedule;
-import static com.scribassu.scribabot.keyboard.KeyboardType.ButtonFullTimeSchedule;
 
 public class BotMessageUtils {
 

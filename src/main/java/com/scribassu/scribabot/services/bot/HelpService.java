@@ -2,11 +2,8 @@ package com.scribassu.scribabot.services.bot;
 
 import com.scribassu.scribabot.dto.BotMessage;
 import com.scribassu.scribabot.dto.InnerBotUser;
-import com.scribassu.scribabot.entities.BotUser;
-import com.scribassu.scribabot.keyboard.KeyboardType;
-import com.scribassu.scribabot.keyboard.TgKeyboardGenerator;
-import com.scribassu.scribabot.keyboard.VkKeyboardGenerator;
-import com.scribassu.scribabot.util.BotUserSource;
+import com.scribassu.scribabot.generators.TgKeyboardGenerator;
+import com.scribassu.scribabot.generators.VkKeyboardGenerator;
 import org.springframework.stereotype.Service;
 
 @Service

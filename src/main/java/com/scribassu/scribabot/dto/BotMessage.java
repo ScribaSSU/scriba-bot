@@ -1,15 +1,10 @@
 package com.scribassu.scribabot.dto;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.scribassu.scribabot.dto.vkkeyboard.VkKeyboard;
-import com.scribassu.scribabot.keyboard.KeyboardMap;
-import com.scribassu.scribabot.keyboard.KeyboardType;
-import com.scribassu.scribabot.keyboard.TgKeyboardGenerator;
-import com.scribassu.scribabot.keyboard.VkKeyboardGenerator;
+import com.scribassu.scribabot.generators.TgKeyboardGenerator;
+import com.scribassu.scribabot.generators.VkKeyboardGenerator;
 import com.scribassu.scribabot.text.MessageText;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;

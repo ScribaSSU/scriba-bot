@@ -3,7 +3,7 @@ package com.scribassu.scribabot.services.messages;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.scribassu.scribabot.dto.BotMessage;
-import com.scribassu.scribabot.keyboard.VkKeyboardGenerator;
+import com.scribassu.scribabot.generators.VkKeyboardGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;

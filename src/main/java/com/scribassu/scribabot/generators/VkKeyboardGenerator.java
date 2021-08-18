@@ -1,4 +1,4 @@
-package com.scribassu.scribabot.keyboard;
+package com.scribassu.scribabot.generators;
 
 import com.scribassu.scribabot.dto.InnerBotUser;
 import com.scribassu.scribabot.dto.vkkeyboard.*;

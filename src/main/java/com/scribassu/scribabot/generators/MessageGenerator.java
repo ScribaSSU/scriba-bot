@@ -1,4 +1,4 @@
-package com.scribassu.scribabot.text.generators;
+package com.scribassu.scribabot.generators;
 
 import com.scribassu.scribabot.dto.rest.*;
 import com.scribassu.scribabot.text.CommandText;
