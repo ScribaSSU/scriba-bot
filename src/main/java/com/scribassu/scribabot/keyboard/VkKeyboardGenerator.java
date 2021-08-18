@@ -15,6 +15,9 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.scribassu.scribabot.util.Constants.DEFAULT_PAYLOAD;
+import static com.scribassu.scribabot.util.Constants.MAX_KEYBOARD_TEXT_LENGTH;
+
 @Service
 public class VkKeyboardGenerator {
 
@@ -48,38 +51,36 @@ public class VkKeyboardGenerator {
 
     private static final VkKeyboardButton MAIN_MENU_BUTTON = new VkKeyboardButton(
             new VkKeyboardButtonActionText(
-                    "Главное меню","{\"button\": \"1\"}", VkKeyboardButtonActionType.TEXT
+                    "Главное меню",DEFAULT_PAYLOAD, VkKeyboardButtonActionType.TEXT
             ), VkKeyboardButtonColor.PRIMARY);
 
     private static final VkKeyboardButton SETTINGS_BUTTON = new VkKeyboardButton(
             new VkKeyboardButtonActionText(
-                    "Настройки", "{\"button\": \"1\"}", VkKeyboardButtonActionType.TEXT
+                    "Настройки", DEFAULT_PAYLOAD, VkKeyboardButtonActionType.TEXT
             ), VkKeyboardButtonColor.PRIMARY);
 
     private static final VkKeyboardButton CHOOSE_DEPARTMENT_AND_GROUP_BUTTON = new VkKeyboardButton(
             new VkKeyboardButtonActionText(
-                    "Выбрать факультет и группу", "{\"button\": \"1\"}", VkKeyboardButtonActionType.TEXT
+                    "Выбрать факультет и группу", DEFAULT_PAYLOAD, VkKeyboardButtonActionType.TEXT
             ), VkKeyboardButtonColor.POSITIVE);
 
     private static final VkKeyboardButton TODAY_SCHEDULE_BUTTON = new VkKeyboardButton(
             new VkKeyboardButtonActionText(
-                    "Сегодня", "{\"button\": \"1\"}", VkKeyboardButtonActionType.TEXT
+                    "Сегодня", DEFAULT_PAYLOAD, VkKeyboardButtonActionType.TEXT
             ), VkKeyboardButtonColor.PRIMARY);
 
     private static final VkKeyboardButton TOMORROW_SCHEDULE_BUTTON = new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
-            "Завтра", "{\"button\": \"1\"}", VkKeyboardButtonActionType.TEXT
+            "Завтра", DEFAULT_PAYLOAD, VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY);
 
     private static final VkKeyboardButton YESTERDAY_SCHEDULE_BUTTON = new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
-            "Вчера","{\"button\": \"1\"}", VkKeyboardButtonActionType.TEXT
+            "Вчера",DEFAULT_PAYLOAD, VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY);
 
     /*
     TODO:
-    UPDATE TEACHER KEYBOARD AS TG
-
 
     DONE:
     main menu
@@ -102,7 +103,7 @@ public class VkKeyboardGenerator {
                     new VkKeyboardButton(
                     new VkKeyboardButtonActionText(
                             "Расписание студентов",
-                            "{\"button\": \"1\"}",
+                            DEFAULT_PAYLOAD,
                             VkKeyboardButtonActionType.TEXT
                     ), VkKeyboardButtonColor.POSITIVE)
             ),
@@ -110,7 +111,7 @@ public class VkKeyboardGenerator {
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "Расписание преподавателей",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.POSITIVE)
             ),
@@ -119,7 +120,7 @@ public class VkKeyboardGenerator {
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "Справка",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY)
             )
@@ -130,7 +131,7 @@ public class VkKeyboardGenerator {
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "Да",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.POSITIVE)
             ),
@@ -138,7 +139,7 @@ public class VkKeyboardGenerator {
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "Нет",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.NEGATIVE)
             ),
@@ -151,13 +152,13 @@ public class VkKeyboardGenerator {
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "Дневная",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY),
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "Заочная",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY)
             ),
@@ -169,13 +170,13 @@ public class VkKeyboardGenerator {
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "1 курс",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY),
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "2 курс",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY)
             ),
@@ -183,13 +184,13 @@ public class VkKeyboardGenerator {
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "3 курс",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY),
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "4 курс",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY)
             ),
@@ -197,13 +198,13 @@ public class VkKeyboardGenerator {
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "5 курс",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY),
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "Другое",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY)
             ),
@@ -216,19 +217,19 @@ public class VkKeyboardGenerator {
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "БИОЛОГ",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY),
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "ГЕОГРАФ",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY),
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "ГЕОЛОГ",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY)
             ),
@@ -236,19 +237,19 @@ public class VkKeyboardGenerator {
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "ИДПО",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY),
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "И-Т ИСКУССТВ",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY),
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "ИИИМО",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY)
             ),
@@ -256,19 +257,19 @@ public class VkKeyboardGenerator {
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "И-Т ФИЗИКИ",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY),
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "И-Т ФИЗ КУЛ",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY),
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "ИФИЖ",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY)
             ),
@@ -276,19 +277,19 @@ public class VkKeyboardGenerator {
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "И-Т ХИМИИ",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY),
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "МЕХМАТ",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY),
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "СОЦФАК",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY)
             ),
@@ -296,19 +297,19 @@ public class VkKeyboardGenerator {
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "ФИЯИЛ",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY),
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "КНИИТ",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY),
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "ФНБМТ",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY)
             ),
@@ -316,19 +317,19 @@ public class VkKeyboardGenerator {
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "ФНП",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY),
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "ПСИХОЛОГ",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY),
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "ППИСО",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY)
             ),
@@ -336,19 +337,19 @@ public class VkKeyboardGenerator {
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "ФИЛОСОФ",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY),
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "ЭКОНОМ",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY),
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "ЮРФАК",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY)
             ),
@@ -356,13 +357,13 @@ public class VkKeyboardGenerator {
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "ГЕОЛОГ К-Ж",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY),
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "К-Ж ЯБЛОЧКОВА",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY)
             ),
@@ -374,25 +375,25 @@ public class VkKeyboardGenerator {
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "1 ч",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY),
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "2 ч",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY),
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "3 ч",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY),
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "4 ч",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY)
             ),
@@ -400,25 +401,25 @@ public class VkKeyboardGenerator {
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "5 ч",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY),
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "6 ч",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY),
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "7 ч",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY),
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "8 ч",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY)
             ),
@@ -426,25 +427,25 @@ public class VkKeyboardGenerator {
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "9 ч",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY),
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "10 ч",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY),
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "11 ч",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY),
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "12 ч",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY)
             ),
@@ -452,25 +453,25 @@ public class VkKeyboardGenerator {
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "13 ч",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY),
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "14 ч",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY),
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "15 ч",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY),
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "16 ч",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY)
             ),
@@ -478,25 +479,25 @@ public class VkKeyboardGenerator {
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "17 ч",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY),
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "18 ч",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY),
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "19 ч",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY),
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "20 ч",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY)
             ),
@@ -504,25 +505,25 @@ public class VkKeyboardGenerator {
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "21 ч",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY),
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "22 ч",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY),
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "23 ч",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY),
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "0 ч",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY)
             ),
@@ -534,7 +535,7 @@ public class VkKeyboardGenerator {
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "Все занятия",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY)
             ),
@@ -543,19 +544,19 @@ public class VkKeyboardGenerator {
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "Пн",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY),
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "Вт",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY),
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "Ср",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY)
             ),
@@ -563,19 +564,19 @@ public class VkKeyboardGenerator {
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "Чт",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY),
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "Пт",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY),
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "Сб",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY)
             ),
@@ -583,7 +584,7 @@ public class VkKeyboardGenerator {
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "Сессия",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY)
             ),
@@ -596,7 +597,7 @@ public class VkKeyboardGenerator {
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "Все занятия",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY)
             ),
@@ -617,11 +618,15 @@ public class VkKeyboardGenerator {
                 row++;
                 vkKeyboardButtons.add(new ArrayList<>());
             }
+            String teacher = teachers.get(i).getId() + " "
+                    + teachers.get(i).getSurname() + " "
+                    + teachers.get(i).getName() + " "
+                    + teachers.get(i).getPatronymic();
+            teacher = teacher.length() > MAX_KEYBOARD_TEXT_LENGTH ? teacher.substring(0, MAX_KEYBOARD_TEXT_LENGTH) : teacher;
             vkKeyboardButtons.get(row).add(
                     new VkKeyboardButton(
-                            new VkKeyboardButtonActionText(
-                                    teachers.get(i).getSurname() + " " + teachers.get(i).getName() + " " + teachers.get(i).getPatronymic(),
-                                    String.format(Constants.PAYLOAD, CommandText.TEACHER_ID_PAYLOAD + " " + teachers.get(i).getId()),
+                            new VkKeyboardButtonActionText(teacher,
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY)
             );
@@ -680,7 +685,7 @@ public class VkKeyboardGenerator {
                 new VkKeyboardButton(
                         new VkKeyboardButtonActionText(
                                 "Рассылка расписания сессии",
-                                "{\"button\": \"1\"}",
+                                DEFAULT_PAYLOAD,
                                 VkKeyboardButtonActionType.TEXT
                         ), VkKeyboardButtonColor.PRIMARY
                 )
@@ -691,7 +696,7 @@ public class VkKeyboardGenerator {
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "Выкл. фильтр по типу недели",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.NEGATIVE
                     )
@@ -701,7 +706,7 @@ public class VkKeyboardGenerator {
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "Вкл. фильтр по типу недели",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.POSITIVE
                     )
@@ -714,7 +719,7 @@ public class VkKeyboardGenerator {
                 new VkKeyboardButton(
                         new VkKeyboardButtonActionText(
                                 "Текущие настройки пользователя",
-                                "{\"button\": \"1\"}",
+                                DEFAULT_PAYLOAD,
                                 VkKeyboardButtonActionType.TEXT
                         ), VkKeyboardButtonColor.PRIMARY
                 )
@@ -724,7 +729,7 @@ public class VkKeyboardGenerator {
                 new VkKeyboardButton(
                         new VkKeyboardButtonActionText(
                                 "Удалить профиль",
-                                "{\"button\": \"1\"}",
+                                DEFAULT_PAYLOAD,
                                 VkKeyboardButtonActionType.TEXT
                         ), VkKeyboardButtonColor.NEGATIVE
                 )
@@ -737,7 +742,7 @@ public class VkKeyboardGenerator {
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "Рассылка расписания занятий",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY
                     )
@@ -767,7 +772,7 @@ public class VkKeyboardGenerator {
                 new VkKeyboardButton(
                         new VkKeyboardButtonActionText(
                                 "Уст. время рассылки сессии на сегодня",
-                                "{\"button\": \"1\"}",
+                                DEFAULT_PAYLOAD,
                                 VkKeyboardButtonActionType.TEXT
                         ), VkKeyboardButtonColor.PRIMARY
                 )
@@ -777,7 +782,7 @@ public class VkKeyboardGenerator {
                 new VkKeyboardButton(
                         new VkKeyboardButtonActionText(
                                 "Уст. время рассылки сессии на завтра",
-                                "{\"button\": \"1\"}",
+                                DEFAULT_PAYLOAD,
                                 VkKeyboardButtonActionType.TEXT
                         ), VkKeyboardButtonColor.PRIMARY
                 )
@@ -787,7 +792,7 @@ public class VkKeyboardGenerator {
                 new VkKeyboardButton(
                         new VkKeyboardButtonActionText(
                                 "Уст. время рас-ки сессии на послезавтра",
-                                "{\"button\": \"1\"}",
+                                DEFAULT_PAYLOAD,
                                 VkKeyboardButtonActionType.TEXT
                         ), VkKeyboardButtonColor.PRIMARY
                 )
@@ -806,7 +811,7 @@ public class VkKeyboardGenerator {
                         new VkKeyboardButton(
                                 new VkKeyboardButtonActionText(
                                         "Выкл. рассылку сессии на сегодня",
-                                        "{\"button\": \"1\"}",
+                                        DEFAULT_PAYLOAD,
                                         VkKeyboardButtonActionType.TEXT
                                 ), VkKeyboardButtonColor.NEGATIVE
                         )
@@ -816,7 +821,7 @@ public class VkKeyboardGenerator {
                         new VkKeyboardButton(
                                 new VkKeyboardButtonActionText(
                                         "Вкл. рассылку сессии на сегодня",
-                                        "{\"button\": \"1\"}",
+                                        DEFAULT_PAYLOAD,
                                         VkKeyboardButtonActionType.TEXT
                                 ), VkKeyboardButtonColor.POSITIVE
                         )
@@ -828,7 +833,7 @@ public class VkKeyboardGenerator {
                         new VkKeyboardButton(
                                 new VkKeyboardButtonActionText(
                                         "Выкл. рассылку сессии на завтра",
-                                        "{\"button\": \"1\"}",
+                                        DEFAULT_PAYLOAD,
                                         VkKeyboardButtonActionType.TEXT
                                 ), VkKeyboardButtonColor.NEGATIVE
                         )
@@ -838,7 +843,7 @@ public class VkKeyboardGenerator {
                         new VkKeyboardButton(
                                 new VkKeyboardButtonActionText(
                                         "Вкл. рассылку сессии на завтра",
-                                        "{\"button\": \"1\"}",
+                                        DEFAULT_PAYLOAD,
                                         VkKeyboardButtonActionType.TEXT
                                 ), VkKeyboardButtonColor.POSITIVE
                         )
@@ -850,7 +855,7 @@ public class VkKeyboardGenerator {
                         new VkKeyboardButton(
                                 new VkKeyboardButtonActionText(
                                         "Выкл. рассылку сессии на послезавтра",
-                                        "{\"button\": \"1\"}",
+                                        DEFAULT_PAYLOAD,
                                         VkKeyboardButtonActionType.TEXT
                                 ), VkKeyboardButtonColor.NEGATIVE
                         )
@@ -860,7 +865,7 @@ public class VkKeyboardGenerator {
                         new VkKeyboardButton(
                                 new VkKeyboardButtonActionText(
                                         "Вкл. рассылку сессии на послезавтра",
-                                        "{\"button\": \"1\"}",
+                                        DEFAULT_PAYLOAD,
                                         VkKeyboardButtonActionType.TEXT
                                 ), VkKeyboardButtonColor.POSITIVE
                         )
@@ -878,7 +883,7 @@ public class VkKeyboardGenerator {
                         new VkKeyboardButton(
                                 new VkKeyboardButtonActionText(
                                         "Выкл. рассылку сессии на сегодня",
-                                        "{\"button\": \"1\"}",
+                                        DEFAULT_PAYLOAD,
                                         VkKeyboardButtonActionType.TEXT
                                 ), VkKeyboardButtonColor.NEGATIVE
                         )
@@ -888,7 +893,7 @@ public class VkKeyboardGenerator {
                         new VkKeyboardButton(
                                 new VkKeyboardButtonActionText(
                                         "Вкл. рассылку сессии на сегодня",
-                                        "{\"button\": \"1\"}",
+                                        DEFAULT_PAYLOAD,
                                         VkKeyboardButtonActionType.TEXT
                                 ), VkKeyboardButtonColor.POSITIVE
                         )
@@ -900,7 +905,7 @@ public class VkKeyboardGenerator {
                         new VkKeyboardButton(
                                 new VkKeyboardButtonActionText(
                                         "Выкл. рассылку сессии на завтра",
-                                        "{\"button\": \"1\"}",
+                                        DEFAULT_PAYLOAD,
                                         VkKeyboardButtonActionType.TEXT
                                 ), VkKeyboardButtonColor.NEGATIVE
                         )
@@ -910,7 +915,7 @@ public class VkKeyboardGenerator {
                         new VkKeyboardButton(
                                 new VkKeyboardButtonActionText(
                                         "Вкл. рассылку сессии на завтра",
-                                        "{\"button\": \"1\"}",
+                                        DEFAULT_PAYLOAD,
                                         VkKeyboardButtonActionType.TEXT
                                 ), VkKeyboardButtonColor.POSITIVE
                         )
@@ -922,7 +927,7 @@ public class VkKeyboardGenerator {
                         new VkKeyboardButton(
                                 new VkKeyboardButtonActionText(
                                         "Выкл. рассылку сессии на послезавтра",
-                                        "{\"button\": \"1\"}",
+                                        DEFAULT_PAYLOAD,
                                         VkKeyboardButtonActionType.TEXT
                                 ), VkKeyboardButtonColor.NEGATIVE
                         )
@@ -932,7 +937,7 @@ public class VkKeyboardGenerator {
                         new VkKeyboardButton(
                                 new VkKeyboardButtonActionText(
                                         "Вкл. рассылку сессии на послезавтра",
-                                        "{\"button\": \"1\"}",
+                                        DEFAULT_PAYLOAD,
                                         VkKeyboardButtonActionType.TEXT
                                 ), VkKeyboardButtonColor.POSITIVE
                         )
@@ -962,7 +967,7 @@ public class VkKeyboardGenerator {
                 new VkKeyboardButton(
                         new VkKeyboardButtonActionText(
                                 "Уст. время рассылки расп-я на сегодня",
-                                "{\"button\": \"1\"}",
+                                DEFAULT_PAYLOAD,
                                 VkKeyboardButtonActionType.TEXT
                         ), VkKeyboardButtonColor.PRIMARY
                 )
@@ -973,7 +978,7 @@ public class VkKeyboardGenerator {
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "Выкл. рассылку расп-я на сегодня",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.NEGATIVE
                     )
@@ -983,7 +988,7 @@ public class VkKeyboardGenerator {
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "Вкл. рассылку расп-я на сегодня",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.POSITIVE
                     )
@@ -994,7 +999,7 @@ public class VkKeyboardGenerator {
                 new VkKeyboardButton(
                         new VkKeyboardButtonActionText(
                                 "Уст. время рассылки расп-я на завтра",
-                                "{\"button\": \"1\"}",
+                                DEFAULT_PAYLOAD,
                                 VkKeyboardButtonActionType.TEXT
                         ), VkKeyboardButtonColor.PRIMARY
                 )
@@ -1005,7 +1010,7 @@ public class VkKeyboardGenerator {
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "Выкл. рассылку расп-я на завтра",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.NEGATIVE
                     )
@@ -1015,7 +1020,7 @@ public class VkKeyboardGenerator {
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
                                     "Вкл. рассылку расп-я на завтра",
-                                    "{\"button\": \"1\"}",
+                                    DEFAULT_PAYLOAD,
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.POSITIVE
                     )

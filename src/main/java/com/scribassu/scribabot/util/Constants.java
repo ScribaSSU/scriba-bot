@@ -19,7 +19,11 @@ public class Constants {
     public static final String PAYLOAD = "{\"button\": \"%s\"}";
     public static final String PAYLOAD_START = "{\"button\": \"";
     public static final String PAYLOAD_END = "\"}";
+    public static final String DEFAULT_PAYLOAD = "{\"button\": \"1\"}";
 
+    public static final String TEACHER_ID = "TEACHER_ID ";
+
+    public static final int MAX_KEYBOARD_TEXT_LENGTH = 40;
     public static final int MAX_VK_KEYBOARD_SIZE_FOR_LISTS = 38; //render lists without counting menu buttons
     public static final long PEER_ID_SHIFT = 2000000000;
 }

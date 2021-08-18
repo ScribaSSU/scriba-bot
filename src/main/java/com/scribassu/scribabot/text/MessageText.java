@@ -33,6 +33,13 @@ public class MessageText {
     public static final String ENABLE_FILTER_WEEK_TYPE = "Включена фильтрация по типу недели.";
     public static final String DISABLE_FILTER_WEEK_TYPE = "Выключена фильтрация по типу недели.";
     public static final String SCHEDULE_WILL_BE_SENT_ABSTRACT = "Теперь расписание будет приходить в ";
+    public static final String CHOOSE_TEACHER_TO_GET_SCHEDULE = "Выберите, для какого преподавателя хотите узнать расписание.";
+    public static final String CHOOSE_DAY_FOR_TEACHER_SCHEDULE = "Выберите, для чего хотите узнать расписание преподавателя. Для сброса поиска выберите на клавиатуре 'Главное меню' или введите вручную 'меню'.";
+    public static final String TOO_LONG_TEACHER_LIST = "Искомый список преподавателей слишком большой для клавиатуры. Попробуйте запросить точнее.";
+    public static final String EMPTY_TEACHER_LIST = "По вашему запросу ничего не нашлось.";
+    public static final String TEACHER_NAME_PROMPT = "Введите полностью или частично что-либо из ФИО преподавателя. " +
+            "Например, по запросу 'Ива' найдутся и 'Иванова', и 'Иван', и 'Иванович'. " +
+            "По запросу 'Иванов Ев' найдется 'Иванов Евгений', но не 'Иванова Евгения'.";
 
     public static final String NOT_ENABLE_SCHEDULE_NOTIFICATION_TODAY = "Вы еще не подключали рассылку расписания на сегодня. Подключите через '";
     public static final String NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_TODAY = "Вы еще не подключали рассылку расписания сессии на сегодня. Подключите через '";

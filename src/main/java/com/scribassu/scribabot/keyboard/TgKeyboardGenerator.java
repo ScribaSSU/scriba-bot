@@ -15,6 +15,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.scribassu.scribabot.util.Constants.MAX_KEYBOARD_TEXT_LENGTH;
 import static com.scribassu.scribabot.util.TgKeyboardEmoji.*;
 
 @Service
@@ -279,11 +280,12 @@ public class TgKeyboardGenerator {
                 row++;
                 rows.add(new KeyboardRow());
             }
-            rows.get(row).add(new KeyboardButton(
-                            teachers.get(i).getId() + " "
-                                    + teachers.get(i).getSurname() + " "
-                                    + teachers.get(i).getName() + " "
-                                    + teachers.get(i).getPatronymic()));
+            String teacher = teachers.get(i).getId() + " "
+                    + teachers.get(i).getSurname() + " "
+                    + teachers.get(i).getName() + " "
+                    + teachers.get(i).getPatronymic();
+            teacher = teacher.length() > MAX_KEYBOARD_TEXT_LENGTH ? teacher.substring(0, MAX_KEYBOARD_TEXT_LENGTH) : teacher;
+            rows.get(row).add(new KeyboardButton(teacher));
             i++;
         }
 

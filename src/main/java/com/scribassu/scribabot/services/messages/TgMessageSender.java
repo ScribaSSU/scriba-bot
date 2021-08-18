@@ -69,7 +69,7 @@ public class TgMessageSender extends TelegramLongPollingBot implements MessageSe
                     message = botMessage.getMessage().substring(startIndex, lastSpaceIndex);
                 }
 
-                if (botMessage.hasVkKeyboard()) {
+                if (botMessage.hasTgKeyboard()) {
                     execute(new SendMessage().setChatId(chatId)
                             .setText(message)
                             .setReplyMarkup(botMessage.getTgKeyboard()));

@@ -32,7 +32,7 @@ public class ExamPeriodService implements BotMessageService {
     }
 
     private BotMessage getTeacherBotMessage(String message, InnerBotUser botUser) {
-        String teacherId = botUser.getPreviousUserMessage().split(" ")[2];
+        String teacherId = botUser.getPreviousUserMessage().split(" ")[1];
         if (message.equalsIgnoreCase(CommandText.EXAMS)) {
             TeacherExamPeriodEventDto examPeriodEventDto = callRestService.getTeacherExamPeriodEvents(teacherId);
             if (null == examPeriodEventDto || examPeriodEventDto.getExamPeriodEvents().isEmpty()) {

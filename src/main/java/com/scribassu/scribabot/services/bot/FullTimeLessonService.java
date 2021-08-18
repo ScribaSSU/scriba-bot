@@ -39,7 +39,7 @@ public class FullTimeLessonService implements BotMessageService {
         boolean isToday = false;
         boolean isTomorrow = false;
         boolean isYesterday = false;
-        String teacherId = botUser.getPreviousUserMessage().split(" ")[2];
+        String teacherId = botUser.getPreviousUserMessage().split(" ")[1];
 
         switch (message) {
             case CommandText.MONDAY:

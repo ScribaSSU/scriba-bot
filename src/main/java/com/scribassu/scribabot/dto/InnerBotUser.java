@@ -1,18 +1,11 @@
 package com.scribassu.scribabot.dto;
 
-import com.scribassu.scribabot.entities.BotUser;
 import com.scribassu.scribabot.entities.TgBotUser;
 import com.scribassu.scribabot.entities.VkBotUser;
-import com.scribassu.scribabot.text.CommandText;
 import com.scribassu.scribabot.util.BotUserSource;
-import javassist.runtime.Inner;
+import com.scribassu.scribabot.util.Constants;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-import javax.persistence.Column;
-import javax.persistence.Id;
 
 @Data
 @NoArgsConstructor
@@ -63,6 +56,6 @@ public class InnerBotUser {
     }
 
     public boolean wantTeacherSchedule() {
-        return this.previousUserMessage.startsWith(CommandText.TEACHER_ID_PAYLOAD);
+        return this.previousUserMessage.startsWith(Constants.TEACHER_ID);
     }
 }
