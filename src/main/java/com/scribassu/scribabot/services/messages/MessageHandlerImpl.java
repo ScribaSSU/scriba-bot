@@ -357,9 +357,17 @@ public class MessageHandlerImpl implements MessageHandler {
 
             } else {
                 if (botUser.fromVk()) {
-                    botMessage = new BotMessage(MessageText.FINISH_SET_GROUP, VkKeyboardGenerator.fullTimeSchedule);
+                    if (BotMessageUtils.isBotUserFullTime(botUser)) {
+                        botMessage = new BotMessage(MessageText.FINISH_SET_GROUP, VkKeyboardGenerator.fullTimeSchedule);
+                    } else {
+                        botMessage = new BotMessage(FINISH_SET_GROUP, VkKeyboardGenerator.extramuralSchedule);
+                    }
                 } else {
-                    botMessage = new BotMessage(MessageText.FINISH_SET_GROUP, TgKeyboardGenerator.fullTimeSchedule());
+                    if (BotMessageUtils.isBotUserFullTime(botUser)) {
+                        botMessage = new BotMessage(MessageText.FINISH_SET_GROUP, TgKeyboardGenerator.fullTimeSchedule());
+                    } else {
+                        botMessage = new BotMessage(FINISH_SET_GROUP, TgKeyboardGenerator.extramuralSchedule());
+                    }
                 }
             }
         }

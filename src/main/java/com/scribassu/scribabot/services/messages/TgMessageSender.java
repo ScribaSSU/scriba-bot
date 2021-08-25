@@ -33,7 +33,7 @@ public class TgMessageSender extends TelegramLongPollingBot implements MessageSe
 
     @Override
     public void onUpdateReceived(Update update) {
-        System.out.println(update);
+        log.info(update.toString());
         String text = update.getMessage().getText();
         Long chatId = update.getMessage().getChatId();
         text = removeEmoji(text);
@@ -42,6 +42,7 @@ public class TgMessageSender extends TelegramLongPollingBot implements MessageSe
                 "no payload",
                 String.valueOf(update.getMessage().getFrom().getId()),
                 BotUserSource.TG);
+        log.info(command.toString());
         try {
             BotMessage botMessage = messageHandler.getBotMessage(command);
 
