@@ -92,6 +92,76 @@ public class MessageGenerator {
         return stringBuilder.toString();
     }
 
+    public static String makeFullTimeLessonTemplateLessonsAll(FullTimeLessonDto fullTimeLessonDto,
+                                                              boolean filterWeekType) {
+        StringBuilder stringBuilder = new StringBuilder();
+        Calendar calendar = CalendarUtils.getCalendar();
+
+        WeekType currentWeekType = WeekTypeUtils.getWeekType(calendar);
+
+        // kgl has another week type
+        if (fullTimeLessonDto.getStudentGroup().getDepartment().getURL().equalsIgnoreCase("kgl")) {
+            currentWeekType = currentWeekType.equals(WeekType.NOM) ? WeekType.DENOM : WeekType.NOM;
+        }
+
+        stringBuilder.append("Группа № ").append(fullTimeLessonDto.getStudentGroup().getGroupNumberRus()).append("\n \n");
+
+        if (CollectionUtils.isEmpty(fullTimeLessonDto.getLessons())) {
+            stringBuilder.append("А пар-то нету :)");
+        } else {
+            List<FullTimeLesson> fullTimeLessons = fullTimeLessonDto.getLessons();
+            if (filterWeekType) {
+                final WeekType finalCurrentWeekType = currentWeekType;
+                fullTimeLessons = fullTimeLessons
+                        .stream()
+                        .filter(f -> f.getWeekType().equals(WeekType.FULL) || f.getWeekType().equals(finalCurrentWeekType))
+                        .collect(Collectors.toList());
+            }
+
+            //TODO: refactor may be
+            List<FullTimeLesson> monday = fullTimeLessons.stream().filter(l -> l.getDay().getWeekDay().equals(WeekDay.MONDAY)).collect(Collectors.toList());
+            List<FullTimeLesson> tuesday = fullTimeLessons.stream().filter(l -> l.getDay().getWeekDay().equals(WeekDay.TUESDAY)).collect(Collectors.toList());
+            List<FullTimeLesson> wednesday = fullTimeLessons.stream().filter(l -> l.getDay().getWeekDay().equals(WeekDay.WEDNESDAY)).collect(Collectors.toList());
+            List<FullTimeLesson> thursday = fullTimeLessons.stream().filter(l -> l.getDay().getWeekDay().equals(WeekDay.THURSDAY)).collect(Collectors.toList());
+            List<FullTimeLesson> friday = fullTimeLessons.stream().filter(l -> l.getDay().getWeekDay().equals(WeekDay.FRIDAY)).collect(Collectors.toList());
+            List<FullTimeLesson> saturday = fullTimeLessons.stream().filter(l -> l.getDay().getWeekDay().equals(WeekDay.SATURDAY)).collect(Collectors.toList());
+
+            List<List<FullTimeLesson>> weekLessons = List.of(monday, tuesday, wednesday, thursday, friday, saturday);
+            List<String> days = List.of("ПОНЕДЕЛЬНИК", "ВТОРНИК", "СРЕДА", "ЧЕТВЕРГ", "ПЯТНИЦА", "СУББОТА");
+            int dayNumber = 0;
+
+            for (List<FullTimeLesson> day : weekLessons) {
+                stringBuilder.append(days.get(dayNumber)).append("\n\n");
+                dayNumber++;
+                if (CollectionUtils.isEmpty(day)) {
+                    stringBuilder.append("А пар-то нету :)").append("\n\n");
+                } else {
+                    day.sort(Comparator.comparingInt(o -> o.getLessonTime().getLessonNumber()));
+                    for (FullTimeLesson fullTimeLesson : day) {
+                        stringBuilder.append(appendTime(fullTimeLesson.getLessonTime())).append("\n")
+                                .append(fullTimeLesson.getLessonType().getType())
+                                .append(" ")
+                                .append(appendLessonTypeEmoji(fullTimeLesson))
+                                .append("\n");
+
+                        if (!fullTimeLesson.getWeekType().equals(WeekType.FULL)) {
+                            stringBuilder.append(fullTimeLesson.getWeekType().getType()).append("\n");
+                        }
+                        if (!StringUtils.isEmpty(fullTimeLesson.getSubGroup())) {
+                            stringBuilder.append(fullTimeLesson.getSubGroup().trim()).append("\n");
+                        }
+                        stringBuilder.append(fullTimeLesson.getName()).append("\n");
+                        stringBuilder.append(appendTeacher(fullTimeLesson.getTeacher())).append("\n");
+                        stringBuilder.append(fullTimeLesson.getPlace()).append("\n \n");
+                    }
+                }
+            }
+        }
+
+        return stringBuilder.toString();
+    }
+
+
     public static String makeFullTimeExamPeriodTemplate(ExamPeriodEventDto examPeriodEventDto,
                                                         String day) {
         StringBuilder stringBuilder = new StringBuilder();

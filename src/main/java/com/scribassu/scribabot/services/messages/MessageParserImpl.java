@@ -18,7 +18,7 @@ public class MessageParserImpl implements MessageParser {
 
     @Override
     public Map<String, String> parseMessage(String incomingJson) {
-        log.info("Message: " + incomingJson);
+        log.info("VK Message: " + incomingJson);
         Map<String, String> parsed = new HashMap<>();
         JsonObject requestJson = gson.fromJson(incomingJson, JsonObject.class);
         String type = requestJson.get("type").getAsString();

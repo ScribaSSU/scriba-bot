@@ -3,6 +3,7 @@ package com.scribassu.scribabot.text;
 import java.util.regex.Pattern;
 
 public class CommandText {
+    public static final String TG_START = "/start";
     public static final String HELLO = "привет";
     public static final String HELP = "справка";
     public static final String STUDENTS_SCHEDULE = "расписание студентов";

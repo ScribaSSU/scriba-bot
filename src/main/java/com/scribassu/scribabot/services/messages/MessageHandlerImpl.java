@@ -133,7 +133,8 @@ public class MessageHandlerImpl implements MessageHandler {
 
         if (botUser.notRegistered() && !message.equals(CommandText.HELLO)
                 && !message.equals(CommandText.MAIN_MENU)
-                && !message.equals(CommandText.SHORT_MAIN_MENU)) {
+                && !message.equals(CommandText.SHORT_MAIN_MENU)
+                && !message.equals(CommandText.TG_START)) {
             botMessage = new BotMessage(GREETING_WITH_PROMPT);
             botUser = new InnerBotUser();
             botUser.setUserId(userId); //DON'T SAVE! It is only for unrecognized messages check
@@ -149,6 +150,7 @@ public class MessageHandlerImpl implements MessageHandler {
         }
 
         switch (message) {
+            case CommandText.TG_START:
             case CommandText.HELLO:
                 if (botUser.notRegistered()) {
                     if (botUser.fromVk()) {
@@ -278,6 +280,8 @@ public class MessageHandlerImpl implements MessageHandler {
             case CommandText.ALL_LESSONS:
                 if (BotMessageUtils.isBotUserExtramural(botUser)) {
                     botMessage = extramuralEventService.getBotMessage(message, botUser);
+                } else {
+                    botMessage = fullTimeLessonService.getBotMessage(message, botUser);
                 }
                 break;
             case CommandText.TEACHER_SCHEDULE_FOR_EXTRAMURAL:

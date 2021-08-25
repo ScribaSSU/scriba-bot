@@ -28,6 +28,20 @@ public class BotMessageUtils {
         }
     }
 
+    public static BotMessage getBotMessageForFullTimeLessonsAll(FullTimeLessonDto fullTimeLessonDto,
+                                                                boolean filterWeekType,
+                                                                InnerBotUser botUser) {
+        if (botUser.fromVk()) {
+            return new BotMessage(
+                    MessageGenerator.makeFullTimeLessonTemplateLessonsAll(fullTimeLessonDto, filterWeekType),
+                    VkKeyboardGenerator.fullTimeSchedule);
+        } else {
+            return new BotMessage(
+                    MessageGenerator.makeFullTimeLessonTemplateLessonsAll(fullTimeLessonDto, filterWeekType),
+                    TgKeyboardGenerator.fullTimeSchedule());
+        }
+    }
+
     public static BotMessage getBotMessageForUnsupportedLessons(InnerBotUser botUser) {
         return botUser.fromVk() ?
                 new BotMessage(UNSUPPORTED_LESSONS, VkKeyboardGenerator.departments)
