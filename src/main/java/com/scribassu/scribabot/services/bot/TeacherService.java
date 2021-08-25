@@ -77,7 +77,6 @@ public class TeacherService implements BotMessageService {
                             } else {
                                 tgBotUserRepository.updatePreviousUserMessage(CHOOSE_TEACHER_TO_GET_SCHEDULE, userId);
                                 botMessage.setTgKeyboard(tgKeyboardGenerator.teachers(teachers));
-                                System.out.println("I'll give you a Batraeva teacher");
                             }
                         } catch (Exception e) {
                             botMessage = botUser.fromVk() ?
@@ -98,15 +97,15 @@ public class TeacherService implements BotMessageService {
             try {
                 String teacherId = message.substring(0, message.indexOf(" "));
                 if (botUser.fromVk()) {
-                    vkBotUserRepository.updatePreviousUserMessage("TEACHER_ID " + teacherId, userId);
+                    vkBotUserRepository.updatePreviousUserMessage(Constants.TEACHER_ID + teacherId, userId);
                     botMessage = new BotMessage(
                             CHOOSE_DAY_FOR_TEACHER_SCHEDULE,
-                            VkKeyboardGenerator.fullTimeSchedule);
+                            VkKeyboardGenerator.teacherSchedule);
                 } else {
-                    tgBotUserRepository.updatePreviousUserMessage("TEACHER_ID " + teacherId, userId);
+                    tgBotUserRepository.updatePreviousUserMessage(Constants.TEACHER_ID + teacherId, userId);
                     botMessage = new BotMessage(
                             CHOOSE_DAY_FOR_TEACHER_SCHEDULE,
-                            TgKeyboardGenerator.fullTimeSchedule());
+                            TgKeyboardGenerator.teacherSchedule());
                 }
             } catch (StringIndexOutOfBoundsException e) {
                 botMessage = botUser.fromVk() ?

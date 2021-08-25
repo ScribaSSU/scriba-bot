@@ -2,6 +2,7 @@ package com.scribassu.scribabot.generators;
 
 import com.scribassu.scribabot.dto.rest.*;
 import com.scribassu.scribabot.text.CommandText;
+import com.scribassu.scribabot.text.MessageText;
 import com.scribassu.scribabot.util.CalendarUtils;
 import com.scribassu.scribabot.util.WeekTypeUtils;
 import com.scribassu.tracto.domain.*;
@@ -342,6 +343,65 @@ public class MessageGenerator {
                 stringBuilder.append("\n");
                 stringBuilder.append(extramuralEvent.getName()).append("\n");
                 stringBuilder.append(extramuralEvent.getTeacher()).append("\n");
+                stringBuilder.append(extramuralEvent.getPlace()).append("\n \n");
+            }
+        }
+        return stringBuilder.toString();
+    }
+
+    public static String makeExtramuralEventTemplateTeacher(TeacherExtramuralEventDto extramuralDto) {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(appendTeacher(extramuralDto.getTeacher())).append("\n\n");
+        List<ExtramuralEvent> extramuralEvents = extramuralDto.getExtramuralEvents();
+
+        if (CollectionUtils.isEmpty(extramuralEvents)) {
+            stringBuilder.append(MessageText.NO_EXAM_PERIOD_SCHEDULE_TEACHER);
+        } else {
+            extramuralEvents.sort(Comparator.comparingLong(ExtramuralEvent::getId));
+
+            for (ExtramuralEvent extramuralEvent : extramuralEvents) {
+                if (extramuralEvent.getDay() != -1) {
+                    stringBuilder
+                            .append(extramuralEvent.getDay())
+                            .append(" ")
+                            .append(extramuralEvent.getMonth().getRusGenitive())
+                            .append(" ")
+                            .append(extramuralEvent.getYear())
+                            .append("\n");
+                } else {
+                    stringBuilder.append("\n");
+                }
+                if (extramuralEvent.getStartHour() != -1) {
+                    stringBuilder.append(extramuralEvent.getStartHour());
+                    if (extramuralEvent.getStartMinute() != -1) {
+                        stringBuilder.append(":").append(extramuralEvent.getStartMinute() < 10 ?
+                                "0" + extramuralEvent.getStartMinute() :
+                                extramuralEvent.getStartMinute());
+                    } else {
+                        stringBuilder.append("ч.");
+                    }
+
+                    if (extramuralEvent.getEndHour() != -1) {
+                        stringBuilder.append(" - ").append(extramuralEvent.getEndHour());
+                        if (extramuralEvent.getEndMinute() != -1) {
+                            stringBuilder.append(":").append(extramuralEvent.getEndMinute() < 10 ?
+                                    "0" + extramuralEvent.getEndMinute() :
+                                    extramuralEvent.getEndMinute());
+                        } else {
+                            stringBuilder.append("ч");
+                        }
+                    }
+                    stringBuilder.append("\n");
+                }
+
+                stringBuilder
+                        .append(extramuralEvent.getEventType().getType())
+                        .append(" ")
+                        .append(appendExtramuralEventTypeEmoji(extramuralEvent));
+
+                stringBuilder.append("\n");
+                stringBuilder.append(extramuralEvent.getName()).append("\n");
+                stringBuilder.append("Группа № ").append(extramuralEvent.getStudentGroup().getGroupNumberRus()).append("\n");
                 stringBuilder.append(extramuralEvent.getPlace()).append("\n \n");
             }
         }

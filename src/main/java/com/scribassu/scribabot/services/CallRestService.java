@@ -31,8 +31,9 @@ public class CallRestService {
 
     private final String TEACHER_URI = "teacher";
 
+    private final String TEACHER_EXTRAMURAL_SCHEDULE_URI = "schedule/extramural/teacher/%s";
     private final String EXTR_EV_GROUP_URI = "schedule/extramural/%s/%s";
-    private final String EXTR_EV_GROUP_URI_MONTH_DAY = "schedule/extramural/%s/%s/%s/%s";
+    private final String EXTR_EV_GROUP_MONTH_DAY_URI = "schedule/extramural/%s/%s/%s/%s";
 
     public FullTimeLessonDto getFullTimeLessonsByDayAndLesson(String departmentUrl,
                                                               String groupNumber,
@@ -123,6 +124,17 @@ public class CallRestService {
 
         return restTemplate.getForObject(uri, ExamPeriodEventDto.class);
     }
+
+    public TeacherExtramuralEventDto getTeacherExtramuralEvents(String teacherId) {
+        RestTemplate restTemplate = new RestTemplate();
+        String uri = prefix + String.format(TEACHER_EXTRAMURAL_SCHEDULE_URI, teacherId);
+
+        //https://stackoverflow.com/questions/19540289/how-to-fix-the-java-security-cert-certificateexception-no-subject-alternative
+        javax.net.ssl.HttpsURLConnection.setDefaultHostnameVerifier((hostname, sslSession) -> true);
+
+        return restTemplate.getForObject(uri, TeacherExtramuralEventDto.class);
+    }
+
 
     public GroupNumbersDto getGroupNumbersByDepartmentUrlAndEducationFormAndCourse(
             String departmentUrl,
@@ -219,7 +231,7 @@ public class CallRestService {
         RestTemplate restTemplate = new RestTemplate();
         String uri = prefix +
                 String.format(
-                        EXTR_EV_GROUP_URI_MONTH_DAY,
+                        EXTR_EV_GROUP_MONTH_DAY_URI,
                         departmentUrl,
                         groupNumber,
                         month,

@@ -3,6 +3,7 @@ package com.scribassu.scribabot.services.bot;
 import com.scribassu.scribabot.dto.BotMessage;
 import com.scribassu.scribabot.dto.InnerBotUser;
 import com.scribassu.scribabot.dto.rest.ExtramuralDto;
+import com.scribassu.scribabot.dto.rest.TeacherExtramuralEventDto;
 import com.scribassu.scribabot.services.CallRestService;
 import com.scribassu.scribabot.text.CommandText;
 import com.scribassu.scribabot.util.BotMessageUtils;
@@ -24,6 +25,24 @@ public class ExtramuralEventService implements BotMessageService {
 
     @Override
     public BotMessage getBotMessage(String message, InnerBotUser botUser) {
+        if (botUser.wantTeacherSchedule()) {
+            return getTeacherBotMessage(message, botUser);
+        } else {
+            return getStudentBotMessage(message, botUser);
+        }
+    }
+
+    private BotMessage getTeacherBotMessage(String message, InnerBotUser botUser) {
+            String teacherId = botUser.getPreviousUserMessage().split(" ")[1];
+            TeacherExtramuralEventDto lessons = callRestService.getTeacherExtramuralEvents(teacherId);
+
+            if (null == lessons || null == lessons.getExtramuralEvents() || lessons.getExtramuralEvents().isEmpty()) {
+                return BotMessageUtils.getBotMessageForEmptyExtramuralEventTeacher(botUser);
+            }
+            return BotMessageUtils.getBotMessageForExtramuralEventTeacher(lessons, botUser);
+    }
+
+    private BotMessage getStudentBotMessage(String message, InnerBotUser botUser) {
         Calendar calendar = CalendarUtils.getCalendar();
         ExtramuralDto lessons = new ExtramuralDto();
         boolean isToday = false;
@@ -83,7 +102,7 @@ public class ExtramuralEventService implements BotMessageService {
         }
 
         if (null == lessons || null == lessons.getExtramuralEvents() || lessons.getExtramuralEvents().isEmpty()) {
-            return BotMessageUtils.getBotMessageForEmptyExtramuralEvents(botUser);
+            return BotMessageUtils.getBotMessageForEmptyExtramuralEvent(botUser);
         } else {
             if (isToday) {
                 return BotMessageUtils.getBotMessageForExtramuralEvent(lessons, CommandText.TODAY, botUser);

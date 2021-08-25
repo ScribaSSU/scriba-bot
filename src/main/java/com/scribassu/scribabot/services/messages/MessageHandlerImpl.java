@@ -280,6 +280,11 @@ public class MessageHandlerImpl implements MessageHandler {
                     botMessage = extramuralEventService.getBotMessage(message, botUser);
                 }
                 break;
+            case CommandText.TEACHER_SCHEDULE_FOR_EXTRAMURAL:
+                if (botUser.wantTeacherSchedule()) {
+                    botMessage = teacherService.getBotMessage(message, botUser);
+                }
+                break;
             case CommandText.SETTINGS:
                 botMessage = botUser.fromVk() ?
                         new BotMessage(SETTINGS_MENU, vkKeyboardGenerator.settings(botUser))

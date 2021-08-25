@@ -220,6 +220,33 @@ public class TgKeyboardGenerator {
         return replyKeyboardMarkup;
     }
 
+    public static ReplyKeyboardMarkup teacherSchedule() {
+        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
+        List<KeyboardRow> rows = new ArrayList<>();
+        for (int i = 0; i < 6; i++)
+            rows.add(new KeyboardRow());
+        rows.get(0).add(TODAY_SCHEDULE_BUTTON);
+        rows.get(0).add(TOMORROW_SCHEDULE_BUTTON);
+        rows.get(0).add(YESTERDAY_SCHEDULE_BUTTON);
+
+        rows.get(1).add(new KeyboardButton("Пн"));
+        rows.get(1).add(new KeyboardButton("Вт"));
+        rows.get(1).add(new KeyboardButton("Ср"));
+
+        rows.get(2).add(new KeyboardButton("Чт"));
+        rows.get(2).add(new KeyboardButton("Пт"));
+        rows.get(2).add(new KeyboardButton("Сб"));
+
+        rows.get(3).add(new KeyboardButton(String.format("%1$s Сессия %1$s", FIRE_EMOJI)));
+
+        rows.get(4).add(new KeyboardButton("Занятия заочников"));
+
+        rows.get(5).add(MAIN_MENU_BUTTON);
+
+        replyKeyboardMarkup.setKeyboard(rows);
+        return replyKeyboardMarkup;
+    }
+
     public static ReplyKeyboardMarkup hours() {
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
         List<KeyboardRow> rows = new ArrayList<>();

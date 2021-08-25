@@ -9,8 +9,7 @@ import com.scribassu.scribabot.generators.VkKeyboardGenerator;
 import com.scribassu.tracto.domain.EducationForm;
 import org.springframework.util.StringUtils;
 
-import static com.scribassu.scribabot.text.MessageText.NO_EXAM_PERIOD_SCHEDULE;
-import static com.scribassu.scribabot.text.MessageText.UNSUPPORTED_LESSONS;
+import static com.scribassu.scribabot.text.MessageText.*;
 
 public class BotMessageUtils {
 
@@ -62,11 +61,11 @@ public class BotMessageUtils {
         if (botUser.fromVk()) {
             return new BotMessage(
                     MessageGenerator.makeTeacherFullTimeLessonTemplate(fullTimeLessonDto, day, filterWeekType),
-                    VkKeyboardGenerator.fullTimeSchedule);
+                    VkKeyboardGenerator.teacherSchedule);
         } else {
             return new BotMessage(
                     MessageGenerator.makeTeacherFullTimeLessonTemplate(fullTimeLessonDto, day, filterWeekType),
-                    TgKeyboardGenerator.fullTimeSchedule());
+                    TgKeyboardGenerator.teacherSchedule());
         }
     }
 
@@ -75,11 +74,11 @@ public class BotMessageUtils {
         if (botUser.fromVk()) {
             return new BotMessage(
                     MessageGenerator.makeTeacherExamPeriodTemplate(examPeriodEventDto),
-                    VkKeyboardGenerator.fullTimeSchedule);
+                    VkKeyboardGenerator.teacherSchedule);
         } else {
             return new BotMessage(
                     MessageGenerator.makeTeacherExamPeriodTemplate(examPeriodEventDto),
-                    TgKeyboardGenerator.fullTimeSchedule());
+                    TgKeyboardGenerator.teacherSchedule());
         }
     }
 
@@ -97,10 +96,28 @@ public class BotMessageUtils {
         }
     }
 
-    public static BotMessage getBotMessageForEmptyExtramuralEvents(InnerBotUser botUser) {
+    public static BotMessage getBotMessageForEmptyExtramuralEvent(InnerBotUser botUser) {
         return botUser.fromVk() ?
                 new BotMessage(NO_EXAM_PERIOD_SCHEDULE, VkKeyboardGenerator.extramuralSchedule)
                 : new BotMessage(NO_EXAM_PERIOD_SCHEDULE, TgKeyboardGenerator.extramuralSchedule());
+    }
+
+    public static BotMessage getBotMessageForEmptyExtramuralEventTeacher(InnerBotUser botUser) {
+        return botUser.fromVk() ?
+                new BotMessage(NO_EXAM_PERIOD_SCHEDULE_TEACHER, VkKeyboardGenerator.teacherSchedule)
+                : new BotMessage(NO_EXAM_PERIOD_SCHEDULE_TEACHER, TgKeyboardGenerator.teacherSchedule());
+    }
+
+    public static BotMessage getBotMessageForExtramuralEventTeacher(TeacherExtramuralEventDto extramuralDto, InnerBotUser botUser) {
+        if (botUser.fromVk()) {
+            return new BotMessage(
+                    MessageGenerator.makeExtramuralEventTemplateTeacher(extramuralDto),
+                    VkKeyboardGenerator.teacherSchedule);
+        } else {
+            return new BotMessage(
+                    MessageGenerator.makeExtramuralEventTemplateTeacher(extramuralDto),
+                    TgKeyboardGenerator.teacherSchedule());
+        }
     }
 
     public static boolean isBotUserFullTime(InnerBotUser botUser) {

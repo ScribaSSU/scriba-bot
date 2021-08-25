@@ -606,6 +606,67 @@ public class VkKeyboardGenerator {
             List.of(MAIN_MENU_BUTTON)
     ), false);
 
+    public static final VkKeyboard teacherSchedule = new VkKeyboard(List.of(
+            List.of(TODAY_SCHEDULE_BUTTON, TOMORROW_SCHEDULE_BUTTON, YESTERDAY_SCHEDULE_BUTTON),
+            List.of(
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "Пн",
+                                    DEFAULT_PAYLOAD,
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY),
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "Вт",
+                                    DEFAULT_PAYLOAD,
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY),
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "Ср",
+                                    DEFAULT_PAYLOAD,
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY)
+            ),
+            List.of(
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "Чт",
+                                    DEFAULT_PAYLOAD,
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY),
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "Пт",
+                                    DEFAULT_PAYLOAD,
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY),
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "Сб",
+                                    DEFAULT_PAYLOAD,
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY)
+            ),
+            List.of(
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "Сессия",
+                                    DEFAULT_PAYLOAD,
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY)
+            ),
+            List.of(
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "Занятия заочников",
+                                    DEFAULT_PAYLOAD,
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.PRIMARY)
+            ),
+            List.of(MAIN_MENU_BUTTON)
+    ), false);
+
     public VkKeyboard teachers(List<Teacher> teachers) {
         List<List<VkKeyboardButton>> vkKeyboardButtons = new ArrayList<>();
 
@@ -656,7 +717,7 @@ public class VkKeyboardGenerator {
             vkKeyboardButtons.get(row).add(
                     new VkKeyboardButton(
                             new VkKeyboardButtonActionText(
-                                    groupNumbers.get(i),
+                                    "г " + groupNumbers.get(i),
                                     String.format(Constants.PAYLOAD, CommandText.CHOOSE_STUDENT_GROUP),
                                     VkKeyboardButtonActionType.TEXT
                             ), VkKeyboardButtonColor.PRIMARY)
