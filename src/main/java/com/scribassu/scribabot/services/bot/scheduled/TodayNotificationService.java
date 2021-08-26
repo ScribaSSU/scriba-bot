@@ -64,12 +64,12 @@ public class TodayNotificationService {
     private void sendFullTimeSchedule() throws Exception {
         Calendar calendar = CalendarUtils.getCalendar();
         int hourOfDay = calendar.get(Calendar.HOUR_OF_DAY);
-        log.info("Start to send full time schedule for hour {}", hourOfDay);
+        log.info("Start to send today full time schedule for hour {}", hourOfDay);
         List<ScheduleTodayNotification> scheduleTodayNotifications =
                 scheduleTodayNotificationRepository.findByHourForSendAndEnabled(hourOfDay);
 
         if (!CollectionUtils.isEmpty(scheduleTodayNotifications)) {
-            log.info("Send full time schedule for hour {}", hourOfDay);
+            log.info("Send today full time schedule for hour {}", hourOfDay);
             final String dayNumber = String.valueOf(CalendarUtils.getDayOfWeekStartsFromMonday(calendar));
             for (ScheduleTodayNotification notification : scheduleTodayNotifications) {
                 InnerBotUser botUser;
@@ -96,9 +96,9 @@ public class TodayNotificationService {
                 }
             }
         } else {
-            log.info("No need to send full time schedule for hour {}", hourOfDay);
+            log.info("No need to send today full time schedule for hour {}", hourOfDay);
         }
-        log.info("Finish sending full time schedule for hour {}", hourOfDay);
+        log.info("Finish sending today full time schedule for hour {}", hourOfDay);
     }
 
     private void sendExamPeriodSchedule() throws Exception {
@@ -106,12 +106,12 @@ public class TodayNotificationService {
         int month = calendar.get(Calendar.MONTH) + 1;
         int day = calendar.get(Calendar.DAY_OF_MONTH);
         int hourOfDay = calendar.get(Calendar.HOUR_OF_DAY);
-        log.info("Start to send exam period schedule for hour {}", hourOfDay);
+        log.info("Start to send today exam period schedule for hour {}", hourOfDay);
         List<ExamPeriodTodayNotification> examPeriodTodayNotifications =
                 examPeriodTodayNotificationRepository.findByHourForSendAndEnabled(hourOfDay);
 
         if (!CollectionUtils.isEmpty(examPeriodTodayNotifications)) {
-            log.info("Send exam period schedule for hour {}", hourOfDay);
+            log.info("Send today exam period schedule for hour {}", hourOfDay);
             for (ExamPeriodTodayNotification notification : examPeriodTodayNotifications) {
                 InnerBotUser botUser;
                 if (notification.fromVk()) {
@@ -139,9 +139,9 @@ public class TodayNotificationService {
                 }
             }
         } else {
-            log.info("No need to send exam period schedule for hour {}", hourOfDay);
+            log.info("No need to send today exam period schedule for hour {}", hourOfDay);
         }
-        log.info("Finish sending exam period schedule for hour {}", hourOfDay);
+        log.info("Finish sending today exam period schedule for hour {}", hourOfDay);
     }
 
     private void sendExtramuralSchedule() throws Exception {
@@ -149,12 +149,12 @@ public class TodayNotificationService {
         int month = calendar.get(Calendar.MONTH) + 1;
         int day = calendar.get(Calendar.DAY_OF_MONTH);
         int hourOfDay = calendar.get(Calendar.HOUR_OF_DAY);
-        log.info("Start to send extramural schedule for hour {}", hourOfDay);
+        log.info("Start to send today extramural schedule for hour {}", hourOfDay);
         List<ExtramuralEventTodayNotification> extramuralEventTodayNotifications =
                 extramuralEventTodayNotificationRepository.findByHourForSendAndEnabled(hourOfDay);
 
         if (!CollectionUtils.isEmpty(extramuralEventTodayNotifications)) {
-            log.info("Send extramural schedule for hour {}", hourOfDay);
+            log.info("Send today extramural schedule for hour {}", hourOfDay);
             for (ExtramuralEventTodayNotification notification : extramuralEventTodayNotifications) {
                 InnerBotUser botUser;
                 if (notification.fromVk()) {
@@ -182,8 +182,8 @@ public class TodayNotificationService {
                 }
             }
         } else {
-            log.info("No need to send extramural schedule for hour {}", hourOfDay);
+            log.info("No need to send today extramural schedule for hour {}", hourOfDay);
         }
-        log.info("Finish sending extramural schedule for hour {}", hourOfDay);
+        log.info("Finish sending today extramural schedule for hour {}", hourOfDay);
     }
 }

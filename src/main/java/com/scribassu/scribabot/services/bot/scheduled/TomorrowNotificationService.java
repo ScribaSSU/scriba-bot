@@ -163,7 +163,7 @@ public class TomorrowNotificationService {
                 extramuralEventTomorrowNotificationRepository.findByHourForSendAndEnabled(hourOfDay);
 
         if (!CollectionUtils.isEmpty(extramuralEventTomorrowNotifications)) {
-            log.info("Send extramural schedule for hour {}", hourOfDay);
+            log.info("Send tomorrow extramural schedule for hour {}", hourOfDay);
             for (ExtramuralEventTomorrowNotification notification : extramuralEventTomorrowNotifications) {
                 InnerBotUser botUser;
                 if (notification.fromVk()) {
@@ -180,7 +180,7 @@ public class TomorrowNotificationService {
                             month,
                             day
                     );
-                    BotMessage botMessage = BotMessageUtils.getBotMessageForExtramuralEvent(extramuralDto, CommandText.TODAY, botUser);
+                    BotMessage botMessage = BotMessageUtils.getBotMessageForExtramuralEvent(extramuralDto, CommandText.TOMORROW, botUser);
                     if (botUser.fromVk()) {
                         vkMessageSender.send(botMessage, botUser.getUserId());
                     } else {
@@ -190,8 +190,8 @@ public class TomorrowNotificationService {
                 }
             }
         } else {
-            log.info("No need to send extramural schedule for hour {}", hourOfDay);
+            log.info("No need to send tomorrow extramural schedule for hour {}", hourOfDay);
         }
-        log.info("Finish sending extramural schedule for hour {}", hourOfDay);
+        log.info("Finish sending tomorrow extramural schedule for hour {}", hourOfDay);
     }
 }

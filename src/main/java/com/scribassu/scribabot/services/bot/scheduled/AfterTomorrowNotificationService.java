@@ -114,12 +114,12 @@ public class AfterTomorrowNotificationService {
         int day = calendar.get(Calendar.DAY_OF_MONTH);
         calendar.add(Calendar.DAY_OF_MONTH, -2);
         int hourOfDay = calendar.get(Calendar.HOUR_OF_DAY);
-        log.info("Start to send tomorrow extramural schedule for hour {}", hourOfDay);
+        log.info("Start to send after tomorrow extramural schedule for hour {}", hourOfDay);
         List<ExtramuralEventAfterTomorrowNotification> extramuralEventAfterTomorrowNotifications =
                 extramuralEventAfterTomorrowNotificationRepository.findByHourForSendAndEnabled(hourOfDay);
 
         if (!CollectionUtils.isEmpty(extramuralEventAfterTomorrowNotifications)) {
-            log.info("Send extramural schedule for hour {}", hourOfDay);
+            log.info("Send after tomorrow extramural schedule for hour {}", hourOfDay);
             for (ExtramuralEventAfterTomorrowNotification notification : extramuralEventAfterTomorrowNotifications) {
                 InnerBotUser botUser;
                 if (notification.fromVk()) {
@@ -137,7 +137,7 @@ public class AfterTomorrowNotificationService {
                             day
                     );
                     BotMessage botMessage;
-                    botMessage = BotMessageUtils.getBotMessageForExtramuralEvent(extramuralDto, CommandText.TODAY, botUser);
+                    botMessage = BotMessageUtils.getBotMessageForExtramuralEvent(extramuralDto, CommandText.AFTER_TOMORROW, botUser);
                     if (botUser.fromVk()) {
                         vkMessageSender.send(botMessage, botUser.getUserId());
                     } else {
@@ -147,8 +147,8 @@ public class AfterTomorrowNotificationService {
                 }
             }
         } else {
-            log.info("No need to send extramural schedule for hour {}", hourOfDay);
+            log.info("No need to send after tomorrow extramural schedule for hour {}", hourOfDay);
         }
-        log.info("Finish sending extramural schedule for hour {}", hourOfDay);
+        log.info("Finish sending after tomorrow extramural schedule for hour {}", hourOfDay);
     }
 }
