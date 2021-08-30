@@ -439,12 +439,6 @@ public class TgKeyboardGenerator {
 
         rows.get(1).add(new KeyboardButton(String.format("%1$s Рассылка расписания сессии %1$s", NOTIFICATION_EMOJI)));
 
-        if (user.isFilterNomDenom()) {
-            rows.get(2).add(new KeyboardButton(String.format("%1$s Выкл. фильтр по типу недели %1$s", NO_EMOJI)));
-        } else {
-            rows.get(2).add(new KeyboardButton(String.format("%1$s Вкл. фильтр по типу недели %1$s", YES_EMOJI)));
-        }
-
         rows.get(3).add(CHOOSE_DEPARTMENT_AND_GROUP_BUTTON);
         rows.get(3).add(new KeyboardButton(String.format("%1$s Текущие настройки пользователя %1$s", PROFILE_EMOJI)));
         rows.get(4).add(new KeyboardButton(String.format("%1$s Удалить профиль %1$s", DELETE_PROFILE_EMOJI)));
@@ -452,8 +446,15 @@ public class TgKeyboardGenerator {
 
         if (!BotMessageUtils.isBotUserExtramural(user)) {
             rows.get(0).add(new KeyboardButton(String.format("%1$s Рассылка расписания занятий %1$s", NOTIFICATION_EMOJI)));
+
+            if (user.isFilterNomDenom()) {
+                rows.get(2).add(new KeyboardButton(String.format("%1$s Выкл. фильтр по типу недели %1$s", NO_EMOJI)));
+            } else {
+                rows.get(2).add(new KeyboardButton(String.format("%1$s Вкл. фильтр по типу недели %1$s", YES_EMOJI)));
+            }
         } else {
-            rows.remove(0);
+            rows.remove(2); // week type filter
+            rows.remove(0); // schedule notifications
         }
 
         replyKeyboardMarkup.setKeyboard(rows);

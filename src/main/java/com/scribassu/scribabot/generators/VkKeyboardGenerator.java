@@ -752,28 +752,6 @@ public class VkKeyboardGenerator {
                 )
         );
 
-        if (user.isFilterNomDenom()) {
-            vkKeyboardButtons.get(2).add(
-                    new VkKeyboardButton(
-                            new VkKeyboardButtonActionText(
-                                    "Выкл. фильтр по типу недели",
-                                    DEFAULT_PAYLOAD,
-                                    VkKeyboardButtonActionType.TEXT
-                            ), VkKeyboardButtonColor.NEGATIVE
-                    )
-            );
-        } else {
-            vkKeyboardButtons.get(2).add(
-                    new VkKeyboardButton(
-                            new VkKeyboardButtonActionText(
-                                    "Вкл. фильтр по типу недели",
-                                    DEFAULT_PAYLOAD,
-                                    VkKeyboardButtonActionType.TEXT
-                            ), VkKeyboardButtonColor.POSITIVE
-                    )
-            );
-        }
-
         vkKeyboardButtons.get(3).add(CHOOSE_DEPARTMENT_AND_GROUP_BUTTON);
 
         vkKeyboardButtons.get(3).add(
@@ -808,8 +786,31 @@ public class VkKeyboardGenerator {
                             ), VkKeyboardButtonColor.PRIMARY
                     )
             );
+
+            if (user.isFilterNomDenom()) {
+                vkKeyboardButtons.get(2).add(
+                        new VkKeyboardButton(
+                                new VkKeyboardButtonActionText(
+                                        "Выкл. фильтр по типу недели",
+                                        DEFAULT_PAYLOAD,
+                                        VkKeyboardButtonActionType.TEXT
+                                ), VkKeyboardButtonColor.NEGATIVE
+                        )
+                );
+            } else {
+                vkKeyboardButtons.get(2).add(
+                        new VkKeyboardButton(
+                                new VkKeyboardButtonActionText(
+                                        "Вкл. фильтр по типу недели",
+                                        DEFAULT_PAYLOAD,
+                                        VkKeyboardButtonActionType.TEXT
+                                ), VkKeyboardButtonColor.POSITIVE
+                        )
+                );
+            }
         } else {
-            vkKeyboardButtons.remove(0);
+            vkKeyboardButtons.remove(2); // week type filter
+            vkKeyboardButtons.remove(0); // schedule notifications
         }
 
         return new VkKeyboard(vkKeyboardButtons, false);
