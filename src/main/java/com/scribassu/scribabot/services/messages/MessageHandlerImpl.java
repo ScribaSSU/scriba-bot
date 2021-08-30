@@ -230,8 +230,8 @@ public class MessageHandlerImpl implements MessageHandler {
                 break;
             case CommandText.CHOOSE_DEPARTMENT:
                 botMessage = botUser.fromVk() ?
-                        new BotMessage(GREETING_WITH_CHOOSE_DEPARTMENT, VkKeyboardGenerator.departments)
-                        : new BotMessage(GREETING_WITH_CHOOSE_DEPARTMENT, TgKeyboardGenerator.departments());
+                        new BotMessage(CHOOSE_DEPARTMENT, VkKeyboardGenerator.departments)
+                        : new BotMessage(CHOOSE_DEPARTMENT, TgKeyboardGenerator.departments());
                 break;
             case CommandText.FULL_TIME:
                 if (botUser.fromVk()) {
