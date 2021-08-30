@@ -32,4 +32,10 @@ public interface ScheduleTodayNotificationRepository extends JpaRepository<Sched
     @Query("update ScheduleTodayNotification set isEnabled = false where userId = :userId and userSource = :userSource")
     void disableByUserIdAndUserSource(@Param("userId") String userId,
                                       @Param("userSource") BotUserSource userSource);
+
+    @Modifying
+    @Transactional
+    @Query("delete from ScheduleTodayNotification where userId = :userId and userSource = :userSource")
+    void deleteByUserIdAndUserSource(@Param("userId") String userId,
+                                     @Param("userSource") BotUserSource userSource);
 }

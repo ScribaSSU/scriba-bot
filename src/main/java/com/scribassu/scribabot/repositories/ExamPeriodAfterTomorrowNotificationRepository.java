@@ -32,4 +32,10 @@ public interface ExamPeriodAfterTomorrowNotificationRepository extends JpaReposi
     @Query("update ExamPeriodAfterTomorrowNotification set isEnabled = false where userId = :userId and userSource = :userSource")
     void disableByUserIdAndUserSource(@Param("userId") String userId,
                                       @Param("userSource") BotUserSource userSource);
+
+    @Modifying
+    @Transactional
+    @Query("delete from ExamPeriodAfterTomorrowNotification where userId = :userId and userSource = :userSource")
+    void deleteByUserIdAndUserSource(@Param("userId") String userId,
+                                     @Param("userSource") BotUserSource userSource);
 }

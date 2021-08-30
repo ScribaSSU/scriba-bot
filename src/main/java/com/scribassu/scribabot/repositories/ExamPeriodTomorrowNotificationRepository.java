@@ -32,4 +32,10 @@ public interface ExamPeriodTomorrowNotificationRepository extends JpaRepository<
     @Query("update ExamPeriodTomorrowNotification set isEnabled = false where userId = :userId and userSource = :userSource")
     void disableByUserIdAndUserSource(@Param("userId") String userId,
                                       @Param("userSource") BotUserSource userSource);
+
+    @Modifying
+    @Transactional
+    @Query("delete from ExamPeriodTomorrowNotification where userId = :userId and userSource = :userSource")
+    void deleteByUserIdAndUserSource(@Param("userId") String userId,
+                                     @Param("userSource") BotUserSource userSource);
 }

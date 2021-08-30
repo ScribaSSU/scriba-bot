@@ -32,4 +32,10 @@ public interface ExamPeriodTodayNotificationRepository extends JpaRepository<Exa
     @Query("update ExamPeriodTodayNotification set isEnabled = false where userId = :userId and userSource = :userSource")
     void disableByUserIdAndUserSource(@Param("userId") String userId,
                                       @Param("userSource") BotUserSource userSource);
+
+    @Modifying
+    @Transactional
+    @Query("delete from ExamPeriodTodayNotification where userId = :userId and userSource = :userSource")
+    void deleteByUserIdAndUserSource(@Param("userId") String userId,
+                                     @Param("userSource") BotUserSource userSource);
 }

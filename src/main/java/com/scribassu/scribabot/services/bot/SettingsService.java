@@ -134,9 +134,9 @@ public class SettingsService implements BotMessageService {
                 String scheduleNotificationStatus = BotMessageUtils.isBotUserFullTime(botUser) ?
                         getScheduleNotificationStatusFullTime(botUser)
                         : getScheduleNotificationStatusExtramural(botUser);
-                String currentUserSettings = getStudentInfo(botUser) + "\n" +
-                        scheduleNotificationStatus + "\n\n" +
-                        "Фильтрация по типу недели: " + (botUser.isFilterNomDenom() ? "вкл." : "выкл.");
+                String weekTypeFilterSettings = BotMessageUtils.isBotUserFullTime(botUser) ?
+                        "\n\n" + "Фильтрация по типу недели: " + (botUser.isFilterNomDenom() ? "вкл." : "выкл.") : "";
+                String currentUserSettings = getStudentInfo(botUser) + "\n" + scheduleNotificationStatus + weekTypeFilterSettings;
                 if (botUser.fromVk()) {
                     botMessage = new BotMessage(currentUserSettings, vkKeyboardGenerator.settings(botUser));
                 } else {
@@ -159,8 +159,30 @@ public class SettingsService implements BotMessageService {
             case CommandText.YES:
                 if (botUser.fromVk()) {
                     vkBotUserRepository.deleteOneById(userId);
+                    if (BotMessageUtils.isBotUserExtramural(botUser)) {
+                        extramuralEventTodayNotificationRepository.deleteByUserIdAndUserSource(userId, BotUserSource.VK);
+                        extramuralEventTomorrowNotificationRepository.deleteByUserIdAndUserSource(userId, BotUserSource.VK);
+                        extramuralEventAfterTomorrowNotificationRepository.deleteByUserIdAndUserSource(userId, BotUserSource.VK);
+                    } else {
+                        examPeriodTodayNotificationRepository.deleteByUserIdAndUserSource(userId, BotUserSource.VK);
+                        examPeriodTomorrowNotificationRepository.deleteByUserIdAndUserSource(userId, BotUserSource.VK);
+                        examPeriodAfterTomorrowNotificationRepository.deleteByUserIdAndUserSource(userId, BotUserSource.VK);
+                        scheduleTodayNotificationRepository.deleteByUserIdAndUserSource(userId, BotUserSource.VK);
+                        scheduleTomorrowNotificationRepository.deleteByUserIdAndUserSource(userId, BotUserSource.VK);
+                    }
                 } else {
                     tgBotUserRepository.deleteOneById(userId);
+                    if (BotMessageUtils.isBotUserExtramural(botUser)) {
+                        extramuralEventTodayNotificationRepository.deleteByUserIdAndUserSource(userId, BotUserSource.TG);
+                        extramuralEventTomorrowNotificationRepository.deleteByUserIdAndUserSource(userId, BotUserSource.TG);
+                        extramuralEventAfterTomorrowNotificationRepository.deleteByUserIdAndUserSource(userId, BotUserSource.TG);
+                    } else {
+                        examPeriodTodayNotificationRepository.deleteByUserIdAndUserSource(userId, BotUserSource.TG);
+                        examPeriodTomorrowNotificationRepository.deleteByUserIdAndUserSource(userId, BotUserSource.TG);
+                        examPeriodAfterTomorrowNotificationRepository.deleteByUserIdAndUserSource(userId, BotUserSource.TG);
+                        scheduleTodayNotificationRepository.deleteByUserIdAndUserSource(userId, BotUserSource.TG);
+                        scheduleTomorrowNotificationRepository.deleteByUserIdAndUserSource(userId, BotUserSource.TG);
+                    }
                 }
                 botMessage = new BotMessage(BYE_MESSAGE);
                 break;
