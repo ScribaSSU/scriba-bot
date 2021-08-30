@@ -130,13 +130,42 @@ public class SettingsService implements BotMessageService {
                     botMessage = new BotMessage(DISABLE_FILTER_WEEK_TYPE, tgKeyboardGenerator.settings(botUser));
                 }
                 break;
+            case CommandText.ENABLE_SEND_EMPTY_SCHEDULE_NOTIFICATION:
+                botUser.setSilentEmptyDays(false);
+                if (botUser.fromVk()) {
+                    VkBotUser vkBotUser = vkBotUserRepository.findOneById(userId);
+                    vkBotUser.setSilentEmptyDays(false);
+                    vkBotUserRepository.save(vkBotUser);
+                    botMessage = new BotMessage(ENABLE_SEND_EMPTY_SCHEDULE_NOTIFICATION, vkKeyboardGenerator.settings(botUser));
+                } else {
+                    TgBotUser tgBotUser = tgBotUserRepository.findOneById(userId);
+                    tgBotUser.setSilentEmptyDays(false);
+                    tgBotUserRepository.save(tgBotUser);
+                    botMessage = new BotMessage(ENABLE_SEND_EMPTY_SCHEDULE_NOTIFICATION, tgKeyboardGenerator.settings(botUser));
+                }
+                break;
+            case CommandText.DISABLE_SEND_EMPTY_SCHEDULE_NOTIFICATION:
+                botUser.setSilentEmptyDays(true);
+                if (botUser.fromVk()) {
+                    VkBotUser vkBotUser = vkBotUserRepository.findOneById(userId);
+                    vkBotUser.setSilentEmptyDays(true);
+                    vkBotUserRepository.save(vkBotUser);
+                    botMessage = new BotMessage(DISABLE_SEND_EMPTY_SCHEDULE_NOTIFICATION, vkKeyboardGenerator.settings(botUser));
+                } else {
+                    TgBotUser tgBotUser = tgBotUserRepository.findOneById(userId);
+                    tgBotUser.setSilentEmptyDays(true);
+                    tgBotUserRepository.save(tgBotUser);
+                    botMessage = new BotMessage(DISABLE_SEND_EMPTY_SCHEDULE_NOTIFICATION, tgKeyboardGenerator.settings(botUser));
+                }
+                break;
             case CommandText.CURRENT_USER_SETTINGS:
                 String scheduleNotificationStatus = BotMessageUtils.isBotUserFullTime(botUser) ?
                         getScheduleNotificationStatusFullTime(botUser)
                         : getScheduleNotificationStatusExtramural(botUser);
                 String weekTypeFilterSettings = BotMessageUtils.isBotUserFullTime(botUser) ?
                         "\n\n" + "Фильтрация по типу недели: " + (botUser.isFilterNomDenom() ? "вкл." : "выкл.") : "";
-                String currentUserSettings = getStudentInfo(botUser) + "\n" + scheduleNotificationStatus + weekTypeFilterSettings;
+                String silentDaysStatus = "\n\n" + "Рассылка, когда пар нет: " + (botUser.isSilentEmptyDays() ? "не присылается" : "присылается");
+                String currentUserSettings = getStudentInfo(botUser) + "\n" + scheduleNotificationStatus + weekTypeFilterSettings + silentDaysStatus;
                 if (botUser.fromVk()) {
                     botMessage = new BotMessage(currentUserSettings, vkKeyboardGenerator.settings(botUser));
                 } else {

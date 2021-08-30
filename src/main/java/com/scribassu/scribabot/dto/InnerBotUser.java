@@ -18,6 +18,7 @@ public class InnerBotUser {
     private String educationForm;
     private String previousUserMessage;
     private boolean filterNomDenom;
+    private boolean silentEmptyDays;
 
     public InnerBotUser(BotUserSource source) {
         this.source = source;
@@ -31,6 +32,7 @@ public class InnerBotUser {
         this.groupNumber = vkBotUser.getGroupNumber();
         this.previousUserMessage = vkBotUser.getPreviousUserMessage();
         this.filterNomDenom = vkBotUser.isFilterNomDenom();
+        this.silentEmptyDays = vkBotUser.isSilentEmptyDays();
     }
 
     public InnerBotUser(TgBotUser tgBotUser) {
@@ -41,6 +43,7 @@ public class InnerBotUser {
         this.groupNumber = tgBotUser.getGroupNumber();
         this.previousUserMessage = tgBotUser.getPreviousUserMessage();
         this.filterNomDenom = tgBotUser.isFilterNomDenom();
+        this.silentEmptyDays = tgBotUser.isSilentEmptyDays();
     }
 
     public boolean fromVk() {

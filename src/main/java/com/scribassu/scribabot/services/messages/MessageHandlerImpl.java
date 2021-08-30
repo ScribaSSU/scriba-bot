@@ -313,6 +313,8 @@ public class MessageHandlerImpl implements MessageHandler {
             case CommandText.SEND_SCHEDULE:
             case CommandText.ENABLE_FILTER_WEEK_TYPE:
             case CommandText.DISABLE_FILTER_WEEK_TYPE:
+            case CommandText.ENABLE_SEND_EMPTY_SCHEDULE_NOTIFICATION:
+            case CommandText.DISABLE_SEND_EMPTY_SCHEDULE_NOTIFICATION:
             case CommandText.CURRENT_USER_SETTINGS:
             case CommandText.DELETE_PROFILE:
             case CommandText.YES:

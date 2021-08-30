@@ -14,6 +14,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.scribassu.scribabot.text.MessageText.NO_EXAMS;
 import static com.scribassu.scribabot.text.MessageText.NO_LESSONS;
 
 public class MessageGenerator {
@@ -194,7 +195,7 @@ public class MessageGenerator {
 
             String data = calendar.get(Calendar.DAY_OF_MONTH) + "-" + (calendar.get(Calendar.MONTH) + 1) + "-" + calendar.get(Calendar.YEAR);
             stringBuilder.append(data).append("\n");
-            stringBuilder.append("На этот день событий сессии не назначено.");
+            stringBuilder.append(NO_EXAMS);
         } else {
             List<ExamPeriodEvent> examPeriodEvents = examPeriodEventDto.getExamPeriodEvents();
             examPeriodEvents.sort((e1, e2) -> (int) (e1.getId() - e2.getId()));
@@ -371,7 +372,7 @@ public class MessageGenerator {
 
             String data = calendar.get(Calendar.DAY_OF_MONTH) + "-" + (calendar.get(Calendar.MONTH) + 1) + "-" + calendar.get(Calendar.YEAR);
             stringBuilder.append(data).append("\n");
-            stringBuilder.append("На этот день событий не назначено.");
+            stringBuilder.append(NO_EXAMS);
         } else {
             List<ExtramuralEvent> extramuralEvents = extramuralDto.getExtramuralEvents();
             extramuralEvents.sort(Comparator.comparingLong(ExtramuralEvent::getId));

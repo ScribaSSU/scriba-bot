@@ -2,8 +2,10 @@ package com.scribassu.scribabot.entities;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
+import java.time.OffsetDateTime;
 
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
@@ -22,6 +24,10 @@ public abstract class BotUser {
     private String previousUserMessage;
 
     private boolean filterNomDenom;
+    private boolean silentEmptyDays;
+
+    @CreatedDate
+    private OffsetDateTime registrationTimestamp;
 
     public BotUser(String userId) {
         this.userId = userId;
@@ -37,6 +43,8 @@ public abstract class BotUser {
                 ", educationForm='" + educationForm + '\'' +
                 ", previousUserMessage='" + previousUserMessage + '\'' +
                 ", filterNomDenom=" + filterNomDenom +
+                ", silentEmptyDays=" + silentEmptyDays +
+                ", registrationTimestamp=" + registrationTimestamp +
                 '}';
     }
 }

@@ -32,6 +32,8 @@ public class MessageText {
     public static final String HERE_SCHEDULE_NOTIFICATION = "Здесь вы можете настроить рассылку расписания занятий.";
     public static final String ENABLE_FILTER_WEEK_TYPE = "Включена фильтрация по типу недели.";
     public static final String DISABLE_FILTER_WEEK_TYPE = "Выключена фильтрация по типу недели.";
+    public static final String ENABLE_SEND_EMPTY_SCHEDULE_NOTIFICATION = "Теперь рассылка расписания пар и сессии будет приходить, даже если в запрашиваемый день отсутствуют пары и сессионные события.";
+    public static final String DISABLE_SEND_EMPTY_SCHEDULE_NOTIFICATION = "Теперь рассылка расписания пар и сессии не будет приходить, если в запрашиваемый день отсутствуют пары и сессионные события.";
     public static final String SCHEDULE_WILL_BE_SENT_ABSTRACT = "Теперь расписание будет приходить в ";
     public static final String CHOOSE_TEACHER_TO_GET_SCHEDULE = "Выберите, для какого преподавателя хотите узнать расписание.";
     public static final String CHOOSE_DAY_FOR_TEACHER_SCHEDULE = "Выберите, для чего хотите узнать расписание преподавателя. Для сброса поиска выберите на клавиатуре 'Главное меню' или введите вручную 'меню'.";
@@ -45,6 +47,7 @@ public class MessageText {
     public static final String NO_EXAM_PERIOD_SCHEDULE_TEACHER = "Расписание сессии для этого преподавателя отсутствует.";
 
     public static final String NO_LESSONS = "А пар-то нету :)";
+    public static final String NO_EXAMS = "На этот день событий сессии не назначено.";
 
     public static final String NOT_ENABLE_SCHEDULE_NOTIFICATION_TODAY = "Вы еще не подключали рассылку расписания на сегодня. Подключите через '";
     public static final String NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_TODAY = "Вы еще не подключали рассылку расписания сессии на сегодня. Подключите через '";

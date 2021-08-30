@@ -22,6 +22,9 @@ import org.springframework.util.CollectionUtils;
 import java.util.Calendar;
 import java.util.List;
 
+import static com.scribassu.scribabot.text.MessageText.NO_EXAMS;
+import static com.scribassu.scribabot.text.MessageText.NO_LESSONS;
+
 @Slf4j
 @Service
 public class TomorrowNotificationService {
@@ -81,10 +84,18 @@ public class TomorrowNotificationService {
                 InnerBotUser botUser;
                 if (notification.fromVk()) {
                     VkBotUser vkBotUser = vkBotUserRepository.findOneById(notification.getUserId());
-                    botUser = new InnerBotUser(vkBotUser);
+                    if (null != vkBotUser) {
+                        botUser = new InnerBotUser(vkBotUser);
+                    } else {
+                        continue;
+                    }
                 } else {
                     TgBotUser tgBotUser = tgBotUserRepository.findOneById(notification.getUserId());
-                    botUser = new InnerBotUser(tgBotUser);
+                    if (null != tgBotUser) {
+                        botUser = new InnerBotUser(tgBotUser);
+                    } else {
+                        continue;
+                    }
                 }
                 if (BotMessageUtils.isBotUserFullTime(botUser)) {
                     FullTimeLessonDto lessons = callRestService.getFullTimeLessonsByDay(
@@ -93,10 +104,12 @@ public class TomorrowNotificationService {
                             dayNumber
                     );
                     BotMessage botMessage = BotMessageUtils.getBotMessageForFullTimeLessons(lessons, CommandText.TOMORROW, botUser.isFilterNomDenom(), botUser);
-                    if (botUser.fromVk()) {
-                        vkMessageSender.send(botMessage, botUser.getUserId());
-                    } else {
-                        tgMessageSender.send(botMessage, botUser.getUserId());
+                    if (!(botUser.isSilentEmptyDays() && botMessage.getMessage().contains(NO_LESSONS))) {
+                        if (botUser.fromVk()) {
+                            vkMessageSender.send(botMessage, botUser.getUserId());
+                        } else {
+                            tgMessageSender.send(botMessage, botUser.getUserId());
+                        }
                     }
                 }
             }
@@ -123,10 +136,18 @@ public class TomorrowNotificationService {
                 InnerBotUser botUser;
                 if (notification.fromVk()) {
                     VkBotUser vkBotUser = vkBotUserRepository.findOneById(notification.getUserId());
-                    botUser = new InnerBotUser(vkBotUser);
+                    if (null != vkBotUser) {
+                        botUser = new InnerBotUser(vkBotUser);
+                    } else {
+                        continue;
+                    }
                 } else {
                     TgBotUser tgBotUser = tgBotUserRepository.findOneById(notification.getUserId());
-                    botUser = new InnerBotUser(tgBotUser);
+                    if (null != tgBotUser) {
+                        botUser = new InnerBotUser(tgBotUser);
+                    } else {
+                        continue;
+                    }
                 }
                 if (BotMessageUtils.isBotUserFullTime(botUser)) {
                     ExamPeriodEventDto examPeriodEventDto = callRestService.getFullTimeExamPeriodEventByDay(
@@ -137,10 +158,12 @@ public class TomorrowNotificationService {
                     );
                     BotMessage botMessage;
                     botMessage = BotMessageUtils.getBotMessageForFullTimeExamPeriod(examPeriodEventDto, CommandText.TOMORROW, botUser);
-                    if (botUser.fromVk()) {
-                        vkMessageSender.send(botMessage, botUser.getUserId());
-                    } else {
-                        tgMessageSender.send(botMessage, botUser.getUserId());
+                    if (!(botUser.isSilentEmptyDays() && botMessage.getMessage().contains(NO_EXAMS))) {
+                        if (botUser.fromVk()) {
+                            vkMessageSender.send(botMessage, botUser.getUserId());
+                        } else {
+                            tgMessageSender.send(botMessage, botUser.getUserId());
+                        }
                     }
                     Thread.sleep(51); //20 messages per second
                 }
@@ -168,10 +191,18 @@ public class TomorrowNotificationService {
                 InnerBotUser botUser;
                 if (notification.fromVk()) {
                     VkBotUser vkBotUser = vkBotUserRepository.findOneById(notification.getUserId());
-                    botUser = new InnerBotUser(vkBotUser);
+                    if (null != vkBotUser) {
+                        botUser = new InnerBotUser(vkBotUser);
+                    } else {
+                        continue;
+                    }
                 } else {
                     TgBotUser tgBotUser = tgBotUserRepository.findOneById(notification.getUserId());
-                    botUser = new InnerBotUser(tgBotUser);
+                    if (null != tgBotUser) {
+                        botUser = new InnerBotUser(tgBotUser);
+                    } else {
+                        continue;
+                    }
                 }
                 if (BotMessageUtils.isBotUserExtramural(botUser)) {
                     ExtramuralDto extramuralDto = callRestService.getExtramuralEventsByDay(
@@ -181,10 +212,12 @@ public class TomorrowNotificationService {
                             day
                     );
                     BotMessage botMessage = BotMessageUtils.getBotMessageForExtramuralEvent(extramuralDto, CommandText.TOMORROW, botUser);
-                    if (botUser.fromVk()) {
-                        vkMessageSender.send(botMessage, botUser.getUserId());
-                    } else {
-                        tgMessageSender.send(botMessage, botUser.getUserId());
+                    if (!(botUser.isSilentEmptyDays() && botMessage.getMessage().contains(NO_EXAMS))) {
+                        if (botUser.fromVk()) {
+                            vkMessageSender.send(botMessage, botUser.getUserId());
+                        } else {
+                            tgMessageSender.send(botMessage, botUser.getUserId());
+                        }
                     }
                     Thread.sleep(51); //20 messages per second
                 }

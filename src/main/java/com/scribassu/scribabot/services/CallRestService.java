@@ -178,7 +178,7 @@ public class CallRestService {
         String uri = prefix + TEACHER_URI + "/word";
         HttpHeaders headers = new HttpHeaders();
         List<Charset> charsets = new ArrayList<>();
-        charsets.add(Charsets.UTF_8);
+        charsets.add(StandardCharsets.UTF_8);
         headers.setAcceptCharset(charsets);
         HttpEntity<String> request = new HttpEntity<>(word, headers);
         restTemplate.getMessageConverters().add(0, new StringHttpMessageConverter(StandardCharsets.UTF_8));
