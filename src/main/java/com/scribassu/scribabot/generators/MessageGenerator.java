@@ -14,6 +14,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.scribassu.scribabot.text.MessageText.NO_LESSONS;
+
 public class MessageGenerator {
 
     public static String makeFullTimeLessonTemplate(FullTimeLessonDto fullTimeLessonDto,
@@ -59,33 +61,38 @@ public class MessageGenerator {
         stringBuilder.append("Группа № ").append(fullTimeLessonDto.getStudentGroup().getGroupNumberRus()).append("\n \n");
 
         if (CollectionUtils.isEmpty(fullTimeLessonDto.getLessons())) {
-            stringBuilder.append("А пар-то нету :)");
+            stringBuilder.append(NO_LESSONS);
         } else {
             List<FullTimeLesson> fullTimeLessons = fullTimeLessonDto.getLessons();
             if (filterWeekType) {
                 final WeekType finalCurrentWeekType = currentWeekType;
                 fullTimeLessons = fullTimeLessons
                         .stream()
-                        .filter(f -> f.getWeekType().equals(WeekType.FULL) || f.getWeekType().equals(finalCurrentWeekType))
+                        .filter(f -> WeekType.FULL.equals(f.getWeekType()) || finalCurrentWeekType.equals(f.getWeekType()))
                         .collect(Collectors.toList());
             }
-            fullTimeLessons.sort(Comparator.comparingInt(o -> o.getLessonTime().getLessonNumber()));
-            for (FullTimeLesson fullTimeLesson : fullTimeLessons) {
-                stringBuilder.append(appendTime(fullTimeLesson.getLessonTime())).append("\n")
-                        .append(fullTimeLesson.getLessonType().getType())
-                        .append(" ")
-                        .append(appendLessonTypeEmoji(fullTimeLesson))
-                        .append("\n");
+            // it could be empty after week type filter
+            if (fullTimeLessons.isEmpty()) {
+                stringBuilder.append(NO_LESSONS);
+            } else {
+                fullTimeLessons.sort(Comparator.comparingInt(o -> o.getLessonTime().getLessonNumber()));
+                for (FullTimeLesson fullTimeLesson : fullTimeLessons) {
+                    stringBuilder.append(appendTime(fullTimeLesson.getLessonTime())).append("\n")
+                            .append(fullTimeLesson.getLessonType().getType())
+                            .append(" ")
+                            .append(appendLessonTypeEmoji(fullTimeLesson))
+                            .append("\n");
 
-                if (!fullTimeLesson.getWeekType().equals(WeekType.FULL)) {
-                    stringBuilder.append(fullTimeLesson.getWeekType().getType()).append("\n");
+                    if (!fullTimeLesson.getWeekType().equals(WeekType.FULL)) {
+                        stringBuilder.append(fullTimeLesson.getWeekType().getType()).append("\n");
+                    }
+                    if (!StringUtils.isEmpty(fullTimeLesson.getSubGroup())) {
+                        stringBuilder.append(fullTimeLesson.getSubGroup().trim()).append("\n");
+                    }
+                    stringBuilder.append(fullTimeLesson.getName()).append("\n");
+                    stringBuilder.append(appendTeacher(fullTimeLesson.getTeacher())).append("\n");
+                    stringBuilder.append(fullTimeLesson.getPlace()).append("\n \n");
                 }
-                if (!StringUtils.isEmpty(fullTimeLesson.getSubGroup())) {
-                    stringBuilder.append(fullTimeLesson.getSubGroup().trim()).append("\n");
-                }
-                stringBuilder.append(fullTimeLesson.getName()).append("\n");
-                stringBuilder.append(appendTeacher(fullTimeLesson.getTeacher())).append("\n");
-                stringBuilder.append(fullTimeLesson.getPlace()).append("\n \n");
             }
         }
 
@@ -160,7 +167,6 @@ public class MessageGenerator {
 
         return stringBuilder.toString();
     }
-
 
     public static String makeFullTimeExamPeriodTemplate(ExamPeriodEventDto examPeriodEventDto,
                                                         String day) {
@@ -266,7 +272,7 @@ public class MessageGenerator {
         stringBuilder.append(appendTeacher(teacher)).append("\n\n");
 
         if (CollectionUtils.isEmpty(fullTimeLessonDto.getLessons())) {
-            stringBuilder.append("А пар-то нету :)");
+            stringBuilder.append(NO_LESSONS);
         } else {
             List<FullTimeLesson> fullTimeLessons = fullTimeLessonDto.getLessons();
             if (filterWeekType) {

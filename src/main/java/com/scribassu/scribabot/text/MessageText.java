@@ -44,6 +44,8 @@ public class MessageText {
     public static final String NO_EXAM_PERIOD_SCHEDULE = "Расписание сессии для вашей группы отсутствует.";
     public static final String NO_EXAM_PERIOD_SCHEDULE_TEACHER = "Расписание сессии для этого преподавателя отсутствует.";
 
+    public static final String NO_LESSONS = "А пар-то нету :)";
+
     public static final String NOT_ENABLE_SCHEDULE_NOTIFICATION_TODAY = "Вы еще не подключали рассылку расписания на сегодня. Подключите через '";
     public static final String NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_TODAY = "Вы еще не подключали рассылку расписания сессии на сегодня. Подключите через '";
     public static final String NOT_ENABLE_SCHEDULE_NOTIFICATION_TOMORROW = "Вы еще не подключали рассылку расписания на завтра. Подключите через '";
