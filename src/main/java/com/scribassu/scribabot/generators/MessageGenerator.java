@@ -52,14 +52,16 @@ public class MessageGenerator {
         }
         WeekType currentWeekType = WeekTypeUtils.getWeekType(calendar);
 
-        // kgl has another week type
-        if (fullTimeLessonDto.getStudentGroup().getDepartment().getURL().equalsIgnoreCase("kgl")) {
-            currentWeekType = currentWeekType.equals(WeekType.NOM) ? WeekType.DENOM : WeekType.NOM;
+        if (null != fullTimeLessonDto.getStudentGroup()) {
+            // kgl has another week type
+            if (fullTimeLessonDto.getStudentGroup().getDepartment().getURL().equalsIgnoreCase("kgl")) {
+                currentWeekType = currentWeekType.equals(WeekType.NOM) ? WeekType.DENOM : WeekType.NOM;
+            }
+            stringBuilder.append("Неделя: ").append(WeekTypeUtils.weekTypeToLongString(currentWeekType)).append("\n");
+            stringBuilder.append("Группа № ").append(fullTimeLessonDto.getStudentGroup().getGroupNumberRus()).append("\n \n");
+        } else {
+            stringBuilder.append("Группа отсутствует").append("\n \n");
         }
-
-        stringBuilder.append("Неделя: ").append(WeekTypeUtils.weekTypeToLongString(currentWeekType)).append("\n");
-
-        stringBuilder.append("Группа № ").append(fullTimeLessonDto.getStudentGroup().getGroupNumberRus()).append("\n \n");
 
         if (CollectionUtils.isEmpty(fullTimeLessonDto.getLessons())) {
             stringBuilder.append(NO_LESSONS);
@@ -106,7 +108,7 @@ public class MessageGenerator {
         Calendar calendar = CalendarUtils.getCalendar();
         WeekType currentWeekType = WeekTypeUtils.getWeekType(calendar);
 
-        if (!StringUtils.isEmpty(fullTimeLessonDto.getStudentGroup().getGroupNumberRus())) {
+        if (null != fullTimeLessonDto.getStudentGroup()) {
             // kgl has another week type
             if (fullTimeLessonDto.getStudentGroup().getDepartment().getURL().equalsIgnoreCase("kgl")) {
                 currentWeekType = currentWeekType.equals(WeekType.NOM) ? WeekType.DENOM : WeekType.NOM;
