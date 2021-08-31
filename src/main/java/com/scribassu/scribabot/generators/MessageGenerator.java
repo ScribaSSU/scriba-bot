@@ -104,15 +104,17 @@ public class MessageGenerator {
                                                               boolean filterWeekType) {
         StringBuilder stringBuilder = new StringBuilder();
         Calendar calendar = CalendarUtils.getCalendar();
-
         WeekType currentWeekType = WeekTypeUtils.getWeekType(calendar);
 
-        // kgl has another week type
-        if (fullTimeLessonDto.getStudentGroup().getDepartment().getURL().equalsIgnoreCase("kgl")) {
-            currentWeekType = currentWeekType.equals(WeekType.NOM) ? WeekType.DENOM : WeekType.NOM;
+        if (!StringUtils.isEmpty(fullTimeLessonDto.getStudentGroup().getGroupNumberRus())) {
+            // kgl has another week type
+            if (fullTimeLessonDto.getStudentGroup().getDepartment().getURL().equalsIgnoreCase("kgl")) {
+                currentWeekType = currentWeekType.equals(WeekType.NOM) ? WeekType.DENOM : WeekType.NOM;
+            }
+            stringBuilder.append("Группа № ").append(fullTimeLessonDto.getStudentGroup().getGroupNumberRus()).append("\n \n");
+        } else {
+            stringBuilder.append("Группа отсутствует").append("\n \n");
         }
-
-        stringBuilder.append("Группа № ").append(fullTimeLessonDto.getStudentGroup().getGroupNumberRus()).append("\n \n");
 
         if (CollectionUtils.isEmpty(fullTimeLessonDto.getLessons())) {
             stringBuilder.append("А пар-то нету :)");
