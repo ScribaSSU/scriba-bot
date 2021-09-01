@@ -3,14 +3,12 @@ scriba-bot:
     token:
     secret:
     confirmation-code:
-    keyboards-folder: keyboards/
     api-version:
     url:
     mentioned-names: "example1,@example2"
   tg:
     name:
     token:
-
 
 call:
   rest:
