@@ -99,14 +99,14 @@ public class MessageHandlerImpl implements MessageHandler {
         if (BotUserSource.VK.equals(source)) {
             vkBotUser = vkBotUserRepository.findOneById(userId);
             if (null == vkBotUser) {
-                botUser = new InnerBotUser(source);
+                botUser = new InnerBotUser(source, userId);
             } else {
                 botUser = new InnerBotUser(vkBotUser);
             }
         } else {
             tgBotUser = tgBotUserRepository.findOneById(userId);
             if (null == tgBotUser) {
-                botUser = new InnerBotUser(source);
+                botUser = new InnerBotUser(source, userId);
             } else {
                 botUser = new InnerBotUser(tgBotUser);
             }
@@ -316,6 +316,8 @@ public class MessageHandlerImpl implements MessageHandler {
             case CommandText.ENABLE_SEND_EMPTY_SCHEDULE_NOTIFICATION:
             case CommandText.DISABLE_SEND_EMPTY_SCHEDULE_NOTIFICATION:
             case CommandText.CURRENT_USER_SETTINGS:
+            case CommandText.ENABLE_SEND_KEYBOARD:
+            case CommandText.DISABLE_SEND_KEYBOARD:
             case CommandText.DELETE_PROFILE:
             case CommandText.YES:
             case CommandText.NO:
@@ -425,6 +427,7 @@ public class MessageHandlerImpl implements MessageHandler {
             }
         }
 
+        botMessage.setBotUser(botUser);
         return botMessage;
     }
 }

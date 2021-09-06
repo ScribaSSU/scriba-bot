@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardRemove;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.Locale;
@@ -30,6 +31,7 @@ public class TgMessageSender extends TelegramLongPollingBot implements MessageSe
     private String botToken;
 
     private static final Integer TG_LENGTH = 4096;
+    private static final ReplyKeyboardRemove replyKeyboardRemove = new ReplyKeyboardRemove();
 
     @Override
     public void onUpdateReceived(Update update) {
@@ -56,14 +58,18 @@ public class TgMessageSender extends TelegramLongPollingBot implements MessageSe
                     message = botMessage.getMessage().substring(startIndex, lastSpaceIndex);
                 }
 
-                if (botMessage.hasTgKeyboard()) {
-                    execute(new SendMessage().setChatId(chatId)
-                            .setText(message)
-                            .setReplyMarkup(botMessage.getTgKeyboard()));
+                if (botMessage.getBotUser().isSentKeyboard()) {
+                    if (botMessage.hasTgKeyboard()) {
+                        execute(new SendMessage().setChatId(chatId)
+                                .setText(message)
+                                .setReplyMarkup(botMessage.getTgKeyboard()));
+                    } else {
+                        execute(new SendMessage().setChatId(chatId)
+                                .setText(message)
+                                .setReplyMarkup(TgKeyboardGenerator.mainMenu()));
+                    }
                 } else {
-                    execute(new SendMessage().setChatId(chatId)
-                            .setText(message)
-                            .setReplyMarkup(TgKeyboardGenerator.mainMenu()));
+                    execute(new SendMessage().setChatId(chatId).setText(message).setReplyMarkup(replyKeyboardRemove));
                 }
 
                 if (lastSpaceIndex > 0) {
@@ -108,14 +114,18 @@ public class TgMessageSender extends TelegramLongPollingBot implements MessageSe
                     message = botMessage.getMessage().substring(startIndex, lastSpaceIndex);
                 }
 
-                if (botMessage.hasVkKeyboard()) {
-                    execute(new SendMessage().setChatId(userId)
-                            .setText(message)
-                            .setReplyMarkup(botMessage.getTgKeyboard()));
+                if (botMessage.getBotUser().isSentKeyboard()) {
+                    if (botMessage.hasTgKeyboard()) {
+                        execute(new SendMessage().setChatId(userId)
+                                .setText(message)
+                                .setReplyMarkup(botMessage.getTgKeyboard()));
+                    } else {
+                        execute(new SendMessage().setChatId(userId)
+                                .setText(message)
+                                .setReplyMarkup(TgKeyboardGenerator.mainMenu()));
+                    }
                 } else {
-                    execute(new SendMessage().setChatId(userId)
-                            .setText(message)
-                            .setReplyMarkup(TgKeyboardGenerator.mainMenu()));
+                    execute(new SendMessage().setChatId(userId).setText(message).setReplyMarkup(replyKeyboardRemove));
                 }
 
                 if (lastSpaceIndex > 0) {

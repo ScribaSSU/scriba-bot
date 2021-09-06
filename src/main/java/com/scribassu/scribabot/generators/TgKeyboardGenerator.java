@@ -431,7 +431,7 @@ public class TgKeyboardGenerator {
     public ReplyKeyboardMarkup settings(InnerBotUser user) {
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
         List<KeyboardRow> rows = new ArrayList<>();
-        for (int i = 0; i < 7; i++) {
+        for (int i = 0; i < 8; i++) {
             rows.add(new KeyboardRow());
         }
 
@@ -445,10 +445,16 @@ public class TgKeyboardGenerator {
             rows.get(3).add(new KeyboardButton(String.format("%1$s Не присылать рассылку, когда пар нет %1$s", NO_EMOJI)));
         }
 
-        rows.get(4).add(CHOOSE_DEPARTMENT_AND_GROUP_BUTTON);
-        rows.get(4).add(new KeyboardButton(String.format("%1$s Текущие настройки пользователя %1$s", PROFILE_EMOJI)));
-        rows.get(5).add(new KeyboardButton(String.format("%1$s Удалить профиль %1$s", DELETE_PROFILE_EMOJI)));
-        rows.get(6).add(MAIN_MENU_BUTTON);
+        if (user.isSentKeyboard()) {
+            rows.get(4).add(new KeyboardButton(String.format("%1$s Не присылать клавиатуру %1$s", NO_EMOJI)));
+        } else {
+            rows.get(4).add(new KeyboardButton(String.format("%1$s Присылать клавиатуру %1$s", YES_EMOJI)));
+        }
+
+        rows.get(5).add(CHOOSE_DEPARTMENT_AND_GROUP_BUTTON);
+        rows.get(5).add(new KeyboardButton(String.format("%1$s Текущие настройки пользователя %1$s", PROFILE_EMOJI)));
+        rows.get(6).add(new KeyboardButton(String.format("%1$s Удалить профиль %1$s", DELETE_PROFILE_EMOJI)));
+        rows.get(7).add(MAIN_MENU_BUTTON);
 
         if (!BotMessageUtils.isBotUserExtramural(user)) {
             rows.get(0).add(new KeyboardButton(String.format("%1$s Рассылка расписания занятий %1$s", NOTIFICATION_EMOJI)));

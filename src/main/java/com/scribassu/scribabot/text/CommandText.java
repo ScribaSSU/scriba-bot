@@ -61,6 +61,8 @@ public class CommandText {
     public static final String DISABLE_FILTER_WEEK_TYPE = "выкл. фильтр по типу недели";
     public static final String ENABLE_SEND_EMPTY_SCHEDULE_NOTIFICATION = "присылать рассылку, когда пар нет";
     public static final String DISABLE_SEND_EMPTY_SCHEDULE_NOTIFICATION = "не присылать рассылку, когда пар нет";
+    public static final String ENABLE_SEND_KEYBOARD = "присылать клавиатуру";
+    public static final String DISABLE_SEND_KEYBOARD = "не присылать клавиатуру";
     public static final String CURRENT_USER_SETTINGS = "текущие настройки пользователя";
     public static final String SEND_EXAM_PERIOD = "рассылка расписания сессии";
     public static final String SEND_SCHEDULE = "рассылка расписания занятий";

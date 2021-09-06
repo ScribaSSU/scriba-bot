@@ -130,6 +130,34 @@ public class SettingsService implements BotMessageService {
                     botMessage = new BotMessage(DISABLE_FILTER_WEEK_TYPE, tgKeyboardGenerator.settings(botUser));
                 }
                 break;
+            case CommandText.ENABLE_SEND_KEYBOARD:
+                botUser.setSentKeyboard(true);
+                if (botUser.fromVk()) {
+                    VkBotUser vkBotUser = vkBotUserRepository.findOneById(userId);
+                    vkBotUser.setSentKeyboard(true);
+                    vkBotUserRepository.save(vkBotUser);
+                    botMessage = new BotMessage(ENABLE_SEND_KEYBOARD, vkKeyboardGenerator.settings(botUser));
+                } else {
+                    TgBotUser tgBotUser = tgBotUserRepository.findOneById(userId);
+                    tgBotUser.setSentKeyboard(true);
+                    tgBotUserRepository.save(tgBotUser);
+                    botMessage = new BotMessage(ENABLE_SEND_KEYBOARD, tgKeyboardGenerator.settings(botUser));
+                }
+                break;
+            case CommandText.DISABLE_SEND_KEYBOARD:
+                botUser.setSentKeyboard(false);
+                if (botUser.fromVk()) {
+                    VkBotUser vkBotUser = vkBotUserRepository.findOneById(userId);
+                    vkBotUser.setSentKeyboard(false);
+                    vkBotUserRepository.save(vkBotUser);
+                    botMessage = new BotMessage(DISABLE_SEND_KEYBOARD, vkKeyboardGenerator.settings(botUser));
+                } else {
+                    TgBotUser tgBotUser = tgBotUserRepository.findOneById(userId);
+                    tgBotUser.setSentKeyboard(false);
+                    tgBotUserRepository.save(tgBotUser);
+                    botMessage = new BotMessage(DISABLE_SEND_KEYBOARD, tgKeyboardGenerator.settings(botUser));
+                }
+                break;
             case CommandText.ENABLE_SEND_EMPTY_SCHEDULE_NOTIFICATION:
                 botUser.setSilentEmptyDays(false);
                 if (botUser.fromVk()) {
@@ -159,13 +187,14 @@ public class SettingsService implements BotMessageService {
                 }
                 break;
             case CommandText.CURRENT_USER_SETTINGS:
-                String scheduleNotificationStatus = BotMessageUtils.isBotUserFullTime(botUser) ?
-                        getScheduleNotificationStatusFullTime(botUser)
-                        : getScheduleNotificationStatusExtramural(botUser);
+                String scheduleNotificationSettings = BotMessageUtils.isBotUserFullTime(botUser) ?
+                        getScheduleNotificationSettingsFullTime(botUser)
+                        : getScheduleNotificationSettingsExtramural(botUser);
                 String weekTypeFilterSettings = BotMessageUtils.isBotUserFullTime(botUser) ?
                         "\n\n" + "Фильтрация по типу недели: " + (botUser.isFilterNomDenom() ? "вкл." : "выкл.") : "";
-                String silentDaysStatus = "\n\n" + "Рассылка, когда пар нет: " + (botUser.isSilentEmptyDays() ? "не присылается" : "присылается");
-                String currentUserSettings = getStudentInfo(botUser) + "\n" + scheduleNotificationStatus + weekTypeFilterSettings + silentDaysStatus;
+                String silentDaysSettings = "\n\n" + "Рассылка, когда пар нет: " + (botUser.isSilentEmptyDays() ? "не присылается" : "присылается");
+                String sentKeyboardSettings = "\n\n" + (botUser.isSentKeyboard() ? "Клавиатура бота: присылается" : "Клавиатура бота: не присылается");
+                String currentUserSettings = getStudentInfo(botUser) + "\n" + scheduleNotificationSettings + weekTypeFilterSettings + silentDaysSettings + sentKeyboardSettings;
                 if (botUser.fromVk()) {
                     botMessage = new BotMessage(currentUserSettings, vkKeyboardGenerator.settings(botUser));
                 } else {
@@ -898,7 +927,7 @@ public class SettingsService implements BotMessageService {
                 "Группа: " + firstNotEmpty(botUser.getGroupNumber()) + "\n";
     }
 
-    private String getScheduleNotificationStatusFullTime(InnerBotUser botUser) {
+    private String getScheduleNotificationSettingsFullTime(InnerBotUser botUser) {
         String userId = botUser.getUserId();
         BotUserSource source = botUser.getSource();
 
@@ -1015,7 +1044,7 @@ public class SettingsService implements BotMessageService {
         return stringBuilder.toString();
     }
 
-    private String getScheduleNotificationStatusExtramural(InnerBotUser botUser) {
+    private String getScheduleNotificationSettingsExtramural(InnerBotUser botUser) {
         String userId = botUser.getUserId();
         BotUserSource source = botUser.getSource();
 

@@ -19,9 +19,11 @@ public class InnerBotUser {
     private String previousUserMessage;
     private boolean filterNomDenom;
     private boolean silentEmptyDays;
+    private boolean sentKeyboard;
 
-    public InnerBotUser(BotUserSource source) {
+    public InnerBotUser(BotUserSource source, String userId) {
         this.source = source;
+        this.userId = userId;
     }
 
     public InnerBotUser(VkBotUser vkBotUser) {
@@ -33,6 +35,7 @@ public class InnerBotUser {
         this.previousUserMessage = vkBotUser.getPreviousUserMessage();
         this.filterNomDenom = vkBotUser.isFilterNomDenom();
         this.silentEmptyDays = vkBotUser.isSilentEmptyDays();
+        this.sentKeyboard = vkBotUser.isSentKeyboard();
     }
 
     public InnerBotUser(TgBotUser tgBotUser) {
@@ -44,6 +47,7 @@ public class InnerBotUser {
         this.previousUserMessage = tgBotUser.getPreviousUserMessage();
         this.filterNomDenom = tgBotUser.isFilterNomDenom();
         this.silentEmptyDays = tgBotUser.isSilentEmptyDays();
+        this.sentKeyboard = tgBotUser.isSentKeyboard();
     }
 
     public boolean fromVk() {

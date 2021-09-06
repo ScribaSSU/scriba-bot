@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import static com.scribassu.scribabot.util.Constants.EMPTY_VK_KEYBOARD;
+
 @Slf4j
 @Service
 public class VkMessageSender implements MessageSender {
@@ -53,7 +55,7 @@ public class VkMessageSender implements MessageSender {
             postParameters.add(new BasicNameValuePair("random_id", String.valueOf(random.nextInt())));
             postParameters.add(new BasicNameValuePair("message", message));
 
-            if (botMessage.hasVkKeyboard()) {
+            if (botMessage.getBotUser().isSentKeyboard() && botMessage.hasVkKeyboard()) {
                 ObjectMapper objectMapper = new ObjectMapper();
                 String keyboard;
                 try {
@@ -62,6 +64,8 @@ public class VkMessageSender implements MessageSender {
                     keyboard = objectMapper.writeValueAsString(VkKeyboardGenerator.mainMenu);
                 }
                 postParameters.add(new BasicNameValuePair("keyboard", keyboard));
+            } else {
+                postParameters.add(new BasicNameValuePair("keyboard", EMPTY_VK_KEYBOARD));
             }
 
             HttpPost postRequest = new HttpPost(VK_API_METHOD);

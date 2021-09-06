@@ -19,6 +19,8 @@ public class BotMessage {
 
     private ReplyKeyboardMarkup tgKeyboard;
 
+    private InnerBotUser botUser;
+
     public BotMessage(String message) {
         this.message = message;
     }
@@ -41,6 +43,14 @@ public class BotMessage {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public void setBotUser(InnerBotUser botUser) {
+        this.botUser = botUser;
+    }
+
+    public InnerBotUser getBotUser() {
+        return botUser;
     }
 
     public boolean isEmpty() {

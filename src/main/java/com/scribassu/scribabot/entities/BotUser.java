@@ -25,6 +25,7 @@ public abstract class BotUser {
 
     private boolean filterNomDenom;
     private boolean silentEmptyDays;
+    private boolean sentKeyboard;
 
     @CreatedDate
     private OffsetDateTime registrationTimestamp;
@@ -44,6 +45,7 @@ public abstract class BotUser {
                 ", previousUserMessage='" + previousUserMessage + '\'' +
                 ", filterNomDenom=" + filterNomDenom +
                 ", silentEmptyDays=" + silentEmptyDays +
+                ", sentKeyboard=" + sentKeyboard +
                 ", registrationTimestamp=" + registrationTimestamp +
                 '}';
     }

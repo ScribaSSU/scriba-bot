@@ -13,7 +13,7 @@ public class MessageText {
     public static final String THIS_IS_MAIN_MENU = "Это главное меню бота. Отсюда вы можете узнать расписание, задать настройки и не только.";
     public static final String CHOOSE_DEPARTMENT = "Выберите факультет. Если клавиатура для выбора факультета не пришла, напишите сюда же любое сообщение, чтобы оповестить админа, админ увидит и поможет.\n\n" +
             "Также вы можете ввести факультет вручную: биолог, географ, геолог, идпо, и-т искусств, ииимо, и-т физики, и-т физ кул, ифиж, и-т химии, мехмат, фияил, книит, соцфак, фнбмт, фнп, психолог, пписо, философ, эконом, юрфак, геолог к-ж, к-ж яблочкова";
-    public static final String CHOOSE_EDUCATION_FORM = "Выберите форму расписания. Также вы можете ввести форму расписания вручную. Доступные варианты: дневная.";
+    public static final String CHOOSE_EDUCATION_FORM = "Выберите форму расписания. Также вы можете ввести форму расписания вручную. Доступные варианты: дневная, заочная.";
     public static final String CHOOSE_COURSE = "Выберите курс. В магистратуре и аспирантуре курсы тоже отсчитываются с первого! Также вы можете ввести курс вручную в формате 'номеркурса курс', без кавычек. Например, 1 курс.";
     public static final String CHOOSE_STUDENT_GROUP = "Выберите группу. Также вы можете ввести номер группы вручную в формате 'г номергруппы', без кавычек. Например, г 123.";
     public static final String CHOOSE_SCHEDULE_NOTIFICATION_TIME = "Выберите удобное время для рассылки расписания на %s.";
@@ -32,10 +32,12 @@ public class MessageText {
     public static final String HERE_SCHEDULE_NOTIFICATION = "Здесь вы можете настроить рассылку расписания занятий.";
     public static final String ENABLE_FILTER_WEEK_TYPE = "Включена фильтрация по типу недели.";
     public static final String DISABLE_FILTER_WEEK_TYPE = "Выключена фильтрация по типу недели.";
+    public static final String ENABLE_SEND_KEYBOARD = "Клавиатура бота подключена.";
+    public static final String DISABLE_SEND_KEYBOARD = "Клавиатура бота отключена. Теперь общение с ботом будет вестись только с помощью ручного ввода. Чтобы включить клавиатуру обратно, отправьте 'присылать клавиатуру' без кавычек.";
     public static final String ENABLE_SEND_EMPTY_SCHEDULE_NOTIFICATION = "Теперь рассылка расписания пар и сессии будет приходить, даже если в запрашиваемый день отсутствуют пары и сессионные события.";
     public static final String DISABLE_SEND_EMPTY_SCHEDULE_NOTIFICATION = "Теперь рассылка расписания пар и сессии не будет приходить, если в запрашиваемый день отсутствуют пары и сессионные события.";
     public static final String SCHEDULE_WILL_BE_SENT_ABSTRACT = "Теперь расписание будет приходить в ";
-    public static final String CHOOSE_TEACHER_TO_GET_SCHEDULE = "Выберите, для какого преподавателя хотите узнать расписание.";
+    public static final String CHOOSE_TEACHER_TO_GET_SCHEDULE = "Выберите, для какого преподавателя хотите узнать расписание. Можно выбрать преподавателя на клавиатуре или ввести ID и ФИО вручную как указано ниже.";
     public static final String CHOOSE_DAY_FOR_TEACHER_SCHEDULE = "Выберите, для чего хотите узнать расписание преподавателя. Для сброса поиска выберите на клавиатуре 'Главное меню' или введите вручную 'меню'.";
     public static final String TOO_LONG_TEACHER_LIST = "Искомый список преподавателей слишком большой для клавиатуры. Попробуйте запросить точнее.";
     public static final String EMPTY_TEACHER_LIST = "По вашему запросу ничего не нашлось.";

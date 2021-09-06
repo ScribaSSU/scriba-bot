@@ -70,12 +70,23 @@ public class TeacherService implements BotMessageService {
                                 : new BotMessage(TOO_LONG_TEACHER_LIST, TgKeyboardGenerator.mainMenu());
                     } else {
                         try {
-                            botMessage = new BotMessage(CHOOSE_TEACHER_TO_GET_SCHEDULE);
+                            StringBuilder sb = new StringBuilder();
+                            sb.append(CHOOSE_TEACHER_TO_GET_SCHEDULE).append("\n\n");
+                            for (Teacher teacher : teachers) {
+                                sb
+                                        .append(teacher.getId()).append(" ")
+                                        .append(teacher.getSurname()).append(" ")
+                                        .append(teacher.getName()).append(" ")
+                                        .append(teacher.getPatronymic()).append("\n");
+                            }
+                            String teacherList = sb.toString();
+                            botMessage = new BotMessage(teacherList);
+
                             if (botUser.fromVk()) {
-                                vkBotUserRepository.updatePreviousUserMessage(CHOOSE_TEACHER_TO_GET_SCHEDULE, userId);
+                                vkBotUserRepository.updatePreviousUserMessage(teacherList, userId);
                                 botMessage.setVkKeyboard(vkKeyboardGenerator.teachers(teachers));
                             } else {
-                                tgBotUserRepository.updatePreviousUserMessage(CHOOSE_TEACHER_TO_GET_SCHEDULE, userId);
+                                tgBotUserRepository.updatePreviousUserMessage(teacherList, userId);
                                 botMessage.setTgKeyboard(tgKeyboardGenerator.teachers(teachers));
                             }
                         } catch (Exception e) {

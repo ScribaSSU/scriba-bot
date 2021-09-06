@@ -740,6 +740,7 @@ public class VkKeyboardGenerator {
         vkKeyboardButtons.add(new ArrayList<>());
         vkKeyboardButtons.add(new ArrayList<>());
         vkKeyboardButtons.add(new ArrayList<>());
+        vkKeyboardButtons.add(new ArrayList<>());
 
         // 0 row is checked in the end
 
@@ -775,9 +776,31 @@ public class VkKeyboardGenerator {
             );
         }
 
-        vkKeyboardButtons.get(4).add(CHOOSE_DEPARTMENT_AND_GROUP_BUTTON);
+        if (user.isSentKeyboard()) {
+            vkKeyboardButtons.get(4).add(
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "Не присылать клавиатуру",
+                                    DEFAULT_PAYLOAD,
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.NEGATIVE
+                    )
+            );
+        } else {
+            vkKeyboardButtons.get(4).add(
+                    new VkKeyboardButton(
+                            new VkKeyboardButtonActionText(
+                                    "Присылать клавиатуру",
+                                    DEFAULT_PAYLOAD,
+                                    VkKeyboardButtonActionType.TEXT
+                            ), VkKeyboardButtonColor.POSITIVE
+                    )
+            );
+        }
 
-        vkKeyboardButtons.get(4).add(
+        vkKeyboardButtons.get(5).add(CHOOSE_DEPARTMENT_AND_GROUP_BUTTON);
+
+        vkKeyboardButtons.get(5).add(
                 new VkKeyboardButton(
                         new VkKeyboardButtonActionText(
                                 "Текущие настройки пользователя",
@@ -787,7 +810,7 @@ public class VkKeyboardGenerator {
                 )
         );
 
-        vkKeyboardButtons.get(5).add(
+        vkKeyboardButtons.get(6).add(
                 new VkKeyboardButton(
                         new VkKeyboardButtonActionText(
                                 "Удалить профиль",
@@ -797,7 +820,7 @@ public class VkKeyboardGenerator {
                 )
         );
 
-        vkKeyboardButtons.get(6).add(MAIN_MENU_BUTTON);
+        vkKeyboardButtons.get(7).add(MAIN_MENU_BUTTON);
 
         if (!BotMessageUtils.isBotUserExtramural(user)) {
             vkKeyboardButtons.get(0).add(

@@ -23,6 +23,8 @@ public class Constants {
 
     public static final String TEACHER_ID = "TEACHER_ID ";
 
+    public static final String EMPTY_VK_KEYBOARD = "{\"buttons\":[],\"one_time\":true}";
+
     public static final int MAX_KEYBOARD_TEXT_LENGTH = 40;
     public static final int MAX_VK_KEYBOARD_SIZE_FOR_LISTS = 38; //render lists without counting menu buttons
     public static final long PEER_ID_SHIFT = 2000000000;
