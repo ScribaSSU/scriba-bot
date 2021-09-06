@@ -103,6 +103,7 @@ public class AfterTomorrowNotificationService {
                     );
                     BotMessage botMessage;
                     botMessage = BotMessageUtils.getBotMessageForFullTimeExamPeriod(examPeriodEventDto, CommandText.AFTER_TOMORROW, botUser);
+                    botMessage.setBotUser(botUser);
                     if (!(botUser.isSilentEmptyDays() && botMessage.getMessage().contains(NO_EXAMS))) {
                         if (botUser.fromVk()) {
                             vkMessageSender.send(botMessage, botUser.getUserId());
@@ -158,6 +159,7 @@ public class AfterTomorrowNotificationService {
                     );
                     BotMessage botMessage;
                     botMessage = BotMessageUtils.getBotMessageForExtramuralEvent(extramuralDto, CommandText.AFTER_TOMORROW, botUser);
+                    botMessage.setBotUser(botUser);
                     if (!(botUser.isSilentEmptyDays() && botMessage.getMessage().contains(NO_EXAMS))) {
                         if (botUser.fromVk()) {
                             vkMessageSender.send(botMessage, botUser.getUserId());

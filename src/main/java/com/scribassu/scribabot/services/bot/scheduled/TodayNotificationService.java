@@ -98,6 +98,7 @@ public class TodayNotificationService {
                             dayNumber
                     );
                     BotMessage botMessage = BotMessageUtils.getBotMessageForFullTimeLessons(lessons, CommandText.TODAY, botUser.isFilterNomDenom(), botUser);
+                    botMessage.setBotUser(botUser);
                     if (!(botUser.isSilentEmptyDays() && botMessage.getMessage().contains(NO_LESSONS))) {
                         if (botUser.fromVk()) {
                             vkMessageSender.send(botMessage, botUser.getUserId());
@@ -151,6 +152,7 @@ public class TodayNotificationService {
                     );
                     BotMessage botMessage;
                     botMessage = BotMessageUtils.getBotMessageForFullTimeExamPeriod(examPeriodEventDto, CommandText.TODAY, botUser);
+                    botMessage.setBotUser(botUser);
                     if (!(botUser.isSilentEmptyDays() && botMessage.getMessage().contains(NO_EXAMS))) {
                         if (botUser.fromVk()) {
                             vkMessageSender.send(botMessage, botUser.getUserId());
@@ -204,6 +206,7 @@ public class TodayNotificationService {
                     );
                     BotMessage botMessage;
                     botMessage = BotMessageUtils.getBotMessageForExtramuralEvent(extramuralDto, CommandText.TODAY, botUser);
+                    botMessage.setBotUser(botUser);
                     if (!(botUser.isSilentEmptyDays() && botMessage.getMessage().contains(NO_EXAMS))) {
                         if (botUser.fromVk()) {
                             vkMessageSender.send(botMessage, botUser.getUserId());
