@@ -33,6 +33,9 @@ public abstract class BotUser {
     public BotUser(String userId) {
         this.userId = userId;
         this.previousUserMessage = "";
+        this.sentKeyboard = true;
+        this.silentEmptyDays = false;
+        this.filterNomDenom = false;
     }
 
     @Override

@@ -8,7 +8,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 public class InnerBotUser {
 
     private BotUserSource source;
@@ -21,9 +20,18 @@ public class InnerBotUser {
     private boolean silentEmptyDays;
     private boolean sentKeyboard;
 
+    public InnerBotUser() {
+        this.sentKeyboard = true;
+        this.silentEmptyDays = false;
+        this.filterNomDenom = false;
+    }
+
     public InnerBotUser(BotUserSource source, String userId) {
         this.source = source;
         this.userId = userId;
+        this.sentKeyboard = true;
+        this.silentEmptyDays = false;
+        this.filterNomDenom = false;
     }
 
     public InnerBotUser(VkBotUser vkBotUser) {

@@ -96,12 +96,14 @@ public class MessageHandlerImpl implements MessageHandler {
         InnerBotUser botUser;
         VkBotUser vkBotUser = null;
         TgBotUser tgBotUser = null;
+        boolean registered = false;
         if (BotUserSource.VK.equals(source)) {
             vkBotUser = vkBotUserRepository.findOneById(userId);
             if (null == vkBotUser) {
                 botUser = new InnerBotUser(source, userId);
             } else {
                 botUser = new InnerBotUser(vkBotUser);
+                registered = true;
             }
         } else {
             tgBotUser = tgBotUserRepository.findOneById(userId);
@@ -109,6 +111,7 @@ public class MessageHandlerImpl implements MessageHandler {
                 botUser = new InnerBotUser(source, userId);
             } else {
                 botUser = new InnerBotUser(tgBotUser);
+                registered = true;
             }
         }
 
@@ -131,17 +134,16 @@ public class MessageHandlerImpl implements MessageHandler {
             return new BotMessage(DO_NOT_SEND);
         }
 
-        if (botUser.notRegistered() && !message.equals(CommandText.HELLO)
+        if (!registered && !message.equals(CommandText.HELLO)
                 && !message.equals(CommandText.MAIN_MENU)
                 && !message.equals(CommandText.SHORT_MAIN_MENU)
                 && !message.equals(CommandText.TG_START)) {
-            botMessage = new BotMessage(GREETING_WITH_PROMPT);
-            botUser = new InnerBotUser();
+            botMessage = new BotMessage(GREETING_WITH_CHOOSE_DEPARTMENT);
             botUser.setUserId(userId); //DON'T SAVE! It is only for unrecognized messages check
             return botMessage;
         }
 
-        if (botUser.registered()
+        if (registered
                 && null != botUser.getPreviousUserMessage()
                 && (botUser.getPreviousUserMessage().equalsIgnoreCase(CommandText.TEACHER_SCHEDULE)
                 || botUser.getPreviousUserMessage().startsWith(Constants.TEACHER_ID)
@@ -152,16 +154,14 @@ public class MessageHandlerImpl implements MessageHandler {
         switch (message) {
             case CommandText.TG_START:
             case CommandText.HELLO:
-                if (botUser.notRegistered()) {
+                if (!registered) {
                     if (botUser.fromVk()) {
                         vkBotUser = new VkBotUser(userId);
-                        vkBotUser.setFilterNomDenom(false);
                         vkBotUser = vkBotUserRepository.save(vkBotUser);
                         botMessage = new BotMessage(GREETING_WITH_CHOOSE_DEPARTMENT, VkKeyboardGenerator.departments);
                         vkBotUserRepository.updatePreviousUserMessage(GREETING_WITH_CHOOSE_DEPARTMENT, vkBotUser.getUserId());
                     } else {
                         tgBotUser = new TgBotUser(userId);
-                        tgBotUser.setFilterNomDenom(false);
                         tgBotUser = tgBotUserRepository.save(tgBotUser);
                         botMessage = new BotMessage(GREETING_WITH_CHOOSE_DEPARTMENT, TgKeyboardGenerator.departments());
                         tgBotUserRepository.updatePreviousUserMessage(GREETING_WITH_CHOOSE_DEPARTMENT, tgBotUser.getUserId());
@@ -176,16 +176,14 @@ public class MessageHandlerImpl implements MessageHandler {
                 break;
             case CommandText.MAIN_MENU:
             case CommandText.SHORT_MAIN_MENU:
-                if (botUser.notRegistered()) {
+                if (!registered) {
                     if (botUser.fromVk()) {
                         vkBotUser = new VkBotUser(userId);
-                        vkBotUser.setFilterNomDenom(false);
                         vkBotUser = vkBotUserRepository.save(vkBotUser);
                         botMessage = new BotMessage(GREETING_WITH_CHOOSE_DEPARTMENT, VkKeyboardGenerator.departments);
                         vkBotUserRepository.updatePreviousUserMessage(GREETING_WITH_CHOOSE_DEPARTMENT, vkBotUser.getUserId());
                     } else {
                         tgBotUser = new TgBotUser(userId);
-                        tgBotUser.setFilterNomDenom(false);
                         tgBotUser = tgBotUserRepository.save(tgBotUser);
                         botMessage = new BotMessage(GREETING_WITH_CHOOSE_DEPARTMENT, TgKeyboardGenerator.departments());
                         tgBotUserRepository.updatePreviousUserMessage(GREETING_WITH_CHOOSE_DEPARTMENT, tgBotUser.getUserId());
