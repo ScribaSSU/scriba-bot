@@ -60,16 +60,18 @@ public class TgMessageSender extends TelegramLongPollingBot implements MessageSe
 
                 if (botMessage.getBotUser().isSentKeyboard()) {
                     if (botMessage.hasTgKeyboard()) {
-                        execute(new SendMessage().setChatId(chatId)
-                                .setText(message)
-                                .setReplyMarkup(botMessage.getTgKeyboard()));
+                        SendMessage sendMessage = new SendMessage(String.valueOf(chatId), message);
+                        sendMessage.setReplyMarkup(botMessage.getTgKeyboard());
+                        execute(sendMessage);
                     } else {
-                        execute(new SendMessage().setChatId(chatId)
-                                .setText(message)
-                                .setReplyMarkup(TgKeyboardGenerator.mainMenu()));
+                        SendMessage sendMessage = new SendMessage(String.valueOf(chatId), message);
+                        sendMessage.setReplyMarkup(TgKeyboardGenerator.mainMenu());
+                        execute(sendMessage);
                     }
                 } else {
-                    execute(new SendMessage().setChatId(chatId).setText(message).setReplyMarkup(replyKeyboardRemove));
+                    SendMessage sendMessage = new SendMessage(String.valueOf(chatId), message);
+                    sendMessage.setReplyMarkup(replyKeyboardRemove);
+                    execute(sendMessage);
                 }
 
                 if (lastSpaceIndex > 0) {
@@ -114,18 +116,21 @@ public class TgMessageSender extends TelegramLongPollingBot implements MessageSe
                     message = botMessage.getMessage().substring(startIndex, lastSpaceIndex);
                 }
 
+
                 if (botMessage.getBotUser().isSentKeyboard()) {
                     if (botMessage.hasTgKeyboard()) {
-                        execute(new SendMessage().setChatId(userId)
-                                .setText(message)
-                                .setReplyMarkup(botMessage.getTgKeyboard()));
+                        SendMessage sendMessage = new SendMessage(String.valueOf(userId), message);
+                        sendMessage.setReplyMarkup(botMessage.getTgKeyboard());
+                        execute(sendMessage);
                     } else {
-                        execute(new SendMessage().setChatId(userId)
-                                .setText(message)
-                                .setReplyMarkup(TgKeyboardGenerator.mainMenu()));
+                        SendMessage sendMessage = new SendMessage(String.valueOf(userId), message);
+                        sendMessage.setReplyMarkup(TgKeyboardGenerator.mainMenu());
+                        execute(sendMessage);
                     }
                 } else {
-                    execute(new SendMessage().setChatId(userId).setText(message).setReplyMarkup(replyKeyboardRemove));
+                    SendMessage sendMessage = new SendMessage(String.valueOf(userId), message);
+                    sendMessage.setReplyMarkup(replyKeyboardRemove);
+                    execute(sendMessage);
                 }
 
                 if (lastSpaceIndex > 0) {
