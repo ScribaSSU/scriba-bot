@@ -13,6 +13,11 @@ public class Constants {
     public static final String KEY_TEXT = "text";
     public static final String KEY_PAYLOAD = "payload";
 
+    public static final String KEY_ATTACHMENTS = "attachments";
+    public static final String KEY_TYPE = "type";
+
+    public static final String KEY_STICKER = "sticker";
+
     public static final String TYPE_CONFIRMATION = "confirmation";
     public static final String TYPE_MESSAGE_NEW = "message_new";
 

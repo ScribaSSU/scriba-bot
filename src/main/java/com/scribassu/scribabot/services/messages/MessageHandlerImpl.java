@@ -152,6 +152,7 @@ public class MessageHandlerImpl implements MessageHandler {
         }
 
         switch (message) {
+            case "sticker_was_sent_to_bot":
             case CommandText.TG_START:
             case CommandText.HELLO:
                 if (!registered) {

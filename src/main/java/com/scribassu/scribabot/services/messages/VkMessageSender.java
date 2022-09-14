@@ -13,6 +13,8 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
@@ -69,7 +71,7 @@ public class VkMessageSender implements MessageSender {
             }
 
             HttpPost postRequest = new HttpPost(VK_API_METHOD);
-            postRequest.addHeader("accept", "application/x-www-form-urlencoded");
+            postRequest.addHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
             postRequest.setEntity(new UrlEncodedFormEntity(postParameters, StandardCharsets.UTF_8));
             HttpClient client = HttpClientBuilder.create().build();
             HttpResponse response = client.execute(postRequest);

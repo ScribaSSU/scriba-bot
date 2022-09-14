@@ -1,13 +1,13 @@
 package com.scribassu.scribabot.services.messages;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
+import com.google.gson.*;
+import com.scribassu.scribabot.text.CommandText;
 import com.scribassu.scribabot.util.Constants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 @Slf4j
@@ -21,7 +21,7 @@ public class MessageParserImpl implements MessageParser {
         log.info("VK Message: " + incomingJson);
         Map<String, String> parsed = new HashMap<>();
         JsonObject requestJson = gson.fromJson(incomingJson, JsonObject.class);
-        String type = requestJson.get("type").getAsString();
+        String type = requestJson.get(Constants.KEY_TYPE).getAsString();
 
         if (type.equalsIgnoreCase(Constants.TYPE_CONFIRMATION)) {
             System.out.println(Constants.TYPE_CONFIRMATION);
@@ -32,6 +32,15 @@ public class MessageParserImpl implements MessageParser {
             JsonObject object = requestJson.getAsJsonObject(Constants.KEY_OBJECT);
             String userId = object.getAsJsonPrimitive(Constants.KEY_PEER_ID).getAsString();
             String message = object.getAsJsonPrimitive(Constants.KEY_TEXT).getAsString();
+            JsonArray attachments = object.getAsJsonArray(Constants.KEY_ATTACHMENTS);
+            Iterator<JsonElement> attachmentsItems = attachments.iterator();
+            if (attachmentsItems.hasNext()) {
+                JsonObject attachmentItem = attachmentsItems.next().getAsJsonObject();
+                String attachmentItemType = attachmentItem.getAsJsonPrimitive(Constants.KEY_TYPE).getAsString();
+                if (Constants.KEY_STICKER.equals(attachmentItemType)) {
+                    message = CommandText.STICKER_WAS_SENT_TO_BOT;
+                }
+            }
             parsed.put(Constants.KEY_MESSAGE, message);
             parsed.put(Constants.KEY_USER_ID, userId);
 

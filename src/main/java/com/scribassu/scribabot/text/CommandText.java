@@ -80,4 +80,6 @@ public class CommandText {
     public static final String DEPARTMENT_PAYLOAD = "dep";
     public static final String COURSE_PAYLOAD = "course";
     public static final String TEACHER_ID_PAYLOAD = "teacher id";
+
+    public static final String STICKER_WAS_SENT_TO_BOT = "sticker_was_sent_to_bot";
 }
