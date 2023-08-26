@@ -1,4 +1,4 @@
-package com.scribassu.scribabot.services.messages;
+package com.scribassu.scribabot.message_handlers;
 
 import com.scribassu.scribabot.model.BotMessage;
 

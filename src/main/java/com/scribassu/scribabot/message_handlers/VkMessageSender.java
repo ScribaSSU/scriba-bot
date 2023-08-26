@@ -1,12 +1,10 @@
-package com.scribassu.scribabot.services.messages;
+package com.scribassu.scribabot.message_handlers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.scribassu.scribabot.model.BotMessage;
 import com.scribassu.scribabot.generators.InnerKeyboardGenerator;
 import com.scribassu.scribabot.mapper.HttpMapper;
-import com.scribassu.scribabot.model.Command;
-import com.scribassu.scribabot.services.bot.BotUserService;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpResponse;

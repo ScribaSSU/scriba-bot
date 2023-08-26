@@ -2,9 +2,13 @@ package com.scribassu.scribabot.dto.vk;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.scribassu.scribabot.config.VkAttachmentDeserializer;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -20,7 +24,8 @@ public class VkMessageObject {
     @JsonProperty("out")
     private long out;
     @JsonProperty("attachments")
-    private List<Object> attachments;
+    @JsonDeserialize(using = VkAttachmentDeserializer.class)
+    private List<VkAttachment> attachments;
     @JsonProperty("conversation_message_id")
     private long conversationMessageId;
     @JsonProperty("fwd_messages")

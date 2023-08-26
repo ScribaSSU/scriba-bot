@@ -1,4 +1,4 @@
-package com.scribassu.scribabot.services.messages;
+package com.scribassu.scribabot.message_handlers;
 
 import com.scribassu.scribabot.dto.rest.FullTimeLessonDto;
 import com.scribassu.scribabot.entities.unrecognized_messages.UnrecognizedMessage;

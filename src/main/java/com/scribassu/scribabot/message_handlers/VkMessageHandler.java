@@ -1,9 +1,7 @@
-package com.scribassu.scribabot.controllers;
+package com.scribassu.scribabot.message_handlers;
 
 import com.scribassu.scribabot.dto.vk.VkMessageDto;
 import com.scribassu.scribabot.mapper.HttpMapper;
-import com.scribassu.scribabot.services.messages.MessageHandler;
-import com.scribassu.scribabot.services.messages.VkMessageSender;
 import com.scribassu.scribabot.text.MessageText;
 import com.scribassu.scribabot.util.Constants;
 import lombok.Data;
@@ -18,7 +16,7 @@ import java.util.concurrent.CompletableFuture;
 
 @RestController
 @Data
-public class VkController {
+public class VkMessageHandler {
 
     @Value("${scriba-bot.vk.confirmation-code}")
     private String confirmationCode;

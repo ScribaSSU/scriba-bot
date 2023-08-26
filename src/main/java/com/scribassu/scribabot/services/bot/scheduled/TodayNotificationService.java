@@ -16,8 +16,8 @@ import com.scribassu.scribabot.repositories.notifications.ScheduleTodayNotificat
 import com.scribassu.scribabot.repositories.users.TgBotUserRepository;
 import com.scribassu.scribabot.repositories.users.VkBotUserRepository;
 import com.scribassu.scribabot.services.CallRestService;
-import com.scribassu.scribabot.services.messages.TgMessageSender;
-import com.scribassu.scribabot.services.messages.VkMessageSender;
+import com.scribassu.scribabot.message_handlers.TgMessageSender;
+import com.scribassu.scribabot.message_handlers.VkMessageSender;
 import com.scribassu.scribabot.text.CommandText;
 import com.scribassu.scribabot.generators.BotMessageGenerator;
 import com.scribassu.scribabot.util.CalendarUtils;
