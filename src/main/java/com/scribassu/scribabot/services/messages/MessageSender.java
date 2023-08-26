@@ -1,7 +1,7 @@
 package com.scribassu.scribabot.services.messages;
 
-import com.scribassu.scribabot.dto.BotMessage;
+import com.scribassu.scribabot.model.BotMessage;
 
 public interface MessageSender {
-    void send(BotMessage botMessage, String userId) throws Exception;
+    void send(BotMessage botMessage) throws Exception;
 }

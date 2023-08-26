@@ -1,26 +1,31 @@
 package com.scribassu.scribabot.services.bot;
 
-import com.scribassu.scribabot.dto.BotMessage;
-import com.scribassu.scribabot.dto.InnerBotUser;
-import com.scribassu.scribabot.entities.*;
-import com.scribassu.scribabot.generators.TgKeyboardGenerator;
-import com.scribassu.scribabot.generators.VkKeyboardGenerator;
-import com.scribassu.scribabot.repositories.*;
+import com.scribassu.scribabot.entities.notifications.*;
+import com.scribassu.scribabot.generators.InnerKeyboardGenerator;
+import com.scribassu.scribabot.model.BotMessage;
+import com.scribassu.scribabot.model.InnerBotUser;
+import com.scribassu.scribabot.repositories.notifications.*;
 import com.scribassu.scribabot.text.CommandText;
-import com.scribassu.scribabot.util.BotMessageUtils;
 import com.scribassu.scribabot.util.BotUserSource;
 import com.scribassu.scribabot.util.DepartmentConverter;
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.concurrent.CompletableFuture;
 
 import static com.scribassu.scribabot.text.MessageText.*;
 
+// 1127
+// 1038
+// 984
+// 734
 @Service
+@Slf4j
+@Data
 public class SettingsService implements BotMessageService {
-
-    private final VkBotUserRepository vkBotUserRepository;
-    private final TgBotUserRepository tgBotUserRepository;
+    private final BotUserService botUserService;
     private final ScheduleTodayNotificationRepository scheduleTodayNotificationRepository;
     private final ScheduleTomorrowNotificationRepository scheduleTomorrowNotificationRepository;
     private final ExamPeriodTodayNotificationRepository examPeriodTodayNotificationRepository;
@@ -29,221 +34,74 @@ public class SettingsService implements BotMessageService {
     private final ExtramuralEventTodayNotificationRepository extramuralEventTodayNotificationRepository;
     private final ExtramuralEventTomorrowNotificationRepository extramuralEventTomorrowNotificationRepository;
     private final ExtramuralEventAfterTomorrowNotificationRepository extramuralEventAfterTomorrowNotificationRepository;
-    private final VkKeyboardGenerator vkKeyboardGenerator;
-    private final TgKeyboardGenerator tgKeyboardGenerator;
-
-    @Autowired
-    public SettingsService(VkBotUserRepository vkBotUserRepository,
-                           TgBotUserRepository tgBotUserRepository,
-                           ScheduleTodayNotificationRepository scheduleTodayNotificationRepository,
-                           ScheduleTomorrowNotificationRepository scheduleTomorrowNotificationRepository,
-                           ExamPeriodTodayNotificationRepository examPeriodTodayNotificationRepository,
-                           ExamPeriodTomorrowNotificationRepository examPeriodTomorrowNotificationRepository,
-                           ExamPeriodAfterTomorrowNotificationRepository examPeriodAfterTomorrowNotificationRepository,
-                           ExtramuralEventTodayNotificationRepository extramuralEventTodayNotificationRepository,
-                           ExtramuralEventTomorrowNotificationRepository extramuralEventTomorrowNotificationRepository,
-                           ExtramuralEventAfterTomorrowNotificationRepository extramuralEventAfterTomorrowNotificationRepository,
-                           VkKeyboardGenerator vkKeyboardGenerator,
-                           TgKeyboardGenerator tgKeyboardGenerator) {
-        this.vkBotUserRepository = vkBotUserRepository;
-        this.tgBotUserRepository = tgBotUserRepository;
-        this.scheduleTodayNotificationRepository = scheduleTodayNotificationRepository;
-        this.scheduleTomorrowNotificationRepository = scheduleTomorrowNotificationRepository;
-        this.examPeriodTodayNotificationRepository = examPeriodTodayNotificationRepository;
-        this.examPeriodTomorrowNotificationRepository = examPeriodTomorrowNotificationRepository;
-        this.examPeriodAfterTomorrowNotificationRepository = examPeriodAfterTomorrowNotificationRepository;
-        this.extramuralEventTodayNotificationRepository = extramuralEventTodayNotificationRepository;
-        this.extramuralEventTomorrowNotificationRepository = extramuralEventTomorrowNotificationRepository;
-        this.extramuralEventAfterTomorrowNotificationRepository = extramuralEventAfterTomorrowNotificationRepository;
-        this.vkKeyboardGenerator = vkKeyboardGenerator;
-        this.tgKeyboardGenerator = tgKeyboardGenerator;
-    }
+    private final InnerKeyboardGenerator innerKeyboardGenerator;
 
     @Override
-    public BotMessage getBotMessage(String message, InnerBotUser botUser) {
+    public CompletableFuture<BotMessage> getBotMessage(String message, InnerBotUser botUser) {
         BotMessage botMessage = new BotMessage();
         String userId = botUser.getUserId();
         BotUserSource source = botUser.getSource();
 
         switch (message) {
             case CommandText.SEND_EXAM_PERIOD:
-                botMessage = botUser.fromVk() ?
-                        new BotMessage(HERE_EXAM_PERIOD_NOTIFICATION, vkKeyboardGenerator.settingsExamNotification(botUser))
-                        : new BotMessage(HERE_EXAM_PERIOD_NOTIFICATION, tgKeyboardGenerator.settingsExamNotification(botUser));
-
-                break;
+                return CompletableFuture.completedFuture(new BotMessage(HERE_EXAM_PERIOD_NOTIFICATION, innerKeyboardGenerator.settingsExamNotification(botUser), botUser));
             case CommandText.SEND_SCHEDULE:
-                botMessage = botUser.fromVk() ?
-                        new BotMessage(HERE_SCHEDULE_NOTIFICATION, vkKeyboardGenerator.settingsScheduleNotification(botUser))
-                        : new BotMessage(HERE_SCHEDULE_NOTIFICATION, tgKeyboardGenerator.settingsScheduleNotification(botUser));
-                break;
+                return CompletableFuture.completedFuture(new BotMessage(HERE_SCHEDULE_NOTIFICATION, innerKeyboardGenerator.settingsScheduleNotification(botUser), botUser));
             case CommandText.SET_SEND_SCHEDULE_TIME_TODAY:
             case CommandText.ENABLE_SEND_SCHEDULE_TODAY:
             case CommandText.DISABLE_SEND_SCHEDULE_TODAY:
-                botMessage = todayNotificationsSchedule(message, botUser);
-                break;
+                return todayNotificationsSchedule(message, botUser);
             case CommandText.SET_SEND_SCHEDULE_TIME_TOMORROW:
             case CommandText.ENABLE_SEND_SCHEDULE_TOMORROW:
             case CommandText.DISABLE_SEND_SCHEDULE_TOMORROW:
-                botMessage = tomorrowNotificationsSchedule(message, botUser);
-                break;
+                return tomorrowNotificationsSchedule(message, botUser);
             case CommandText.SET_SEND_EXAM_PERIOD_TIME_TODAY:
             case CommandText.ENABLE_SEND_EXAM_PERIOD_TODAY:
             case CommandText.DISABLE_SEND_EXAM_PERIOD_TODAY:
-                botMessage = todayNotificationsExamPeriod(message, botUser);
-                break;
+                return todayNotificationsExamPeriod(message, botUser);
             case CommandText.SET_SEND_EXAM_PERIOD_TIME_TOMORROW:
             case CommandText.ENABLE_SEND_EXAM_PERIOD_TOMORROW:
             case CommandText.DISABLE_SEND_EXAM_PERIOD_TOMORROW:
-                botMessage = tomorrowNotificationsExamPeriod(message, botUser);
-                break;
+                return tomorrowNotificationsExamPeriod(message, botUser);
             case CommandText.SET_SEND_EXAM_PERIOD_TIME_AFTER_TOMORROW:
             case CommandText.ENABLE_SEND_EXAM_PERIOD_AFTER_TOMORROW:
             case CommandText.DISABLE_SEND_EXAM_PERIOD_AFTER_TOMORROW:
-                botMessage = afterTomorrowNotificationsExamPeriod(message, botUser);
-                break;
+                return afterTomorrowNotificationsExamPeriod(message, botUser);
             case CommandText.ENABLE_FILTER_WEEK_TYPE:
-                botUser.setFilterNomDenom(true);
-                if (botUser.fromVk()) {
-                    VkBotUser vkBotUser = vkBotUserRepository.findOneById(userId);
-                    vkBotUser.setFilterNomDenom(true);
-                    vkBotUserRepository.save(vkBotUser);
-                    botMessage = new BotMessage(ENABLE_FILTER_WEEK_TYPE, vkKeyboardGenerator.settings(botUser));
-                } else {
-                    TgBotUser tgBotUser = tgBotUserRepository.findOneById(userId);
-                    tgBotUser.setFilterNomDenom(true);
-                    tgBotUserRepository.save(tgBotUser);
-                    botMessage = new BotMessage(ENABLE_FILTER_WEEK_TYPE, tgKeyboardGenerator.settings(botUser));
-                }
-                break;
+                botUserService.setFilterNomDenom(true, botUser);
+                return CompletableFuture.completedFuture(new BotMessage(ENABLE_FILTER_WEEK_TYPE, innerKeyboardGenerator.settings(botUser), botUser));
             case CommandText.DISABLE_FILTER_WEEK_TYPE:
-                botUser.setFilterNomDenom(false);
-                if (botUser.fromVk()) {
-                    VkBotUser vkBotUser = vkBotUserRepository.findOneById(userId);
-                    vkBotUser.setFilterNomDenom(false);
-                    vkBotUserRepository.save(vkBotUser);
-                    botMessage = new BotMessage(DISABLE_FILTER_WEEK_TYPE, vkKeyboardGenerator.settings(botUser));
-                } else {
-                    TgBotUser tgBotUser = tgBotUserRepository.findOneById(userId);
-                    tgBotUser.setFilterNomDenom(false);
-                    tgBotUserRepository.save(tgBotUser);
-                    botMessage = new BotMessage(DISABLE_FILTER_WEEK_TYPE, tgKeyboardGenerator.settings(botUser));
-                }
-                break;
+                botUserService.setFilterNomDenom(false, botUser);
+                return CompletableFuture.completedFuture(new BotMessage(DISABLE_FILTER_WEEK_TYPE, innerKeyboardGenerator.settings(botUser), botUser));
             case CommandText.ENABLE_SEND_KEYBOARD:
-                botUser.setSentKeyboard(true);
-                if (botUser.fromVk()) {
-                    VkBotUser vkBotUser = vkBotUserRepository.findOneById(userId);
-                    vkBotUser.setSentKeyboard(true);
-                    vkBotUserRepository.save(vkBotUser);
-                    botMessage = new BotMessage(ENABLE_SEND_KEYBOARD, vkKeyboardGenerator.settings(botUser));
-                } else {
-                    TgBotUser tgBotUser = tgBotUserRepository.findOneById(userId);
-                    tgBotUser.setSentKeyboard(true);
-                    tgBotUserRepository.save(tgBotUser);
-                    botMessage = new BotMessage(ENABLE_SEND_KEYBOARD, tgKeyboardGenerator.settings(botUser));
-                }
-                break;
+                botUserService.setSentKeyboard(true, botUser);
+                return CompletableFuture.completedFuture(new BotMessage(ENABLE_SEND_KEYBOARD, innerKeyboardGenerator.settings(botUser), botUser));
             case CommandText.DISABLE_SEND_KEYBOARD:
-                botUser.setSentKeyboard(false);
-                if (botUser.fromVk()) {
-                    VkBotUser vkBotUser = vkBotUserRepository.findOneById(userId);
-                    vkBotUser.setSentKeyboard(false);
-                    vkBotUserRepository.save(vkBotUser);
-                    botMessage = new BotMessage(DISABLE_SEND_KEYBOARD, vkKeyboardGenerator.settings(botUser));
-                } else {
-                    TgBotUser tgBotUser = tgBotUserRepository.findOneById(userId);
-                    tgBotUser.setSentKeyboard(false);
-                    tgBotUserRepository.save(tgBotUser);
-                    botMessage = new BotMessage(DISABLE_SEND_KEYBOARD, tgKeyboardGenerator.settings(botUser));
-                }
-                break;
+                botUserService.setSentKeyboard(false, botUser);
+                return CompletableFuture.completedFuture(new BotMessage(DISABLE_SEND_KEYBOARD, innerKeyboardGenerator.settings(botUser), botUser));
             case CommandText.ENABLE_SEND_EMPTY_SCHEDULE_NOTIFICATION:
-                botUser.setSilentEmptyDays(false);
-                if (botUser.fromVk()) {
-                    VkBotUser vkBotUser = vkBotUserRepository.findOneById(userId);
-                    vkBotUser.setSilentEmptyDays(false);
-                    vkBotUserRepository.save(vkBotUser);
-                    botMessage = new BotMessage(ENABLE_SEND_EMPTY_SCHEDULE_NOTIFICATION, vkKeyboardGenerator.settings(botUser));
-                } else {
-                    TgBotUser tgBotUser = tgBotUserRepository.findOneById(userId);
-                    tgBotUser.setSilentEmptyDays(false);
-                    tgBotUserRepository.save(tgBotUser);
-                    botMessage = new BotMessage(ENABLE_SEND_EMPTY_SCHEDULE_NOTIFICATION, tgKeyboardGenerator.settings(botUser));
-                }
-                break;
+                botUserService.setSilentEmptyDays(false, botUser);
+                return CompletableFuture.completedFuture(new BotMessage(ENABLE_SEND_EMPTY_SCHEDULE_NOTIFICATION, innerKeyboardGenerator.settings(botUser), botUser));
             case CommandText.DISABLE_SEND_EMPTY_SCHEDULE_NOTIFICATION:
-                botUser.setSilentEmptyDays(true);
-                if (botUser.fromVk()) {
-                    VkBotUser vkBotUser = vkBotUserRepository.findOneById(userId);
-                    vkBotUser.setSilentEmptyDays(true);
-                    vkBotUserRepository.save(vkBotUser);
-                    botMessage = new BotMessage(DISABLE_SEND_EMPTY_SCHEDULE_NOTIFICATION, vkKeyboardGenerator.settings(botUser));
-                } else {
-                    TgBotUser tgBotUser = tgBotUserRepository.findOneById(userId);
-                    tgBotUser.setSilentEmptyDays(true);
-                    tgBotUserRepository.save(tgBotUser);
-                    botMessage = new BotMessage(DISABLE_SEND_EMPTY_SCHEDULE_NOTIFICATION, tgKeyboardGenerator.settings(botUser));
-                }
-                break;
+                botUserService.setSilentEmptyDays(true, botUser);
+                return CompletableFuture.completedFuture(new BotMessage(DISABLE_SEND_EMPTY_SCHEDULE_NOTIFICATION, innerKeyboardGenerator.settings(botUser), botUser));
             case CommandText.CURRENT_USER_SETTINGS:
-                String scheduleNotificationSettings = BotMessageUtils.isBotUserFullTime(botUser) ?
+                String scheduleNotificationSettings = InnerBotUser.isBotUserFullTime(botUser) ?
                         getScheduleNotificationSettingsFullTime(botUser)
                         : getScheduleNotificationSettingsExtramural(botUser);
-                String weekTypeFilterSettings = BotMessageUtils.isBotUserFullTime(botUser) ?
+                String weekTypeFilterSettings = InnerBotUser.isBotUserFullTime(botUser) ?
                         "\n\n" + "Фильтрация по типу недели: " + (botUser.isFilterNomDenom() ? "вкл." : "выкл.") : "";
                 String silentDaysSettings = "\n\n" + "Рассылка, когда пар нет: " + (botUser.isSilentEmptyDays() ? "не присылается" : "присылается");
                 String sentKeyboardSettings = "\n\n" + (botUser.isSentKeyboard() ? "Клавиатура бота: присылается" : "Клавиатура бота: не присылается");
                 String currentUserSettings = getStudentInfo(botUser) + "\n" + scheduleNotificationSettings + weekTypeFilterSettings + silentDaysSettings + sentKeyboardSettings;
-                if (botUser.fromVk()) {
-                    botMessage = new BotMessage(currentUserSettings, vkKeyboardGenerator.settings(botUser));
-                } else {
-                    botMessage = new BotMessage(currentUserSettings, tgKeyboardGenerator.settings(botUser));
-                }
-                break;
+                return CompletableFuture.completedFuture(new BotMessage(currentUserSettings, innerKeyboardGenerator.settings(botUser), botUser));
             case CommandText.DELETE_PROFILE:
-                botMessage = new BotMessage(DELETE_CONFIRMATION);
-                if (botUser.fromVk()) {
-                    botMessage.setVkKeyboard(VkKeyboardGenerator.confirmDeletion);
-                } else {
-                    botMessage.setTgKeyboard(TgKeyboardGenerator.confirmDeletion());
-                }
-                break;
+                return CompletableFuture.completedFuture(new BotMessage(DELETE_CONFIRMATION, innerKeyboardGenerator.confirmDeletion(), botUser));
             case CommandText.NO:
-                botMessage = botUser.fromVk() ?
-                        new BotMessage(NOT_BYE_MESSAGE, vkKeyboardGenerator.settings(botUser))
-                        : new BotMessage(NOT_BYE_MESSAGE, tgKeyboardGenerator.settings(botUser));
-                break;
+                return CompletableFuture.completedFuture(new BotMessage(NOT_BYE_MESSAGE, innerKeyboardGenerator.settings(botUser), botUser));
             case CommandText.YES:
-                if (botUser.fromVk()) {
-                    vkBotUserRepository.deleteOneById(userId);
-                    if (BotMessageUtils.isBotUserExtramural(botUser)) {
-                        extramuralEventTodayNotificationRepository.deleteByUserIdAndUserSource(userId, BotUserSource.VK);
-                        extramuralEventTomorrowNotificationRepository.deleteByUserIdAndUserSource(userId, BotUserSource.VK);
-                        extramuralEventAfterTomorrowNotificationRepository.deleteByUserIdAndUserSource(userId, BotUserSource.VK);
-                    } else {
-                        examPeriodTodayNotificationRepository.deleteByUserIdAndUserSource(userId, BotUserSource.VK);
-                        examPeriodTomorrowNotificationRepository.deleteByUserIdAndUserSource(userId, BotUserSource.VK);
-                        examPeriodAfterTomorrowNotificationRepository.deleteByUserIdAndUserSource(userId, BotUserSource.VK);
-                        scheduleTodayNotificationRepository.deleteByUserIdAndUserSource(userId, BotUserSource.VK);
-                        scheduleTomorrowNotificationRepository.deleteByUserIdAndUserSource(userId, BotUserSource.VK);
-                    }
-                } else {
-                    tgBotUserRepository.deleteOneById(userId);
-                    if (BotMessageUtils.isBotUserExtramural(botUser)) {
-                        extramuralEventTodayNotificationRepository.deleteByUserIdAndUserSource(userId, BotUserSource.TG);
-                        extramuralEventTomorrowNotificationRepository.deleteByUserIdAndUserSource(userId, BotUserSource.TG);
-                        extramuralEventAfterTomorrowNotificationRepository.deleteByUserIdAndUserSource(userId, BotUserSource.TG);
-                    } else {
-                        examPeriodTodayNotificationRepository.deleteByUserIdAndUserSource(userId, BotUserSource.TG);
-                        examPeriodTomorrowNotificationRepository.deleteByUserIdAndUserSource(userId, BotUserSource.TG);
-                        examPeriodAfterTomorrowNotificationRepository.deleteByUserIdAndUserSource(userId, BotUserSource.TG);
-                        scheduleTodayNotificationRepository.deleteByUserIdAndUserSource(userId, BotUserSource.TG);
-                        scheduleTomorrowNotificationRepository.deleteByUserIdAndUserSource(userId, BotUserSource.TG);
-                    }
-                }
-                botMessage = new BotMessage(BYE_MESSAGE);
-                break;
+                botUserService.delete(botUser);
+                return CompletableFuture.completedFuture(new BotMessage(BYE_MESSAGE, botUser));
         }
 
         if (CommandText.HOUR_PATTERN.matcher(message).matches()) {
@@ -272,7 +130,7 @@ public class SettingsService implements BotMessageService {
                 scheduleTomorrowNotificationRepository.save(scheduleTomorrowNotification);
             }
             if (botUser.getPreviousUserMessage().equalsIgnoreCase(CHOOSE_EXAM_PERIOD_NOTIFICATION_TIME_TODAY)) {
-                if (BotMessageUtils.isBotUserFullTime(botUser)) {
+                if (InnerBotUser.isBotUserFullTime(botUser)) {
                     ExamPeriodTodayNotification examPeriodTodayNotification =
                             examPeriodTodayNotificationRepository.findByUserIdAndUserSource(userId, source);
 
@@ -295,7 +153,7 @@ public class SettingsService implements BotMessageService {
                 }
             }
             if (botUser.getPreviousUserMessage().equalsIgnoreCase(CHOOSE_EXAM_PERIOD_NOTIFICATION_TIME_TOMORROW)) {
-                if (BotMessageUtils.isBotUserFullTime(botUser)) {
+                if (InnerBotUser.isBotUserFullTime(botUser)) {
                     ExamPeriodTomorrowNotification examPeriodTomorrowNotification =
                             examPeriodTomorrowNotificationRepository.findByUserIdAndUserSource(userId, source);
 
@@ -318,7 +176,7 @@ public class SettingsService implements BotMessageService {
                 }
             }
             if (botUser.getPreviousUserMessage().equalsIgnoreCase(CHOOSE_EXAM_PERIOD_NOTIFICATION_TIME_AFTER_TOMORROW)) {
-                if (BotMessageUtils.isBotUserFullTime(botUser)) {
+                if (InnerBotUser.isBotUserFullTime(botUser)) {
                     ExamPeriodAfterTomorrowNotification examPeriodAfterTomorrowNotification =
                             examPeriodAfterTomorrowNotificationRepository.findByUserIdAndUserSource(userId, source);
 
@@ -341,15 +199,13 @@ public class SettingsService implements BotMessageService {
                 }
             }
             final String hourMessage = SCHEDULE_WILL_BE_SENT_ABSTRACT + hourForSend + H_DOT;
-            botMessage = botUser.fromVk() ?
-                    new BotMessage(hourMessage, vkKeyboardGenerator.settings(botUser))
-                    : new BotMessage(hourMessage, tgKeyboardGenerator.settings(botUser));
+            return CompletableFuture.completedFuture(new BotMessage(hourMessage, innerKeyboardGenerator.settings(botUser), botUser));
         }
 
-        return botMessage;
+        return CompletableFuture.completedFuture(botMessage);
     }
 
-    private BotMessage todayNotificationsSchedule(String message, InnerBotUser botUser) {
+    private CompletableFuture<BotMessage> todayNotificationsSchedule(String message, InnerBotUser botUser) {
         BotMessage botMessage = new BotMessage();
         String userId = botUser.getUserId();
         BotUserSource source = botUser.getSource();
@@ -357,18 +213,8 @@ public class SettingsService implements BotMessageService {
         switch (message) {
             case CommandText.SET_SEND_SCHEDULE_TIME_TODAY:
                 String formatSchedule = String.format(CHOOSE_SCHEDULE_NOTIFICATION_TIME, TODAY);
-                if (botUser.fromVk()) {
-                    botMessage = new BotMessage(formatSchedule, VkKeyboardGenerator.hours);
-                    VkBotUser vkBotUser = vkBotUserRepository.findOneById(userId);
-                    vkBotUser.setPreviousUserMessage(formatSchedule);
-                    vkBotUserRepository.save(vkBotUser);
-                } else {
-                    botMessage = new BotMessage(formatSchedule, TgKeyboardGenerator.hours());
-                    TgBotUser tgBotUser = tgBotUserRepository.findOneById(userId);
-                    tgBotUser.setPreviousUserMessage(formatSchedule);
-                    tgBotUserRepository.save(tgBotUser);
-                }
-                break;
+                botUserService.updatePreviousUserMessage(formatSchedule, botUser);
+                return CompletableFuture.completedFuture(new BotMessage(formatSchedule, innerKeyboardGenerator.hours(), botUser));
             case CommandText.ENABLE_SEND_SCHEDULE_TODAY:
                 ScheduleTodayNotification scheduleTodayNotificationEn =
                         scheduleTodayNotificationRepository.findByUserIdAndUserSource(userId, source);
@@ -377,60 +223,34 @@ public class SettingsService implements BotMessageService {
                     scheduleTodayNotificationRepository.save(scheduleTodayNotificationEn);
                     String enableNotificationMessage = String.format(SCHEDULE_WILL_BE_SENT, TODAY) +
                             scheduleTodayNotificationEn.getHourForSend() + H_DOT;
-                    if (botUser.fromVk()) {
-                        botMessage = new BotMessage(
-                                enableNotificationMessage,
-                                vkKeyboardGenerator.settingsScheduleNotification(botUser));
-                    } else {
-                        botMessage = new BotMessage(
-                                enableNotificationMessage,
-                                tgKeyboardGenerator.settingsScheduleNotification(botUser));
-                    }
+                    return CompletableFuture.completedFuture(new BotMessage(
+                            enableNotificationMessage,
+                            innerKeyboardGenerator.settingsScheduleNotification(botUser), botUser));
                 } else {
-                    if (botUser.fromVk()) {
-                        botMessage = new BotMessage(
-                                NOT_ENABLE_SCHEDULE_NOTIFICATION_TODAY_FRMTD,
-                                vkKeyboardGenerator.settingsScheduleNotification(botUser));
-                    } else {
-                        botMessage = new BotMessage(
-                                NOT_ENABLE_SCHEDULE_NOTIFICATION_TODAY_FRMTD,
-                                tgKeyboardGenerator.settingsScheduleNotification(botUser));
-                    }
+                    return CompletableFuture.completedFuture(new BotMessage(
+                            NOT_ENABLE_SCHEDULE_NOTIFICATION_TODAY_FRMTD,
+                            innerKeyboardGenerator.settingsScheduleNotification(botUser), botUser));
                 }
-                break;
             case CommandText.DISABLE_SEND_SCHEDULE_TODAY:
                 ScheduleTodayNotification scheduleTodayNotificationDis =
                         scheduleTodayNotificationRepository.findByUserIdAndUserSource(userId, source);
                 if (null != scheduleTodayNotificationDis) {
                     scheduleTodayNotificationDis.setEnabled(false);
                     scheduleTodayNotificationRepository.save(scheduleTodayNotificationDis);
-                    if (botUser.fromVk()) {
-                        botMessage = new BotMessage(
-                                String.format(SCHEDULE_IS_DISABLED, TODAY),
-                                vkKeyboardGenerator.settingsScheduleNotification(botUser));
-                    } else {
-                        botMessage = new BotMessage(
-                                String.format(SCHEDULE_IS_DISABLED, TODAY),
-                                tgKeyboardGenerator.settingsScheduleNotification(botUser));
-                    }
+                    return CompletableFuture.completedFuture(new BotMessage(
+                            String.format(SCHEDULE_IS_DISABLED, TODAY),
+                            innerKeyboardGenerator.settingsScheduleNotification(botUser), botUser));
                 } else {
-                    if (botUser.fromVk()) {
-                        botMessage = new BotMessage(
-                                NOT_ENABLE_SCHEDULE_NOTIFICATION_TODAY_FRMTD,
-                                vkKeyboardGenerator.settingsScheduleNotification(botUser));
-                    } else {
-                        botMessage = new BotMessage(
-                                NOT_ENABLE_SCHEDULE_NOTIFICATION_TODAY_FRMTD,
-                                tgKeyboardGenerator.settingsScheduleNotification(botUser));
-                    }
+                    return CompletableFuture.completedFuture(new BotMessage(
+                            NOT_ENABLE_SCHEDULE_NOTIFICATION_TODAY_FRMTD,
+                            innerKeyboardGenerator.settingsScheduleNotification(botUser), botUser));
                 }
-                break;
         }
 
-        return botMessage;
+        return CompletableFuture.completedFuture(botMessage);
     }
 
-    private BotMessage todayNotificationsExamPeriod(String message, InnerBotUser botUser) {
+    private CompletableFuture<BotMessage> todayNotificationsExamPeriod(String message, InnerBotUser botUser) {
         BotMessage botMessage = new BotMessage();
         String userId = botUser.getUserId();
         BotUserSource source = botUser.getSource();
@@ -438,134 +258,77 @@ public class SettingsService implements BotMessageService {
         switch (message) {
             case CommandText.SET_SEND_EXAM_PERIOD_TIME_TODAY:
                 String formatSchedule = String.format(CHOOSE_EXAM_PERIOD_NOTIFICATION_TIME, TODAY);
-                if (botUser.fromVk()) {
-                    botMessage = new BotMessage(formatSchedule, VkKeyboardGenerator.hours);
-                    vkBotUserRepository.updatePreviousUserMessage(formatSchedule, userId);
-                } else {
-                    botMessage = new BotMessage(formatSchedule, TgKeyboardGenerator.hours());
-                    tgBotUserRepository.updatePreviousUserMessage(formatSchedule, userId);
-                }
-                break;
+                botUserService.updatePreviousUserMessage(formatSchedule, botUser);
+                return CompletableFuture.completedFuture(new BotMessage(formatSchedule, innerKeyboardGenerator.hours(), botUser));
             case CommandText.ENABLE_SEND_EXAM_PERIOD_TODAY:
-                if (BotMessageUtils.isBotUserFullTime(botUser)) {
+                if (InnerBotUser.isBotUserFullTime(botUser)) {
                     ExamPeriodTodayNotification examPeriodTodayNotificationEn =
                             examPeriodTodayNotificationRepository.findByUserIdAndUserSource(userId, source);
                     if (null != examPeriodTodayNotificationEn) {
                         examPeriodTodayNotificationEn.setEnabled(true);
                         examPeriodTodayNotificationRepository.save(examPeriodTodayNotificationEn);
-                        if (botUser.fromVk()) {
-                            botMessage = new BotMessage(
-                                    String.format(EXAM_PERIOD_WILL_BE_SENT, TODAY) +
-                                            examPeriodTodayNotificationEn.getHourForSend() + H_DOT,
-                                    vkKeyboardGenerator.settingsExamNotification(botUser));
-                        } else {
-                            botMessage = new BotMessage(
-                                    String.format(EXAM_PERIOD_WILL_BE_SENT, TODAY) +
-                                            examPeriodTodayNotificationEn.getHourForSend() + H_DOT,
-                                    tgKeyboardGenerator.settingsExamNotification(botUser));
-                        }
+                        return CompletableFuture.completedFuture(new BotMessage(
+                                String.format(EXAM_PERIOD_WILL_BE_SENT, TODAY) +
+                                        examPeriodTodayNotificationEn.getHourForSend() + H_DOT,
+                                innerKeyboardGenerator.settingsExamNotification(botUser), botUser));
                     } else {
-                        if (botUser.fromVk()) {
-                            botMessage = new BotMessage(
-                                    NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_TODAY_FRMTD,
-                                    vkKeyboardGenerator.settingsExamNotification(botUser));
-                        } else {
-                            botMessage = new BotMessage(
-                                    NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_TODAY_FRMTD,
-                                    tgKeyboardGenerator.settingsExamNotification(botUser));
-                        }
+                        return CompletableFuture.completedFuture(new BotMessage(
+                                NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_TODAY_FRMTD,
+                                innerKeyboardGenerator.settingsExamNotification(botUser), botUser));
                     }
-                } else if (BotMessageUtils.isBotUserExtramural(botUser)) {
+                } else if (InnerBotUser.isBotUserExtramural(botUser)) {
                     ExtramuralEventTodayNotification extramuralEventTodayNotificationEn =
                             extramuralEventTodayNotificationRepository.findByUserIdAndUserSource(userId, source);
                     if (null != extramuralEventTodayNotificationEn) {
                         extramuralEventTodayNotificationEn.setEnabled(true);
                         extramuralEventTodayNotificationRepository.save(extramuralEventTodayNotificationEn);
-                        if (botUser.fromVk()) {
-                            botMessage = new BotMessage(
-                                    String.format(EXAM_PERIOD_WILL_BE_SENT, TODAY) +
-                                            extramuralEventTodayNotificationEn.getHourForSend() + H_DOT,
-                                    vkKeyboardGenerator.settingsExamNotification(botUser));
-                        } else {
-                            botMessage = new BotMessage(
-                                    String.format(EXAM_PERIOD_WILL_BE_SENT, TODAY) +
-                                            extramuralEventTodayNotificationEn.getHourForSend() + H_DOT,
-                                    tgKeyboardGenerator.settingsExamNotification(botUser));
-                        }
+                        return CompletableFuture.completedFuture(new BotMessage(
+                                String.format(EXAM_PERIOD_WILL_BE_SENT, TODAY) +
+                                        extramuralEventTodayNotificationEn.getHourForSend() + H_DOT,
+                                innerKeyboardGenerator.settingsExamNotification(botUser), botUser));
                     } else {
-                        if (botUser.fromVk()) {
-                            botMessage = new BotMessage(
-                                    NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_TODAY_FRMTD,
-                                    vkKeyboardGenerator.settingsExamNotification(botUser));
-                        } else {
-                            botMessage = new BotMessage(
-                                    NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_TODAY_FRMTD,
-                                    tgKeyboardGenerator.settingsExamNotification(botUser));
-                        }
+                        return CompletableFuture.completedFuture(new BotMessage(
+                                NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_TODAY_FRMTD,
+                                innerKeyboardGenerator.settingsExamNotification(botUser), botUser));
                     }
                 }
                 break;
             case CommandText.DISABLE_SEND_EXAM_PERIOD_TODAY:
-                if (BotMessageUtils.isBotUserFullTime(botUser)) {
+                if (InnerBotUser.isBotUserFullTime(botUser)) {
                     ExamPeriodTodayNotification examPeriodTodayNotificationDis =
                             examPeriodTodayNotificationRepository.findByUserIdAndUserSource(userId, source);
                     if (null != examPeriodTodayNotificationDis) {
                         examPeriodTodayNotificationDis.setEnabled(false);
                         examPeriodTodayNotificationRepository.save(examPeriodTodayNotificationDis);
-                        if (botUser.fromVk()) {
-                            botMessage = new BotMessage(
-                                    String.format(EXAM_PERIOD_IS_DISABLED, TODAY),
-                                    vkKeyboardGenerator.settingsExamNotification(botUser));
-                        } else {
-                            botMessage = new BotMessage(
-                                    String.format(EXAM_PERIOD_IS_DISABLED, TODAY),
-                                    tgKeyboardGenerator.settingsExamNotification(botUser));
-                        }
+                        return CompletableFuture.completedFuture(new BotMessage(
+                                String.format(EXAM_PERIOD_IS_DISABLED, TODAY),
+                                innerKeyboardGenerator.settingsExamNotification(botUser), botUser));
                     } else {
-                        if (botUser.fromVk()) {
-                            botMessage = new BotMessage(
-                                    NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_TODAY_FRMTD,
-                                    vkKeyboardGenerator.settingsExamNotification(botUser));
-                        } else {
-                            botMessage = new BotMessage(
-                                    NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_TODAY_FRMTD,
-                                    tgKeyboardGenerator.settingsExamNotification(botUser));
-                        }
+                        return CompletableFuture.completedFuture(new BotMessage(
+                                NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_TODAY_FRMTD,
+                                innerKeyboardGenerator.settingsExamNotification(botUser), botUser));
                     }
-                } else if (BotMessageUtils.isBotUserExtramural(botUser)) {
+                } else if (InnerBotUser.isBotUserExtramural(botUser)) {
                     ExtramuralEventTodayNotification extramuralEventTodayNotificationDis =
                             extramuralEventTodayNotificationRepository.findByUserIdAndUserSource(userId, source);
                     if (null != extramuralEventTodayNotificationDis) {
                         extramuralEventTodayNotificationDis.setEnabled(false);
                         extramuralEventTodayNotificationRepository.save(extramuralEventTodayNotificationDis);
-                        if (botUser.fromVk()) {
-                            botMessage = new BotMessage(
-                                    String.format(EXAM_PERIOD_IS_DISABLED, TODAY),
-                                    vkKeyboardGenerator.settingsExamNotification(botUser));
-                        } else {
-                            botMessage = new BotMessage(
-                                    String.format(EXAM_PERIOD_IS_DISABLED, TODAY),
-                                    tgKeyboardGenerator.settingsExamNotification(botUser));
-                        }
+                        return CompletableFuture.completedFuture(new BotMessage(
+                                String.format(EXAM_PERIOD_IS_DISABLED, TODAY),
+                                innerKeyboardGenerator.settingsExamNotification(botUser), botUser));
                     } else {
-                        if (botUser.fromVk()) {
-                            botMessage = new BotMessage(
-                                    NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_TODAY_FRMTD,
-                                    vkKeyboardGenerator.settingsExamNotification(botUser));
-                        } else {
-                            botMessage = new BotMessage(
-                                    NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_TODAY_FRMTD,
-                                    tgKeyboardGenerator.settingsExamNotification(botUser));
-                        }
+                        return CompletableFuture.completedFuture(new BotMessage(
+                                NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_TODAY_FRMTD,
+                                innerKeyboardGenerator.settingsExamNotification(botUser), botUser));
                     }
                 }
-                break;
         }
 
-        return botMessage;
+        return CompletableFuture.completedFuture(botMessage);
     }
 
-    private BotMessage tomorrowNotificationsSchedule(String message, InnerBotUser botUser) {
+    private CompletableFuture<BotMessage> tomorrowNotificationsSchedule(String message, InnerBotUser botUser) {
         BotMessage botMessage = new BotMessage();
         String userId = botUser.getUserId();
         BotUserSource source = botUser.getSource();
@@ -573,18 +336,8 @@ public class SettingsService implements BotMessageService {
         switch (message) {
             case CommandText.SET_SEND_SCHEDULE_TIME_TOMORROW:
                 String formatSchedule = String.format(CHOOSE_SCHEDULE_NOTIFICATION_TIME, TOMORROW);
-                if (botUser.fromVk()) {
-                    botMessage = new BotMessage(formatSchedule, VkKeyboardGenerator.hours);
-                    VkBotUser vkBotUser = vkBotUserRepository.findOneById(userId);
-                    vkBotUser.setPreviousUserMessage(formatSchedule);
-                    vkBotUserRepository.save(vkBotUser);
-                } else {
-                    botMessage = new BotMessage(formatSchedule, TgKeyboardGenerator.hours());
-                    TgBotUser tgBotUser = tgBotUserRepository.findOneById(userId);
-                    tgBotUser.setPreviousUserMessage(formatSchedule);
-                    tgBotUserRepository.save(tgBotUser);
-                }
-                break;
+                botUserService.updatePreviousUserMessage(formatSchedule, botUser);
+                return CompletableFuture.completedFuture(new BotMessage(formatSchedule, innerKeyboardGenerator.hours(), botUser));
             case CommandText.ENABLE_SEND_SCHEDULE_TOMORROW:
                 ScheduleTomorrowNotification scheduleTomorrowNotificationEn =
                         scheduleTomorrowNotificationRepository.findByUserIdAndUserSource(userId, source);
@@ -593,195 +346,112 @@ public class SettingsService implements BotMessageService {
                     scheduleTomorrowNotificationRepository.save(scheduleTomorrowNotificationEn);
                     String enableNotificationMessage = String.format(SCHEDULE_WILL_BE_SENT, TOMORROW) +
                             scheduleTomorrowNotificationEn.getHourForSend() + H_DOT;
-                    if (botUser.fromVk()) {
-                        botMessage = new BotMessage(
-                                enableNotificationMessage,
-                                vkKeyboardGenerator.settingsScheduleNotification(botUser));
-                    } else {
-                        botMessage = new BotMessage(
-                                enableNotificationMessage,
-                                tgKeyboardGenerator.settingsScheduleNotification(botUser));
-                    }
+                    return CompletableFuture.completedFuture(new BotMessage(
+                            enableNotificationMessage,
+                            innerKeyboardGenerator.settingsScheduleNotification(botUser), botUser));
                 } else {
-                    if (botUser.fromVk()) {
-                        botMessage = new BotMessage(
-                                NOT_ENABLE_SCHEDULE_NOTIFICATION_TOMORROW_FRMTD,
-                                vkKeyboardGenerator.settingsScheduleNotification(botUser));
-                    } else {
-                        botMessage = new BotMessage(
-                                NOT_ENABLE_SCHEDULE_NOTIFICATION_TOMORROW_FRMTD,
-                                tgKeyboardGenerator.settingsScheduleNotification(botUser));
-                    }
+                    return CompletableFuture.completedFuture(new BotMessage(
+                            NOT_ENABLE_SCHEDULE_NOTIFICATION_TOMORROW_FRMTD,
+                            innerKeyboardGenerator.settingsScheduleNotification(botUser), botUser));
                 }
-                break;
             case CommandText.DISABLE_SEND_SCHEDULE_TOMORROW:
                 ScheduleTomorrowNotification scheduleTomorrowNotificationDis =
                         scheduleTomorrowNotificationRepository.findByUserIdAndUserSource(userId, source);
                 if (null != scheduleTomorrowNotificationDis) {
                     scheduleTomorrowNotificationDis.setEnabled(false);
                     scheduleTomorrowNotificationRepository.save(scheduleTomorrowNotificationDis);
-                    if (botUser.fromVk()) {
-                        botMessage = new BotMessage(
-                                String.format(SCHEDULE_IS_DISABLED, TOMORROW),
-                                vkKeyboardGenerator.settingsScheduleNotification(botUser));
-                    } else {
-                        botMessage = new BotMessage(
-                                String.format(SCHEDULE_IS_DISABLED, TOMORROW),
-                                tgKeyboardGenerator.settingsScheduleNotification(botUser));
-                    }
+                    return CompletableFuture.completedFuture(new BotMessage(
+                            String.format(SCHEDULE_IS_DISABLED, TOMORROW),
+                            innerKeyboardGenerator.settingsScheduleNotification(botUser), botUser));
                 } else {
-                    if (botUser.fromVk()) {
-                        botMessage = new BotMessage(
-                                NOT_ENABLE_SCHEDULE_NOTIFICATION_TOMORROW_FRMTD,
-                                vkKeyboardGenerator.settingsScheduleNotification(botUser));
-                    } else {
-                        botMessage = new BotMessage(
-                                NOT_ENABLE_SCHEDULE_NOTIFICATION_TOMORROW_FRMTD,
-                                tgKeyboardGenerator.settingsScheduleNotification(botUser));
-                    }
+                    return CompletableFuture.completedFuture(new BotMessage(
+                            NOT_ENABLE_SCHEDULE_NOTIFICATION_TOMORROW_FRMTD,
+                            innerKeyboardGenerator.settingsScheduleNotification(botUser), botUser));
                 }
-                break;
         }
 
-        return botMessage;
+        return CompletableFuture.completedFuture(botMessage);
     }
 
-    private BotMessage tomorrowNotificationsExamPeriod(String message, InnerBotUser botUser) {
-        BotMessage botMessage = new BotMessage();
+    private CompletableFuture<BotMessage> tomorrowNotificationsExamPeriod(String message, InnerBotUser botUser) {
+        var botMessage = new BotMessage();
         String userId = botUser.getUserId();
         BotUserSource source = botUser.getSource();
 
         switch (message) {
             case CommandText.SET_SEND_EXAM_PERIOD_TIME_TOMORROW:
                 String formatSchedule = String.format(CHOOSE_EXAM_PERIOD_NOTIFICATION_TIME, TOMORROW);
-                if (botUser.fromVk()) {
-                    botMessage = new BotMessage(formatSchedule, VkKeyboardGenerator.hours);
-                    vkBotUserRepository.updatePreviousUserMessage(formatSchedule, userId);
-                } else {
-                    botMessage = new BotMessage(formatSchedule, TgKeyboardGenerator.hours());
-                    tgBotUserRepository.updatePreviousUserMessage(formatSchedule, userId);
-                }
-                break;
+                botUserService.updatePreviousUserMessage(formatSchedule, botUser);
+                return CompletableFuture.completedFuture(new BotMessage(formatSchedule, innerKeyboardGenerator.hours(), botUser));
             case CommandText.ENABLE_SEND_EXAM_PERIOD_TOMORROW:
-                if (BotMessageUtils.isBotUserFullTime(botUser)) {
+                if (InnerBotUser.isBotUserFullTime(botUser)) {
                     ExamPeriodTomorrowNotification examPeriodTomorrowNotificationEn =
                             examPeriodTomorrowNotificationRepository.findByUserIdAndUserSource(userId, source);
                     if (null != examPeriodTomorrowNotificationEn) {
                         examPeriodTomorrowNotificationEn.setEnabled(true);
                         examPeriodTomorrowNotificationRepository.save(examPeriodTomorrowNotificationEn);
-                        if (botUser.fromVk()) {
-                            botMessage = new BotMessage(
-                                    String.format(EXAM_PERIOD_WILL_BE_SENT, TOMORROW) +
-                                            examPeriodTomorrowNotificationEn.getHourForSend() + H_DOT,
-                                    vkKeyboardGenerator.settingsExamNotification(botUser));
-                        } else {
-                            botMessage = new BotMessage(
-                                    String.format(EXAM_PERIOD_WILL_BE_SENT, TOMORROW) +
-                                            examPeriodTomorrowNotificationEn.getHourForSend() + H_DOT,
-                                    tgKeyboardGenerator.settingsExamNotification(botUser));
-                        }
+                        return CompletableFuture.completedFuture(new BotMessage(
+                                String.format(EXAM_PERIOD_WILL_BE_SENT, TOMORROW) +
+                                        examPeriodTomorrowNotificationEn.getHourForSend() + H_DOT,
+                                innerKeyboardGenerator.settingsExamNotification(botUser), botUser));
                     } else {
-                        if (botUser.fromVk()) {
-                            botMessage = new BotMessage(
-                                    NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_TOMORROW_FRMTD,
-                                    vkKeyboardGenerator.settingsExamNotification(botUser));
-                        } else {
-                            botMessage = new BotMessage(
-                                    NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_TOMORROW_FRMTD,
-                                    tgKeyboardGenerator.settingsExamNotification(botUser));
-                        }
+                        return CompletableFuture.completedFuture(new BotMessage(
+                                NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_TOMORROW_FRMTD,
+                                innerKeyboardGenerator.settingsExamNotification(botUser), botUser));
                     }
-                } else if (BotMessageUtils.isBotUserExtramural(botUser)) {
+                } else if (InnerBotUser.isBotUserExtramural(botUser)) {
                     ExtramuralEventTomorrowNotification extramuralEventTomorrowNotificationEn =
                             extramuralEventTomorrowNotificationRepository.findByUserIdAndUserSource(userId, source);
                     if (null != extramuralEventTomorrowNotificationEn) {
                         extramuralEventTomorrowNotificationEn.setEnabled(true);
                         extramuralEventTomorrowNotificationRepository.save(extramuralEventTomorrowNotificationEn);
-                        if (botUser.fromVk()) {
-                            botMessage = new BotMessage(
-                                    String.format(EXAM_PERIOD_WILL_BE_SENT, TOMORROW) +
-                                            extramuralEventTomorrowNotificationEn.getHourForSend() + H_DOT,
-                                    vkKeyboardGenerator.settingsExamNotification(botUser));
-                        } else {
-                            botMessage = new BotMessage(
-                                    String.format(EXAM_PERIOD_WILL_BE_SENT, TOMORROW) +
-                                            extramuralEventTomorrowNotificationEn.getHourForSend() + H_DOT,
-                                    tgKeyboardGenerator.settingsExamNotification(botUser));
-                        }
+                        return CompletableFuture.completedFuture(new BotMessage(
+                                String.format(EXAM_PERIOD_WILL_BE_SENT, TOMORROW) +
+                                        extramuralEventTomorrowNotificationEn.getHourForSend() + H_DOT,
+                                innerKeyboardGenerator.settingsExamNotification(botUser), botUser));
                     } else {
-                        if (botUser.fromVk()) {
-                            botMessage = new BotMessage(
-                                    NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_TOMORROW_FRMTD,
-                                    vkKeyboardGenerator.settingsExamNotification(botUser));
-                        } else {
-                            botMessage = new BotMessage(
-                                    NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_TOMORROW_FRMTD,
-                                    tgKeyboardGenerator.settingsExamNotification(botUser));
-                        }
+                        return CompletableFuture.completedFuture(new BotMessage(
+                                NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_TOMORROW_FRMTD,
+                                innerKeyboardGenerator.settingsExamNotification(botUser), botUser));
                     }
                 }
                 break;
             case CommandText.DISABLE_SEND_EXAM_PERIOD_TOMORROW:
-                if (BotMessageUtils.isBotUserFullTime(botUser)) {
+                if (InnerBotUser.isBotUserFullTime(botUser)) {
                     ExamPeriodTomorrowNotification examPeriodTomorrowNotificationDis =
                             examPeriodTomorrowNotificationRepository.findByUserIdAndUserSource(userId, source);
                     if (null != examPeriodTomorrowNotificationDis) {
                         examPeriodTomorrowNotificationDis.setEnabled(false);
                         examPeriodTomorrowNotificationRepository.save(examPeriodTomorrowNotificationDis);
-                        if (botUser.fromVk()) {
-                            botMessage = new BotMessage(
-                                    String.format(EXAM_PERIOD_IS_DISABLED, TOMORROW),
-                                    vkKeyboardGenerator.settingsExamNotification(botUser));
-                        } else {
-                            botMessage = new BotMessage(
-                                    String.format(EXAM_PERIOD_IS_DISABLED, TOMORROW),
-                                    tgKeyboardGenerator.settingsExamNotification(botUser));
-                        }
+                        return CompletableFuture.completedFuture(new BotMessage(
+                                String.format(EXAM_PERIOD_IS_DISABLED, TOMORROW),
+                                innerKeyboardGenerator.settingsExamNotification(botUser), botUser));
                     } else {
-                        if (botUser.fromVk()) {
-                            botMessage = new BotMessage(
-                                    NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_TOMORROW_FRMTD,
-                                    vkKeyboardGenerator.settingsExamNotification(botUser));
-                        } else {
-                            botMessage = new BotMessage(
-                                    NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_TOMORROW_FRMTD,
-                                    tgKeyboardGenerator.settingsExamNotification(botUser));
-                        }
+                        return CompletableFuture.completedFuture(new BotMessage(
+                                NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_TOMORROW_FRMTD,
+                                innerKeyboardGenerator.settingsExamNotification(botUser), botUser));
                     }
-                } else if (BotMessageUtils.isBotUserExtramural(botUser)) {
+                } else if (InnerBotUser.isBotUserExtramural(botUser)) {
                     ExtramuralEventTomorrowNotification extramuralEventTomorrowNotificationDis =
                             extramuralEventTomorrowNotificationRepository.findByUserIdAndUserSource(userId, source);
                     if (null != extramuralEventTomorrowNotificationDis) {
                         extramuralEventTomorrowNotificationDis.setEnabled(false);
                         extramuralEventTomorrowNotificationRepository.save(extramuralEventTomorrowNotificationDis);
-                        if (botUser.fromVk()) {
-                            botMessage = new BotMessage(
-                                    String.format(EXAM_PERIOD_IS_DISABLED, TOMORROW),
-                                    vkKeyboardGenerator.settingsExamNotification(botUser));
-                        } else {
-                            botMessage = new BotMessage(
-                                    String.format(EXAM_PERIOD_IS_DISABLED, TOMORROW),
-                                    tgKeyboardGenerator.settingsExamNotification(botUser));
-                        }
+                        return CompletableFuture.completedFuture(new BotMessage(
+                                String.format(EXAM_PERIOD_IS_DISABLED, TOMORROW),
+                                innerKeyboardGenerator.settingsExamNotification(botUser), botUser));
                     } else {
-                        if (botUser.fromVk()) {
-                            botMessage = new BotMessage(
-                                    NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_TOMORROW_FRMTD,
-                                    vkKeyboardGenerator.settingsExamNotification(botUser));
-                        } else {
-                            botMessage = new BotMessage(
-                                    NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_TOMORROW_FRMTD,
-                                    tgKeyboardGenerator.settingsExamNotification(botUser));
-                        }
+                        return CompletableFuture.completedFuture(new BotMessage(
+                                NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_TOMORROW_FRMTD,
+                                innerKeyboardGenerator.settingsExamNotification(botUser), botUser));
                     }
                 }
-                break;
         }
 
-        return botMessage;
+        return CompletableFuture.completedFuture(botMessage);
     }
 
-    private BotMessage afterTomorrowNotificationsExamPeriod(String message, InnerBotUser botUser) {
+    private CompletableFuture<BotMessage> afterTomorrowNotificationsExamPeriod(String message, InnerBotUser botUser) {
         BotMessage botMessage = new BotMessage();
         String userId = botUser.getUserId();
         BotUserSource source = botUser.getSource();
@@ -789,131 +459,73 @@ public class SettingsService implements BotMessageService {
         switch (message) {
             case CommandText.SET_SEND_EXAM_PERIOD_TIME_AFTER_TOMORROW:
                 String formatSchedule = String.format(CHOOSE_EXAM_PERIOD_NOTIFICATION_TIME, AFTER_TOMORROW);
-                if (botUser.fromVk()) {
-                    botMessage = new BotMessage(formatSchedule, VkKeyboardGenerator.hours);
-                    vkBotUserRepository.updatePreviousUserMessage(formatSchedule, userId);
-                } else {
-                    botMessage = new BotMessage(formatSchedule, TgKeyboardGenerator.hours());
-                    tgBotUserRepository.updatePreviousUserMessage(formatSchedule, userId);
-                }
-                break;
+                botUserService.updatePreviousUserMessage(formatSchedule, botUser);
+                return CompletableFuture.completedFuture(new BotMessage(formatSchedule, innerKeyboardGenerator.hours(), botUser));
             case CommandText.ENABLE_SEND_EXAM_PERIOD_AFTER_TOMORROW:
-                if (BotMessageUtils.isBotUserFullTime(botUser)) {
+                if (InnerBotUser.isBotUserFullTime(botUser)) {
                     ExamPeriodAfterTomorrowNotification examPeriodAfterTomorrowNotificationEn =
                             examPeriodAfterTomorrowNotificationRepository.findByUserIdAndUserSource(userId, source);
                     if (null != examPeriodAfterTomorrowNotificationEn) {
                         examPeriodAfterTomorrowNotificationEn.setEnabled(true);
                         examPeriodAfterTomorrowNotificationRepository.save(examPeriodAfterTomorrowNotificationEn);
-                        if (botUser.fromVk()) {
-                            botMessage = new BotMessage(
-                                    String.format(EXAM_PERIOD_WILL_BE_SENT, AFTER_TOMORROW) +
-                                            examPeriodAfterTomorrowNotificationEn.getHourForSend() + H_DOT,
-                                    vkKeyboardGenerator.settingsExamNotification(botUser));
-                        } else {
-                            botMessage = new BotMessage(
-                                    String.format(EXAM_PERIOD_WILL_BE_SENT, AFTER_TOMORROW) +
-                                            examPeriodAfterTomorrowNotificationEn.getHourForSend() + H_DOT,
-                                    tgKeyboardGenerator.settingsExamNotification(botUser));
-                        }
+                        return CompletableFuture.completedFuture(new BotMessage(
+                                String.format(EXAM_PERIOD_WILL_BE_SENT, AFTER_TOMORROW) +
+                                        examPeriodAfterTomorrowNotificationEn.getHourForSend() + H_DOT,
+                                innerKeyboardGenerator.settingsExamNotification(botUser), botUser));
                     } else {
-                        if (botUser.fromVk()) {
-                            botMessage = new BotMessage(
-                                    NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_AFTER_TOMORROW_FRMTD,
-                                    vkKeyboardGenerator.settingsExamNotification(botUser));
-                        } else {
-                            botMessage = new BotMessage(
-                                    NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_AFTER_TOMORROW_FRMTD,
-                                    tgKeyboardGenerator.settingsExamNotification(botUser));
-                        }
+                        return CompletableFuture.completedFuture(new BotMessage(
+                                NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_AFTER_TOMORROW_FRMTD,
+                                innerKeyboardGenerator.settingsExamNotification(botUser), botUser));
                     }
-                } else if (BotMessageUtils.isBotUserExtramural(botUser)) {
+                } else if (InnerBotUser.isBotUserExtramural(botUser)) {
                     ExtramuralEventAfterTomorrowNotification extramuralEventAfterTomorrowNotificationEn =
                             extramuralEventAfterTomorrowNotificationRepository.findByUserIdAndUserSource(userId, source);
                     if (null != extramuralEventAfterTomorrowNotificationEn) {
                         extramuralEventAfterTomorrowNotificationEn.setEnabled(true);
                         extramuralEventAfterTomorrowNotificationRepository.save(extramuralEventAfterTomorrowNotificationEn);
-                        if (botUser.fromVk()) {
-                            botMessage = new BotMessage(
-                                    String.format(EXAM_PERIOD_WILL_BE_SENT, AFTER_TOMORROW) +
-                                            extramuralEventAfterTomorrowNotificationEn.getHourForSend() + H_DOT,
-                                    vkKeyboardGenerator.settingsExamNotification(botUser));
-                        } else {
-                            botMessage = new BotMessage(
-                                    String.format(EXAM_PERIOD_WILL_BE_SENT, AFTER_TOMORROW) +
-                                            extramuralEventAfterTomorrowNotificationEn.getHourForSend() + H_DOT,
-                                    tgKeyboardGenerator.settingsExamNotification(botUser));
-                        }
+                        return CompletableFuture.completedFuture(new BotMessage(
+                                String.format(EXAM_PERIOD_WILL_BE_SENT, AFTER_TOMORROW) +
+                                        extramuralEventAfterTomorrowNotificationEn.getHourForSend() + H_DOT,
+                                innerKeyboardGenerator.settingsExamNotification(botUser), botUser));
                     } else {
-                        if (botUser.fromVk()) {
-                            botMessage = new BotMessage(
-                                    NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_AFTER_TOMORROW_FRMTD,
-                                    vkKeyboardGenerator.settingsExamNotification(botUser));
-                        } else {
-                            botMessage = new BotMessage(
-                                    NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_AFTER_TOMORROW_FRMTD,
-                                    tgKeyboardGenerator.settingsExamNotification(botUser));
-                        }
+                        return CompletableFuture.completedFuture(new BotMessage(
+                                NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_AFTER_TOMORROW_FRMTD,
+                                innerKeyboardGenerator.settingsExamNotification(botUser), botUser));
                     }
                 }
                 break;
             case CommandText.DISABLE_SEND_EXAM_PERIOD_AFTER_TOMORROW:
-                if (BotMessageUtils.isBotUserFullTime(botUser)) {
+                if (InnerBotUser.isBotUserFullTime(botUser)) {
                     ExamPeriodAfterTomorrowNotification examPeriodAfterTomorrowNotificationDis =
                             examPeriodAfterTomorrowNotificationRepository.findByUserIdAndUserSource(userId, source);
                     if (null != examPeriodAfterTomorrowNotificationDis) {
                         examPeriodAfterTomorrowNotificationDis.setEnabled(false);
                         examPeriodAfterTomorrowNotificationRepository.save(examPeriodAfterTomorrowNotificationDis);
-                        if (botUser.fromVk()) {
-                            botMessage = new BotMessage(
-                                    String.format(EXAM_PERIOD_IS_DISABLED, AFTER_TOMORROW),
-                                    vkKeyboardGenerator.settingsExamNotification(botUser));
-                        } else {
-                            botMessage = new BotMessage(
-                                    String.format(EXAM_PERIOD_IS_DISABLED, AFTER_TOMORROW),
-                                    tgKeyboardGenerator.settingsExamNotification(botUser));
-                        }
+                        return CompletableFuture.completedFuture(new BotMessage(
+                                String.format(EXAM_PERIOD_IS_DISABLED, AFTER_TOMORROW),
+                                innerKeyboardGenerator.settingsExamNotification(botUser), botUser));
                     } else {
-                        if (botUser.fromVk()) {
-                            botMessage = new BotMessage(
-                                    NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_AFTER_TOMORROW_FRMTD,
-                                    vkKeyboardGenerator.settingsExamNotification(botUser));
-                        } else {
-                            botMessage = new BotMessage(
-                                    NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_AFTER_TOMORROW_FRMTD,
-                                    tgKeyboardGenerator.settingsExamNotification(botUser));
-                        }
+                        return CompletableFuture.completedFuture(new BotMessage(
+                                NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_AFTER_TOMORROW_FRMTD,
+                                innerKeyboardGenerator.settingsExamNotification(botUser), botUser));
                     }
-                } else if (BotMessageUtils.isBotUserExtramural(botUser)) {
+                } else if (InnerBotUser.isBotUserExtramural(botUser)) {
                     ExtramuralEventAfterTomorrowNotification extramuralEventAfterTomorrowNotificationDis =
                             extramuralEventAfterTomorrowNotificationRepository.findByUserIdAndUserSource(userId, source);
                     if (null != extramuralEventAfterTomorrowNotificationDis) {
                         extramuralEventAfterTomorrowNotificationDis.setEnabled(false);
                         extramuralEventAfterTomorrowNotificationRepository.save(extramuralEventAfterTomorrowNotificationDis);
-                        if (botUser.fromVk()) {
-                            botMessage = new BotMessage(
-                                    String.format(EXAM_PERIOD_IS_DISABLED, AFTER_TOMORROW),
-                                    vkKeyboardGenerator.settingsExamNotification(botUser));
-                        } else {
-                            botMessage = new BotMessage(
-                                    String.format(EXAM_PERIOD_IS_DISABLED, AFTER_TOMORROW),
-                                    tgKeyboardGenerator.settingsExamNotification(botUser));
-                        }
+                        return CompletableFuture.completedFuture(new BotMessage(
+                                String.format(EXAM_PERIOD_IS_DISABLED, AFTER_TOMORROW),
+                                innerKeyboardGenerator.settingsExamNotification(botUser), botUser));
                     } else {
-                        if (botUser.fromVk()) {
-                            botMessage = new BotMessage(
-                                    NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_AFTER_TOMORROW_FRMTD,
-                                    vkKeyboardGenerator.settingsExamNotification(botUser));
-                        } else {
-                            botMessage = new BotMessage(
-                                    NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_AFTER_TOMORROW_FRMTD,
-                                    tgKeyboardGenerator.settingsExamNotification(botUser));
-                        }
+                        return CompletableFuture.completedFuture(new BotMessage(
+                                NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_AFTER_TOMORROW_FRMTD,
+                                innerKeyboardGenerator.settingsExamNotification(botUser), botUser));
                     }
                 }
-                break;
         }
-
-        return botMessage;
+        return CompletableFuture.completedFuture(botMessage);
     }
 
 

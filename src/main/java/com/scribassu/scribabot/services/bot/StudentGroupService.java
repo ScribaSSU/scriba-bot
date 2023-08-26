@@ -1,45 +1,35 @@
 package com.scribassu.scribabot.services.bot;
 
-import com.scribassu.scribabot.dto.BotMessage;
-import com.scribassu.scribabot.dto.InnerBotUser;
 import com.scribassu.scribabot.dto.rest.GroupNumbersDto;
-import com.scribassu.scribabot.dto.vkkeyboard.VkKeyboard;
-import com.scribassu.scribabot.generators.TgKeyboardGenerator;
-import com.scribassu.scribabot.generators.VkKeyboardGenerator;
+import com.scribassu.scribabot.generators.InnerKeyboardGenerator;
+import com.scribassu.scribabot.model.BotMessage;
+import com.scribassu.scribabot.model.InnerBotUser;
 import com.scribassu.scribabot.services.CallRestService;
 import com.scribassu.scribabot.text.MessageText;
 import com.scribassu.scribabot.util.Constants;
 import com.scribassu.tracto.domain.EducationForm;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+
+import java.util.concurrent.CompletableFuture;
 
 @Service
+@Slf4j
+@Data
 public class StudentGroupService implements BotMessageService {
 
     private final CallRestService callRestService;
-    private final VkKeyboardGenerator vkKeyboardGenerator;
-    private final TgKeyboardGenerator tgKeyboardGenerator;
-
-    @Autowired
-    public StudentGroupService(CallRestService callRestService,
-                               VkKeyboardGenerator vkKeyboardGenerator,
-                               TgKeyboardGenerator tgKeyboardGenerator) {
-        this.callRestService = callRestService;
-        this.vkKeyboardGenerator = vkKeyboardGenerator;
-        this.tgKeyboardGenerator = tgKeyboardGenerator;
-    }
+    private final InnerKeyboardGenerator innerKeyboardGenerator;
 
     @Override
-    public BotMessage getBotMessage(String message, InnerBotUser botUser) {
-        BotMessage botMessage;
+    public CompletableFuture<BotMessage> getBotMessage(String message, InnerBotUser botUser) {
         GroupNumbersDto groupNumbersDto = new GroupNumbersDto();
         if (message.equalsIgnoreCase("другое")) {
             if (botUser != null
-                    && !StringUtils.isEmpty(botUser.getDepartment())
-                    && !StringUtils.isEmpty(botUser.getEducationForm())) {
+                    && !botUser.getDepartment().isBlank()
+                    && !botUser.getEducationForm().isBlank()) {
                 groupNumbersDto =
                         callRestService.getOtherGroupNumbersByDepartmentUrlAndEducationForm(
                                 botUser.getDepartment(),
@@ -49,8 +39,8 @@ public class StudentGroupService implements BotMessageService {
         } else {
             String course = message.substring(0, 1);
             if (botUser != null
-                    && !StringUtils.isEmpty(botUser.getDepartment())
-                    && !StringUtils.isEmpty(botUser.getEducationForm())) {
+                    && !botUser.getDepartment().isBlank()
+                    && !botUser.getEducationForm().isBlank()) {
                 groupNumbersDto =
                         callRestService.getGroupNumbersByDepartmentUrlAndEducationFormAndCourse(
                                 botUser.getDepartment(),
@@ -60,11 +50,7 @@ public class StudentGroupService implements BotMessageService {
             }
         }
         if (CollectionUtils.isEmpty(groupNumbersDto.getGroupNumbers())) {
-            if (botUser.fromVk()) {
-                botMessage = new BotMessage("Группы не найдены.", VkKeyboardGenerator.courses);
-            } else {
-                botMessage = new BotMessage("Группы не найдены.", TgKeyboardGenerator.courses());
-            }
+            return CompletableFuture.completedFuture(new BotMessage("Группы не найдены.", innerKeyboardGenerator.courses(), botUser));
         } else if (groupNumbersDto.getGroupNumbers().size() > Constants.MAX_VK_KEYBOARD_SIZE_FOR_LISTS) {
             StringBuilder stringBuilder = new StringBuilder("Извините, нашлось слишком много групп, " +
                     "и они не могут отобразиться через клавиатуру из-за ограничений клавиатур ботов :( " +
@@ -73,18 +59,10 @@ public class StudentGroupService implements BotMessageService {
             for (String groupNumber : groupNumbersDto.getGroupNumbers()) {
                 stringBuilder.append(groupNumber).append(", ");
             }
-            botMessage = new BotMessage(stringBuilder.toString());
+            return CompletableFuture.completedFuture(new BotMessage(stringBuilder.toString(), botUser));
         } else {
-            if (botUser.fromVk()) {
-                VkKeyboard vkKeyboard = vkKeyboardGenerator.groupNumbers(groupNumbersDto.getGroupNumbers());
-                botMessage = new BotMessage(MessageText.CHOOSE_STUDENT_GROUP, vkKeyboard);
-            } else {
-                ReplyKeyboardMarkup tgKeyboard = tgKeyboardGenerator.groupNumbers(groupNumbersDto.getGroupNumbers());
-                botMessage = new BotMessage(MessageText.CHOOSE_STUDENT_GROUP, tgKeyboard);
-            }
+            return CompletableFuture.completedFuture(new BotMessage(MessageText.CHOOSE_STUDENT_GROUP, innerKeyboardGenerator.groupNumbers(groupNumbersDto.getGroupNumbers()), botUser));
         }
-
-        return botMessage;
     }
 
 }

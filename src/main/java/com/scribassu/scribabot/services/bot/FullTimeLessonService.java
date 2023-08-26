@@ -1,30 +1,30 @@
 package com.scribassu.scribabot.services.bot;
 
-import com.scribassu.scribabot.dto.BotMessage;
-import com.scribassu.scribabot.dto.InnerBotUser;
 import com.scribassu.scribabot.dto.rest.FullTimeLessonDto;
 import com.scribassu.scribabot.dto.rest.TeacherFullTimeLessonDto;
+import com.scribassu.scribabot.generators.BotMessageGenerator;
+import com.scribassu.scribabot.model.BotMessage;
+import com.scribassu.scribabot.model.InnerBotUser;
 import com.scribassu.scribabot.services.CallRestService;
 import com.scribassu.scribabot.text.CommandText;
-import com.scribassu.scribabot.util.BotMessageUtils;
 import com.scribassu.scribabot.util.CalendarUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Calendar;
+import java.util.concurrent.CompletableFuture;
 
 @Service
+@Slf4j
+@Data
 public class FullTimeLessonService implements BotMessageService {
 
     private final CallRestService callRestService;
-
-    @Autowired
-    public FullTimeLessonService(CallRestService callRestService) {
-        this.callRestService = callRestService;
-    }
+    private final BotMessageGenerator botMessageGenerator;
 
     @Override
-    public BotMessage getBotMessage(String message, InnerBotUser botUser) {
+    public CompletableFuture<BotMessage> getBotMessage(String message, InnerBotUser botUser) {
         if (botUser.wantTeacherSchedule()) {
             return getTeacherBotMessage(message, botUser);
         } else {
@@ -32,7 +32,7 @@ public class FullTimeLessonService implements BotMessageService {
         }
     }
 
-    private BotMessage getTeacherBotMessage(String message, InnerBotUser botUser) {
+    private CompletableFuture<BotMessage> getTeacherBotMessage(String message, InnerBotUser botUser) {
         Calendar calendar = CalendarUtils.getCalendar();
         TeacherFullTimeLessonDto lessons = new TeacherFullTimeLessonDto();
         boolean isToday = false;
@@ -77,20 +77,20 @@ public class FullTimeLessonService implements BotMessageService {
                 isYesterday = true;
                 break;
         }
-
+// todo why isnomdenom with botuser
         if (isToday) {
-            return BotMessageUtils.getBotMessageForTeacherFullTimeLessons(lessons, CommandText.TODAY, botUser.isFilterNomDenom(), botUser);
+            return CompletableFuture.completedFuture(botMessageGenerator.getBotMessageForTeacherFullTimeLessons(lessons, CommandText.TODAY, botUser));
         }
         if (isTomorrow) {
-            return BotMessageUtils.getBotMessageForTeacherFullTimeLessons(lessons, CommandText.TOMORROW, botUser.isFilterNomDenom(), botUser);
+            return CompletableFuture.completedFuture(botMessageGenerator.getBotMessageForTeacherFullTimeLessons(lessons, CommandText.TOMORROW, botUser));
         }
         if (isYesterday) {
-            return BotMessageUtils.getBotMessageForTeacherFullTimeLessons(lessons, CommandText.YESTERDAY, botUser.isFilterNomDenom(), botUser);
+            return CompletableFuture.completedFuture(botMessageGenerator.getBotMessageForTeacherFullTimeLessons(lessons, CommandText.YESTERDAY, botUser));
         }
-        return BotMessageUtils.getBotMessageForTeacherFullTimeLessons(lessons, "", botUser.isFilterNomDenom(), botUser);
+        return CompletableFuture.completedFuture(botMessageGenerator.getBotMessageForTeacherFullTimeLessons(lessons, "", botUser));
     }
 
-    private BotMessage getStudentBotMessage(String message, InnerBotUser botUser) {
+    private CompletableFuture<BotMessage> getStudentBotMessage(String message, InnerBotUser botUser) {
         Calendar calendar = CalendarUtils.getCalendar();
         FullTimeLessonDto lessons = new FullTimeLessonDto();
         boolean isBotUserFullTime = false;
@@ -101,7 +101,7 @@ public class FullTimeLessonService implements BotMessageService {
 
         switch (message) {
             case CommandText.ALL_LESSONS:
-                if (BotMessageUtils.isBotUserFullTime(botUser)) {
+                if (InnerBotUser.isBotUserFullTime(botUser)) {
                     lessons = callRestService.getFullTimeLessonsByGroup(
                             botUser.getDepartment(),
                             botUser.getGroupNumber()
@@ -111,7 +111,7 @@ public class FullTimeLessonService implements BotMessageService {
                 }
                 break;
             case CommandText.MONDAY:
-                if (BotMessageUtils.isBotUserFullTime(botUser)) {
+                if (InnerBotUser.isBotUserFullTime(botUser)) {
                     lessons = callRestService.getFullTimeLessonsByDay(
                             botUser.getDepartment(),
                             botUser.getGroupNumber(),
@@ -121,7 +121,7 @@ public class FullTimeLessonService implements BotMessageService {
                 }
                 break;
             case CommandText.TUESDAY:
-                if (BotMessageUtils.isBotUserFullTime(botUser)) {
+                if (InnerBotUser.isBotUserFullTime(botUser)) {
                     lessons = callRestService.getFullTimeLessonsByDay(
                             botUser.getDepartment(),
                             botUser.getGroupNumber(),
@@ -131,7 +131,7 @@ public class FullTimeLessonService implements BotMessageService {
                 }
                 break;
             case CommandText.WEDNESDAY:
-                if (BotMessageUtils.isBotUserFullTime(botUser)) {
+                if (InnerBotUser.isBotUserFullTime(botUser)) {
                     lessons = callRestService.getFullTimeLessonsByDay(
                             botUser.getDepartment(),
                             botUser.getGroupNumber(),
@@ -141,7 +141,7 @@ public class FullTimeLessonService implements BotMessageService {
                 }
                 break;
             case CommandText.THURSDAY:
-                if (BotMessageUtils.isBotUserFullTime(botUser)) {
+                if (InnerBotUser.isBotUserFullTime(botUser)) {
                     lessons = callRestService.getFullTimeLessonsByDay(
                             botUser.getDepartment(),
                             botUser.getGroupNumber(),
@@ -151,7 +151,7 @@ public class FullTimeLessonService implements BotMessageService {
                 }
                 break;
             case CommandText.FRIDAY:
-                if (BotMessageUtils.isBotUserFullTime(botUser)) {
+                if (InnerBotUser.isBotUserFullTime(botUser)) {
                     lessons = callRestService.getFullTimeLessonsByDay(
                             botUser.getDepartment(),
                             botUser.getGroupNumber(),
@@ -161,7 +161,7 @@ public class FullTimeLessonService implements BotMessageService {
                 }
                 break;
             case CommandText.SATURDAY:
-                if (BotMessageUtils.isBotUserFullTime(botUser)) {
+                if (InnerBotUser.isBotUserFullTime(botUser)) {
                     lessons = callRestService.getFullTimeLessonsByDay(
                             botUser.getDepartment(),
                             botUser.getGroupNumber(),
@@ -172,7 +172,7 @@ public class FullTimeLessonService implements BotMessageService {
                 break;
             case CommandText.TODAY:
                 String day = String.valueOf(CalendarUtils.getDayOfWeekStartsFromMonday(calendar));
-                if (BotMessageUtils.isBotUserFullTime(botUser)) {
+                if (InnerBotUser.isBotUserFullTime(botUser)) {
                     lessons = callRestService.getFullTimeLessonsByDay(
                             botUser.getDepartment(),
                             botUser.getGroupNumber(),
@@ -185,7 +185,7 @@ public class FullTimeLessonService implements BotMessageService {
             case CommandText.TOMORROW:
                 calendar.add(Calendar.DAY_OF_WEEK, 1);
                 day = String.valueOf(CalendarUtils.getDayOfWeekStartsFromMonday(calendar));
-                if (BotMessageUtils.isBotUserFullTime(botUser)) {
+                if (InnerBotUser.isBotUserFullTime(botUser)) {
                     lessons = callRestService.getFullTimeLessonsByDay(
                             botUser.getDepartment(),
                             botUser.getGroupNumber(),
@@ -198,7 +198,7 @@ public class FullTimeLessonService implements BotMessageService {
             case CommandText.YESTERDAY:
                 calendar.add(Calendar.DAY_OF_WEEK, -1);
                 day = String.valueOf(CalendarUtils.getDayOfWeekStartsFromMonday(calendar));
-                if (BotMessageUtils.isBotUserFullTime(botUser)) {
+                if (InnerBotUser.isBotUserFullTime(botUser)) {
                     lessons = callRestService.getFullTimeLessonsByDay(
                             botUser.getDepartment(),
                             botUser.getGroupNumber(),
@@ -212,20 +212,20 @@ public class FullTimeLessonService implements BotMessageService {
 
         if (isBotUserFullTime) {
             if (isToday) {
-                return BotMessageUtils.getBotMessageForFullTimeLessons(lessons, CommandText.TODAY, botUser.isFilterNomDenom(), botUser);
+                return CompletableFuture.completedFuture(botMessageGenerator.getBotMessageForFullTimeLessons(lessons, CommandText.TODAY, botUser));
             }
             if (isTomorrow) {
-                return BotMessageUtils.getBotMessageForFullTimeLessons(lessons, CommandText.TOMORROW, botUser.isFilterNomDenom(), botUser);
+                return CompletableFuture.completedFuture(botMessageGenerator.getBotMessageForFullTimeLessons(lessons, CommandText.TOMORROW, botUser));
             }
             if (isYesterday) {
-                return BotMessageUtils.getBotMessageForFullTimeLessons(lessons, CommandText.YESTERDAY, botUser.isFilterNomDenom(), botUser);
+                return CompletableFuture.completedFuture(botMessageGenerator.getBotMessageForFullTimeLessons(lessons, CommandText.YESTERDAY, botUser));
             }
             if (isAll) {
-                return BotMessageUtils.getBotMessageForFullTimeLessonsAll(lessons, botUser.isFilterNomDenom(), botUser);
+                return CompletableFuture.completedFuture(botMessageGenerator.getBotMessageForFullTimeLessonsAll(lessons, botUser));
             }
-            return BotMessageUtils.getBotMessageForFullTimeLessons(lessons, "", botUser.isFilterNomDenom(), botUser);
+            return CompletableFuture.completedFuture(botMessageGenerator.getBotMessageForFullTimeLessons(lessons, "", botUser));
         } else {
-            return BotMessageUtils.getBotMessageForUnsupportedLessons(botUser);
+            return CompletableFuture.completedFuture(botMessageGenerator.getBotMessageForUnsupportedLessons(botUser));
         }
     }
 }

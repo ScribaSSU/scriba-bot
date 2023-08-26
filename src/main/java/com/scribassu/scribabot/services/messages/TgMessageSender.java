@@ -1,28 +1,28 @@
 package com.scribassu.scribabot.services.messages;
 
-import com.scribassu.scribabot.dto.BotMessage;
-import com.scribassu.scribabot.dto.Command;
-import com.scribassu.scribabot.generators.TgKeyboardGenerator;
-import com.scribassu.scribabot.util.BotUserSource;
-import com.scribassu.scribabot.util.TgKeyboardEmoji;
+import com.scribassu.scribabot.model.BotMessage;
+import com.scribassu.scribabot.model.Command;
+import com.scribassu.scribabot.generators.InnerKeyboardGenerator;
+import com.scribassu.scribabot.mapper.HttpMapper;
+import com.scribassu.scribabot.services.bot.BotUserService;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardRemove;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import java.util.Locale;
-
+@Service
 @Slf4j
-@Component
+@Data
 public class TgMessageSender extends TelegramLongPollingBot implements MessageSender {
 
-    @Autowired
     private MessageHandler messageHandler;
+    private InnerKeyboardGenerator innerKeyboardGenerator;
+    private HttpMapper httpMapper;
 
     @Value("${scriba-bot.tg.name}")
     private String botUsername;
@@ -35,17 +35,11 @@ public class TgMessageSender extends TelegramLongPollingBot implements MessageSe
 
     @Override
     public void onUpdateReceived(Update update) {
-        String text = update.getMessage().getText();
-        Long chatId = update.getMessage().getChatId();
-        text = removeEmoji(text);
-        text = text.toLowerCase(Locale.ROOT);
-        Command command = new Command(text,
-                "no payload",
-                String.valueOf(update.getMessage().getFrom().getId()),
-                BotUserSource.TG);
+        var chatId = update.getMessage().getChatId();
+        Command command = httpMapper.toCommand(update);
         log.info("TG Message: " + command);
         try {
-            BotMessage botMessage = messageHandler.getBotMessage(command);
+            BotMessage botMessage = messageHandler.getBotMessage(command).get();
 
             int startIndex = 0;
             String message;
@@ -59,13 +53,13 @@ public class TgMessageSender extends TelegramLongPollingBot implements MessageSe
                 }
 
                 if (botMessage.getBotUser().isSentKeyboard()) {
-                    if (botMessage.hasTgKeyboard()) {
+                    if (botMessage.hasKeyboard()) {
                         SendMessage sendMessage = new SendMessage(String.valueOf(chatId), message);
-                        sendMessage.setReplyMarkup(botMessage.getTgKeyboard());
+                        sendMessage.setReplyMarkup(httpMapper.toTgKeyboard(botMessage.getInnerKeyboard().get()));
                         execute(sendMessage);
                     } else {
                         SendMessage sendMessage = new SendMessage(String.valueOf(chatId), message);
-                        sendMessage.setReplyMarkup(TgKeyboardGenerator.mainMenu());
+                        sendMessage.setReplyMarkup(httpMapper.toTgKeyboard(innerKeyboardGenerator.mainMenu()));
                         execute(sendMessage);
                     }
                 } else {
@@ -96,18 +90,15 @@ public class TgMessageSender extends TelegramLongPollingBot implements MessageSe
         return botToken;
     }
 
-    private String removeEmoji(String text) {
-        for (String emoji : TgKeyboardEmoji.TG_EMOJIS)
-            text = text.replace(emoji, "");
-        return text.trim();
-    }
+
 
     @Override
-    public void send(BotMessage botMessage, String userId) {
+    public void send(BotMessage botMessage) {
         try {
             int startIndex = 0;
             String message;
             int lastSpaceIndex = 0;
+            var userId = botMessage.getBotUser().getUserId();
             while (startIndex < botMessage.getMessage().length()) {
                 if (botMessage.getMessage().length() - startIndex <= TG_LENGTH) {
                     message = botMessage.getMessage().substring(startIndex);
@@ -116,15 +107,14 @@ public class TgMessageSender extends TelegramLongPollingBot implements MessageSe
                     message = botMessage.getMessage().substring(startIndex, lastSpaceIndex);
                 }
 
-
                 if (botMessage.getBotUser().isSentKeyboard()) {
-                    if (botMessage.hasTgKeyboard()) {
+                    if (botMessage.hasKeyboard()) {
                         SendMessage sendMessage = new SendMessage(String.valueOf(userId), message);
-                        sendMessage.setReplyMarkup(botMessage.getTgKeyboard());
+                        sendMessage.setReplyMarkup(httpMapper.toTgKeyboard(botMessage.getInnerKeyboard().get()));
                         execute(sendMessage);
                     } else {
                         SendMessage sendMessage = new SendMessage(String.valueOf(userId), message);
-                        sendMessage.setReplyMarkup(TgKeyboardGenerator.mainMenu());
+                        sendMessage.setReplyMarkup(httpMapper.toTgKeyboard(innerKeyboardGenerator.mainMenu()));
                         execute(sendMessage);
                     }
                 } else {

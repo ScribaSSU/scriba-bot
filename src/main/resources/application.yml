@@ -25,6 +25,12 @@ scheduled:
 week-type:
   access-token:
 
+vk-executor:
+  core-pool-size:
+  max-pool-size:
+  queue-capacity:
+  thread-name-prefix:
+
 server:
   port:
 

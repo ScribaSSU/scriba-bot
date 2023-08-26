@@ -1,57 +1,39 @@
 package com.scribassu.scribabot.services.bot;
 
-import com.scribassu.scribabot.dto.BotMessage;
-import com.scribassu.scribabot.dto.InnerBotUser;
 import com.scribassu.scribabot.dto.rest.TeacherListDto;
-import com.scribassu.scribabot.generators.TgKeyboardGenerator;
-import com.scribassu.scribabot.generators.VkKeyboardGenerator;
-import com.scribassu.scribabot.repositories.TgBotUserRepository;
-import com.scribassu.scribabot.repositories.VkBotUserRepository;
+import com.scribassu.scribabot.generators.InnerKeyboardGenerator;
+import com.scribassu.scribabot.model.BotMessage;
+import com.scribassu.scribabot.model.InnerBotUser;
 import com.scribassu.scribabot.services.CallRestService;
 import com.scribassu.scribabot.text.CommandText;
 import com.scribassu.scribabot.util.Constants;
 import com.scribassu.tracto.domain.Teacher;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import static com.scribassu.scribabot.text.MessageText.*;
 
 @Service
+@Slf4j
+@Data
 public class TeacherService implements BotMessageService {
 
     private final CallRestService callRestService;
-    private final VkBotUserRepository vkBotUserRepository;
-    private final TgBotUserRepository tgBotUserRepository;
-    private final VkKeyboardGenerator vkKeyboardGenerator;
-    private final TgKeyboardGenerator tgKeyboardGenerator;
-
-    @Autowired
-    public TeacherService(CallRestService callRestService,
-                          VkBotUserRepository vkBotUserRepository,
-                          TgBotUserRepository tgBotUserRepository,
-                          VkKeyboardGenerator vkKeyboardGenerator,
-                          TgKeyboardGenerator tgKeyboardGenerator) {
-        this.callRestService = callRestService;
-        this.vkBotUserRepository = vkBotUserRepository;
-        this.tgBotUserRepository = tgBotUserRepository;
-        this.vkKeyboardGenerator = vkKeyboardGenerator;
-        this.tgKeyboardGenerator = tgKeyboardGenerator;
-    }
+    private final BotUserService botUserService;
+    private final InnerKeyboardGenerator innerKeyboardGenerator;
 
     @Override
-    public BotMessage getBotMessage(String message, InnerBotUser botUser) {
-        BotMessage botMessage = new BotMessage();
+    public CompletableFuture<BotMessage> getBotMessage(String message, InnerBotUser botUser) {
+        var botMessage = CompletableFuture.completedFuture(new BotMessage());
         final String userId = botUser.getUserId();
 
         if (message.equals(CommandText.TEACHER_SCHEDULE)) {
-            botMessage = new BotMessage(TEACHER_NAME_PROMPT);
-            if (botUser.fromVk()) {
-                vkBotUserRepository.updatePreviousUserMessage(CommandText.TEACHER_SCHEDULE, userId);
-            } else {
-                tgBotUserRepository.updatePreviousUserMessage(CommandText.TEACHER_SCHEDULE, userId);
-            }
+            botMessage = CompletableFuture.completedFuture(new BotMessage(TEACHER_NAME_PROMPT, botUser));
+            botUserService.updatePreviousUserMessage(CommandText.TEACHER_SCHEDULE, botUser);
         }
 
         if (null != botUser.getPreviousUserMessage()
@@ -59,15 +41,11 @@ public class TeacherService implements BotMessageService {
             TeacherListDto teacherListDto = callRestService.getTeachersByWord(message);
             if (null != teacherListDto.getTeachers()) {
                 if (teacherListDto.getTeachers().isEmpty()) {
-                    botMessage = botUser.fromVk() ?
-                            new BotMessage(EMPTY_TEACHER_LIST, VkKeyboardGenerator.mainMenu)
-                            : new BotMessage(EMPTY_TEACHER_LIST, TgKeyboardGenerator.mainMenu());
+                    return CompletableFuture.completedFuture(new BotMessage(EMPTY_TEACHER_LIST, innerKeyboardGenerator.mainMenu(), botUser));
                 } else {
                     List<Teacher> teachers = teacherListDto.getTeachers();
                     if (teachers.size() > Constants.MAX_VK_KEYBOARD_SIZE_FOR_LISTS) {
-                        botMessage = botUser.fromVk() ?
-                                new BotMessage(TOO_LONG_TEACHER_LIST, VkKeyboardGenerator.mainMenu)
-                                : new BotMessage(TOO_LONG_TEACHER_LIST, TgKeyboardGenerator.mainMenu());
+                        return CompletableFuture.completedFuture(new BotMessage(TOO_LONG_TEACHER_LIST, innerKeyboardGenerator.mainMenu(), botUser));
                     } else {
                         try {
                             StringBuilder sb = new StringBuilder();
@@ -80,26 +58,15 @@ public class TeacherService implements BotMessageService {
                                         .append(teacher.getPatronymic()).append("\n");
                             }
                             String teacherList = sb.toString();
-                            botMessage = new BotMessage(teacherList);
-
-                            if (botUser.fromVk()) {
-                                vkBotUserRepository.updatePreviousUserMessage(teacherList, userId);
-                                botMessage.setVkKeyboard(vkKeyboardGenerator.teachers(teachers));
-                            } else {
-                                tgBotUserRepository.updatePreviousUserMessage(teacherList, userId);
-                                botMessage.setTgKeyboard(tgKeyboardGenerator.teachers(teachers));
-                            }
+                            botUserService.updatePreviousUserMessage(teacherList, botUser);
+                            return CompletableFuture.completedFuture(new BotMessage(teacherList, innerKeyboardGenerator.teachers(teachers), botUser));
                         } catch (Exception e) {
-                            botMessage = botUser.fromVk() ?
-                                    new BotMessage(CANNOT_GET_TEACHERS, VkKeyboardGenerator.mainMenu)
-                                    : new BotMessage(CANNOT_GET_TEACHERS, TgKeyboardGenerator.mainMenu());
+                            return CompletableFuture.completedFuture(new BotMessage(CANNOT_GET_TEACHERS, innerKeyboardGenerator.mainMenu(), botUser));
                         }
                     }
                 }
             } else {
-                botMessage = botUser.fromVk() ?
-                        new BotMessage(CANNOT_GET_TEACHERS, VkKeyboardGenerator.mainMenu)
-                        : new BotMessage(CANNOT_GET_TEACHERS, TgKeyboardGenerator.mainMenu());
+                return CompletableFuture.completedFuture(new BotMessage(CANNOT_GET_TEACHERS, innerKeyboardGenerator.mainMenu(), botUser));
             }
         }
 
@@ -107,21 +74,12 @@ public class TeacherService implements BotMessageService {
                 && botUser.getPreviousUserMessage().equals(CHOOSE_TEACHER_TO_GET_SCHEDULE)) {
             try {
                 String teacherId = message.substring(0, message.indexOf(" "));
-                if (botUser.fromVk()) {
-                    vkBotUserRepository.updatePreviousUserMessage(Constants.TEACHER_ID + teacherId, userId);
-                    botMessage = new BotMessage(
-                            CHOOSE_DAY_FOR_TEACHER_SCHEDULE,
-                            VkKeyboardGenerator.teacherSchedule);
-                } else {
-                    tgBotUserRepository.updatePreviousUserMessage(Constants.TEACHER_ID + teacherId, userId);
-                    botMessage = new BotMessage(
-                            CHOOSE_DAY_FOR_TEACHER_SCHEDULE,
-                            TgKeyboardGenerator.teacherSchedule());
-                }
+                botUserService.updatePreviousUserMessage(Constants.TEACHER_ID + teacherId, botUser);
+                return CompletableFuture.completedFuture(new BotMessage(
+                        CHOOSE_DAY_FOR_TEACHER_SCHEDULE,
+                        innerKeyboardGenerator.teacherSchedule(), botUser));
             } catch (StringIndexOutOfBoundsException e) {
-                botMessage = botUser.fromVk() ?
-                        new BotMessage(CANNOT_GET_TEACHERS, VkKeyboardGenerator.mainMenu)
-                        : new BotMessage(CANNOT_GET_TEACHERS, TgKeyboardGenerator.mainMenu());
+                return CompletableFuture.completedFuture(new BotMessage(CANNOT_GET_TEACHERS, innerKeyboardGenerator.mainMenu(), botUser));
             }
         }
 

@@ -1,25 +1,25 @@
 package com.scribassu.scribabot.services.bot.scheduled;
 
-import com.scribassu.scribabot.dto.BotMessage;
-import com.scribassu.scribabot.dto.InnerBotUser;
+import com.scribassu.scribabot.model.BotMessage;
+import com.scribassu.scribabot.model.InnerBotUser;
 import com.scribassu.scribabot.dto.rest.ExamPeriodEventDto;
 import com.scribassu.scribabot.dto.rest.ExtramuralDto;
-import com.scribassu.scribabot.entities.ExamPeriodAfterTomorrowNotification;
-import com.scribassu.scribabot.entities.ExtramuralEventAfterTomorrowNotification;
-import com.scribassu.scribabot.entities.TgBotUser;
-import com.scribassu.scribabot.entities.VkBotUser;
-import com.scribassu.scribabot.repositories.ExamPeriodAfterTomorrowNotificationRepository;
-import com.scribassu.scribabot.repositories.ExtramuralEventAfterTomorrowNotificationRepository;
-import com.scribassu.scribabot.repositories.TgBotUserRepository;
-import com.scribassu.scribabot.repositories.VkBotUserRepository;
+import com.scribassu.scribabot.entities.notifications.ExamPeriodAfterTomorrowNotification;
+import com.scribassu.scribabot.entities.notifications.ExtramuralEventAfterTomorrowNotification;
+import com.scribassu.scribabot.entities.users.TgBotUser;
+import com.scribassu.scribabot.entities.users.VkBotUser;
+import com.scribassu.scribabot.repositories.notifications.ExamPeriodAfterTomorrowNotificationRepository;
+import com.scribassu.scribabot.repositories.notifications.ExtramuralEventAfterTomorrowNotificationRepository;
+import com.scribassu.scribabot.repositories.users.TgBotUserRepository;
+import com.scribassu.scribabot.repositories.users.VkBotUserRepository;
 import com.scribassu.scribabot.services.CallRestService;
 import com.scribassu.scribabot.services.messages.TgMessageSender;
 import com.scribassu.scribabot.services.messages.VkMessageSender;
 import com.scribassu.scribabot.text.CommandText;
-import com.scribassu.scribabot.util.BotMessageUtils;
+import com.scribassu.scribabot.generators.BotMessageGenerator;
 import com.scribassu.scribabot.util.CalendarUtils;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -29,34 +29,19 @@ import java.util.List;
 
 import static com.scribassu.scribabot.text.MessageText.NO_EXAMS;
 
-@Slf4j
 @Service
+@Slf4j
+@Data
 public class AfterTomorrowNotificationService {
 
     private final VkMessageSender vkMessageSender;
     private final TgMessageSender tgMessageSender;
     private final CallRestService callRestService;
+    private final BotMessageGenerator botMessageGenerator;
     private final VkBotUserRepository vkBotUserRepository;
     private final TgBotUserRepository tgBotUserRepository;
     private final ExamPeriodAfterTomorrowNotificationRepository examPeriodAfterTomorrowNotificationRepository;
     private final ExtramuralEventAfterTomorrowNotificationRepository extramuralEventAfterTomorrowNotificationRepository;
-
-    @Autowired
-    public AfterTomorrowNotificationService(VkMessageSender vkMessageSender,
-                                            TgMessageSender tgMessageSender,
-                                            CallRestService callRestService,
-                                            VkBotUserRepository vkBotUserRepository,
-                                            TgBotUserRepository tgBotUserRepository,
-                                            ExamPeriodAfterTomorrowNotificationRepository examPeriodAfterTomorrowNotificationRepository,
-                                            ExtramuralEventAfterTomorrowNotificationRepository extramuralEventAfterTomorrowNotificationRepository) {
-        this.vkMessageSender = vkMessageSender;
-        this.tgMessageSender = tgMessageSender;
-        this.callRestService = callRestService;
-        this.vkBotUserRepository = vkBotUserRepository;
-        this.tgBotUserRepository = tgBotUserRepository;
-        this.examPeriodAfterTomorrowNotificationRepository = examPeriodAfterTomorrowNotificationRepository;
-        this.extramuralEventAfterTomorrowNotificationRepository = extramuralEventAfterTomorrowNotificationRepository;
-    }
 
     @Scheduled(cron = "${scheduled.schedule-after-tomorrow-notification-service.cron}")
     public void sendSchedule() throws Exception {
@@ -94,7 +79,7 @@ public class AfterTomorrowNotificationService {
                         continue;
                     }
                 }
-                if (BotMessageUtils.isBotUserFullTime(botUser)) {
+                if (InnerBotUser.isBotUserFullTime(botUser)) {
                     ExamPeriodEventDto examPeriodEventDto = callRestService.getFullTimeExamPeriodEventByDay(
                             botUser.getDepartment(),
                             botUser.getGroupNumber(),
@@ -102,13 +87,12 @@ public class AfterTomorrowNotificationService {
                             day
                     );
                     BotMessage botMessage;
-                    botMessage = BotMessageUtils.getBotMessageForFullTimeExamPeriod(examPeriodEventDto, CommandText.AFTER_TOMORROW, botUser);
-                    botMessage.setBotUser(botUser);
+                    botMessage = botMessageGenerator.getBotMessageForFullTimeExamPeriod(examPeriodEventDto, CommandText.AFTER_TOMORROW, botUser);
                     if (!(botUser.isSilentEmptyDays() && botMessage.getMessage().contains(NO_EXAMS))) {
                         if (botUser.fromVk()) {
-                            vkMessageSender.send(botMessage, botUser.getUserId());
+                            vkMessageSender.send(botMessage);
                         } else {
-                            tgMessageSender.send(botMessage, botUser.getUserId());
+                            tgMessageSender.send(botMessage);
                         }
                     }
                     Thread.sleep(51); //20 messages per second
@@ -150,7 +134,7 @@ public class AfterTomorrowNotificationService {
                         continue;
                     }
                 }
-                if (BotMessageUtils.isBotUserExtramural(botUser)) {
+                if (InnerBotUser.isBotUserExtramural(botUser)) {
                     ExtramuralDto extramuralDto = callRestService.getExtramuralEventsByDay(
                             botUser.getDepartment(),
                             botUser.getGroupNumber(),
@@ -158,13 +142,12 @@ public class AfterTomorrowNotificationService {
                             day
                     );
                     BotMessage botMessage;
-                    botMessage = BotMessageUtils.getBotMessageForExtramuralEvent(extramuralDto, CommandText.AFTER_TOMORROW, botUser);
-                    botMessage.setBotUser(botUser);
+                    botMessage = botMessageGenerator.getBotMessageForExtramuralEvent(extramuralDto, CommandText.AFTER_TOMORROW, botUser);
                     if (!(botUser.isSilentEmptyDays() && botMessage.getMessage().contains(NO_EXAMS))) {
                         if (botUser.fromVk()) {
-                            vkMessageSender.send(botMessage, botUser.getUserId());
+                            vkMessageSender.send(botMessage);
                         } else {
-                            tgMessageSender.send(botMessage, botUser.getUserId());
+                            tgMessageSender.send(botMessage);
                         }
                     }
                     Thread.sleep(51); //20 messages per second

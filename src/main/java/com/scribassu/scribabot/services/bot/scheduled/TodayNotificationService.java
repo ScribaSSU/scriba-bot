@@ -1,20 +1,28 @@
 package com.scribassu.scribabot.services.bot.scheduled;
 
-import com.scribassu.scribabot.dto.BotMessage;
-import com.scribassu.scribabot.dto.InnerBotUser;
+import com.scribassu.scribabot.model.BotMessage;
+import com.scribassu.scribabot.model.InnerBotUser;
 import com.scribassu.scribabot.dto.rest.ExamPeriodEventDto;
 import com.scribassu.scribabot.dto.rest.ExtramuralDto;
 import com.scribassu.scribabot.dto.rest.FullTimeLessonDto;
-import com.scribassu.scribabot.entities.*;
-import com.scribassu.scribabot.repositories.*;
+import com.scribassu.scribabot.entities.notifications.ExamPeriodTodayNotification;
+import com.scribassu.scribabot.entities.notifications.ExtramuralEventTodayNotification;
+import com.scribassu.scribabot.entities.notifications.ScheduleTodayNotification;
+import com.scribassu.scribabot.entities.users.TgBotUser;
+import com.scribassu.scribabot.entities.users.VkBotUser;
+import com.scribassu.scribabot.repositories.notifications.ExamPeriodTodayNotificationRepository;
+import com.scribassu.scribabot.repositories.notifications.ExtramuralEventTodayNotificationRepository;
+import com.scribassu.scribabot.repositories.notifications.ScheduleTodayNotificationRepository;
+import com.scribassu.scribabot.repositories.users.TgBotUserRepository;
+import com.scribassu.scribabot.repositories.users.VkBotUserRepository;
 import com.scribassu.scribabot.services.CallRestService;
 import com.scribassu.scribabot.services.messages.TgMessageSender;
 import com.scribassu.scribabot.services.messages.VkMessageSender;
 import com.scribassu.scribabot.text.CommandText;
-import com.scribassu.scribabot.util.BotMessageUtils;
+import com.scribassu.scribabot.generators.BotMessageGenerator;
 import com.scribassu.scribabot.util.CalendarUtils;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -25,37 +33,20 @@ import java.util.List;
 import static com.scribassu.scribabot.text.MessageText.NO_EXAMS;
 import static com.scribassu.scribabot.text.MessageText.NO_LESSONS;
 
-@Slf4j
 @Service
+@Slf4j
+@Data
 public class TodayNotificationService {
 
     private final VkMessageSender vkMessageSender;
     private final TgMessageSender tgMessageSender;
     private final CallRestService callRestService;
+    private final BotMessageGenerator botMessageGenerator;
     private final VkBotUserRepository vkBotUserRepository;
     private final TgBotUserRepository tgBotUserRepository;
     private final ScheduleTodayNotificationRepository scheduleTodayNotificationRepository;
     private final ExamPeriodTodayNotificationRepository examPeriodTodayNotificationRepository;
     private final ExtramuralEventTodayNotificationRepository extramuralEventTodayNotificationRepository;
-
-    @Autowired
-    public TodayNotificationService(VkMessageSender vkMessageSender,
-                                    TgMessageSender tgMessageSender,
-                                    CallRestService callRestService,
-                                    VkBotUserRepository vkBotUserRepository,
-                                    TgBotUserRepository tgBotUserRepository,
-                                    ScheduleTodayNotificationRepository scheduleTodayNotificationRepository,
-                                    ExamPeriodTodayNotificationRepository examPeriodTodayNotificationRepository,
-                                    ExtramuralEventTodayNotificationRepository extramuralEventTodayNotificationRepository) {
-        this.vkMessageSender = vkMessageSender;
-        this.tgMessageSender = tgMessageSender;
-        this.callRestService = callRestService;
-        this.vkBotUserRepository = vkBotUserRepository;
-        this.tgBotUserRepository = tgBotUserRepository;
-        this.scheduleTodayNotificationRepository = scheduleTodayNotificationRepository;
-        this.examPeriodTodayNotificationRepository = examPeriodTodayNotificationRepository;
-        this.extramuralEventTodayNotificationRepository = extramuralEventTodayNotificationRepository;
-    }
 
     @Scheduled(cron = "${scheduled.schedule-today-notification-service.cron}")
     public void sendSchedule() throws Exception {
@@ -91,19 +82,19 @@ public class TodayNotificationService {
                         continue;
                     }
                 }
-                if (BotMessageUtils.isBotUserFullTime(botUser)) {
+                if (InnerBotUser.isBotUserFullTime(botUser)) {
                     FullTimeLessonDto lessons = callRestService.getFullTimeLessonsByDay(
                             botUser.getDepartment(),
                             botUser.getGroupNumber(),
                             dayNumber
                     );
-                    BotMessage botMessage = BotMessageUtils.getBotMessageForFullTimeLessons(lessons, CommandText.TODAY, botUser.isFilterNomDenom(), botUser);
+                    BotMessage botMessage = botMessageGenerator.getBotMessageForFullTimeLessons(lessons, CommandText.TODAY, botUser);
                     botMessage.setBotUser(botUser);
                     if (!(botUser.isSilentEmptyDays() && botMessage.getMessage().contains(NO_LESSONS))) {
                         if (botUser.fromVk()) {
-                            vkMessageSender.send(botMessage, botUser.getUserId());
+                            vkMessageSender.send(botMessage);
                         } else {
-                            tgMessageSender.send(botMessage, botUser.getUserId());
+                            tgMessageSender.send(botMessage);
                         }
                     }
                     Thread.sleep(51); //20 messages per second
@@ -143,7 +134,7 @@ public class TodayNotificationService {
                         continue;
                     }
                 }
-                if (BotMessageUtils.isBotUserFullTime(botUser)) {
+                if (InnerBotUser.isBotUserFullTime(botUser)) {
                     ExamPeriodEventDto examPeriodEventDto = callRestService.getFullTimeExamPeriodEventByDay(
                             botUser.getDepartment(),
                             botUser.getGroupNumber(),
@@ -151,13 +142,13 @@ public class TodayNotificationService {
                             day
                     );
                     BotMessage botMessage;
-                    botMessage = BotMessageUtils.getBotMessageForFullTimeExamPeriod(examPeriodEventDto, CommandText.TODAY, botUser);
+                    botMessage = botMessageGenerator.getBotMessageForFullTimeExamPeriod(examPeriodEventDto, CommandText.TODAY, botUser);
                     botMessage.setBotUser(botUser);
                     if (!(botUser.isSilentEmptyDays() && botMessage.getMessage().contains(NO_EXAMS))) {
                         if (botUser.fromVk()) {
-                            vkMessageSender.send(botMessage, botUser.getUserId());
+                            vkMessageSender.send(botMessage);
                         } else {
-                            tgMessageSender.send(botMessage, botUser.getUserId());
+                            tgMessageSender.send(botMessage);
                         }
                     }
                     Thread.sleep(51); //20 messages per second
@@ -197,7 +188,7 @@ public class TodayNotificationService {
                         continue;
                     }
                 }
-                if (BotMessageUtils.isBotUserExtramural(botUser)) {
+                if (InnerBotUser.isBotUserExtramural(botUser)) {
                     ExtramuralDto extramuralDto = callRestService.getExtramuralEventsByDay(
                             botUser.getDepartment(),
                             botUser.getGroupNumber(),
@@ -205,13 +196,13 @@ public class TodayNotificationService {
                             day
                     );
                     BotMessage botMessage;
-                    botMessage = BotMessageUtils.getBotMessageForExtramuralEvent(extramuralDto, CommandText.TODAY, botUser);
+                    botMessage = botMessageGenerator.getBotMessageForExtramuralEvent(extramuralDto, CommandText.TODAY, botUser);
                     botMessage.setBotUser(botUser);
                     if (!(botUser.isSilentEmptyDays() && botMessage.getMessage().contains(NO_EXAMS))) {
                         if (botUser.fromVk()) {
-                            vkMessageSender.send(botMessage, botUser.getUserId());
+                            vkMessageSender.send(botMessage);
                         } else {
-                            tgMessageSender.send(botMessage, botUser.getUserId());
+                            tgMessageSender.send(botMessage);
                         }
                     }
                     Thread.sleep(51); //20 messages per second

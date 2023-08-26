@@ -1,13 +1,20 @@
 package com.scribassu.scribabot.services.bot;
 
-import com.scribassu.scribabot.dto.BotMessage;
-import com.scribassu.scribabot.dto.InnerBotUser;
-import com.scribassu.scribabot.generators.TgKeyboardGenerator;
-import com.scribassu.scribabot.generators.VkKeyboardGenerator;
+import com.scribassu.scribabot.generators.InnerKeyboardGenerator;
+import com.scribassu.scribabot.model.BotMessage;
+import com.scribassu.scribabot.model.InnerBotUser;
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.concurrent.CompletableFuture;
+
 @Service
+@Slf4j
+@Data
 public class HelpService implements BotMessageService {
+
+    private final InnerKeyboardGenerator innerKeyboardGenerator;
 
     private static final String HELP_VK = "Чем смогу, помогу. Справка периодически пополняется.\n\n" +
             "'меню' - возврат в главное меню.\n\n" +
@@ -44,9 +51,8 @@ public class HelpService implements BotMessageService {
             "Желаю продуктивной учебы!";
 
     @Override
-    public BotMessage getBotMessage(String message, InnerBotUser botUser) {
-        return botUser.fromVk() ?
-                new BotMessage(HELP_VK, VkKeyboardGenerator.mainMenu)
-                : new BotMessage(HELP_TG, TgKeyboardGenerator.mainMenu());
+    public CompletableFuture<BotMessage> getBotMessage(String message, InnerBotUser botUser) {
+        var help = botUser.fromVk() ? HELP_VK : HELP_TG;
+        return CompletableFuture.completedFuture(new BotMessage(help, innerKeyboardGenerator.mainMenu(), botUser));
     }
 }

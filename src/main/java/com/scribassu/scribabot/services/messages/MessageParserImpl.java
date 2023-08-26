@@ -10,13 +10,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+// todo to delete
 @Slf4j
 @Service
-public class MessageParserImpl implements MessageParser {
+public class MessageParserImpl {
 
     private final Gson gson = new GsonBuilder().create();
 
-    @Override
     public Map<String, String> parseMessage(String incomingJson) {
         log.info("VK Message: " + incomingJson);
         Map<String, String> parsed = new HashMap<>();

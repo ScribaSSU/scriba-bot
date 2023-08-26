@@ -1,30 +1,30 @@
 package com.scribassu.scribabot.services.bot;
 
-import com.scribassu.scribabot.dto.BotMessage;
-import com.scribassu.scribabot.dto.InnerBotUser;
 import com.scribassu.scribabot.dto.rest.ExtramuralDto;
 import com.scribassu.scribabot.dto.rest.TeacherExtramuralEventDto;
+import com.scribassu.scribabot.generators.BotMessageGenerator;
+import com.scribassu.scribabot.model.BotMessage;
+import com.scribassu.scribabot.model.InnerBotUser;
 import com.scribassu.scribabot.services.CallRestService;
 import com.scribassu.scribabot.text.CommandText;
-import com.scribassu.scribabot.util.BotMessageUtils;
 import com.scribassu.scribabot.util.CalendarUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Calendar;
+import java.util.concurrent.CompletableFuture;
 
 @Service
+@Slf4j
+@Data
 public class ExtramuralEventService implements BotMessageService {
 
     private final CallRestService callRestService;
-
-    @Autowired
-    public ExtramuralEventService(CallRestService callRestService) {
-        this.callRestService = callRestService;
-    }
+    private final BotMessageGenerator botMessageGenerator;
 
     @Override
-    public BotMessage getBotMessage(String message, InnerBotUser botUser) {
+    public CompletableFuture<BotMessage> getBotMessage(String message, InnerBotUser botUser) {
         if (botUser.wantTeacherSchedule()) {
             return getTeacherBotMessage(message, botUser);
         } else {
@@ -32,17 +32,17 @@ public class ExtramuralEventService implements BotMessageService {
         }
     }
 
-    private BotMessage getTeacherBotMessage(String message, InnerBotUser botUser) {
+    private CompletableFuture<BotMessage> getTeacherBotMessage(String message, InnerBotUser botUser) {
             String teacherId = botUser.getPreviousUserMessage().split(" ")[1];
             TeacherExtramuralEventDto lessons = callRestService.getTeacherExtramuralEvents(teacherId);
 
             if (null == lessons || null == lessons.getExtramuralEvents() || lessons.getExtramuralEvents().isEmpty()) {
-                return BotMessageUtils.getBotMessageForEmptyExtramuralEventTeacher(botUser);
+                return CompletableFuture.completedFuture(botMessageGenerator.getBotMessageForEmptyExtramuralEventTeacher(botUser));
             }
-            return BotMessageUtils.getBotMessageForExtramuralEventTeacher(lessons, botUser);
+            return CompletableFuture.completedFuture(botMessageGenerator.getBotMessageForExtramuralEventTeacher(lessons, botUser));
     }
 
-    private BotMessage getStudentBotMessage(String message, InnerBotUser botUser) {
+    private CompletableFuture<BotMessage> getStudentBotMessage(String message, InnerBotUser botUser) {
         Calendar calendar = CalendarUtils.getCalendar();
         ExtramuralDto lessons = new ExtramuralDto();
         boolean isToday = false;
@@ -51,7 +51,7 @@ public class ExtramuralEventService implements BotMessageService {
 
         switch (message) {
             case CommandText.ALL_LESSONS:
-                if (BotMessageUtils.isBotUserExtramural(botUser)) {
+                if (InnerBotUser.isBotUserExtramural(botUser)) {
                     lessons = callRestService.getExtramuralEventsByGroup(
                             botUser.getDepartment(),
                             botUser.getGroupNumber()
@@ -61,7 +61,7 @@ public class ExtramuralEventService implements BotMessageService {
             case CommandText.TODAY:
                 int month = calendar.get(Calendar.MONTH) + 1;
                 int day = calendar.get(Calendar.DAY_OF_MONTH);
-                if (BotMessageUtils.isBotUserExtramural(botUser)) {
+                if (InnerBotUser.isBotUserExtramural(botUser)) {
                     lessons = callRestService.getExtramuralEventsByDay(
                             botUser.getDepartment(),
                             botUser.getGroupNumber(),
@@ -75,7 +75,7 @@ public class ExtramuralEventService implements BotMessageService {
                 calendar.add(Calendar.DAY_OF_MONTH, 1);
                 month = calendar.get(Calendar.MONTH) + 1;
                 day = calendar.get(Calendar.DAY_OF_MONTH);
-                if (BotMessageUtils.isBotUserExtramural(botUser)) {
+                if (InnerBotUser.isBotUserExtramural(botUser)) {
                     lessons = callRestService.getExtramuralEventsByDay(
                             botUser.getDepartment(),
                             botUser.getGroupNumber(),
@@ -89,7 +89,7 @@ public class ExtramuralEventService implements BotMessageService {
                 calendar.add(Calendar.DAY_OF_MONTH, -1);
                 month = calendar.get(Calendar.MONTH) + 1;
                 day = calendar.get(Calendar.DAY_OF_MONTH);
-                if (BotMessageUtils.isBotUserExtramural(botUser)) {
+                if (InnerBotUser.isBotUserExtramural(botUser)) {
                     lessons = callRestService.getExtramuralEventsByDay(
                             botUser.getDepartment(),
                             botUser.getGroupNumber(),
@@ -102,18 +102,18 @@ public class ExtramuralEventService implements BotMessageService {
         }
 
         if (null == lessons || null == lessons.getExtramuralEvents() || lessons.getExtramuralEvents().isEmpty()) {
-            return BotMessageUtils.getBotMessageForEmptyExtramuralEvent(botUser);
+            return CompletableFuture.completedFuture(botMessageGenerator.getBotMessageForEmptyExtramuralEvent(botUser));
         } else {
             if (isToday) {
-                return BotMessageUtils.getBotMessageForExtramuralEvent(lessons, CommandText.TODAY, botUser);
+                return CompletableFuture.completedFuture(botMessageGenerator.getBotMessageForExtramuralEvent(lessons, CommandText.TODAY, botUser));
             }
             if (isTomorrow) {
-                return BotMessageUtils.getBotMessageForExtramuralEvent(lessons, CommandText.TOMORROW, botUser);
+                return CompletableFuture.completedFuture(botMessageGenerator.getBotMessageForExtramuralEvent(lessons, CommandText.TOMORROW, botUser));
             }
             if (isYesterday) {
-                return BotMessageUtils.getBotMessageForExtramuralEvent(lessons, CommandText.YESTERDAY, botUser);
+                return CompletableFuture.completedFuture(botMessageGenerator.getBotMessageForExtramuralEvent(lessons, CommandText.YESTERDAY, botUser));
             }
-            return BotMessageUtils.getBotMessageForExtramuralEvent(lessons, "", botUser);
+            return CompletableFuture.completedFuture(botMessageGenerator.getBotMessageForExtramuralEvent(lessons, "", botUser));
         }
     }
 }

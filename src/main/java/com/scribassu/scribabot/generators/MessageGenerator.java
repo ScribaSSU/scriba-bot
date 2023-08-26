@@ -7,7 +7,6 @@ import com.scribassu.scribabot.util.CalendarUtils;
 import com.scribassu.scribabot.util.WeekTypeUtils;
 import com.scribassu.tracto.domain.*;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import java.util.Calendar;
 import java.util.Comparator;
@@ -50,7 +49,7 @@ public class MessageGenerator {
         if (calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) { // for week type determination
             calendar.add(Calendar.DAY_OF_MONTH, -1);
         }
-        WeekType currentWeekType = WeekTypeUtils.getWeekType(calendar);
+        WeekType currentWeekType = WeekTypeUtils.getWeekType(calendar, fullTimeLessonDto.getWeekShift().getShift());
 
         if (null != fullTimeLessonDto.getStudentGroup()) {
             // kgl has another week type
@@ -89,7 +88,7 @@ public class MessageGenerator {
                     if (!fullTimeLesson.getWeekType().equals(WeekType.FULL)) {
                         stringBuilder.append(fullTimeLesson.getWeekType().getType()).append("\n");
                     }
-                    if (!StringUtils.isEmpty(fullTimeLesson.getSubGroup())) {
+                    if (!fullTimeLesson.getSubGroup().isBlank()) {
                         stringBuilder.append(fullTimeLesson.getSubGroup().trim()).append("\n");
                     }
                     stringBuilder.append(fullTimeLesson.getName()).append("\n");
@@ -106,7 +105,7 @@ public class MessageGenerator {
                                                               boolean filterWeekType) {
         StringBuilder stringBuilder = new StringBuilder();
         Calendar calendar = CalendarUtils.getCalendar();
-        WeekType currentWeekType = WeekTypeUtils.getWeekType(calendar);
+        WeekType currentWeekType = WeekTypeUtils.getWeekType(calendar, fullTimeLessonDto.getWeekShift().getShift());
 
         if (null != fullTimeLessonDto.getStudentGroup()) {
             // kgl has another week type
@@ -159,7 +158,7 @@ public class MessageGenerator {
                         if (!fullTimeLesson.getWeekType().equals(WeekType.FULL)) {
                             stringBuilder.append(fullTimeLesson.getWeekType().getType()).append("\n");
                         }
-                        if (!StringUtils.isEmpty(fullTimeLesson.getSubGroup())) {
+                        if (!fullTimeLesson.getSubGroup().isBlank()) {
                             stringBuilder.append(fullTimeLesson.getSubGroup().trim()).append("\n");
                         }
                         stringBuilder.append(fullTimeLesson.getName()).append("\n");
@@ -270,9 +269,7 @@ public class MessageGenerator {
         if (calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) { // for week type determination
             calendar.add(Calendar.DAY_OF_MONTH, -1);
         }
-        WeekType currentWeekType = WeekTypeUtils.getWeekType(calendar);
-        stringBuilder.append("Неделя: ").append(WeekTypeUtils.weekTypeToLongString(currentWeekType)).append("\n");
-
+        // TODO set weekShift for every lesson separately?
         Teacher teacher = fullTimeLessonDto.getTeacher();
         stringBuilder.append(appendTeacher(teacher)).append("\n\n");
 
@@ -280,12 +277,12 @@ public class MessageGenerator {
             stringBuilder.append(NO_LESSONS);
         } else {
             List<FullTimeLesson> fullTimeLessons = fullTimeLessonDto.getLessons();
-            if (filterWeekType) {
-                fullTimeLessons = fullTimeLessons
-                        .stream()
-                        .filter(f -> f.getWeekType().equals(WeekType.FULL) || f.getWeekType().equals(currentWeekType))
-                        .collect(Collectors.toList());
-            }
+//            if (filterWeekType) {
+//                fullTimeLessons = fullTimeLessons
+//                        .stream()
+//                        .filter(f -> f.getWeekType().equals(WeekType.FULL) || f.getWeekType().equals(currentWeekType))
+//                        .collect(Collectors.toList());
+//            }
             fullTimeLessons.sort(Comparator.comparingInt(o -> o.getLessonTime().getLessonNumber()));
             for (FullTimeLesson fullTimeLesson : fullTimeLessons) {
                 stringBuilder.append(appendTime(fullTimeLesson.getLessonTime())).append("\n")
@@ -299,7 +296,7 @@ public class MessageGenerator {
                 }
                 stringBuilder.append(fullTimeLesson.getName()).append("\n");
                 stringBuilder.append("Группа № ").append(fullTimeLesson.getStudentGroup().getGroupNumberRus()).append(" ");
-                if (!StringUtils.isEmpty(fullTimeLesson.getSubGroup())) {
+                if (!fullTimeLesson.getSubGroup().isBlank()) {
                     stringBuilder.append(fullTimeLesson.getSubGroup().trim());
                 }
                 stringBuilder.append("\n");
@@ -491,9 +488,9 @@ public class MessageGenerator {
 
     private static String appendTeacher(Teacher teacher) {
         return teacher.getSurname() + " " +
-                (StringUtils.isEmpty(teacher.getName()) ? " " : teacher.getName()) +
+                (teacher.getName().isBlank() ? " " : teacher.getName()) +
                 " " +
-                (StringUtils.isEmpty(teacher.getPatronymic()) ? " " : teacher.getPatronymic());
+                (teacher.getPatronymic().isBlank() ? " " : teacher.getPatronymic());
     }
 
     private static String appendTime(LessonTime lessonTime) {

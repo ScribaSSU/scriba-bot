@@ -1,8 +1,10 @@
 package com.scribassu.scribabot.services.bot;
 
-import com.scribassu.scribabot.dto.BotMessage;
-import com.scribassu.scribabot.dto.InnerBotUser;
+import com.scribassu.scribabot.model.BotMessage;
+import com.scribassu.scribabot.model.InnerBotUser;
+
+import java.util.concurrent.CompletableFuture;
 
 public interface BotMessageService {
-    BotMessage getBotMessage(String message, InnerBotUser botUser);
+    CompletableFuture<BotMessage> getBotMessage(String message, InnerBotUser botUser);
 }
