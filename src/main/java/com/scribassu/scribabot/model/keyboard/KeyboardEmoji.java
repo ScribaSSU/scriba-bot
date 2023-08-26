@@ -1,4 +1,4 @@
-package com.scribassu.scribabot.model.inner_keyboard;
+package com.scribassu.scribabot.model.keyboard;
 
 import java.util.List;
 

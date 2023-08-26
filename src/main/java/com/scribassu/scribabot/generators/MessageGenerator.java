@@ -4,7 +4,6 @@ import com.scribassu.scribabot.dto.rest.*;
 import com.scribassu.scribabot.text.CommandText;
 import com.scribassu.scribabot.text.MessageText;
 import com.scribassu.scribabot.util.CalendarUtils;
-import com.scribassu.scribabot.util.WeekTypeUtils;
 import com.scribassu.tracto.domain.*;
 import org.springframework.util.CollectionUtils;
 
@@ -49,14 +48,14 @@ public class MessageGenerator {
         if (calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) { // for week type determination
             calendar.add(Calendar.DAY_OF_MONTH, -1);
         }
-        WeekType currentWeekType = WeekTypeUtils.getWeekType(calendar, fullTimeLessonDto.getWeekShift().getShift());
+        WeekType currentWeekType = CalendarUtils.getWeekType(calendar, fullTimeLessonDto.getWeekShift().getShift());
 
         if (null != fullTimeLessonDto.getStudentGroup()) {
             // kgl has another week type
             if (fullTimeLessonDto.getStudentGroup().getDepartment().getURL().equalsIgnoreCase("kgl")) {
                 currentWeekType = currentWeekType.equals(WeekType.NOM) ? WeekType.DENOM : WeekType.NOM;
             }
-            stringBuilder.append("Неделя: ").append(WeekTypeUtils.weekTypeToLongString(currentWeekType)).append("\n");
+            stringBuilder.append("Неделя: ").append(CalendarUtils.weekTypeToLongString(currentWeekType)).append("\n");
             stringBuilder.append("Группа № ").append(fullTimeLessonDto.getStudentGroup().getGroupNumberRus()).append("\n \n");
         } else {
             stringBuilder.append("Группа отсутствует").append("\n \n");
@@ -105,7 +104,7 @@ public class MessageGenerator {
                                                               boolean filterWeekType) {
         StringBuilder stringBuilder = new StringBuilder();
         Calendar calendar = CalendarUtils.getCalendar();
-        WeekType currentWeekType = WeekTypeUtils.getWeekType(calendar, fullTimeLessonDto.getWeekShift().getShift());
+        WeekType currentWeekType = CalendarUtils.getWeekType(calendar, fullTimeLessonDto.getWeekShift().getShift());
 
         if (null != fullTimeLessonDto.getStudentGroup()) {
             // kgl has another week type

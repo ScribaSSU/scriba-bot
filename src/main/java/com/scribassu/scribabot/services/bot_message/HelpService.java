@@ -1,8 +1,9 @@
-package com.scribassu.scribabot.services.bot;
+package com.scribassu.scribabot.services.bot_message;
 
 import com.scribassu.scribabot.generators.InnerKeyboardGenerator;
 import com.scribassu.scribabot.model.BotMessage;
-import com.scribassu.scribabot.model.InnerBotUser;
+import com.scribassu.scribabot.model.BotUser;
+import com.scribassu.scribabot.services.BotMessageService;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -51,7 +52,7 @@ public class HelpService implements BotMessageService {
             "Желаю продуктивной учебы!";
 
     @Override
-    public CompletableFuture<BotMessage> getBotMessage(String message, InnerBotUser botUser) {
+    public CompletableFuture<BotMessage> getBotMessage(String message, BotUser botUser) {
         var help = botUser.fromVk() ? HELP_VK : HELP_TG;
         return CompletableFuture.completedFuture(new BotMessage(help, innerKeyboardGenerator.mainMenu(), botUser));
     }

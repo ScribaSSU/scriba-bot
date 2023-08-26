@@ -1,7 +1,7 @@
 package com.scribassu.scribabot.repositories.notifications;
 
 import com.scribassu.scribabot.entities.notifications.ExtramuralEventTodayNotification;
-import com.scribassu.scribabot.util.BotUserSource;
+import com.scribassu.scribabot.model.BotUserSource;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

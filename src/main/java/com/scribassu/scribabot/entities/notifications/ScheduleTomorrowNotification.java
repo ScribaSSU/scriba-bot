@@ -1,11 +1,9 @@
 package com.scribassu.scribabot.entities.notifications;
 
 
-import com.scribassu.scribabot.util.BotUserSource;
+import com.scribassu.scribabot.model.BotUserSource;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 
 @Entity
 public class ScheduleTomorrowNotification extends AbstractScheduleNotification {

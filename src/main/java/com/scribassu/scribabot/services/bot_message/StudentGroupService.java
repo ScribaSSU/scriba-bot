@@ -1,10 +1,11 @@
-package com.scribassu.scribabot.services.bot;
+package com.scribassu.scribabot.services.bot_message;
 
 import com.scribassu.scribabot.dto.rest.GroupNumbersDto;
 import com.scribassu.scribabot.generators.InnerKeyboardGenerator;
 import com.scribassu.scribabot.model.BotMessage;
-import com.scribassu.scribabot.model.InnerBotUser;
+import com.scribassu.scribabot.model.BotUser;
 import com.scribassu.scribabot.services.CallRestService;
+import com.scribassu.scribabot.services.BotMessageService;
 import com.scribassu.scribabot.text.MessageText;
 import com.scribassu.scribabot.util.Constants;
 import com.scribassu.tracto.domain.EducationForm;
@@ -24,7 +25,7 @@ public class StudentGroupService implements BotMessageService {
     private final InnerKeyboardGenerator innerKeyboardGenerator;
 
     @Override
-    public CompletableFuture<BotMessage> getBotMessage(String message, InnerBotUser botUser) {
+    public CompletableFuture<BotMessage> getBotMessage(String message, BotUser botUser) {
         GroupNumbersDto groupNumbersDto = new GroupNumbersDto();
         if (message.equalsIgnoreCase("другое")) {
             if (botUser != null

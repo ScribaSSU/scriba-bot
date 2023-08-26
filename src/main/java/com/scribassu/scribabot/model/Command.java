@@ -1,6 +1,5 @@
 package com.scribassu.scribabot.model;
 
-import com.scribassu.scribabot.util.BotUserSource;
 import lombok.Data;
 
 @Data

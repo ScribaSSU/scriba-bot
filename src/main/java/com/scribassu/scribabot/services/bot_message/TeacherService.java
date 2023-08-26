@@ -1,10 +1,12 @@
-package com.scribassu.scribabot.services.bot;
+package com.scribassu.scribabot.services.bot_message;
 
 import com.scribassu.scribabot.dto.rest.TeacherListDto;
 import com.scribassu.scribabot.generators.InnerKeyboardGenerator;
 import com.scribassu.scribabot.model.BotMessage;
-import com.scribassu.scribabot.model.InnerBotUser;
+import com.scribassu.scribabot.model.BotUser;
 import com.scribassu.scribabot.services.CallRestService;
+import com.scribassu.scribabot.services.BotMessageService;
+import com.scribassu.scribabot.services.BotUserService;
 import com.scribassu.scribabot.text.CommandText;
 import com.scribassu.scribabot.util.Constants;
 import com.scribassu.tracto.domain.Teacher;
@@ -27,7 +29,7 @@ public class TeacherService implements BotMessageService {
     private final InnerKeyboardGenerator innerKeyboardGenerator;
 
     @Override
-    public CompletableFuture<BotMessage> getBotMessage(String message, InnerBotUser botUser) {
+    public CompletableFuture<BotMessage> getBotMessage(String message, BotUser botUser) {
         var botMessage = CompletableFuture.completedFuture(new BotMessage());
         final String userId = botUser.getUserId();
 

@@ -1,7 +1,7 @@
-package com.scribassu.scribabot.services.bot.scheduled;
+package com.scribassu.scribabot.services.scheduled;
 
 import com.scribassu.scribabot.model.BotMessage;
-import com.scribassu.scribabot.model.InnerBotUser;
+import com.scribassu.scribabot.model.BotUser;
 import com.scribassu.scribabot.dto.rest.ExamPeriodEventDto;
 import com.scribassu.scribabot.dto.rest.ExtramuralDto;
 import com.scribassu.scribabot.entities.notifications.ExamPeriodAfterTomorrowNotification;
@@ -63,23 +63,23 @@ public class AfterTomorrowNotificationService {
         if (!CollectionUtils.isEmpty(examPeriodAfterTomorrowNotifications)) {
             log.info("Send after tomorrow exam period schedule for hour {}", hourOfDay);
             for (ExamPeriodAfterTomorrowNotification notification : examPeriodAfterTomorrowNotifications) {
-                InnerBotUser botUser;
+                BotUser botUser;
                 if (notification.fromVk()) {
                     VkBotUser vkBotUser = vkBotUserRepository.findOneById(notification.getUserId());
                     if (null != vkBotUser) {
-                        botUser = new InnerBotUser(vkBotUser);
+                        botUser = new BotUser(vkBotUser);
                     } else {
                         continue;
                     }
                 } else {
                     TgBotUser tgBotUser = tgBotUserRepository.findOneById(notification.getUserId());
                     if (null != tgBotUser) {
-                        botUser = new InnerBotUser(tgBotUser);
+                        botUser = new BotUser(tgBotUser);
                     } else {
                         continue;
                     }
                 }
-                if (InnerBotUser.isBotUserFullTime(botUser)) {
+                if (BotUser.isBotUserFullTime(botUser)) {
                     ExamPeriodEventDto examPeriodEventDto = callRestService.getFullTimeExamPeriodEventByDay(
                             botUser.getDepartment(),
                             botUser.getGroupNumber(),
@@ -118,23 +118,23 @@ public class AfterTomorrowNotificationService {
         if (!CollectionUtils.isEmpty(extramuralEventAfterTomorrowNotifications)) {
             log.info("Send after tomorrow extramural schedule for hour {}", hourOfDay);
             for (ExtramuralEventAfterTomorrowNotification notification : extramuralEventAfterTomorrowNotifications) {
-                InnerBotUser botUser;
+                BotUser botUser;
                 if (notification.fromVk()) {
                     VkBotUser vkBotUser = vkBotUserRepository.findOneById(notification.getUserId());
                     if (null != vkBotUser) {
-                        botUser = new InnerBotUser(vkBotUser);
+                        botUser = new BotUser(vkBotUser);
                     } else {
                         continue;
                     }
                 } else {
                     TgBotUser tgBotUser = tgBotUserRepository.findOneById(notification.getUserId());
                     if (null != tgBotUser) {
-                        botUser = new InnerBotUser(tgBotUser);
+                        botUser = new BotUser(tgBotUser);
                     } else {
                         continue;
                     }
                 }
-                if (InnerBotUser.isBotUserExtramural(botUser)) {
+                if (BotUser.isBotUserExtramural(botUser)) {
                     ExtramuralDto extramuralDto = callRestService.getExtramuralEventsByDay(
                             botUser.getDepartment(),
                             botUser.getGroupNumber(),

@@ -4,16 +4,13 @@ import com.scribassu.scribabot.dto.rest.FullTimeLessonDto;
 import com.scribassu.scribabot.entities.unrecognized_messages.UnrecognizedMessage;
 import com.scribassu.scribabot.generators.BotMessageGenerator;
 import com.scribassu.scribabot.generators.InnerKeyboardGenerator;
-import com.scribassu.scribabot.model.BotMessage;
-import com.scribassu.scribabot.model.Command;
-import com.scribassu.scribabot.model.InnerBotUser;
-import com.scribassu.scribabot.model.RegisteredUserResult;
+import com.scribassu.scribabot.model.*;
 import com.scribassu.scribabot.repositories.UnrecognizedMessageRepository;
+import com.scribassu.scribabot.services.BotUserService;
 import com.scribassu.scribabot.services.CallRestService;
-import com.scribassu.scribabot.services.bot.*;
+import com.scribassu.scribabot.services.bot_message.*;
 import com.scribassu.scribabot.text.CommandText;
 import com.scribassu.scribabot.text.MessageText;
-import com.scribassu.scribabot.util.BotUserSource;
 import com.scribassu.scribabot.util.Constants;
 import com.scribassu.tracto.domain.EducationForm;
 import lombok.Data;
@@ -61,7 +58,7 @@ public class MessageHandler {
         String userId = command.getUserId();
         BotUserSource botUserSource = command.getBotUserSource();
         RegisteredUserResult registeredUserResult = botUserService.isBotUserRegistered(command);
-        InnerBotUser botUser = registeredUserResult.getInnerBotUser();
+        BotUser botUser = registeredUserResult.getBotUser();
         boolean registered = registeredUserResult.isRegistered();
 
         var botMessage = new BotMessage(
@@ -116,9 +113,9 @@ public class MessageHandler {
             case CommandText.TEACHER_SCHEDULE:
                 return teacherService.getBotMessage(message, botUser);
             case CommandText.STUDENTS_SCHEDULE:
-                if (InnerBotUser.isBotUserFullTime(botUser)) {
+                if (BotUser.isBotUserFullTime(botUser)) {
                     return CompletableFuture.completedFuture(new BotMessage(CHOOSE_WANTED_SCHEDULE, innerKeyboardGenerator.fullTimeSchedule(), botUser));
-                } else if (InnerBotUser.isBotUserExtramural(botUser)) {
+                } else if (BotUser.isBotUserExtramural(botUser)) {
                     return CompletableFuture.completedFuture(new BotMessage(CHOOSE_WANTED_SCHEDULE, innerKeyboardGenerator.extramuralSchedule(), botUser));
                 } else {
                     return CompletableFuture.completedFuture(new BotMessage(CANNOT_GET_SCHEDULE_GROUP_NOT_SET, innerKeyboardGenerator.departments(), botUser));
@@ -144,13 +141,13 @@ public class MessageHandler {
             case CommandText.TODAY:
             case CommandText.TOMORROW:
             case CommandText.YESTERDAY:
-                if (InnerBotUser.isBotUserFullTime(botUser)) {
+                if (BotUser.isBotUserFullTime(botUser)) {
                     return fullTimeLessonService.getBotMessage(message, botUser);
                 } else {
                     return extramuralEventService.getBotMessage(message, botUser);
                 }
             case CommandText.ALL_LESSONS:
-                if (InnerBotUser.isBotUserExtramural(botUser)) {
+                if (BotUser.isBotUserExtramural(botUser)) {
                     return extramuralEventService.getBotMessage(message, botUser);
                 } else {
                     return fullTimeLessonService.getBotMessage(message, botUser);
@@ -217,10 +214,10 @@ public class MessageHandler {
                 return CompletableFuture.completedFuture(new BotMessage(THIS_IS_MAIN_MENU, innerKeyboardGenerator.mainMenu(), botUser));
 
             } else {
-                if (InnerBotUser.isBotUserFullTime(botUser)) {
+                if (BotUser.isBotUserFullTime(botUser)) {
                     return CompletableFuture.completedFuture(new BotMessage(MessageText.FINISH_SET_GROUP, innerKeyboardGenerator.fullTimeSchedule(), botUser));
                 }
-                if (InnerBotUser.isBotUserExtramural(botUser)) {
+                if (BotUser.isBotUserExtramural(botUser)) {
                     return CompletableFuture.completedFuture(new BotMessage(FINISH_SET_GROUP, innerKeyboardGenerator.extramuralSchedule(), botUser));
                 }
             }

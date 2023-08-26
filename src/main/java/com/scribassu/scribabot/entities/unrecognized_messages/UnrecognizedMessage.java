@@ -1,7 +1,7 @@
 package com.scribassu.scribabot.entities.unrecognized_messages;
 
 import com.scribassu.scribabot.model.Command;
-import com.scribassu.scribabot.util.BotUserSource;
+import com.scribassu.scribabot.model.BotUserSource;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;

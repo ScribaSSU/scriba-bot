@@ -1,4 +1,4 @@
-package com.scribassu.scribabot.util;
+package com.scribassu.scribabot.model;
 
 public enum BotUserSource {
     VK, TG

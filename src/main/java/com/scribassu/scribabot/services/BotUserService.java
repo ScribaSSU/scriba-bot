@@ -1,14 +1,14 @@
-package com.scribassu.scribabot.services.bot;
+package com.scribassu.scribabot.services;
 
 import com.scribassu.scribabot.entities.users.TgBotUser;
 import com.scribassu.scribabot.entities.users.VkBotUser;
 import com.scribassu.scribabot.model.Command;
-import com.scribassu.scribabot.model.InnerBotUser;
+import com.scribassu.scribabot.model.BotUser;
 import com.scribassu.scribabot.model.RegisteredUserResult;
 import com.scribassu.scribabot.repositories.notifications.*;
 import com.scribassu.scribabot.repositories.users.TgBotUserRepository;
 import com.scribassu.scribabot.repositories.users.VkBotUserRepository;
-import com.scribassu.scribabot.util.BotUserSource;
+import com.scribassu.scribabot.model.BotUserSource;
 import com.scribassu.scribabot.util.DepartmentConverter;
 import com.scribassu.tracto.domain.EducationForm;
 import lombok.Data;
@@ -39,23 +39,23 @@ public class BotUserService {
         BotUserSource source = command.getBotUserSource();
 
         boolean registered = false;
-        InnerBotUser botUser;
+        BotUser botUser;
         VkBotUser vkBotUser;
         TgBotUser tgBotUser;
         if (BotUserSource.VK.equals(source)) {
             vkBotUser = vkBotUserRepository.findOneById(userId);
             if (null == vkBotUser) {
-                botUser = new InnerBotUser(source, userId);
+                botUser = new BotUser(source, userId);
             } else {
-                botUser = new InnerBotUser(vkBotUser);
+                botUser = new BotUser(vkBotUser);
                 registered = true;
             }
         } else {
             tgBotUser = tgBotUserRepository.findOneById(userId);
             if (null == tgBotUser) {
-                botUser = new InnerBotUser(source, userId);
+                botUser = new BotUser(source, userId);
             } else {
-                botUser = new InnerBotUser(tgBotUser);
+                botUser = new BotUser(tgBotUser);
                 registered = true;
             }
         }
@@ -63,9 +63,9 @@ public class BotUserService {
     }
 
     // todo add notifications insert
-    public void registerUser(InnerBotUser innerBotUser) {
-        var userId = innerBotUser.getUserId();
-        if (innerBotUser.fromVk()) {
+    public void registerUser(BotUser botUser) {
+        var userId = botUser.getUserId();
+        if (botUser.fromVk()) {
             var vkBotUser = new VkBotUser(userId);
             vkBotUser = vkBotUserRepository.save(vkBotUser);
             vkBotUserRepository.updatePreviousUserMessage(GREETING_WITH_CHOOSE_DEPARTMENT, vkBotUser.getUserId());
@@ -76,61 +76,61 @@ public class BotUserService {
         }
     }
 
-    public void resetPreviousUserMessage(InnerBotUser innerBotUser) {
-        updatePreviousUserMessage("", innerBotUser);
+    public void resetPreviousUserMessage(BotUser botUser) {
+        updatePreviousUserMessage("", botUser);
     }
 
-    public void updatePreviousUserMessage(String message, InnerBotUser innerBotUser) {
-        if (innerBotUser.fromVk()) {
-            vkBotUserRepository.updatePreviousUserMessage(message, innerBotUser.getUserId());
+    public void updatePreviousUserMessage(String message, BotUser botUser) {
+        if (botUser.fromVk()) {
+            vkBotUserRepository.updatePreviousUserMessage(message, botUser.getUserId());
         } else {
-            tgBotUserRepository.updatePreviousUserMessage(message, innerBotUser.getUserId());
+            tgBotUserRepository.updatePreviousUserMessage(message, botUser.getUserId());
         }
     }
 
-    public void updateEducationForm(EducationForm educationForm, InnerBotUser innerBotUser) {
-        if (innerBotUser.fromVk()) {
-            vkBotUserRepository.updateEducationForm(educationForm.getGroupType(), innerBotUser.getUserId());
+    public void updateEducationForm(EducationForm educationForm, BotUser botUser) {
+        if (botUser.fromVk()) {
+            vkBotUserRepository.updateEducationForm(educationForm.getGroupType(), botUser.getUserId());
         } else {
-            tgBotUserRepository.updateEducationForm(educationForm.getGroupType(), innerBotUser.getUserId());
+            tgBotUserRepository.updateEducationForm(educationForm.getGroupType(), botUser.getUserId());
         }
     }
 
-    public void updateDepartment(String message, InnerBotUser innerBotUser) {
-        if (innerBotUser.fromVk()) {
-            vkBotUserRepository.updateDepartment(DepartmentConverter.convertToUrl(message), innerBotUser.getUserId());
+    public void updateDepartment(String message, BotUser botUser) {
+        if (botUser.fromVk()) {
+            vkBotUserRepository.updateDepartment(DepartmentConverter.convertToUrl(message), botUser.getUserId());
         } else {
-            tgBotUserRepository.updateDepartment(DepartmentConverter.convertToUrl(message), innerBotUser.getUserId());
+            tgBotUserRepository.updateDepartment(DepartmentConverter.convertToUrl(message), botUser.getUserId());
         }
     }
 
-    public void updateGroupNumber(String message, InnerBotUser innerBotUser) {
-        if (innerBotUser.fromVk()) {
-            vkBotUserRepository.updateGroupNumber(message, innerBotUser.getUserId());
+    public void updateGroupNumber(String message, BotUser botUser) {
+        if (botUser.fromVk()) {
+            vkBotUserRepository.updateGroupNumber(message, botUser.getUserId());
         } else {
-            tgBotUserRepository.updateGroupNumber(message, innerBotUser.getUserId());
+            tgBotUserRepository.updateGroupNumber(message, botUser.getUserId());
         }
     }
 
-    public void setFilterNomDenom(boolean filter, InnerBotUser innerBotUser) {
-        if (innerBotUser.fromVk()) {
-            VkBotUser vkBotUser = vkBotUserRepository.findOneById(innerBotUser.getUserId());
+    public void setFilterNomDenom(boolean filter, BotUser botUser) {
+        if (botUser.fromVk()) {
+            VkBotUser vkBotUser = vkBotUserRepository.findOneById(botUser.getUserId());
             vkBotUser.setFilterNomDenom(filter);
             vkBotUserRepository.save(vkBotUser);
         } else {
-            TgBotUser tgBotUser = tgBotUserRepository.findOneById(innerBotUser.getUserId());
+            TgBotUser tgBotUser = tgBotUserRepository.findOneById(botUser.getUserId());
             tgBotUser.setFilterNomDenom(true);
             tgBotUserRepository.save(tgBotUser);
         }
     }
 
-    public void setSentKeyboard(boolean flag, InnerBotUser innerBotUser) {
-        if (innerBotUser.fromVk()) {
-            VkBotUser vkBotUser = vkBotUserRepository.findOneById(innerBotUser.getUserId());
+    public void setSentKeyboard(boolean flag, BotUser botUser) {
+        if (botUser.fromVk()) {
+            VkBotUser vkBotUser = vkBotUserRepository.findOneById(botUser.getUserId());
             vkBotUser.setSentKeyboard(flag);
             vkBotUserRepository.save(vkBotUser);
         } else {
-            TgBotUser tgBotUser = tgBotUserRepository.findOneById(innerBotUser.getUserId());
+            TgBotUser tgBotUser = tgBotUserRepository.findOneById(botUser.getUserId());
             tgBotUser.setSentKeyboard(flag);
             tgBotUserRepository.save(tgBotUser);
         }
@@ -144,28 +144,28 @@ public class BotUserService {
         }
     }
 
-    public void setSilentEmptyDays(boolean flag, InnerBotUser innerBotUser) {
-        if (innerBotUser.fromVk()) {
-            VkBotUser vkBotUser = vkBotUserRepository.findOneById(innerBotUser.getUserId());
+    public void setSilentEmptyDays(boolean flag, BotUser botUser) {
+        if (botUser.fromVk()) {
+            VkBotUser vkBotUser = vkBotUserRepository.findOneById(botUser.getUserId());
             vkBotUser.setSilentEmptyDays(flag);
             vkBotUserRepository.save(vkBotUser);
         } else {
-            TgBotUser tgBotUser = tgBotUserRepository.findOneById(innerBotUser.getUserId());
+            TgBotUser tgBotUser = tgBotUserRepository.findOneById(botUser.getUserId());
             tgBotUser.setSilentEmptyDays(flag);
             tgBotUserRepository.save(tgBotUser);
         }
     }
 
-    public void delete(InnerBotUser innerBotUser) {
-        var userId = innerBotUser.getUserId();
-        var botUserSource = innerBotUser.getSource();
+    public void delete(BotUser botUser) {
+        var userId = botUser.getUserId();
+        var botUserSource = botUser.getSource();
 
-        if (innerBotUser.fromVk()) {
+        if (botUser.fromVk()) {
             vkBotUserRepository.deleteOneById(userId);
         } else {
             tgBotUserRepository.deleteOneById(userId);
         }
-        if (InnerBotUser.isBotUserExtramural(innerBotUser)) {
+        if (BotUser.isBotUserExtramural(botUser)) {
             extramuralEventTodayNotificationRepository.deleteByUserIdAndUserSource(userId, botUserSource);
             extramuralEventTomorrowNotificationRepository.deleteByUserIdAndUserSource(userId, botUserSource);
             extramuralEventAfterTomorrowNotificationRepository.deleteByUserIdAndUserSource(userId, botUserSource);

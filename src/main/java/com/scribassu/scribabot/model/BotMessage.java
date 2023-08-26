@@ -1,6 +1,6 @@
 package com.scribassu.scribabot.model;
 
-import com.scribassu.scribabot.model.inner_keyboard.InnerKeyboard;
+import com.scribassu.scribabot.model.keyboard.Keyboard;
 import com.scribassu.scribabot.text.MessageText;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,23 +14,23 @@ public class BotMessage {
 
     private String message;
 
-    private Optional<InnerKeyboard> innerKeyboard;
-    private InnerBotUser botUser;
+    private Optional<Keyboard> innerKeyboard;
+    private BotUser botUser;
 
-    public BotMessage(String message, InnerBotUser innerBotUser) {
+    public BotMessage(String message, BotUser botUser) {
         this.message = message;
         this.innerKeyboard = Optional.empty();
-        this.botUser = innerBotUser;
+        this.botUser = botUser;
     }
 
-    public BotMessage(String message, InnerKeyboard innerKeyboard, InnerBotUser innerBotUser) {
+    public BotMessage(String message, Keyboard keyboard, BotUser botUser) {
         this.message = message;
-        this.innerKeyboard = Optional.of(innerKeyboard);
-        this.botUser = innerBotUser;
+        this.innerKeyboard = Optional.of(keyboard);
+        this.botUser = botUser;
     }
 
-    public void setKeyboard(InnerKeyboard innerKeyboard) {
-        this.innerKeyboard = Optional.of(innerKeyboard);
+    public void setKeyboard(Keyboard keyboard) {
+        this.innerKeyboard = Optional.of(keyboard);
     }
 
     public boolean isEmpty() {

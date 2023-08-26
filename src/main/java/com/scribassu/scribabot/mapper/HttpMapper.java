@@ -1,24 +1,22 @@
 package com.scribassu.scribabot.mapper;
 
 import com.scribassu.scribabot.model.Command;
-import com.scribassu.scribabot.model.inner_keyboard.InnerKeyboard;
-import com.scribassu.scribabot.model.inner_keyboard.InnerKeyboardButton;
-import com.scribassu.scribabot.model.inner_keyboard.KeyboardEmoji;
+import com.scribassu.scribabot.model.keyboard.Keyboard;
+import com.scribassu.scribabot.model.keyboard.KeyboardButton;
+import com.scribassu.scribabot.model.keyboard.KeyboardEmoji;
 import com.scribassu.scribabot.dto.vk.VkMessageDto;
 import com.scribassu.scribabot.dto.vkkeyboard.*;
 import com.scribassu.scribabot.text.CommandText;
-import com.scribassu.scribabot.util.BotUserSource;
+import com.scribassu.scribabot.model.BotUserSource;
 import com.scribassu.scribabot.util.Constants;
 import lombok.Data;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
 import java.util.ArrayList;
 import java.util.Locale;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.scribassu.scribabot.util.Constants.DEFAULT_PAYLOAD;
@@ -58,8 +56,8 @@ public class HttpMapper {
                 BotUserSource.TG);
     }
 
-    public VkKeyboard toVkKeyboard(InnerKeyboard innerKeyboard) {
-        return new VkKeyboard(innerKeyboard.getButtons()
+    public VkKeyboard toVkKeyboard(Keyboard keyboard) {
+        return new VkKeyboard(keyboard.getButtons()
                 .stream()
                 .map(buttonRow ->
                         buttonRow
@@ -70,13 +68,13 @@ public class HttpMapper {
                 false);
     }
 
-    public ReplyKeyboardMarkup toTgKeyboard(InnerKeyboard innerKeyboard) {
+    public ReplyKeyboardMarkup toTgKeyboard(Keyboard keyboard) {
         var replyKeyboardMarkup = new ReplyKeyboardMarkup();
         var rows = new ArrayList<KeyboardRow>();
-        var buttons = innerKeyboard.getButtons();
+        var buttons = keyboard.getButtons();
         for (var i = 0; i < buttons.size(); i++) {
             rows.add(new KeyboardRow());
-            for (InnerKeyboardButton button : buttons.get(i)) {
+            for (KeyboardButton button : buttons.get(i)) {
                 rows.get(i).add(toTgKeyboardButton(button));
             }
         }
@@ -84,17 +82,17 @@ public class HttpMapper {
         return replyKeyboardMarkup;
     }
 
-    public VkKeyboardButton toVkKeyboardButton(InnerKeyboardButton innerKeyboardButton) {
+    public VkKeyboardButton toVkKeyboardButton(KeyboardButton keyboardButton) {
         return new VkKeyboardButton(
                 new VkKeyboardButtonActionText(
-                        innerKeyboardButton.getText(),
-                        innerKeyboardButton.getPayload().orElse(DEFAULT_PAYLOAD),
+                        keyboardButton.getText(),
+                        keyboardButton.getPayload().orElse(DEFAULT_PAYLOAD),
                         VkKeyboardButtonActionType.TEXT
                 ), VkKeyboardButtonColor.PRIMARY);
     }
 
-    public KeyboardButton toTgKeyboardButton(InnerKeyboardButton innerKeyboardButton) {
-        return new KeyboardButton(innerKeyboardButton.getText());
+    public org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton toTgKeyboardButton(KeyboardButton keyboardButton) {
+        return new org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton(keyboardButton.getText());
     }
 
     private String removeEmoji(String text) {

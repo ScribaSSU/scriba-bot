@@ -1,8 +1,9 @@
-package com.scribassu.scribabot.services.bot;
+package com.scribassu.scribabot.services.bot_message;
 
 import com.scribassu.scribabot.generators.InnerKeyboardGenerator;
 import com.scribassu.scribabot.model.BotMessage;
 import com.scribassu.scribabot.model.Command;
+import com.scribassu.scribabot.services.BotUserService;
 import com.scribassu.scribabot.text.CommandText;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +23,7 @@ public class GreetingsService {
 
     public CompletableFuture<BotMessage> getBotMessage(Command command) {
         var registeredUserResult = botUserService.isBotUserRegistered(command);
-        var botUser = registeredUserResult.getInnerBotUser();
+        var botUser = registeredUserResult.getBotUser();
         var registered = registeredUserResult.isRegistered();
         var message = command.getMessage();
 

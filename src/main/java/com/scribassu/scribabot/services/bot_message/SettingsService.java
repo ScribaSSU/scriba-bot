@@ -1,12 +1,14 @@
-package com.scribassu.scribabot.services.bot;
+package com.scribassu.scribabot.services.bot_message;
 
 import com.scribassu.scribabot.entities.notifications.*;
 import com.scribassu.scribabot.generators.InnerKeyboardGenerator;
 import com.scribassu.scribabot.model.BotMessage;
-import com.scribassu.scribabot.model.InnerBotUser;
+import com.scribassu.scribabot.model.BotUser;
 import com.scribassu.scribabot.repositories.notifications.*;
+import com.scribassu.scribabot.services.BotMessageService;
+import com.scribassu.scribabot.services.BotUserService;
 import com.scribassu.scribabot.text.CommandText;
-import com.scribassu.scribabot.util.BotUserSource;
+import com.scribassu.scribabot.model.BotUserSource;
 import com.scribassu.scribabot.util.DepartmentConverter;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +39,7 @@ public class SettingsService implements BotMessageService {
     private final InnerKeyboardGenerator innerKeyboardGenerator;
 
     @Override
-    public CompletableFuture<BotMessage> getBotMessage(String message, InnerBotUser botUser) {
+    public CompletableFuture<BotMessage> getBotMessage(String message, BotUser botUser) {
         BotMessage botMessage = new BotMessage();
         String userId = botUser.getUserId();
         BotUserSource source = botUser.getSource();
@@ -86,10 +88,10 @@ public class SettingsService implements BotMessageService {
                 botUserService.setSilentEmptyDays(true, botUser);
                 return CompletableFuture.completedFuture(new BotMessage(DISABLE_SEND_EMPTY_SCHEDULE_NOTIFICATION, innerKeyboardGenerator.settings(botUser), botUser));
             case CommandText.CURRENT_USER_SETTINGS:
-                String scheduleNotificationSettings = InnerBotUser.isBotUserFullTime(botUser) ?
+                String scheduleNotificationSettings = BotUser.isBotUserFullTime(botUser) ?
                         getScheduleNotificationSettingsFullTime(botUser)
                         : getScheduleNotificationSettingsExtramural(botUser);
-                String weekTypeFilterSettings = InnerBotUser.isBotUserFullTime(botUser) ?
+                String weekTypeFilterSettings = BotUser.isBotUserFullTime(botUser) ?
                         "\n\n" + "Фильтрация по типу недели: " + (botUser.isFilterNomDenom() ? "вкл." : "выкл.") : "";
                 String silentDaysSettings = "\n\n" + "Рассылка, когда пар нет: " + (botUser.isSilentEmptyDays() ? "не присылается" : "присылается");
                 String sentKeyboardSettings = "\n\n" + (botUser.isSentKeyboard() ? "Клавиатура бота: присылается" : "Клавиатура бота: не присылается");
@@ -130,7 +132,7 @@ public class SettingsService implements BotMessageService {
                 scheduleTomorrowNotificationRepository.save(scheduleTomorrowNotification);
             }
             if (botUser.getPreviousUserMessage().equalsIgnoreCase(CHOOSE_EXAM_PERIOD_NOTIFICATION_TIME_TODAY)) {
-                if (InnerBotUser.isBotUserFullTime(botUser)) {
+                if (BotUser.isBotUserFullTime(botUser)) {
                     ExamPeriodTodayNotification examPeriodTodayNotification =
                             examPeriodTodayNotificationRepository.findByUserIdAndUserSource(userId, source);
 
@@ -153,7 +155,7 @@ public class SettingsService implements BotMessageService {
                 }
             }
             if (botUser.getPreviousUserMessage().equalsIgnoreCase(CHOOSE_EXAM_PERIOD_NOTIFICATION_TIME_TOMORROW)) {
-                if (InnerBotUser.isBotUserFullTime(botUser)) {
+                if (BotUser.isBotUserFullTime(botUser)) {
                     ExamPeriodTomorrowNotification examPeriodTomorrowNotification =
                             examPeriodTomorrowNotificationRepository.findByUserIdAndUserSource(userId, source);
 
@@ -176,7 +178,7 @@ public class SettingsService implements BotMessageService {
                 }
             }
             if (botUser.getPreviousUserMessage().equalsIgnoreCase(CHOOSE_EXAM_PERIOD_NOTIFICATION_TIME_AFTER_TOMORROW)) {
-                if (InnerBotUser.isBotUserFullTime(botUser)) {
+                if (BotUser.isBotUserFullTime(botUser)) {
                     ExamPeriodAfterTomorrowNotification examPeriodAfterTomorrowNotification =
                             examPeriodAfterTomorrowNotificationRepository.findByUserIdAndUserSource(userId, source);
 
@@ -205,7 +207,7 @@ public class SettingsService implements BotMessageService {
         return CompletableFuture.completedFuture(botMessage);
     }
 
-    private CompletableFuture<BotMessage> todayNotificationsSchedule(String message, InnerBotUser botUser) {
+    private CompletableFuture<BotMessage> todayNotificationsSchedule(String message, BotUser botUser) {
         BotMessage botMessage = new BotMessage();
         String userId = botUser.getUserId();
         BotUserSource source = botUser.getSource();
@@ -250,7 +252,7 @@ public class SettingsService implements BotMessageService {
         return CompletableFuture.completedFuture(botMessage);
     }
 
-    private CompletableFuture<BotMessage> todayNotificationsExamPeriod(String message, InnerBotUser botUser) {
+    private CompletableFuture<BotMessage> todayNotificationsExamPeriod(String message, BotUser botUser) {
         BotMessage botMessage = new BotMessage();
         String userId = botUser.getUserId();
         BotUserSource source = botUser.getSource();
@@ -261,7 +263,7 @@ public class SettingsService implements BotMessageService {
                 botUserService.updatePreviousUserMessage(formatSchedule, botUser);
                 return CompletableFuture.completedFuture(new BotMessage(formatSchedule, innerKeyboardGenerator.hours(), botUser));
             case CommandText.ENABLE_SEND_EXAM_PERIOD_TODAY:
-                if (InnerBotUser.isBotUserFullTime(botUser)) {
+                if (BotUser.isBotUserFullTime(botUser)) {
                     ExamPeriodTodayNotification examPeriodTodayNotificationEn =
                             examPeriodTodayNotificationRepository.findByUserIdAndUserSource(userId, source);
                     if (null != examPeriodTodayNotificationEn) {
@@ -276,7 +278,7 @@ public class SettingsService implements BotMessageService {
                                 NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_TODAY_FRMTD,
                                 innerKeyboardGenerator.settingsExamNotification(botUser), botUser));
                     }
-                } else if (InnerBotUser.isBotUserExtramural(botUser)) {
+                } else if (BotUser.isBotUserExtramural(botUser)) {
                     ExtramuralEventTodayNotification extramuralEventTodayNotificationEn =
                             extramuralEventTodayNotificationRepository.findByUserIdAndUserSource(userId, source);
                     if (null != extramuralEventTodayNotificationEn) {
@@ -294,7 +296,7 @@ public class SettingsService implements BotMessageService {
                 }
                 break;
             case CommandText.DISABLE_SEND_EXAM_PERIOD_TODAY:
-                if (InnerBotUser.isBotUserFullTime(botUser)) {
+                if (BotUser.isBotUserFullTime(botUser)) {
                     ExamPeriodTodayNotification examPeriodTodayNotificationDis =
                             examPeriodTodayNotificationRepository.findByUserIdAndUserSource(userId, source);
                     if (null != examPeriodTodayNotificationDis) {
@@ -308,7 +310,7 @@ public class SettingsService implements BotMessageService {
                                 NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_TODAY_FRMTD,
                                 innerKeyboardGenerator.settingsExamNotification(botUser), botUser));
                     }
-                } else if (InnerBotUser.isBotUserExtramural(botUser)) {
+                } else if (BotUser.isBotUserExtramural(botUser)) {
                     ExtramuralEventTodayNotification extramuralEventTodayNotificationDis =
                             extramuralEventTodayNotificationRepository.findByUserIdAndUserSource(userId, source);
                     if (null != extramuralEventTodayNotificationDis) {
@@ -328,7 +330,7 @@ public class SettingsService implements BotMessageService {
         return CompletableFuture.completedFuture(botMessage);
     }
 
-    private CompletableFuture<BotMessage> tomorrowNotificationsSchedule(String message, InnerBotUser botUser) {
+    private CompletableFuture<BotMessage> tomorrowNotificationsSchedule(String message, BotUser botUser) {
         BotMessage botMessage = new BotMessage();
         String userId = botUser.getUserId();
         BotUserSource source = botUser.getSource();
@@ -373,7 +375,7 @@ public class SettingsService implements BotMessageService {
         return CompletableFuture.completedFuture(botMessage);
     }
 
-    private CompletableFuture<BotMessage> tomorrowNotificationsExamPeriod(String message, InnerBotUser botUser) {
+    private CompletableFuture<BotMessage> tomorrowNotificationsExamPeriod(String message, BotUser botUser) {
         var botMessage = new BotMessage();
         String userId = botUser.getUserId();
         BotUserSource source = botUser.getSource();
@@ -384,7 +386,7 @@ public class SettingsService implements BotMessageService {
                 botUserService.updatePreviousUserMessage(formatSchedule, botUser);
                 return CompletableFuture.completedFuture(new BotMessage(formatSchedule, innerKeyboardGenerator.hours(), botUser));
             case CommandText.ENABLE_SEND_EXAM_PERIOD_TOMORROW:
-                if (InnerBotUser.isBotUserFullTime(botUser)) {
+                if (BotUser.isBotUserFullTime(botUser)) {
                     ExamPeriodTomorrowNotification examPeriodTomorrowNotificationEn =
                             examPeriodTomorrowNotificationRepository.findByUserIdAndUserSource(userId, source);
                     if (null != examPeriodTomorrowNotificationEn) {
@@ -399,7 +401,7 @@ public class SettingsService implements BotMessageService {
                                 NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_TOMORROW_FRMTD,
                                 innerKeyboardGenerator.settingsExamNotification(botUser), botUser));
                     }
-                } else if (InnerBotUser.isBotUserExtramural(botUser)) {
+                } else if (BotUser.isBotUserExtramural(botUser)) {
                     ExtramuralEventTomorrowNotification extramuralEventTomorrowNotificationEn =
                             extramuralEventTomorrowNotificationRepository.findByUserIdAndUserSource(userId, source);
                     if (null != extramuralEventTomorrowNotificationEn) {
@@ -417,7 +419,7 @@ public class SettingsService implements BotMessageService {
                 }
                 break;
             case CommandText.DISABLE_SEND_EXAM_PERIOD_TOMORROW:
-                if (InnerBotUser.isBotUserFullTime(botUser)) {
+                if (BotUser.isBotUserFullTime(botUser)) {
                     ExamPeriodTomorrowNotification examPeriodTomorrowNotificationDis =
                             examPeriodTomorrowNotificationRepository.findByUserIdAndUserSource(userId, source);
                     if (null != examPeriodTomorrowNotificationDis) {
@@ -431,7 +433,7 @@ public class SettingsService implements BotMessageService {
                                 NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_TOMORROW_FRMTD,
                                 innerKeyboardGenerator.settingsExamNotification(botUser), botUser));
                     }
-                } else if (InnerBotUser.isBotUserExtramural(botUser)) {
+                } else if (BotUser.isBotUserExtramural(botUser)) {
                     ExtramuralEventTomorrowNotification extramuralEventTomorrowNotificationDis =
                             extramuralEventTomorrowNotificationRepository.findByUserIdAndUserSource(userId, source);
                     if (null != extramuralEventTomorrowNotificationDis) {
@@ -451,7 +453,7 @@ public class SettingsService implements BotMessageService {
         return CompletableFuture.completedFuture(botMessage);
     }
 
-    private CompletableFuture<BotMessage> afterTomorrowNotificationsExamPeriod(String message, InnerBotUser botUser) {
+    private CompletableFuture<BotMessage> afterTomorrowNotificationsExamPeriod(String message, BotUser botUser) {
         BotMessage botMessage = new BotMessage();
         String userId = botUser.getUserId();
         BotUserSource source = botUser.getSource();
@@ -462,7 +464,7 @@ public class SettingsService implements BotMessageService {
                 botUserService.updatePreviousUserMessage(formatSchedule, botUser);
                 return CompletableFuture.completedFuture(new BotMessage(formatSchedule, innerKeyboardGenerator.hours(), botUser));
             case CommandText.ENABLE_SEND_EXAM_PERIOD_AFTER_TOMORROW:
-                if (InnerBotUser.isBotUserFullTime(botUser)) {
+                if (BotUser.isBotUserFullTime(botUser)) {
                     ExamPeriodAfterTomorrowNotification examPeriodAfterTomorrowNotificationEn =
                             examPeriodAfterTomorrowNotificationRepository.findByUserIdAndUserSource(userId, source);
                     if (null != examPeriodAfterTomorrowNotificationEn) {
@@ -477,7 +479,7 @@ public class SettingsService implements BotMessageService {
                                 NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_AFTER_TOMORROW_FRMTD,
                                 innerKeyboardGenerator.settingsExamNotification(botUser), botUser));
                     }
-                } else if (InnerBotUser.isBotUserExtramural(botUser)) {
+                } else if (BotUser.isBotUserExtramural(botUser)) {
                     ExtramuralEventAfterTomorrowNotification extramuralEventAfterTomorrowNotificationEn =
                             extramuralEventAfterTomorrowNotificationRepository.findByUserIdAndUserSource(userId, source);
                     if (null != extramuralEventAfterTomorrowNotificationEn) {
@@ -495,7 +497,7 @@ public class SettingsService implements BotMessageService {
                 }
                 break;
             case CommandText.DISABLE_SEND_EXAM_PERIOD_AFTER_TOMORROW:
-                if (InnerBotUser.isBotUserFullTime(botUser)) {
+                if (BotUser.isBotUserFullTime(botUser)) {
                     ExamPeriodAfterTomorrowNotification examPeriodAfterTomorrowNotificationDis =
                             examPeriodAfterTomorrowNotificationRepository.findByUserIdAndUserSource(userId, source);
                     if (null != examPeriodAfterTomorrowNotificationDis) {
@@ -509,7 +511,7 @@ public class SettingsService implements BotMessageService {
                                 NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_AFTER_TOMORROW_FRMTD,
                                 innerKeyboardGenerator.settingsExamNotification(botUser), botUser));
                     }
-                } else if (InnerBotUser.isBotUserExtramural(botUser)) {
+                } else if (BotUser.isBotUserExtramural(botUser)) {
                     ExtramuralEventAfterTomorrowNotification extramuralEventAfterTomorrowNotificationDis =
                             extramuralEventAfterTomorrowNotificationRepository.findByUserIdAndUserSource(userId, source);
                     if (null != extramuralEventAfterTomorrowNotificationDis) {
@@ -529,7 +531,7 @@ public class SettingsService implements BotMessageService {
     }
 
 
-    private String getStudentInfo(InnerBotUser botUser) {
+    private String getStudentInfo(BotUser botUser) {
         String department = firstNotEmpty(botUser.getDepartment());
         department = department.equals("не указано")
                 ? department
@@ -539,7 +541,7 @@ public class SettingsService implements BotMessageService {
                 "Группа: " + firstNotEmpty(botUser.getGroupNumber()) + "\n";
     }
 
-    private String getScheduleNotificationSettingsFullTime(InnerBotUser botUser) {
+    private String getScheduleNotificationSettingsFullTime(BotUser botUser) {
         String userId = botUser.getUserId();
         BotUserSource source = botUser.getSource();
 
@@ -656,7 +658,7 @@ public class SettingsService implements BotMessageService {
         return stringBuilder.toString();
     }
 
-    private String getScheduleNotificationSettingsExtramural(InnerBotUser botUser) {
+    private String getScheduleNotificationSettingsExtramural(BotUser botUser) {
         String userId = botUser.getUserId();
         BotUserSource source = botUser.getSource();
 

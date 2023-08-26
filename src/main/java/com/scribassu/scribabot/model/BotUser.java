@@ -2,7 +2,6 @@ package com.scribassu.scribabot.model;
 
 import com.scribassu.scribabot.entities.users.TgBotUser;
 import com.scribassu.scribabot.entities.users.VkBotUser;
-import com.scribassu.scribabot.util.BotUserSource;
 import com.scribassu.scribabot.util.Constants;
 import com.scribassu.tracto.domain.EducationForm;
 import lombok.AllArgsConstructor;
@@ -10,7 +9,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class InnerBotUser {
+public class BotUser {
 
     private BotUserSource source;
     private String userId;
@@ -22,13 +21,13 @@ public class InnerBotUser {
     private boolean silentEmptyDays;
     private boolean sentKeyboard;
 
-    public InnerBotUser() {
+    public BotUser() {
         this.sentKeyboard = true;
         this.silentEmptyDays = false;
         this.filterNomDenom = false;
     }
 
-    public InnerBotUser(BotUserSource source, String userId) {
+    public BotUser(BotUserSource source, String userId) {
         this.source = source;
         this.userId = userId;
         this.sentKeyboard = true;
@@ -36,7 +35,7 @@ public class InnerBotUser {
         this.filterNomDenom = false;
     }
 
-    public InnerBotUser(VkBotUser vkBotUser) {
+    public BotUser(VkBotUser vkBotUser) {
         this.source = BotUserSource.VK;
         this.userId = vkBotUser.getUserId();
         this.department = vkBotUser.getDepartment();
@@ -48,7 +47,7 @@ public class InnerBotUser {
         this.sentKeyboard = vkBotUser.isSentKeyboard();
     }
 
-    public InnerBotUser(TgBotUser tgBotUser) {
+    public BotUser(TgBotUser tgBotUser) {
         this.source = BotUserSource.TG;
         this.userId = tgBotUser.getUserId();
         this.department = tgBotUser.getDepartment();
@@ -76,14 +75,14 @@ public class InnerBotUser {
         return this.previousUserMessage.startsWith(Constants.TEACHER_ID);
     }
 
-    public static boolean isBotUserFullTime(InnerBotUser botUser) {
+    public static boolean isBotUserFullTime(BotUser botUser) {
         return botUser != null
                 && botUser.getEducationForm() != null
                 && EducationForm.DO.getGroupType().equalsIgnoreCase(botUser.getEducationForm())
                 && !botUser.getGroupNumber().isBlank();
     }
 
-    public static boolean isBotUserExtramural(InnerBotUser botUser) {
+    public static boolean isBotUserExtramural(BotUser botUser) {
         return botUser != null
                 && botUser.getEducationForm() != null
                 && EducationForm.ZO.getGroupType().equalsIgnoreCase(botUser.getEducationForm())

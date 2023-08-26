@@ -1,4 +1,4 @@
-package com.scribassu.scribabot.model.inner_keyboard;
+package com.scribassu.scribabot.model.keyboard;
 
 import lombok.Data;
 
@@ -6,18 +6,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-public class InnerKeyboard {
-    private List<List<InnerKeyboardButton>> buttons;
+public class Keyboard {
+    private List<List<KeyboardButton>> buttons;
 
-    public InnerKeyboard() {
+    public Keyboard() {
         this.buttons = new ArrayList<>();
     }
 
-    public boolean add(List<InnerKeyboardButton> buttons) {
+    public boolean add(List<KeyboardButton> buttons) {
         return this.buttons.add(buttons);
     }
 
-    public List<InnerKeyboardButton> get(int index) {
+    public List<KeyboardButton> get(int index) {
         return this.buttons.get(index);
     }
 

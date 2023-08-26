@@ -1,9 +1,7 @@
 package com.scribassu.scribabot.entities.notifications;
 
 
-import com.scribassu.scribabot.util.BotUserSource;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.scribassu.scribabot.model.BotUserSource;
 
 import javax.persistence.*;
 

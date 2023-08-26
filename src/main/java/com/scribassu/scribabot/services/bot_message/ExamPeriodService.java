@@ -1,11 +1,12 @@
-package com.scribassu.scribabot.services.bot;
+package com.scribassu.scribabot.services.bot_message;
 
 import com.scribassu.scribabot.dto.rest.ExamPeriodEventDto;
 import com.scribassu.scribabot.dto.rest.TeacherExamPeriodEventDto;
 import com.scribassu.scribabot.generators.BotMessageGenerator;
 import com.scribassu.scribabot.model.BotMessage;
-import com.scribassu.scribabot.model.InnerBotUser;
+import com.scribassu.scribabot.model.BotUser;
 import com.scribassu.scribabot.services.CallRestService;
+import com.scribassu.scribabot.services.BotMessageService;
 import com.scribassu.scribabot.text.CommandText;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +23,7 @@ public class ExamPeriodService implements BotMessageService {
     private final BotMessageGenerator botMessageGenerator;
 
     @Override
-    public CompletableFuture<BotMessage> getBotMessage(String message, InnerBotUser botUser) {
+    public CompletableFuture<BotMessage> getBotMessage(String message, BotUser botUser) {
         if (botUser.wantTeacherSchedule()) {
             return getTeacherBotMessage(message, botUser);
         } else {
@@ -30,7 +31,7 @@ public class ExamPeriodService implements BotMessageService {
         }
     }
 
-    private CompletableFuture<BotMessage> getTeacherBotMessage(String message, InnerBotUser botUser) {
+    private CompletableFuture<BotMessage> getTeacherBotMessage(String message, BotUser botUser) {
         String teacherId = botUser.getPreviousUserMessage().split(" ")[1];
         if (message.equalsIgnoreCase(CommandText.EXAMS)) {
             TeacherExamPeriodEventDto examPeriodEventDto = callRestService.getTeacherExamPeriodEvents(teacherId);
@@ -44,7 +45,7 @@ public class ExamPeriodService implements BotMessageService {
         }
     }
 
-    private CompletableFuture<BotMessage> getStudentBotMessage(String message, InnerBotUser botUser) {
+    private CompletableFuture<BotMessage> getStudentBotMessage(String message, BotUser botUser) {
         if (message.equalsIgnoreCase(CommandText.EXAMS)) {
             ExamPeriodEventDto examPeriodEventDto = callRestService.getFullTimeExamPeriodEvent(
                     botUser.getDepartment(),
