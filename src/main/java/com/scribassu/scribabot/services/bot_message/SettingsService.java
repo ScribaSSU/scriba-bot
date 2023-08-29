@@ -4,11 +4,11 @@ import com.scribassu.scribabot.entities.notifications.*;
 import com.scribassu.scribabot.generators.InnerKeyboardGenerator;
 import com.scribassu.scribabot.model.BotMessage;
 import com.scribassu.scribabot.model.BotUser;
+import com.scribassu.scribabot.model.BotUserSource;
 import com.scribassu.scribabot.repositories.notifications.*;
 import com.scribassu.scribabot.services.BotMessageService;
 import com.scribassu.scribabot.services.BotUserService;
 import com.scribassu.scribabot.text.CommandText;
-import com.scribassu.scribabot.model.BotUserSource;
 import com.scribassu.scribabot.util.DepartmentConverter;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +23,7 @@ import static com.scribassu.scribabot.text.MessageText.*;
 // 1038
 // 984
 // 734
+// todo notification logic
 @Service
 @Slf4j
 @Data
@@ -44,19 +45,19 @@ public class SettingsService implements BotMessageService {
         String userId = botUser.getUserId();
         BotUserSource source = botUser.getSource();
 
+        if (forFullTimeScheduleTodayNotification(message)) {
+            return processFullTimeScheduleTodayNotification(message, botUser);
+        }
+
+        if (forFullTimeScheduleTomorrowNotification(message)) {
+            return processFullTimeScheduleTomorrowNotification(message, botUser);
+        }
+
         switch (message) {
             case CommandText.SEND_EXAM_PERIOD:
                 return CompletableFuture.completedFuture(new BotMessage(HERE_EXAM_PERIOD_NOTIFICATION, innerKeyboardGenerator.settingsExamNotification(botUser), botUser));
             case CommandText.SEND_SCHEDULE:
                 return CompletableFuture.completedFuture(new BotMessage(HERE_SCHEDULE_NOTIFICATION, innerKeyboardGenerator.settingsScheduleNotification(botUser), botUser));
-            case CommandText.SET_SEND_SCHEDULE_TIME_TODAY:
-            case CommandText.ENABLE_SEND_SCHEDULE_TODAY:
-            case CommandText.DISABLE_SEND_SCHEDULE_TODAY:
-                return todayNotificationsSchedule(message, botUser);
-            case CommandText.SET_SEND_SCHEDULE_TIME_TOMORROW:
-            case CommandText.ENABLE_SEND_SCHEDULE_TOMORROW:
-            case CommandText.DISABLE_SEND_SCHEDULE_TOMORROW:
-                return tomorrowNotificationsSchedule(message, botUser);
             case CommandText.SET_SEND_EXAM_PERIOD_TIME_TODAY:
             case CommandText.ENABLE_SEND_EXAM_PERIOD_TODAY:
             case CommandText.DISABLE_SEND_EXAM_PERIOD_TODAY:
@@ -88,15 +89,7 @@ public class SettingsService implements BotMessageService {
                 botUserService.setSilentEmptyDays(true, botUser);
                 return CompletableFuture.completedFuture(new BotMessage(DISABLE_SEND_EMPTY_SCHEDULE_NOTIFICATION, innerKeyboardGenerator.settings(botUser), botUser));
             case CommandText.CURRENT_USER_SETTINGS:
-                String scheduleNotificationSettings = BotUser.isBotUserFullTime(botUser) ?
-                        getScheduleNotificationSettingsFullTime(botUser)
-                        : getScheduleNotificationSettingsExtramural(botUser);
-                String weekTypeFilterSettings = BotUser.isBotUserFullTime(botUser) ?
-                        "\n\n" + "Фильтрация по типу недели: " + (botUser.isFilterNomDenom() ? "вкл." : "выкл.") : "";
-                String silentDaysSettings = "\n\n" + "Рассылка, когда пар нет: " + (botUser.isSilentEmptyDays() ? "не присылается" : "присылается");
-                String sentKeyboardSettings = "\n\n" + (botUser.isSentKeyboard() ? "Клавиатура бота: присылается" : "Клавиатура бота: не присылается");
-                String currentUserSettings = getStudentInfo(botUser) + "\n" + scheduleNotificationSettings + weekTypeFilterSettings + silentDaysSettings + sentKeyboardSettings;
-                return CompletableFuture.completedFuture(new BotMessage(currentUserSettings, innerKeyboardGenerator.settings(botUser), botUser));
+                return getCurrentUserSettings(botUser);
             case CommandText.DELETE_PROFILE:
                 return CompletableFuture.completedFuture(new BotMessage(DELETE_CONFIRMATION, innerKeyboardGenerator.confirmDeletion(), botUser));
             case CommandText.NO:
@@ -110,15 +103,16 @@ public class SettingsService implements BotMessageService {
             int hourForSend = Integer.parseInt(message.substring(0, message.indexOf(" ")));
 
             if (botUser.getPreviousUserMessage().equalsIgnoreCase(CHOOSE_SCHEDULE_NOTIFICATION_TIME_TODAY)) {
-                ScheduleTodayNotification scheduleTodayNotification =
+                var scheduleTodayNotificationOptional =
                         scheduleTodayNotificationRepository.findByUserIdAndUserSource(userId, source);
 
-                if (null == scheduleTodayNotification) {
-                    scheduleTodayNotification = new ScheduleTodayNotification(userId, source, true, hourForSend);
+                if (scheduleTodayNotificationOptional.isEmpty()) {
+                    scheduleTodayNotificationRepository.save(new ScheduleTodayNotification(userId, source, true, hourForSend));
                 } else {
+                    var scheduleTodayNotification = scheduleTodayNotificationOptional.get();
                     scheduleTodayNotification.setHourForSend(hourForSend);
+                    scheduleTodayNotificationRepository.save(scheduleTodayNotification);
                 }
-                scheduleTodayNotificationRepository.save(scheduleTodayNotification);
             }
             if (botUser.getPreviousUserMessage().equalsIgnoreCase(CHOOSE_SCHEDULE_NOTIFICATION_TIME_TOMORROW)) {
                 ScheduleTomorrowNotification scheduleTomorrowNotification =
@@ -207,10 +201,13 @@ public class SettingsService implements BotMessageService {
         return CompletableFuture.completedFuture(botMessage);
     }
 
-    private CompletableFuture<BotMessage> todayNotificationsSchedule(String message, BotUser botUser) {
+    private CompletableFuture<BotMessage> processFullTimeScheduleTodayNotification(String message, BotUser botUser) {
         BotMessage botMessage = new BotMessage();
         String userId = botUser.getUserId();
         BotUserSource source = botUser.getSource();
+
+        var scheduleTodayNotificationOptional =
+                scheduleTodayNotificationRepository.findByUserIdAndUserSource(userId, source);
 
         switch (message) {
             case CommandText.SET_SEND_SCHEDULE_TIME_TODAY:
@@ -218,9 +215,12 @@ public class SettingsService implements BotMessageService {
                 botUserService.updatePreviousUserMessage(formatSchedule, botUser);
                 return CompletableFuture.completedFuture(new BotMessage(formatSchedule, innerKeyboardGenerator.hours(), botUser));
             case CommandText.ENABLE_SEND_SCHEDULE_TODAY:
-                ScheduleTodayNotification scheduleTodayNotificationEn =
-                        scheduleTodayNotificationRepository.findByUserIdAndUserSource(userId, source);
-                if (null != scheduleTodayNotificationEn) {
+                if (scheduleTodayNotificationOptional.isEmpty()) {
+                    return CompletableFuture.completedFuture(new BotMessage(
+                            NOT_ENABLE_SCHEDULE_NOTIFICATION_TODAY_FRMTD,
+                            innerKeyboardGenerator.settingsScheduleNotification(botUser), botUser));
+                } else {
+                    var scheduleTodayNotificationEn = scheduleTodayNotificationOptional.get();
                     scheduleTodayNotificationEn.setEnabled(true);
                     scheduleTodayNotificationRepository.save(scheduleTodayNotificationEn);
                     String enableNotificationMessage = String.format(SCHEDULE_WILL_BE_SENT, TODAY) +
@@ -228,23 +228,18 @@ public class SettingsService implements BotMessageService {
                     return CompletableFuture.completedFuture(new BotMessage(
                             enableNotificationMessage,
                             innerKeyboardGenerator.settingsScheduleNotification(botUser), botUser));
-                } else {
+                }
+            case CommandText.DISABLE_SEND_SCHEDULE_TODAY:
+                if (scheduleTodayNotificationOptional.isEmpty()) {
                     return CompletableFuture.completedFuture(new BotMessage(
                             NOT_ENABLE_SCHEDULE_NOTIFICATION_TODAY_FRMTD,
                             innerKeyboardGenerator.settingsScheduleNotification(botUser), botUser));
-                }
-            case CommandText.DISABLE_SEND_SCHEDULE_TODAY:
-                ScheduleTodayNotification scheduleTodayNotificationDis =
-                        scheduleTodayNotificationRepository.findByUserIdAndUserSource(userId, source);
-                if (null != scheduleTodayNotificationDis) {
+                } else {
+                    var scheduleTodayNotificationDis = scheduleTodayNotificationOptional.get();
                     scheduleTodayNotificationDis.setEnabled(false);
                     scheduleTodayNotificationRepository.save(scheduleTodayNotificationDis);
                     return CompletableFuture.completedFuture(new BotMessage(
                             String.format(SCHEDULE_IS_DISABLED, TODAY),
-                            innerKeyboardGenerator.settingsScheduleNotification(botUser), botUser));
-                } else {
-                    return CompletableFuture.completedFuture(new BotMessage(
-                            NOT_ENABLE_SCHEDULE_NOTIFICATION_TODAY_FRMTD,
                             innerKeyboardGenerator.settingsScheduleNotification(botUser), botUser));
                 }
         }
@@ -330,7 +325,7 @@ public class SettingsService implements BotMessageService {
         return CompletableFuture.completedFuture(botMessage);
     }
 
-    private CompletableFuture<BotMessage> tomorrowNotificationsSchedule(String message, BotUser botUser) {
+    private CompletableFuture<BotMessage> processFullTimeScheduleTomorrowNotification(String message, BotUser botUser) {
         BotMessage botMessage = new BotMessage();
         String userId = botUser.getUserId();
         BotUserSource source = botUser.getSource();
@@ -530,6 +525,20 @@ public class SettingsService implements BotMessageService {
         return CompletableFuture.completedFuture(botMessage);
     }
 
+    private CompletableFuture<BotMessage> getCurrentUserSettings(BotUser botUser) {
+        String scheduleNotificationSettings = BotUser.isBotUserFullTime(botUser) ?
+                getScheduleNotificationSettingsFullTime(botUser)
+                : getScheduleNotificationSettingsExtramural(botUser);
+        String weekTypeFilterSettings = BotUser.isBotUserFullTime(botUser) ?
+                "\n\n" + "Фильтрация по типу недели: " + (botUser.isFilterNomDenom() ? "вкл." : "выкл.") : "";
+        String silentDaysSettings = "\n\n" + "Рассылка, когда пар нет: " + (botUser.isSilentEmptyDays() ? "не присылается" : "присылается");
+        String sentKeyboardSettings = "\n\n" + (botUser.isSentKeyboard() ? "Клавиатура бота: присылается" : "Клавиатура бота: не присылается");
+        String currentUserSettings = getStudentInfo(botUser) + "\n" + scheduleNotificationSettings + weekTypeFilterSettings + silentDaysSettings + sentKeyboardSettings;
+
+        return CompletableFuture.completedFuture(new BotMessage(currentUserSettings, innerKeyboardGenerator.settings(botUser), botUser));
+
+    }
+
 
     private String getStudentInfo(BotUser botUser) {
         String department = firstNotEmpty(botUser.getDepartment());
@@ -545,25 +554,22 @@ public class SettingsService implements BotMessageService {
         String userId = botUser.getUserId();
         BotUserSource source = botUser.getSource();
 
-        ScheduleTodayNotification scheduleTodayNotification =
+        var scheduleTodayNotificationOptional =
                 scheduleTodayNotificationRepository.findByUserIdAndUserSource(userId, source);
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("Рассылка расписания на сегодня: ");
 
-        if (null == scheduleTodayNotification) {
+        if (scheduleTodayNotificationOptional.isEmpty()) {
             stringBuilder.append("не подключена.");
         } else {
+            var scheduleTodayNotification = scheduleTodayNotificationOptional.get();
             if (scheduleTodayNotification.isEnabled()) {
                 stringBuilder.append("вкл, ");
             } else {
                 stringBuilder.append("выкл, ");
             }
 
-            if (null == scheduleTodayNotification.getHourForSend()) {
-                stringBuilder.append("время не указано.");
-            } else {
-                stringBuilder.append(scheduleTodayNotification.getHourForSend()).append(H_DOT);
-            }
+            stringBuilder.append(scheduleTodayNotification.getHourForSend()).append(H_DOT);
         }
 
         stringBuilder.append("\n\n");
@@ -733,5 +739,17 @@ public class SettingsService implements BotMessageService {
 
     private String firstNotEmpty(String string) {
         return StringUtils.isEmpty(string) ? "не указано" : string;
+    }
+
+    private boolean forFullTimeScheduleTodayNotification(String message) {
+        return message.equals(CommandText.SET_SEND_SCHEDULE_TIME_TODAY)
+                || message.equals(CommandText.ENABLE_SEND_SCHEDULE_TODAY)
+                || message.equals(CommandText.DISABLE_SEND_SCHEDULE_TODAY);
+    }
+
+    private boolean forFullTimeScheduleTomorrowNotification(String message) {
+        return message.equals(CommandText.SET_SEND_SCHEDULE_TIME_TOMORROW)
+                || message.equals(CommandText.ENABLE_SEND_SCHEDULE_TOMORROW)
+                || message.equals(CommandText.DISABLE_SEND_SCHEDULE_TOMORROW);
     }
 }

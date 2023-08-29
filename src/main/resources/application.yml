@@ -21,6 +21,7 @@ scheduled:
     cron:
   schedule-after-tomorrow-notification-service:
     cron:
+  default-hour-for-send:
 
 week-type:
   access-token:

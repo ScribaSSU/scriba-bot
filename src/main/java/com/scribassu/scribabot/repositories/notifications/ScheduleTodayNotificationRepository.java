@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ScheduleTodayNotificationRepository extends JpaRepository<ScheduleTodayNotification, Long> {
@@ -18,8 +19,8 @@ public interface ScheduleTodayNotificationRepository extends JpaRepository<Sched
     List<ScheduleTodayNotification> findByHourForSendAndEnabled(@Param("hour") int hour);
 
     @Query("select s from ScheduleTodayNotification s where s.userId = :userId and s.userSource = :userSource")
-    ScheduleTodayNotification findByUserIdAndUserSource(@Param("userId") String userId,
-                                                        @Param("userSource") BotUserSource userSource);
+    Optional<ScheduleTodayNotification> findByUserIdAndUserSource(@Param("userId") String userId,
+                                                                  @Param("userSource") BotUserSource userSource);
 
     @Modifying
     @Transactional

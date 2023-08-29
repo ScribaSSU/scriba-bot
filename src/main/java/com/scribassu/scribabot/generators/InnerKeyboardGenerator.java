@@ -1,11 +1,11 @@
 package com.scribassu.scribabot.generators;
 
+import com.scribassu.scribabot.entities.notifications.*;
 import com.scribassu.scribabot.model.BotUser;
+import com.scribassu.scribabot.model.BotUserSource;
 import com.scribassu.scribabot.model.keyboard.Keyboard;
 import com.scribassu.scribabot.model.keyboard.KeyboardButton;
-import com.scribassu.scribabot.entities.notifications.*;
 import com.scribassu.scribabot.repositories.notifications.*;
-import com.scribassu.scribabot.model.BotUserSource;
 import com.scribassu.tracto.domain.Teacher;
 import lombok.Data;
 import org.springframework.stereotype.Service;
@@ -14,8 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static com.scribassu.scribabot.util.Constants.MAX_KEYBOARD_TEXT_LENGTH;
 import static com.scribassu.scribabot.model.keyboard.KeyboardEmoji.*;
+import static com.scribassu.scribabot.util.Constants.MAX_KEYBOARD_TEXT_LENGTH;
 
 @Service
 @Data
@@ -359,12 +359,12 @@ public class InnerKeyboardGenerator {
         String userId = botUser.getUserId();
         BotUserSource source = botUser.getSource();
 
-        ScheduleTodayNotification scheduleTodayNotification = scheduleTodayNotificationRepository.findByUserIdAndUserSource(userId, source);
+        var scheduleTodayNotification = scheduleTodayNotificationRepository.findByUserIdAndUserSource(userId, source);
         ScheduleTomorrowNotification scheduleTomorrowNotification = scheduleTomorrowNotificationRepository.findByUserIdAndUserSource(userId, source);
 
         innerKeyboard.get(0).add(new KeyboardButton("Уст. время рассылки расп-я на сегодня"));
 
-        if (null != scheduleTodayNotification && scheduleTodayNotification.isEnabled()) {
+        if (scheduleTodayNotification.isPresent() && scheduleTodayNotification.get().isEnabled()) {
             innerKeyboard.get(1).add(new KeyboardButton(String.format("%1$s Выкл. рассылку расп-я на сегодня %1$s", NO_EMOJI)));
         } else {
             innerKeyboard.get(1).add(new KeyboardButton(String.format("%1$s Вкл. рассылку расп-я на сегодня %1$s", YES_EMOJI)));

@@ -37,7 +37,7 @@ public class HttpMapper {
 
         var attachments = messageObject.getAttachments();
 
-        if (!attachments.isEmpty()) {
+        if (null != attachments && !attachments.isEmpty()) {
            for (var attachment : attachments) {
                if (attachment.getType().equals(Constants.KEY_STICKER)) {
                    message = CommandText.STICKER_WAS_SENT_TO_BOT;

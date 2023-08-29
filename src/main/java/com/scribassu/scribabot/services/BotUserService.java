@@ -1,5 +1,6 @@
 package com.scribassu.scribabot.services;
 
+import com.scribassu.scribabot.entities.notifications.*;
 import com.scribassu.scribabot.entities.users.TgBotUser;
 import com.scribassu.scribabot.entities.users.VkBotUser;
 import com.scribassu.scribabot.model.Command;
@@ -13,6 +14,7 @@ import com.scribassu.scribabot.util.DepartmentConverter;
 import com.scribassu.tracto.domain.EducationForm;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import static com.scribassu.scribabot.text.MessageText.GREETING_WITH_CHOOSE_DEPARTMENT;
@@ -21,6 +23,9 @@ import static com.scribassu.scribabot.text.MessageText.GREETING_WITH_CHOOSE_DEPA
 @Slf4j
 @Data
 public class BotUserService {
+
+    @Value("${scheduled.default-hour-for-send}")
+    private int defaultHourForSend;
 
     private final VkBotUserRepository vkBotUserRepository;
     private final TgBotUserRepository tgBotUserRepository;
@@ -62,9 +67,9 @@ public class BotUserService {
         return new RegisteredUserResult(registered, botUser);
     }
 
-    // todo add notifications insert
     public void registerUser(BotUser botUser) {
         var userId = botUser.getUserId();
+        var source = botUser.getSource();
         if (botUser.fromVk()) {
             var vkBotUser = new VkBotUser(userId);
             vkBotUser = vkBotUserRepository.save(vkBotUser);
@@ -74,6 +79,15 @@ public class BotUserService {
             tgBotUser = tgBotUserRepository.save(tgBotUser);
             tgBotUserRepository.updatePreviousUserMessage(GREETING_WITH_CHOOSE_DEPARTMENT, tgBotUser.getUserId());
         }
+
+        scheduleTodayNotificationRepository.save(new ScheduleTodayNotification(userId, source, false, defaultHourForSend));
+        scheduleTomorrowNotificationRepository.save(new ScheduleTomorrowNotification(userId, source, false, defaultHourForSend));
+        examPeriodTodayNotificationRepository.save(new ExamPeriodTodayNotification(userId, source, false, defaultHourForSend));
+        examPeriodTomorrowNotificationRepository.save(new ExamPeriodTomorrowNotification(userId, source, false, defaultHourForSend));
+        examPeriodAfterTomorrowNotificationRepository.save(new ExamPeriodAfterTomorrowNotification(userId, source, false, defaultHourForSend));
+        extramuralEventTodayNotificationRepository.save(new ExtramuralEventTodayNotification(userId, source, false, defaultHourForSend));
+        extramuralEventTomorrowNotificationRepository.save(new ExtramuralEventTomorrowNotification(userId, source, false, defaultHourForSend));
+        extramuralEventAfterTomorrowNotificationRepository.save(new ExtramuralEventAfterTomorrowNotification(userId, source, false, defaultHourForSend));
     }
 
     public void resetPreviousUserMessage(BotUser botUser) {
@@ -165,16 +179,13 @@ public class BotUserService {
         } else {
             tgBotUserRepository.deleteOneById(userId);
         }
-        if (BotUser.isBotUserExtramural(botUser)) {
-            extramuralEventTodayNotificationRepository.deleteByUserIdAndUserSource(userId, botUserSource);
-            extramuralEventTomorrowNotificationRepository.deleteByUserIdAndUserSource(userId, botUserSource);
-            extramuralEventAfterTomorrowNotificationRepository.deleteByUserIdAndUserSource(userId, botUserSource);
-        } else {
-            examPeriodTodayNotificationRepository.deleteByUserIdAndUserSource(userId, botUserSource);
-            examPeriodTomorrowNotificationRepository.deleteByUserIdAndUserSource(userId, botUserSource);
-            examPeriodAfterTomorrowNotificationRepository.deleteByUserIdAndUserSource(userId, botUserSource);
-            scheduleTodayNotificationRepository.deleteByUserIdAndUserSource(userId, botUserSource);
-            scheduleTomorrowNotificationRepository.deleteByUserIdAndUserSource(userId, botUserSource);
-        }
+        extramuralEventTodayNotificationRepository.deleteByUserIdAndUserSource(userId, botUserSource);
+        extramuralEventTomorrowNotificationRepository.deleteByUserIdAndUserSource(userId, botUserSource);
+        extramuralEventAfterTomorrowNotificationRepository.deleteByUserIdAndUserSource(userId, botUserSource);
+        examPeriodTodayNotificationRepository.deleteByUserIdAndUserSource(userId, botUserSource);
+        examPeriodTomorrowNotificationRepository.deleteByUserIdAndUserSource(userId, botUserSource);
+        examPeriodAfterTomorrowNotificationRepository.deleteByUserIdAndUserSource(userId, botUserSource);
+        scheduleTodayNotificationRepository.deleteByUserIdAndUserSource(userId, botUserSource);
+        scheduleTomorrowNotificationRepository.deleteByUserIdAndUserSource(userId, botUserSource);
     }
 }
