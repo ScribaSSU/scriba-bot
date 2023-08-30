@@ -1,7 +1,5 @@
 package com.scribassu.scribabot.services.bot_message;
 
-import com.scribassu.scribabot.dto.rest.FullTimeLessonDto;
-import com.scribassu.scribabot.dto.rest.TeacherFullTimeLessonDto;
 import com.scribassu.scribabot.generators.BotMessageGenerator;
 import com.scribassu.scribabot.model.BotMessage;
 import com.scribassu.scribabot.model.BotUser;
@@ -9,6 +7,8 @@ import com.scribassu.scribabot.services.BotMessageService;
 import com.scribassu.scribabot.services.CallRestService;
 import com.scribassu.scribabot.text.CommandText;
 import com.scribassu.scribabot.util.CalendarUtils;
+import com.scribassu.tracto.dto.FullTimeLessonListDto;
+import com.scribassu.tracto.dto.TeacherFullTimeLessonListDto;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -53,7 +53,7 @@ public class FullTimeLessonService implements BotMessageService {
 
     private CompletableFuture<BotMessage> getTeacherBotMessage(String message, BotUser botUser) {
         Calendar calendar = CalendarUtils.getCalendar();
-        TeacherFullTimeLessonDto lessons = new TeacherFullTimeLessonDto();
+        TeacherFullTimeLessonListDto lessons = new TeacherFullTimeLessonListDto();
         boolean isToday = false;
         boolean isTomorrow = false;
         boolean isYesterday = false;
@@ -111,7 +111,7 @@ public class FullTimeLessonService implements BotMessageService {
 
     private CompletableFuture<BotMessage> getStudentBotMessage(String message, BotUser botUser) {
         Calendar calendar = CalendarUtils.getCalendar();
-        FullTimeLessonDto lessons = new FullTimeLessonDto();
+        FullTimeLessonListDto lessons = new FullTimeLessonListDto();
         boolean isBotUserFullTime = false;
         boolean isToday = false;
         boolean isTomorrow = false;

@@ -1,14 +1,14 @@
 package com.scribassu.scribabot.services.bot_message;
 
-import com.scribassu.scribabot.dto.rest.GroupNumbersDto;
 import com.scribassu.scribabot.generators.InnerKeyboardGenerator;
 import com.scribassu.scribabot.model.BotMessage;
 import com.scribassu.scribabot.model.BotUser;
-import com.scribassu.scribabot.services.CallRestService;
 import com.scribassu.scribabot.services.BotMessageService;
+import com.scribassu.scribabot.services.CallRestService;
 import com.scribassu.scribabot.text.MessageText;
 import com.scribassu.scribabot.util.Constants;
-import com.scribassu.tracto.domain.EducationForm;
+import com.scribassu.tracto.dto.EducationForm;
+import com.scribassu.tracto.dto.GroupNumbersDto;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

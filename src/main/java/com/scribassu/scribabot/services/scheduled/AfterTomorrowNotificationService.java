@@ -1,23 +1,22 @@
 package com.scribassu.scribabot.services.scheduled;
 
-import com.scribassu.scribabot.model.BotMessage;
-import com.scribassu.scribabot.model.BotUser;
-import com.scribassu.scribabot.dto.rest.ExamPeriodEventDto;
-import com.scribassu.scribabot.dto.rest.ExtramuralDto;
 import com.scribassu.scribabot.entities.notifications.ExamPeriodAfterTomorrowNotification;
 import com.scribassu.scribabot.entities.notifications.ExtramuralEventAfterTomorrowNotification;
 import com.scribassu.scribabot.entities.users.TgBotUser;
 import com.scribassu.scribabot.entities.users.VkBotUser;
+import com.scribassu.scribabot.generators.BotMessageGenerator;
+import com.scribassu.scribabot.message_handlers.TgMessageSender;
+import com.scribassu.scribabot.message_handlers.VkMessageSender;
+import com.scribassu.scribabot.model.BotMessage;
+import com.scribassu.scribabot.model.BotUser;
 import com.scribassu.scribabot.repositories.notifications.ExamPeriodAfterTomorrowNotificationRepository;
 import com.scribassu.scribabot.repositories.notifications.ExtramuralEventAfterTomorrowNotificationRepository;
 import com.scribassu.scribabot.repositories.users.TgBotUserRepository;
 import com.scribassu.scribabot.repositories.users.VkBotUserRepository;
 import com.scribassu.scribabot.services.CallRestService;
-import com.scribassu.scribabot.message_handlers.TgMessageSender;
-import com.scribassu.scribabot.message_handlers.VkMessageSender;
 import com.scribassu.scribabot.text.CommandText;
-import com.scribassu.scribabot.generators.BotMessageGenerator;
 import com.scribassu.scribabot.util.CalendarUtils;
+import com.scribassu.tracto.dto.ExamPeriodEventListDto;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -80,7 +79,7 @@ public class AfterTomorrowNotificationService {
                     }
                 }
                 if (BotUser.isBotUserFullTime(botUser)) {
-                    ExamPeriodEventDto examPeriodEventDto = callRestService.getFullTimeExamPeriodEventByDay(
+                    ExamPeriodEventListDto examPeriodEventDto = callRestService.getFullTimeExamPeriodEventByDay(
                             botUser.getDepartment(),
                             botUser.getGroupNumber(),
                             month,
@@ -135,7 +134,7 @@ public class AfterTomorrowNotificationService {
                     }
                 }
                 if (BotUser.isBotUserExtramural(botUser)) {
-                    ExtramuralDto extramuralDto = callRestService.getExtramuralEventsByDay(
+                    var extramuralDto = callRestService.getExtramuralEventsByDay(
                             botUser.getDepartment(),
                             botUser.getGroupNumber(),
                             month,

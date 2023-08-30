@@ -1,6 +1,6 @@
 package com.scribassu.scribabot.util;
 
-import com.scribassu.tracto.domain.WeekType;
+import com.scribassu.tracto.dto.WeekType;
 
 import java.util.Calendar;
 import java.util.TimeZone;
@@ -23,8 +23,8 @@ public class CalendarUtils {
         return dayOfWeekStartsFromMonday;
     }
 
-    public static WeekType getWeekType(Calendar calendar, int departmentShift) {
-        return (calendar.get(Calendar.WEEK_OF_YEAR) + departmentShift) % 2 == 0 ? WeekType.NOM : WeekType.DENOM;
+    public static WeekType getWeekType(Calendar calendar, boolean departmentShift) {
+        return calendar.get(Calendar.WEEK_OF_YEAR) % 2 == 0 && departmentShift ? WeekType.NOM : WeekType.DENOM;
     }
 
     public static String weekTypeToLongString(WeekType weekType) {

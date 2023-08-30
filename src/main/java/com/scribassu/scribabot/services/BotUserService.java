@@ -11,7 +11,7 @@ import com.scribassu.scribabot.repositories.notifications.*;
 import com.scribassu.scribabot.repositories.users.TgBotUserRepository;
 import com.scribassu.scribabot.repositories.users.VkBotUserRepository;
 import com.scribassu.scribabot.util.DepartmentConverter;
-import com.scribassu.tracto.domain.EducationForm;
+import com.scribassu.tracto.dto.EducationForm;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

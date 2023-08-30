@@ -3,7 +3,7 @@ package com.scribassu.scribabot.model;
 import com.scribassu.scribabot.entities.users.TgBotUser;
 import com.scribassu.scribabot.entities.users.VkBotUser;
 import com.scribassu.scribabot.util.Constants;
-import com.scribassu.tracto.domain.EducationForm;
+import com.scribassu.tracto.dto.EducationForm;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

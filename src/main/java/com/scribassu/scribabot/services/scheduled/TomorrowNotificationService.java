@@ -1,14 +1,13 @@
 package com.scribassu.scribabot.services.scheduled;
 
-import com.scribassu.scribabot.dto.rest.ExamPeriodEventDto;
-import com.scribassu.scribabot.dto.rest.ExtramuralDto;
-import com.scribassu.scribabot.dto.rest.FullTimeLessonDto;
 import com.scribassu.scribabot.entities.notifications.ExamPeriodTomorrowNotification;
 import com.scribassu.scribabot.entities.notifications.ExtramuralEventTomorrowNotification;
 import com.scribassu.scribabot.entities.notifications.ScheduleTomorrowNotification;
 import com.scribassu.scribabot.entities.users.TgBotUser;
 import com.scribassu.scribabot.entities.users.VkBotUser;
 import com.scribassu.scribabot.generators.BotMessageGenerator;
+import com.scribassu.scribabot.message_handlers.TgMessageSender;
+import com.scribassu.scribabot.message_handlers.VkMessageSender;
 import com.scribassu.scribabot.model.BotMessage;
 import com.scribassu.scribabot.model.BotUser;
 import com.scribassu.scribabot.repositories.notifications.ExamPeriodTomorrowNotificationRepository;
@@ -17,8 +16,6 @@ import com.scribassu.scribabot.repositories.notifications.ScheduleTomorrowNotifi
 import com.scribassu.scribabot.repositories.users.TgBotUserRepository;
 import com.scribassu.scribabot.repositories.users.VkBotUserRepository;
 import com.scribassu.scribabot.services.CallRestService;
-import com.scribassu.scribabot.message_handlers.TgMessageSender;
-import com.scribassu.scribabot.message_handlers.VkMessageSender;
 import com.scribassu.scribabot.text.CommandText;
 import com.scribassu.scribabot.util.CalendarUtils;
 import lombok.Data;
@@ -89,7 +86,7 @@ public class TomorrowNotificationService {
                     }
                 }
                 if (BotUser.isBotUserFullTime(botUser)) {
-                    FullTimeLessonDto lessons = callRestService.getFullTimeLessonsByDay(
+                    var lessons = callRestService.getFullTimeLessonsByDay(
                             botUser.getDepartment(),
                             botUser.getGroupNumber(),
                             dayNumber
@@ -142,7 +139,7 @@ public class TomorrowNotificationService {
                     }
                 }
                 if (BotUser.isBotUserFullTime(botUser)) {
-                    ExamPeriodEventDto examPeriodEventDto = callRestService.getFullTimeExamPeriodEventByDay(
+                    var examPeriodEventDto = callRestService.getFullTimeExamPeriodEventByDay(
                             botUser.getDepartment(),
                             botUser.getGroupNumber(),
                             month,
@@ -198,7 +195,7 @@ public class TomorrowNotificationService {
                     }
                 }
                 if (BotUser.isBotUserExtramural(botUser)) {
-                    ExtramuralDto extramuralDto = callRestService.getExtramuralEventsByDay(
+                    var extramuralDto = callRestService.getExtramuralEventsByDay(
                             botUser.getDepartment(),
                             botUser.getGroupNumber(),
                             month,

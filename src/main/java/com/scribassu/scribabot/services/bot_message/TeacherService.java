@@ -1,6 +1,5 @@
 package com.scribassu.scribabot.services.bot_message;
 
-import com.scribassu.scribabot.dto.rest.TeacherListDto;
 import com.scribassu.scribabot.generators.InnerKeyboardGenerator;
 import com.scribassu.scribabot.model.BotMessage;
 import com.scribassu.scribabot.model.BotUser;
@@ -9,7 +8,8 @@ import com.scribassu.scribabot.services.BotUserService;
 import com.scribassu.scribabot.services.CallRestService;
 import com.scribassu.scribabot.text.CommandText;
 import com.scribassu.scribabot.util.Constants;
-import com.scribassu.tracto.domain.Teacher;
+import com.scribassu.tracto.dto.TeacherDto;
+import com.scribassu.tracto.dto.TeacherListDto;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -88,7 +88,7 @@ public class TeacherService implements BotMessageService {
             return CompletableFuture.completedFuture(new BotMessage(EMPTY_TEACHER_LIST, innerKeyboardGenerator.mainMenu(botUser), botUser));
         }
 
-        List<Teacher> teachers = teacherListDto.getTeachers();
+        List<TeacherDto> teachers = teacherListDto.getTeachers();
 
         if (teachers.size() > Constants.MAX_VK_KEYBOARD_SIZE_FOR_LISTS) {
             botUserService.resetPreviousUserMessage(botUser);
@@ -129,10 +129,10 @@ public class TeacherService implements BotMessageService {
         return message.equals(CommandText.EXIT_TEACHER_SCHEDULE_MODE);
     }
 
-    private String makeStringTeacherList(List<Teacher> teachers) {
+    private String makeStringTeacherList(List<TeacherDto> teachers) {
         StringBuilder sb = new StringBuilder();
         sb.append(CHOOSE_TEACHER_TO_GET_SCHEDULE).append("\n\n");
-        for (Teacher teacher : teachers) {
+        for (var teacher : teachers) {
             sb
                     .append(teacher.getId()).append(" ")
                     .append(teacher.getSurname()).append(" ")

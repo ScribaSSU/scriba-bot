@@ -1,8 +1,8 @@
 package com.scribassu.scribabot.generators;
 
-import com.scribassu.scribabot.dto.rest.*;
 import com.scribassu.scribabot.model.BotMessage;
 import com.scribassu.scribabot.model.BotUser;
+import com.scribassu.tracto.dto.*;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -16,7 +16,7 @@ public class BotMessageGenerator {
 
     private final InnerKeyboardGenerator innerKeyboardGenerator;
 
-    public BotMessage getBotMessageForFullTimeLessons(FullTimeLessonDto fullTimeLessonDto,
+    public BotMessage getBotMessageForFullTimeLessons(FullTimeLessonListDto fullTimeLessonDto,
                                                       String day,
                                                       BotUser botUser) {
         return new BotMessage(
@@ -24,7 +24,7 @@ public class BotMessageGenerator {
                 innerKeyboardGenerator.fullTimeSchedule(), botUser);
     }
 
-    public BotMessage getBotMessageForFullTimeLessonsAll(FullTimeLessonDto fullTimeLessonDto,
+    public BotMessage getBotMessageForFullTimeLessonsAll(FullTimeLessonListDto fullTimeLessonDto,
                                                          BotUser botUser) {
         return new BotMessage(
                 MessageGenerator.makeFullTimeLessonTemplateLessonsAll(fullTimeLessonDto, botUser.isFilterNomDenom()),
@@ -35,7 +35,7 @@ public class BotMessageGenerator {
         return new BotMessage(UNSUPPORTED_LESSONS, innerKeyboardGenerator.departments(), botUser);
     }
 
-    public BotMessage getBotMessageForFullTimeExamPeriod(ExamPeriodEventDto examPeriodEventDto,
+    public BotMessage getBotMessageForFullTimeExamPeriod(ExamPeriodEventListDto examPeriodEventDto,
                                                          String day, BotUser botUser) {
         return new BotMessage(
                 MessageGenerator.makeFullTimeExamPeriodTemplate(examPeriodEventDto, day),
@@ -46,7 +46,7 @@ public class BotMessageGenerator {
         return new BotMessage(NO_EXAM_PERIOD_SCHEDULE, innerKeyboardGenerator.fullTimeSchedule(), botUser);
     }
 
-    public BotMessage getBotMessageForTeacherFullTimeLessons(TeacherFullTimeLessonDto fullTimeLessonDto,
+    public BotMessage getBotMessageForTeacherFullTimeLessons(TeacherFullTimeLessonListDto fullTimeLessonDto,
                                                              String day,
                                                              BotUser botUser) {
         return new BotMessage(
@@ -54,13 +54,13 @@ public class BotMessageGenerator {
                 innerKeyboardGenerator.teacherSchedule(botUser), botUser);
     }
 
-    public BotMessage getBotMessageForTeacherExamPeriod(TeacherExamPeriodEventDto examPeriodEventDto, BotUser botUser) {
+    public BotMessage getBotMessageForTeacherExamPeriod(TeacherExamPeriodEventListDto examPeriodEventDto, BotUser botUser) {
         return new BotMessage(
                 MessageGenerator.makeTeacherExamPeriodTemplate(examPeriodEventDto),
                 innerKeyboardGenerator.teacherSchedule(botUser), botUser);
     }
 
-    public BotMessage getBotMessageForExtramuralEvent(ExtramuralDto extramuralDto,
+    public BotMessage getBotMessageForExtramuralEvent(ExtramuralEventListDto extramuralDto,
                                                       String day, BotUser botUser) {
         return new BotMessage(
                 MessageGenerator.makeExtramuralEventTemplate(extramuralDto, day),
@@ -75,7 +75,7 @@ public class BotMessageGenerator {
         return new BotMessage(NO_EXAM_PERIOD_SCHEDULE_TEACHER, innerKeyboardGenerator.teacherSchedule(botUser), botUser);
     }
 
-    public BotMessage getBotMessageForExtramuralEventTeacher(TeacherExtramuralEventDto extramuralDto, BotUser botUser) {
+    public BotMessage getBotMessageForExtramuralEventTeacher(TeacherExtramuralEventListDto extramuralDto, BotUser botUser) {
         return new BotMessage(
                 MessageGenerator.makeExtramuralEventTemplateTeacher(extramuralDto),
                 innerKeyboardGenerator.teacherSchedule(botUser), botUser);

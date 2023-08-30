@@ -1,7 +1,5 @@
 package com.scribassu.scribabot.services.bot_message;
 
-import com.scribassu.scribabot.dto.rest.ExtramuralDto;
-import com.scribassu.scribabot.dto.rest.TeacherExtramuralEventDto;
 import com.scribassu.scribabot.generators.BotMessageGenerator;
 import com.scribassu.scribabot.model.BotMessage;
 import com.scribassu.scribabot.model.BotUser;
@@ -9,6 +7,8 @@ import com.scribassu.scribabot.services.BotMessageService;
 import com.scribassu.scribabot.services.CallRestService;
 import com.scribassu.scribabot.text.CommandText;
 import com.scribassu.scribabot.util.CalendarUtils;
+import com.scribassu.tracto.dto.ExtramuralEventListDto;
+import com.scribassu.tracto.dto.TeacherExtramuralEventListDto;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -49,7 +49,7 @@ public class ExtramuralEventService implements BotMessageService {
 
     private CompletableFuture<BotMessage> getTeacherBotMessage(String message, BotUser botUser) {
         String teacherId = botUser.getPreviousUserMessage().split(" ")[1];
-        TeacherExtramuralEventDto lessons = callRestService.getTeacherExtramuralEvents(teacherId);
+        TeacherExtramuralEventListDto lessons = callRestService.getTeacherExtramuralEvents(teacherId);
 
         if (null == lessons || null == lessons.getExtramuralEvents() || lessons.getExtramuralEvents().isEmpty()) {
             return CompletableFuture.completedFuture(botMessageGenerator.getBotMessageForEmptyExtramuralEventTeacher(botUser));
@@ -59,7 +59,7 @@ public class ExtramuralEventService implements BotMessageService {
 
     private CompletableFuture<BotMessage> getStudentBotMessage(String message, BotUser botUser) {
         Calendar calendar = CalendarUtils.getCalendar();
-        ExtramuralDto lessons = new ExtramuralDto();
+        ExtramuralEventListDto lessons = new ExtramuralEventListDto();
         boolean isToday = false;
         boolean isTomorrow = false;
         boolean isYesterday = false;

@@ -1,7 +1,6 @@
 package com.scribassu.scribabot.services;
 
-import com.scribassu.scribabot.dto.rest.*;
-import org.apache.commons.codec.Charsets;
+import com.scribassu.tracto.dto.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -35,10 +34,10 @@ public class CallRestService {
     private final String EXTR_EV_GROUP_URI = "schedule/extramural/%s/%s";
     private final String EXTR_EV_GROUP_MONTH_DAY_URI = "schedule/extramural/%s/%s/%s/%s";
 
-    public FullTimeLessonDto getFullTimeLessonsByDayAndLesson(String departmentUrl,
-                                                              String groupNumber,
-                                                              String dayNumber,
-                                                              String lessonNumber) {
+    public FullTimeLessonListDto getFullTimeLessonsByDayAndLesson(String departmentUrl,
+                                                                  String groupNumber,
+                                                                  String dayNumber,
+                                                                  String lessonNumber) {
         RestTemplate restTemplate = new RestTemplate();
         String uri = prefix +
                 String.format(
@@ -52,10 +51,10 @@ public class CallRestService {
         //https://stackoverflow.com/questions/19540289/how-to-fix-the-java-security-cert-certificateexception-no-subject-alternative
         javax.net.ssl.HttpsURLConnection.setDefaultHostnameVerifier((hostname, sslSession) -> true);
 
-        return restTemplate.getForObject(uri, FullTimeLessonDto.class);
+        return restTemplate.getForObject(uri, FullTimeLessonListDto.class);
     }
 
-    public FullTimeLessonDto getFullTimeLessonsByDay(String departmentUrl,
+    public FullTimeLessonListDto getFullTimeLessonsByDay(String departmentUrl,
                                                      String groupNumber,
                                                      String dayNumber) {
         RestTemplate restTemplate = new RestTemplate();
@@ -70,10 +69,10 @@ public class CallRestService {
         //https://stackoverflow.com/questions/19540289/how-to-fix-the-java-security-cert-certificateexception-no-subject-alternative
         javax.net.ssl.HttpsURLConnection.setDefaultHostnameVerifier((hostname, sslSession) -> true);
 
-        return restTemplate.getForObject(uri, FullTimeLessonDto.class);
+        return restTemplate.getForObject(uri, FullTimeLessonListDto.class);
     }
 
-    public FullTimeLessonDto getFullTimeLessonsByGroup(String departmentUrl,
+    public FullTimeLessonListDto getFullTimeLessonsByGroup(String departmentUrl,
                                                        String groupNumber) {
         RestTemplate restTemplate = new RestTemplate();
         String uri = prefix +
@@ -86,11 +85,11 @@ public class CallRestService {
         //https://stackoverflow.com/questions/19540289/how-to-fix-the-java-security-cert-certificateexception-no-subject-alternative
         javax.net.ssl.HttpsURLConnection.setDefaultHostnameVerifier((hostname, sslSession) -> true);
 
-        return restTemplate.getForObject(uri, FullTimeLessonDto.class);
+        return restTemplate.getForObject(uri, FullTimeLessonListDto.class);
     }
 
-    public ExamPeriodEventDto getFullTimeExamPeriodEvent(String departmentUrl,
-                                                         String groupNumber) {
+    public ExamPeriodEventListDto getFullTimeExamPeriodEvent(String departmentUrl,
+                                                             String groupNumber) {
         RestTemplate restTemplate = new RestTemplate();
         String uri = prefix +
                 String.format(
@@ -102,10 +101,10 @@ public class CallRestService {
         //https://stackoverflow.com/questions/19540289/how-to-fix-the-java-security-cert-certificateexception-no-subject-alternative
         javax.net.ssl.HttpsURLConnection.setDefaultHostnameVerifier((hostname, sslSession) -> true);
 
-        return restTemplate.getForObject(uri, ExamPeriodEventDto.class);
+        return restTemplate.getForObject(uri, ExamPeriodEventListDto.class);
     }
 
-    public ExamPeriodEventDto getFullTimeExamPeriodEventByDay(String departmentUrl,
+    public ExamPeriodEventListDto getFullTimeExamPeriodEventByDay(String departmentUrl,
                                                               String groupNumber,
                                                               Integer month,
                                                               Integer day) {
@@ -122,17 +121,17 @@ public class CallRestService {
         //https://stackoverflow.com/questions/19540289/how-to-fix-the-java-security-cert-certificateexception-no-subject-alternative
         javax.net.ssl.HttpsURLConnection.setDefaultHostnameVerifier((hostname, sslSession) -> true);
 
-        return restTemplate.getForObject(uri, ExamPeriodEventDto.class);
+        return restTemplate.getForObject(uri, ExamPeriodEventListDto.class);
     }
 
-    public TeacherExtramuralEventDto getTeacherExtramuralEvents(String teacherId) {
+    public TeacherExtramuralEventListDto getTeacherExtramuralEvents(String teacherId) {
         RestTemplate restTemplate = new RestTemplate();
         String uri = prefix + String.format(TEACHER_EXTRAMURAL_SCHEDULE_URI, teacherId);
 
         //https://stackoverflow.com/questions/19540289/how-to-fix-the-java-security-cert-certificateexception-no-subject-alternative
         javax.net.ssl.HttpsURLConnection.setDefaultHostnameVerifier((hostname, sslSession) -> true);
 
-        return restTemplate.getForObject(uri, TeacherExtramuralEventDto.class);
+        return restTemplate.getForObject(uri, TeacherExtramuralEventListDto.class);
     }
 
 
@@ -188,27 +187,27 @@ public class CallRestService {
         return restTemplate.postForObject(uri, request, TeacherListDto.class);
     }
 
-    public TeacherFullTimeLessonDto getTeacherLessonsByDay(String teacherId, String day) {
+    public TeacherFullTimeLessonListDto getTeacherLessonsByDay(String teacherId, String day) {
         RestTemplate restTemplate = new RestTemplate();
         String uri = prefix + TEACHER_URI + "/" + teacherId + "/" + day;
 
         //https://stackoverflow.com/questions/19540289/how-to-fix-the-java-security-cert-certificateexception-no-subject-alternative
         javax.net.ssl.HttpsURLConnection.setDefaultHostnameVerifier((hostname, sslSession) -> true);
 
-        return restTemplate.getForObject(uri, TeacherFullTimeLessonDto.class);
+        return restTemplate.getForObject(uri, TeacherFullTimeLessonListDto.class);
     }
 
-    public TeacherExamPeriodEventDto getTeacherExamPeriodEvents(String teacherId) {
+    public TeacherExamPeriodEventListDto getTeacherExamPeriodEvents(String teacherId) {
         RestTemplate restTemplate = new RestTemplate();
         String uri = prefix + TEACHER_URI + "/" + teacherId + "/exam";
 
         //https://stackoverflow.com/questions/19540289/how-to-fix-the-java-security-cert-certificateexception-no-subject-alternative
         javax.net.ssl.HttpsURLConnection.setDefaultHostnameVerifier((hostname, sslSession) -> true);
 
-        return restTemplate.getForObject(uri, TeacherExamPeriodEventDto.class);
+        return restTemplate.getForObject(uri, TeacherExamPeriodEventListDto.class);
     }
 
-    public ExtramuralDto getExtramuralEventsByGroup(String departmentUrl,
+    public ExtramuralEventListDto getExtramuralEventsByGroup(String departmentUrl,
                                                     String groupNumber) {
         RestTemplate restTemplate = new RestTemplate();
         String uri = prefix +
@@ -221,10 +220,10 @@ public class CallRestService {
         //https://stackoverflow.com/questions/19540289/how-to-fix-the-java-security-cert-certificateexception-no-subject-alternative
         javax.net.ssl.HttpsURLConnection.setDefaultHostnameVerifier((hostname, sslSession) -> true);
 
-        return restTemplate.getForObject(uri, ExtramuralDto.class);
+        return restTemplate.getForObject(uri, ExtramuralEventListDto.class);
     }
 
-    public ExtramuralDto getExtramuralEventsByDay(String departmentUrl,
+    public ExtramuralEventListDto getExtramuralEventsByDay(String departmentUrl,
                                                   String groupNumber,
                                                   Integer month,
                                                   Integer day) {
@@ -241,6 +240,6 @@ public class CallRestService {
         //https://stackoverflow.com/questions/19540289/how-to-fix-the-java-security-cert-certificateexception-no-subject-alternative
         javax.net.ssl.HttpsURLConnection.setDefaultHostnameVerifier((hostname, sslSession) -> true);
 
-        return restTemplate.getForObject(uri, ExtramuralDto.class);
+        return restTemplate.getForObject(uri, ExtramuralEventListDto.class);
     }
 }

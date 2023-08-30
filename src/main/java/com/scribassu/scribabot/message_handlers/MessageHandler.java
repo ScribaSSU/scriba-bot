@@ -1,6 +1,5 @@
 package com.scribassu.scribabot.message_handlers;
 
-import com.scribassu.scribabot.dto.rest.FullTimeLessonDto;
 import com.scribassu.scribabot.entities.unrecognized_messages.UnrecognizedMessage;
 import com.scribassu.scribabot.generators.BotMessageGenerator;
 import com.scribassu.scribabot.generators.InnerKeyboardGenerator;
@@ -12,7 +11,8 @@ import com.scribassu.scribabot.services.bot_message.*;
 import com.scribassu.scribabot.text.CommandText;
 import com.scribassu.scribabot.text.MessageText;
 import com.scribassu.scribabot.util.Constants;
-import com.scribassu.tracto.domain.EducationForm;
+import com.scribassu.tracto.dto.EducationForm;
+import com.scribassu.tracto.dto.FullTimeLessonListDto;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -187,7 +187,7 @@ public class MessageHandler {
 
         if (message.startsWith("р ")) {
             String[] params = message.split(" ");
-            FullTimeLessonDto lessons = callRestService.getFullTimeLessonsByDay(params[1], params[2], params[3]);
+            FullTimeLessonListDto lessons = callRestService.getFullTimeLessonsByDay(params[1], params[2], params[3]);
             return CompletableFuture.completedFuture(botMessageGenerator.getBotMessageForFullTimeLessons(lessons, "", botUser));
         }
 

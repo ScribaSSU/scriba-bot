@@ -6,7 +6,7 @@ import com.scribassu.scribabot.model.BotUserSource;
 import com.scribassu.scribabot.model.keyboard.Keyboard;
 import com.scribassu.scribabot.model.keyboard.KeyboardButton;
 import com.scribassu.scribabot.repositories.notifications.*;
-import com.scribassu.tracto.domain.Teacher;
+import com.scribassu.tracto.dto.TeacherDto;
 import lombok.Data;
 import org.springframework.stereotype.Service;
 
@@ -270,7 +270,7 @@ public class InnerKeyboardGenerator {
         return innerKeyboard;
     }
 
-    public Keyboard teachers(List<Teacher> teachers) {
+    public Keyboard teachers(List<TeacherDto> teachers) {
         var innerKeyboard = new Keyboard();
         innerKeyboard.add(new ArrayList<>());
         var i = 0;
