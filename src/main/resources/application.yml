@@ -14,6 +14,9 @@ call:
   rest:
     prefix:
 
+project:
+  version: '@project.version@'
+
 scheduled:
   schedule-today-notification-service:
     cron:

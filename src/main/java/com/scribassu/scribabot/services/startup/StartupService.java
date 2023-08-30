@@ -23,8 +23,7 @@ public class StartupService implements ApplicationListener<ContextRefreshedEvent
         DepartmentConverter.add("мехмат", "mm");
         DepartmentConverter.add("фияил", "fi");
         DepartmentConverter.add("книит", "knt");
-        DepartmentConverter.add("фнбмт", "fn");
-        DepartmentConverter.add("фнп", "fnp");
+        DepartmentConverter.add("ффмимт", "fmimt");
         DepartmentConverter.add("психолог", "fps");
         DepartmentConverter.add("пписо", "fppso");
         DepartmentConverter.add("философ", "fp");
