@@ -76,7 +76,7 @@ public class VkMessageSender implements MessageSender {
                     try {
                         keyboard = objectMapper.writeValueAsString(httpMapper.toVkKeyboard(botMessage.getInnerKeyboard().get()));
                     } catch (JsonProcessingException e) {
-                        keyboard = objectMapper.writeValueAsString(httpMapper.toVkKeyboard(innerKeyboardGenerator.mainMenu()));
+                        keyboard = objectMapper.writeValueAsString(httpMapper.toVkKeyboard(innerKeyboardGenerator.mainMenu(botMessage.getBotUser())));
                     }
                     postParameters.add(new BasicNameValuePair("keyboard", keyboard));
                 } else {

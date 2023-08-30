@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.scribassu.scribabot.model.keyboard.KeyboardEmoji.*;
+import static com.scribassu.scribabot.text.CommandText.TEACHER_PREFIX;
 import static com.scribassu.scribabot.util.Constants.MAX_KEYBOARD_TEXT_LENGTH;
 
 @Service
@@ -36,6 +37,7 @@ public class InnerKeyboardGenerator {
     private static final KeyboardButton TODAY_SCHEDULE_BUTTON = new KeyboardButton("Сегодня");
     private static final KeyboardButton TOMORROW_SCHEDULE_BUTTON = new KeyboardButton("Завтра");
     private static final KeyboardButton YESTERDAY_SCHEDULE_BUTTON = new KeyboardButton("Вчера");
+    private static final KeyboardButton EXIT_TEACHER_SCHEDULE_MODE = new KeyboardButton("Выйти из расписания преподавателя");
 
     /*
     TODO:
@@ -57,7 +59,7 @@ public class InnerKeyboardGenerator {
    
      */
 
-    public Keyboard mainMenu() {
+    public Keyboard mainMenu(BotUser botUser) {
         var innerKeyboard = new Keyboard();
         for (var i = 0; i < 4; i++)
             innerKeyboard.add(new ArrayList<>());
@@ -65,6 +67,11 @@ public class InnerKeyboardGenerator {
         innerKeyboard.get(1).add(new KeyboardButton(String.format("%1$s Расписание преподавателей %1$s", TEACHER_SCHEDULE_EMOJI)));
         innerKeyboard.get(2).add(SETTINGS_BUTTON);
         innerKeyboard.get(3).add(new KeyboardButton(String.format("%1$s Справка %1$s", HELP_EMOJI)));
+
+        if (botUser.wantTeacherSchedule()) {
+            innerKeyboard.add(new ArrayList<>());
+            innerKeyboard.get(4).add(EXIT_TEACHER_SCHEDULE_MODE);
+        }
 
         return innerKeyboard;
     }
@@ -189,7 +196,7 @@ public class InnerKeyboardGenerator {
         return innerKeyboard;
     }
 
-    public Keyboard teacherSchedule() {
+    public Keyboard teacherSchedule(BotUser botUser) {
         var innerKeyboard = new Keyboard();
         for (var i = 0; i < 6; i++)
             innerKeyboard.add(new ArrayList<>());
@@ -210,6 +217,11 @@ public class InnerKeyboardGenerator {
         innerKeyboard.get(4).add(new KeyboardButton("Занятия заочников"));
 
         innerKeyboard.get(5).add(MAIN_MENU_BUTTON);
+
+        if (botUser.wantTeacherSchedule()) {
+            innerKeyboard.add(new ArrayList<>());
+            innerKeyboard.get(6).add(EXIT_TEACHER_SCHEDULE_MODE);
+        }
         
         return innerKeyboard;
     }
@@ -269,10 +281,8 @@ public class InnerKeyboardGenerator {
                 row++;
                 innerKeyboard.add(new ArrayList<>());
             }
-            String teacher = teachers.get(i).getId() + " "
-                    + teachers.get(i).getSurname() + " "
-                    + teachers.get(i).getName() + " "
-                    + teachers.get(i).getPatronymic();
+            var curTeacher = teachers.get(i);
+            var teacher = String.format("%s %s %s %s %s", TEACHER_PREFIX, curTeacher.getId(), curTeacher.getSurname(), curTeacher.getName(), curTeacher.getPatronymic());
             teacher = teacher.length() > MAX_KEYBOARD_TEXT_LENGTH ? teacher.substring(0, MAX_KEYBOARD_TEXT_LENGTH) : teacher;
             innerKeyboard.get(row).add(new KeyboardButton(teacher));
             i++;

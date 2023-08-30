@@ -51,13 +51,13 @@ public class BotMessageGenerator {
                                                              BotUser botUser) {
         return new BotMessage(
                 MessageGenerator.makeTeacherFullTimeLessonTemplate(fullTimeLessonDto, day, botUser.isFilterNomDenom()),
-                innerKeyboardGenerator.teacherSchedule(), botUser);
+                innerKeyboardGenerator.teacherSchedule(botUser), botUser);
     }
 
     public BotMessage getBotMessageForTeacherExamPeriod(TeacherExamPeriodEventDto examPeriodEventDto, BotUser botUser) {
         return new BotMessage(
                 MessageGenerator.makeTeacherExamPeriodTemplate(examPeriodEventDto),
-                innerKeyboardGenerator.teacherSchedule(), botUser);
+                innerKeyboardGenerator.teacherSchedule(botUser), botUser);
     }
 
     public BotMessage getBotMessageForExtramuralEvent(ExtramuralDto extramuralDto,
@@ -72,12 +72,12 @@ public class BotMessageGenerator {
     }
 
     public BotMessage getBotMessageForEmptyExtramuralEventTeacher(BotUser botUser) {
-        return new BotMessage(NO_EXAM_PERIOD_SCHEDULE_TEACHER, innerKeyboardGenerator.teacherSchedule(), botUser);
+        return new BotMessage(NO_EXAM_PERIOD_SCHEDULE_TEACHER, innerKeyboardGenerator.teacherSchedule(botUser), botUser);
     }
 
     public BotMessage getBotMessageForExtramuralEventTeacher(TeacherExtramuralEventDto extramuralDto, BotUser botUser) {
         return new BotMessage(
                 MessageGenerator.makeExtramuralEventTemplateTeacher(extramuralDto),
-                innerKeyboardGenerator.teacherSchedule(), botUser);
+                innerKeyboardGenerator.teacherSchedule(botUser), botUser);
     }
 }

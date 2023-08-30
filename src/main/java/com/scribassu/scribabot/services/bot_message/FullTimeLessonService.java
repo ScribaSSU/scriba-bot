@@ -5,8 +5,8 @@ import com.scribassu.scribabot.dto.rest.TeacherFullTimeLessonDto;
 import com.scribassu.scribabot.generators.BotMessageGenerator;
 import com.scribassu.scribabot.model.BotMessage;
 import com.scribassu.scribabot.model.BotUser;
-import com.scribassu.scribabot.services.CallRestService;
 import com.scribassu.scribabot.services.BotMessageService;
+import com.scribassu.scribabot.services.CallRestService;
 import com.scribassu.scribabot.text.CommandText;
 import com.scribassu.scribabot.util.CalendarUtils;
 import lombok.Data;
@@ -30,6 +30,24 @@ public class FullTimeLessonService implements BotMessageService {
             return getTeacherBotMessage(message, botUser);
         } else {
             return getStudentBotMessage(message, botUser);
+        }
+    }
+
+    @Override
+    public boolean shouldAccept(String message, BotUser botUser) {
+        switch (message) {
+            case CommandText.ALL_LESSONS:
+            case CommandText.MONDAY:
+            case CommandText.TUESDAY:
+            case CommandText.WEDNESDAY:
+            case CommandText.THURSDAY:
+            case CommandText.FRIDAY:
+            case CommandText.SATURDAY:
+            case CommandText.TODAY:
+            case CommandText.TOMORROW:
+            case CommandText.YESTERDAY:
+                return BotUser.isBotUserFullTime(botUser);
+            default: return false;
         }
     }
 
@@ -78,7 +96,7 @@ public class FullTimeLessonService implements BotMessageService {
                 isYesterday = true;
                 break;
         }
-// todo why isnomdenom with botuser
+
         if (isToday) {
             return CompletableFuture.completedFuture(botMessageGenerator.getBotMessageForTeacherFullTimeLessons(lessons, CommandText.TODAY, botUser));
         }

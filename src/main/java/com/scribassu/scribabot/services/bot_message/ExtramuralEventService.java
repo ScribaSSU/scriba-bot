@@ -5,8 +5,8 @@ import com.scribassu.scribabot.dto.rest.TeacherExtramuralEventDto;
 import com.scribassu.scribabot.generators.BotMessageGenerator;
 import com.scribassu.scribabot.model.BotMessage;
 import com.scribassu.scribabot.model.BotUser;
-import com.scribassu.scribabot.services.CallRestService;
 import com.scribassu.scribabot.services.BotMessageService;
+import com.scribassu.scribabot.services.CallRestService;
 import com.scribassu.scribabot.text.CommandText;
 import com.scribassu.scribabot.util.CalendarUtils;
 import lombok.Data;
@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 import java.util.Calendar;
 import java.util.concurrent.CompletableFuture;
 
+
+// todo fix & refactor
 @Service
 @Slf4j
 @Data
@@ -33,14 +35,26 @@ public class ExtramuralEventService implements BotMessageService {
         }
     }
 
-    private CompletableFuture<BotMessage> getTeacherBotMessage(String message, BotUser botUser) {
-            String teacherId = botUser.getPreviousUserMessage().split(" ")[1];
-            TeacherExtramuralEventDto lessons = callRestService.getTeacherExtramuralEvents(teacherId);
+    @Override
+    public boolean shouldAccept(String message, BotUser botUser) {
+        switch (message) {
+            case CommandText.ALL_LESSONS:
+            case CommandText.TODAY:
+            case CommandText.TOMORROW:
+            case CommandText.YESTERDAY:
+                return BotUser.isBotUserExtramural(botUser);
+            default: return false;
+        }
+    }
 
-            if (null == lessons || null == lessons.getExtramuralEvents() || lessons.getExtramuralEvents().isEmpty()) {
-                return CompletableFuture.completedFuture(botMessageGenerator.getBotMessageForEmptyExtramuralEventTeacher(botUser));
-            }
-            return CompletableFuture.completedFuture(botMessageGenerator.getBotMessageForExtramuralEventTeacher(lessons, botUser));
+    private CompletableFuture<BotMessage> getTeacherBotMessage(String message, BotUser botUser) {
+        String teacherId = botUser.getPreviousUserMessage().split(" ")[1];
+        TeacherExtramuralEventDto lessons = callRestService.getTeacherExtramuralEvents(teacherId);
+
+        if (null == lessons || null == lessons.getExtramuralEvents() || lessons.getExtramuralEvents().isEmpty()) {
+            return CompletableFuture.completedFuture(botMessageGenerator.getBotMessageForEmptyExtramuralEventTeacher(botUser));
+        }
+        return CompletableFuture.completedFuture(botMessageGenerator.getBotMessageForExtramuralEventTeacher(lessons, botUser));
     }
 
     private CompletableFuture<BotMessage> getStudentBotMessage(String message, BotUser botUser) {

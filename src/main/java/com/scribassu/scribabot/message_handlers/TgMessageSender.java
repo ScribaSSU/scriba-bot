@@ -58,7 +58,7 @@ public class TgMessageSender extends TelegramLongPollingBot implements MessageSe
                         execute(sendMessage);
                     } else {
                         SendMessage sendMessage = new SendMessage(String.valueOf(chatId), message);
-                        sendMessage.setReplyMarkup(httpMapper.toTgKeyboard(innerKeyboardGenerator.mainMenu()));
+                        sendMessage.setReplyMarkup(httpMapper.toTgKeyboard(innerKeyboardGenerator.mainMenu(botMessage.getBotUser())));
                         execute(sendMessage);
                     }
                 } else {
@@ -113,7 +113,7 @@ public class TgMessageSender extends TelegramLongPollingBot implements MessageSe
                         execute(sendMessage);
                     } else {
                         SendMessage sendMessage = new SendMessage(String.valueOf(userId), message);
-                        sendMessage.setReplyMarkup(httpMapper.toTgKeyboard(innerKeyboardGenerator.mainMenu()));
+                        sendMessage.setReplyMarkup(httpMapper.toTgKeyboard(innerKeyboardGenerator.mainMenu(botMessage.getBotUser())));
                         execute(sendMessage);
                     }
                 } else {

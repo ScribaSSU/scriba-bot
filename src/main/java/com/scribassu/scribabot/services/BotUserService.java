@@ -3,13 +3,13 @@ package com.scribassu.scribabot.services;
 import com.scribassu.scribabot.entities.notifications.*;
 import com.scribassu.scribabot.entities.users.TgBotUser;
 import com.scribassu.scribabot.entities.users.VkBotUser;
-import com.scribassu.scribabot.model.Command;
 import com.scribassu.scribabot.model.BotUser;
+import com.scribassu.scribabot.model.BotUserSource;
+import com.scribassu.scribabot.model.Command;
 import com.scribassu.scribabot.model.RegisteredUserResult;
 import com.scribassu.scribabot.repositories.notifications.*;
 import com.scribassu.scribabot.repositories.users.TgBotUserRepository;
 import com.scribassu.scribabot.repositories.users.VkBotUserRepository;
-import com.scribassu.scribabot.model.BotUserSource;
 import com.scribassu.scribabot.util.DepartmentConverter;
 import com.scribassu.tracto.domain.EducationForm;
 import lombok.Data;
@@ -147,14 +147,6 @@ public class BotUserService {
             TgBotUser tgBotUser = tgBotUserRepository.findOneById(botUser.getUserId());
             tgBotUser.setSentKeyboard(flag);
             tgBotUserRepository.save(tgBotUser);
-        }
-    }
-
-    public boolean isSentKeyboard(String userId, BotUserSource botUserSource) {
-        if (BotUserSource.VK.equals(botUserSource)) {
-            return vkBotUserRepository.findOneById(userId).isSentKeyboard();
-        } else {
-            return tgBotUserRepository.findOneById(userId).isSentKeyboard();
         }
     }
 

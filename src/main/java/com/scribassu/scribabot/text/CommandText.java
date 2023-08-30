@@ -67,6 +67,8 @@ public class CommandText {
     public static final String SEND_EXAM_PERIOD = "рассылка расписания сессии";
     public static final String SEND_SCHEDULE = "рассылка расписания занятий";
 
+    public static final String EXIT_TEACHER_SCHEDULE_MODE = "Выйти из расписания преподавателя";
+
     private static final String HOUR = "^\\d*\\s*ч$";
     private static final String COURSE = "\\d{1}\\s*курс";
     private static final String DEPARTMENT = "биолог|географ|геолог|идпо|и-т искусств|ииимо" +
@@ -81,5 +83,6 @@ public class CommandText {
     public static final String COURSE_PAYLOAD = "course";
     public static final String TEACHER_ID_PAYLOAD = "teacher id";
 
-    public static final String STICKER_WAS_SENT_TO_BOT = "sticker_was_sent_to_bot";
+    public static final String STICKER_WAS_SENT_TO_BOT = "STICKER_WAS_SENT_TO_BOT";
+    public static final String TEACHER_PREFIX = "Преп";
 }

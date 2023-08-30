@@ -37,7 +37,7 @@ public class MessageText {
     public static final String ENABLE_SEND_EMPTY_SCHEDULE_NOTIFICATION = "Теперь рассылка расписания пар и сессии будет приходить, даже если в запрашиваемый день отсутствуют пары и сессионные события.";
     public static final String DISABLE_SEND_EMPTY_SCHEDULE_NOTIFICATION = "Теперь рассылка расписания пар и сессии не будет приходить, если в запрашиваемый день отсутствуют пары и сессионные события.";
     public static final String SCHEDULE_WILL_BE_SENT_ABSTRACT = "Теперь расписание будет приходить в ";
-    public static final String CHOOSE_TEACHER_TO_GET_SCHEDULE = "Выберите, для какого преподавателя хотите узнать расписание. Можно выбрать преподавателя на клавиатуре или ввести ID и ФИО вручную как указано ниже.";
+    public static final String CHOOSE_TEACHER_TO_GET_SCHEDULE = "Выберите, для какого преподавателя хотите узнать расписание. Можно выбрать преподавателя на клавиатуре или ввести 'Преп ID Фамилия Имя Отчество' вручную как указано ниже.";
     public static final String CHOOSE_DAY_FOR_TEACHER_SCHEDULE = "Выберите, для чего хотите узнать расписание преподавателя. Для сброса поиска выберите на клавиатуре 'Главное меню' или введите вручную 'меню'.";
     public static final String TOO_LONG_TEACHER_LIST = "Искомый список преподавателей слишком большой для клавиатуры. Попробуйте запросить точнее.";
     public static final String EMPTY_TEACHER_LIST = "По вашему запросу ничего не нашлось.";

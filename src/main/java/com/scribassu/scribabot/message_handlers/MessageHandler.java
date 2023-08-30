@@ -28,6 +28,7 @@ import static com.scribassu.scribabot.text.MessageText.*;
 // 434
 // 367
 // 260
+// 222
 @Service
 @Slf4j
 @Data
@@ -42,7 +43,6 @@ public class MessageHandler {
     private final SettingsService settingsService;
     private final StudentGroupService studentGroupService;
     private final TeacherService teacherService;
-
     private final BotUserService botUserService;
     private final UnrecognizedMessageRepository unrecognizedMessageRepository;
     private final InnerKeyboardGenerator innerKeyboardGenerator;
@@ -63,7 +63,7 @@ public class MessageHandler {
 
         var botMessage = new BotMessage(
                 MessageText.DEFAULT_MESSAGE,
-                innerKeyboardGenerator.mainMenu(), botUser);
+                innerKeyboardGenerator.mainMenu(botUser), botUser);
 
         boolean isMentioned = false;
 
@@ -83,35 +83,42 @@ public class MessageHandler {
             return CompletableFuture.completedFuture(new BotMessage(DO_NOT_SEND, botUser));
         }
 
-        if (!registered && !message.equals(CommandText.HELLO)
-                && !message.equals(CommandText.MAIN_MENU)
-                && !message.equals(CommandText.SHORT_MAIN_MENU)
-                && !message.equals(CommandText.TG_START)) {
-            botMessage = new BotMessage(GREETING_WITH_CHOOSE_DEPARTMENT, botUser);
-            botUser.setUserId(userId); //DON'T SAVE! It is only for unrecognized messages check
-            return CompletableFuture.completedFuture(botMessage);
+        // todo to remove?
+//        if (!registered && !message.equals(CommandText.HELLO)
+//                && !message.equals(CommandText.MAIN_MENU)
+//                && !message.equals(CommandText.SHORT_MAIN_MENU)
+//                && !message.equals(CommandText.TG_START)) {
+//            botMessage = new BotMessage(GREETING_WITH_CHOOSE_DEPARTMENT, botUser);
+//            botUser.setUserId(userId); //DON'T SAVE! It is only for unrecognized messages check
+//            return CompletableFuture.completedFuture(botMessage);
+//        }
+
+        if (greetingsService.shouldAcceptCommand(message, botUser)) {
+            return greetingsService.getBotMessage(command);
         }
 
-        if (registered
-                && null != botUser.getPreviousUserMessage()
-                && (botUser.getPreviousUserMessage().equalsIgnoreCase(CommandText.TEACHER_SCHEDULE)
-                || botUser.getPreviousUserMessage().startsWith(Constants.TEACHER_ID)
-                || botUser.getPreviousUserMessage().equalsIgnoreCase(CHOOSE_TEACHER_TO_GET_SCHEDULE))) {
+        if (settingsService.shouldAccept(message, botUser)) {
+            return settingsService.getBotMessage(message, botUser);
+        }
+
+        if (helpService.shouldAccept(message, botUser)) {
+            return helpService.getBotMessage(message, botUser);
+        }
+
+        if (teacherService.shouldAccept(message, botUser)) {
             return teacherService.getBotMessage(message, botUser);
         }
 
+        if (fullTimeLessonService.shouldAccept(message, botUser)) {
+            return fullTimeLessonService.getBotMessage(message, botUser);
+        }
+
+        if (extramuralEventService.shouldAccept(message, botUser)) {
+            return extramuralEventService.getBotMessage(message, botUser);
+        }
+
+
         switch (message) {
-            case CommandText.STICKER_WAS_SENT_TO_BOT:
-            case CommandText.TG_START:
-            case CommandText.HELLO:
-            case CommandText.MAIN_MENU:
-            case CommandText.SHORT_MAIN_MENU:
-            case CommandText.THANKS:
-                return greetingsService.getBotMessage(command);
-            case CommandText.HELP:
-                return helpService.getBotMessage(message, botUser);
-            case CommandText.TEACHER_SCHEDULE:
-                return teacherService.getBotMessage(message, botUser);
             case CommandText.STUDENTS_SCHEDULE:
                 if (BotUser.isBotUserFullTime(botUser)) {
                     return CompletableFuture.completedFuture(new BotMessage(CHOOSE_WANTED_SCHEDULE, innerKeyboardGenerator.fullTimeSchedule(), botUser));
@@ -131,44 +138,14 @@ public class MessageHandler {
             case CommandText.EVENING:
                 botUserService.updateEducationForm(EducationForm.VO, botUser);
                 return CompletableFuture.completedFuture(new BotMessage(CHOOSE_COURSE, innerKeyboardGenerator.courses(), botUser));
-            case CommandText.MONDAY:
-            case CommandText.TUESDAY:
-            case CommandText.WEDNESDAY:
-            case CommandText.THURSDAY:
-            case CommandText.FRIDAY:
-            case CommandText.SATURDAY:
-                return fullTimeLessonService.getBotMessage(message, botUser);
-            case CommandText.TODAY:
-            case CommandText.TOMORROW:
-            case CommandText.YESTERDAY:
-                if (BotUser.isBotUserFullTime(botUser)) {
-                    return fullTimeLessonService.getBotMessage(message, botUser);
-                } else {
-                    return extramuralEventService.getBotMessage(message, botUser);
-                }
-            case CommandText.ALL_LESSONS:
-                if (BotUser.isBotUserExtramural(botUser)) {
-                    return extramuralEventService.getBotMessage(message, botUser);
-                } else {
-                    return fullTimeLessonService.getBotMessage(message, botUser);
-                }
-            case CommandText.TEACHER_SCHEDULE_FOR_EXTRAMURAL:
-                if (botUser.wantTeacherSchedule()) {
-                    return teacherService.getBotMessage(message, botUser);
-                } else {
-                    return CompletableFuture.completedFuture(new BotMessage(RETURN_MAIN_MENU, innerKeyboardGenerator.mainMenu(), botUser));
-                }
+
             case CommandText.SETTINGS:
                 return CompletableFuture.completedFuture(new BotMessage(SETTINGS_MENU, innerKeyboardGenerator.settings(botUser), botUser));
             case CommandText.EXAMS:
                 return examPeriodService.getBotMessage(message, botUser);
         }
 
-        if (isSettingsCommand(command)) {
-            return settingsService.getBotMessage(message, botUser);
-        }
 
-        // todo здесь тестируем выход из режима учителя
         if (CommandText.DEPARTMENT_PAYLOAD.equalsIgnoreCase(payload)
                 || CommandText.DEPARTMENT_PATTERN.matcher(message).matches()) {
             botUserService.updateDepartment(message, botUser);
@@ -184,7 +161,7 @@ public class MessageHandler {
             if (null != botUser.getPreviousUserMessage()
                     && botUser.getPreviousUserMessage().equalsIgnoreCase(GREETING_WITH_CHOOSE_DEPARTMENT)) {
                 botUserService.resetPreviousUserMessage(botUser);
-                return CompletableFuture.completedFuture(new BotMessage(THIS_IS_MAIN_MENU, innerKeyboardGenerator.mainMenu(), botUser));
+                return CompletableFuture.completedFuture(new BotMessage(THIS_IS_MAIN_MENU, innerKeyboardGenerator.mainMenu(botUser), botUser));
 
             } else {
                 if (BotUser.isBotUserFullTime(botUser)) {
@@ -202,7 +179,7 @@ public class MessageHandler {
             if (null != botUser.getPreviousUserMessage()
                     && botUser.getPreviousUserMessage().equalsIgnoreCase(GREETING_WITH_CHOOSE_DEPARTMENT)) {
                 botUserService.resetPreviousUserMessage(botUser);
-                return CompletableFuture.completedFuture(new BotMessage(THIS_IS_MAIN_MENU, innerKeyboardGenerator.mainMenu(), botUser));
+                return CompletableFuture.completedFuture(new BotMessage(THIS_IS_MAIN_MENU, innerKeyboardGenerator.mainMenu(botUser), botUser));
             } else {
                 return CompletableFuture.completedFuture(new BotMessage(MessageText.FINISH_SET_GROUP, innerKeyboardGenerator.fullTimeSchedule(), botUser));
             }
@@ -212,10 +189,6 @@ public class MessageHandler {
             String[] params = message.split(" ");
             FullTimeLessonDto lessons = callRestService.getFullTimeLessonsByDay(params[1], params[2], params[3]);
             return CompletableFuture.completedFuture(botMessageGenerator.getBotMessageForFullTimeLessons(lessons, "", botUser));
-        }
-
-        if (payload.startsWith(CommandText.TEACHER_ID_PAYLOAD)) {
-            return teacherService.getBotMessage(payload, botUser);
         }
 
         if (botMessage.isDefault()) {
@@ -229,45 +202,5 @@ public class MessageHandler {
     private boolean isStudentGroupCommand(Command command) {
         return CommandText.COURSE_PAYLOAD.equalsIgnoreCase(command.getPayload())
                 || CommandText.COURSE_PATTERN.matcher(command.getMessage()).matches();
-    }
-
-    private boolean isSettingsCommand(Command command) {
-        var message = command.getMessage();
-
-        if (CommandText.HOUR_PATTERN.matcher(message).matches()) {
-            return true;
-        }
-
-        switch (message) {
-            case CommandText.SET_SEND_SCHEDULE_TIME_TODAY:
-            case CommandText.ENABLE_SEND_SCHEDULE_TODAY:
-            case CommandText.DISABLE_SEND_SCHEDULE_TODAY:
-            case CommandText.SET_SEND_SCHEDULE_TIME_TOMORROW:
-            case CommandText.ENABLE_SEND_SCHEDULE_TOMORROW:
-            case CommandText.DISABLE_SEND_SCHEDULE_TOMORROW:
-            case CommandText.SET_SEND_EXAM_PERIOD_TIME_TODAY:
-            case CommandText.ENABLE_SEND_EXAM_PERIOD_TODAY:
-            case CommandText.DISABLE_SEND_EXAM_PERIOD_TODAY:
-            case CommandText.SET_SEND_EXAM_PERIOD_TIME_TOMORROW:
-            case CommandText.ENABLE_SEND_EXAM_PERIOD_TOMORROW:
-            case CommandText.DISABLE_SEND_EXAM_PERIOD_TOMORROW:
-            case CommandText.SET_SEND_EXAM_PERIOD_TIME_AFTER_TOMORROW:
-            case CommandText.ENABLE_SEND_EXAM_PERIOD_AFTER_TOMORROW:
-            case CommandText.DISABLE_SEND_EXAM_PERIOD_AFTER_TOMORROW:
-            case CommandText.SEND_EXAM_PERIOD:
-            case CommandText.SEND_SCHEDULE:
-            case CommandText.ENABLE_FILTER_WEEK_TYPE:
-            case CommandText.DISABLE_FILTER_WEEK_TYPE:
-            case CommandText.ENABLE_SEND_EMPTY_SCHEDULE_NOTIFICATION:
-            case CommandText.DISABLE_SEND_EMPTY_SCHEDULE_NOTIFICATION:
-            case CommandText.CURRENT_USER_SETTINGS:
-            case CommandText.ENABLE_SEND_KEYBOARD:
-            case CommandText.DISABLE_SEND_KEYBOARD:
-            case CommandText.DELETE_PROFILE:
-            case CommandText.YES:
-            case CommandText.NO:
-                return true;
-            default: return false;
-        }
     }
 }

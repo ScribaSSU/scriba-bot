@@ -40,6 +40,45 @@ public class SettingsService implements BotMessageService {
     private final InnerKeyboardGenerator innerKeyboardGenerator;
 
     @Override
+    public boolean shouldAccept(String message, BotUser botUser) {
+        if (CommandText.HOUR_PATTERN.matcher(message).matches()) {
+            return true;
+        }
+
+        switch (message) {
+            case CommandText.SET_SEND_SCHEDULE_TIME_TODAY:
+            case CommandText.ENABLE_SEND_SCHEDULE_TODAY:
+            case CommandText.DISABLE_SEND_SCHEDULE_TODAY:
+            case CommandText.SET_SEND_SCHEDULE_TIME_TOMORROW:
+            case CommandText.ENABLE_SEND_SCHEDULE_TOMORROW:
+            case CommandText.DISABLE_SEND_SCHEDULE_TOMORROW:
+            case CommandText.SET_SEND_EXAM_PERIOD_TIME_TODAY:
+            case CommandText.ENABLE_SEND_EXAM_PERIOD_TODAY:
+            case CommandText.DISABLE_SEND_EXAM_PERIOD_TODAY:
+            case CommandText.SET_SEND_EXAM_PERIOD_TIME_TOMORROW:
+            case CommandText.ENABLE_SEND_EXAM_PERIOD_TOMORROW:
+            case CommandText.DISABLE_SEND_EXAM_PERIOD_TOMORROW:
+            case CommandText.SET_SEND_EXAM_PERIOD_TIME_AFTER_TOMORROW:
+            case CommandText.ENABLE_SEND_EXAM_PERIOD_AFTER_TOMORROW:
+            case CommandText.DISABLE_SEND_EXAM_PERIOD_AFTER_TOMORROW:
+            case CommandText.SEND_EXAM_PERIOD:
+            case CommandText.SEND_SCHEDULE:
+            case CommandText.ENABLE_FILTER_WEEK_TYPE:
+            case CommandText.DISABLE_FILTER_WEEK_TYPE:
+            case CommandText.ENABLE_SEND_EMPTY_SCHEDULE_NOTIFICATION:
+            case CommandText.DISABLE_SEND_EMPTY_SCHEDULE_NOTIFICATION:
+            case CommandText.CURRENT_USER_SETTINGS:
+            case CommandText.ENABLE_SEND_KEYBOARD:
+            case CommandText.DISABLE_SEND_KEYBOARD:
+            case CommandText.DELETE_PROFILE:
+            case CommandText.YES:
+            case CommandText.NO:
+                return true;
+            default: return false;
+        }
+    }
+
+    @Override
     public CompletableFuture<BotMessage> getBotMessage(String message, BotUser botUser) {
         BotMessage botMessage = new BotMessage();
         String userId = botUser.getUserId();

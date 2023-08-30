@@ -31,6 +31,11 @@ public class ExamPeriodService implements BotMessageService {
         }
     }
 
+    @Override
+    public boolean shouldAccept(String message, BotUser botUser) {
+        return message.equals(CommandText.EXAMS);
+    }
+
     private CompletableFuture<BotMessage> getTeacherBotMessage(String message, BotUser botUser) {
         String teacherId = botUser.getPreviousUserMessage().split(" ")[1];
         if (message.equalsIgnoreCase(CommandText.EXAMS)) {

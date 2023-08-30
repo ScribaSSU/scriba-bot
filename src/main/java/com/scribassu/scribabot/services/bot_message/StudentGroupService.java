@@ -66,4 +66,10 @@ public class StudentGroupService implements BotMessageService {
         }
     }
 
+    // todo
+    @Override
+    public boolean shouldAccept(String message, BotUser botUser) {
+        return false;
+    }
+
 }

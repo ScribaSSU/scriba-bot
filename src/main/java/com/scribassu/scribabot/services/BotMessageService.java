@@ -7,4 +7,5 @@ import java.util.concurrent.CompletableFuture;
 
 public interface BotMessageService {
     CompletableFuture<BotMessage> getBotMessage(String message, BotUser botUser);
+    boolean shouldAccept(String message, BotUser botUser);
 }
