@@ -6,6 +6,7 @@ import com.scribassu.scribabot.model.BotUserSource;
 import com.scribassu.scribabot.model.keyboard.Keyboard;
 import com.scribassu.scribabot.model.keyboard.KeyboardButton;
 import com.scribassu.scribabot.repositories.notifications.*;
+import com.scribassu.scribabot.util.DepartmentConverter;
 import com.scribassu.tracto.dto.TeacherDto;
 import lombok.Data;
 import org.springframework.stereotype.Service;
@@ -38,26 +39,6 @@ public class InnerKeyboardGenerator {
     private static final KeyboardButton TOMORROW_SCHEDULE_BUTTON = new KeyboardButton("Завтра");
     private static final KeyboardButton YESTERDAY_SCHEDULE_BUTTON = new KeyboardButton("Вчера");
     private static final KeyboardButton EXIT_TEACHER_SCHEDULE_MODE = new KeyboardButton("Выйти из расписания преподавателя");
-
-    /*
-    TODO:
-    main menu
-    education forms
-    courses
-    schedule fulltime
-    schedule extramural
-    departments
-    confirm deletion
-    teachers
-    group numbers
-    hours
-    settings notification schedule
-    settings notification exams
-    settings
-
-    DONE:
-   
-     */
 
     public Keyboard mainMenu(BotUser botUser) {
         var innerKeyboard = new Keyboard();
@@ -124,13 +105,12 @@ public class InnerKeyboardGenerator {
 
         innerKeyboard.get(4).add(new KeyboardButton("ФИЯИЛ"));
         innerKeyboard.get(4).add(new KeyboardButton("КНИИТ"));
-        innerKeyboard.get(4).add(new KeyboardButton("ФНБМТ"));
+        innerKeyboard.get(4).add(new KeyboardButton("ФФМИМТ"));
 
-        innerKeyboard.get(5).add(new KeyboardButton("ФНП"));
         innerKeyboard.get(5).add(new KeyboardButton("ПСИХОЛОГ"));
         innerKeyboard.get(5).add(new KeyboardButton("ППИСО"));
+        innerKeyboard.get(5).add(new KeyboardButton("ФИЛОСОФ"));
 
-        innerKeyboard.get(6).add(new KeyboardButton("ФИЛОСОФ"));
         innerKeyboard.get(6).add(new KeyboardButton("ЭКОНОМ"));
         innerKeyboard.get(6).add(new KeyboardButton("ЮРФАК"));
 

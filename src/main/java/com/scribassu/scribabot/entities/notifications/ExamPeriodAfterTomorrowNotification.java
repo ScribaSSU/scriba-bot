@@ -5,7 +5,6 @@ import com.scribassu.scribabot.model.BotUserSource;
 
 import javax.persistence.*;
 
-//TODO автоматически при регистрации пользователя создавать выключенные уведомления
 @Entity
 public class ExamPeriodAfterTomorrowNotification extends AbstractScheduleNotification {
 
