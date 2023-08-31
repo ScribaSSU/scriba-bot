@@ -124,11 +124,10 @@ public class InnerKeyboardGenerator {
         var innerKeyboard = new Keyboard();
         for (var i = 0; i < 4; i++)
             innerKeyboard.add(new ArrayList<>());
-        innerKeyboard.get(0).add(new KeyboardButton(String.format("%1$s Да %1$s", YES_EMOJI)));
-        innerKeyboard.get(1).add(new KeyboardButton(String.format("%1$s Нет %1$s", NO_EMOJI)));
+        innerKeyboard.get(0).add(new KeyboardButton(String.format("%1$s Да, удалить %1$s", YES_EMOJI)));
+        innerKeyboard.get(1).add(new KeyboardButton(String.format("%1$s Нет, не удалять %1$s", NO_EMOJI)));
         innerKeyboard.get(2).add(SETTINGS_BUTTON);
         innerKeyboard.get(3).add(MAIN_MENU_BUTTON);
-        
         return innerKeyboard;
     }
 
