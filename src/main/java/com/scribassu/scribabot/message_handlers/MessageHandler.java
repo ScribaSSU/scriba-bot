@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
 
+import static com.scribassu.scribabot.text.CommandText.HELLO;
 import static com.scribassu.scribabot.text.MessageText.*;
 
 // 434
@@ -54,12 +55,10 @@ public class MessageHandler {
     @Async
     public CompletableFuture<BotMessage> getBotMessage(Command command) {
         String message = command.getMessage().trim();
-        String payload = command.getPayload().toLowerCase();
         String userId = command.getUserId();
         BotUserSource botUserSource = command.getBotUserSource();
         RegisteredUserResult registeredUserResult = botUserService.isBotUserRegistered(command);
         BotUser botUser = registeredUserResult.getBotUser();
-        boolean registered = registeredUserResult.isRegistered();
 
         var botMessage = new BotMessage(
                 MessageText.DEFAULT_MESSAGE,
@@ -67,6 +66,7 @@ public class MessageHandler {
 
         boolean isMentioned = false;
 
+        // vk only
         for (String mentionedName : mentionedNames) {
             if (message.contains(mentionedName.toLowerCase(Locale.ROOT))) {
                 // 1 for ] char
@@ -92,8 +92,12 @@ public class MessageHandler {
 //            botUser.setUserId(userId); //DON'T SAVE! It is only for unrecognized messages check
 //            return CompletableFuture.completedFuture(botMessage);
 //        }
+        if (!registeredUserResult.isRegistered()) {
+            message = HELLO;
+            command = new Command(message, userId, botUserSource);
+        }
 
-        if (greetingsService.shouldAcceptCommand(message, botUser)) {
+        if (greetingsService.shouldAccept(message, botUser)) {
             return greetingsService.getBotMessage(command);
         }
 
@@ -109,6 +113,10 @@ public class MessageHandler {
             return teacherService.getBotMessage(message, botUser);
         }
 
+        if (studentGroupService.shouldAccept(message, botUser)) {
+            return studentGroupService.getBotMessage(message, botUser);
+        }
+
         if (fullTimeLessonService.shouldAccept(message, botUser)) {
             return fullTimeLessonService.getBotMessage(message, botUser);
         }
@@ -117,13 +125,12 @@ public class MessageHandler {
             return extramuralEventService.getBotMessage(message, botUser);
         }
 
-
         switch (message) {
             case CommandText.STUDENTS_SCHEDULE:
                 if (BotUser.isBotUserFullTime(botUser)) {
-                    return CompletableFuture.completedFuture(new BotMessage(CHOOSE_WANTED_SCHEDULE, innerKeyboardGenerator.fullTimeSchedule(), botUser));
+                    return CompletableFuture.completedFuture(new BotMessage(CHOOSE_WANTED_SCHEDULE, innerKeyboardGenerator.fullTimeSchedule(botUser), botUser));
                 } else if (BotUser.isBotUserExtramural(botUser)) {
-                    return CompletableFuture.completedFuture(new BotMessage(CHOOSE_WANTED_SCHEDULE, innerKeyboardGenerator.extramuralSchedule(), botUser));
+                    return CompletableFuture.completedFuture(new BotMessage(CHOOSE_WANTED_SCHEDULE, innerKeyboardGenerator.extramuralSchedule(botUser), botUser));
                 } else {
                     return CompletableFuture.completedFuture(new BotMessage(CANNOT_GET_SCHEDULE_GROUP_NOT_SET, innerKeyboardGenerator.departments(), botUser));
                 }
@@ -138,7 +145,6 @@ public class MessageHandler {
             case CommandText.EVENING:
                 botUserService.updateEducationForm(EducationForm.VO, botUser);
                 return CompletableFuture.completedFuture(new BotMessage(CHOOSE_COURSE, innerKeyboardGenerator.courses(), botUser));
-
             case CommandText.SETTINGS:
                 return CompletableFuture.completedFuture(new BotMessage(SETTINGS_MENU, innerKeyboardGenerator.settings(botUser), botUser));
             case CommandText.EXAMS:
@@ -146,43 +152,9 @@ public class MessageHandler {
         }
 
 
-        if (CommandText.DEPARTMENT_PAYLOAD.equalsIgnoreCase(payload)
-                || CommandText.DEPARTMENT_PATTERN.matcher(message).matches()) {
+        if (CommandText.DEPARTMENT_PATTERN.matcher(message).matches()) {
             botUserService.updateDepartment(message, botUser);
             return CompletableFuture.completedFuture(new BotMessage(MessageText.CHOOSE_EDUCATION_FORM, innerKeyboardGenerator.educationForms(), botUser));
-        }
-
-        if (isStudentGroupCommand(command)) {
-            return studentGroupService.getBotMessage(message, botUser);
-        }
-
-        if (CommandText.CHOOSE_STUDENT_GROUP.equalsIgnoreCase(payload)) {
-            botUserService.updateGroupNumber(message, botUser);
-            if (null != botUser.getPreviousUserMessage()
-                    && botUser.getPreviousUserMessage().equalsIgnoreCase(GREETING_WITH_CHOOSE_DEPARTMENT)) {
-                botUserService.resetPreviousUserMessage(botUser);
-                return CompletableFuture.completedFuture(new BotMessage(THIS_IS_MAIN_MENU, innerKeyboardGenerator.mainMenu(botUser), botUser));
-
-            } else {
-                if (BotUser.isBotUserFullTime(botUser)) {
-                    return CompletableFuture.completedFuture(new BotMessage(MessageText.FINISH_SET_GROUP, innerKeyboardGenerator.fullTimeSchedule(), botUser));
-                }
-                if (BotUser.isBotUserExtramural(botUser)) {
-                    return CompletableFuture.completedFuture(new BotMessage(FINISH_SET_GROUP, innerKeyboardGenerator.extramuralSchedule(), botUser));
-                }
-            }
-        }
-
-        if (message.startsWith(CommandText.GROUP_NUMBER_INPUT)) {
-            botUserService.updateGroupNumber(message.substring(2), botUser);
-
-            if (null != botUser.getPreviousUserMessage()
-                    && botUser.getPreviousUserMessage().equalsIgnoreCase(GREETING_WITH_CHOOSE_DEPARTMENT)) {
-                botUserService.resetPreviousUserMessage(botUser);
-                return CompletableFuture.completedFuture(new BotMessage(THIS_IS_MAIN_MENU, innerKeyboardGenerator.mainMenu(botUser), botUser));
-            } else {
-                return CompletableFuture.completedFuture(new BotMessage(MessageText.FINISH_SET_GROUP, innerKeyboardGenerator.fullTimeSchedule(), botUser));
-            }
         }
 
         if (message.startsWith("р ")) {
@@ -197,10 +169,5 @@ public class MessageHandler {
 
         botMessage.setBotUser(botUser);
         return CompletableFuture.completedFuture(botMessage);
-    }
-
-    private boolean isStudentGroupCommand(Command command) {
-        return CommandText.COURSE_PAYLOAD.equalsIgnoreCase(command.getPayload())
-                || CommandText.COURSE_PATTERN.matcher(command.getMessage()).matches();
     }
 }

@@ -100,22 +100,27 @@ public class BotUserService {
         } else {
             tgBotUserRepository.updatePreviousUserMessage(message, botUser.getUserId());
         }
+        botUser.setPreviousUserMessage(message);
     }
 
     public void updateEducationForm(EducationForm educationForm, BotUser botUser) {
+        var educationFormType = educationForm.getGroupType();
         if (botUser.fromVk()) {
-            vkBotUserRepository.updateEducationForm(educationForm.getGroupType(), botUser.getUserId());
+            vkBotUserRepository.updateEducationForm(educationFormType, botUser.getUserId());
         } else {
-            tgBotUserRepository.updateEducationForm(educationForm.getGroupType(), botUser.getUserId());
+            tgBotUserRepository.updateEducationForm(educationFormType, botUser.getUserId());
         }
+        botUser.setEducationForm(educationFormType);
     }
 
     public void updateDepartment(String message, BotUser botUser) {
+        var department = DepartmentConverter.convertToUrl(message);
         if (botUser.fromVk()) {
-            vkBotUserRepository.updateDepartment(DepartmentConverter.convertToUrl(message), botUser.getUserId());
+            vkBotUserRepository.updateDepartment(department, botUser.getUserId());
         } else {
-            tgBotUserRepository.updateDepartment(DepartmentConverter.convertToUrl(message), botUser.getUserId());
+            tgBotUserRepository.updateDepartment(department, botUser.getUserId());
         }
+        botUser.setDepartment(department);
     }
 
     public void updateGroupNumber(String message, BotUser botUser) {
@@ -124,6 +129,7 @@ public class BotUserService {
         } else {
             tgBotUserRepository.updateGroupNumber(message, botUser.getUserId());
         }
+        botUser.setGroupNumber(message);
     }
 
     public void setFilterNomDenom(boolean filter, BotUser botUser) {
@@ -136,6 +142,7 @@ public class BotUserService {
             tgBotUser.setFilterNomDenom(true);
             tgBotUserRepository.save(tgBotUser);
         }
+        botUser.setFilterNomDenom(filter);
     }
 
     public void setSentKeyboard(boolean flag, BotUser botUser) {
@@ -148,6 +155,7 @@ public class BotUserService {
             tgBotUser.setSentKeyboard(flag);
             tgBotUserRepository.save(tgBotUser);
         }
+        botUser.setSentKeyboard(flag);
     }
 
     public void setSilentEmptyDays(boolean flag, BotUser botUser) {
@@ -160,6 +168,7 @@ public class BotUserService {
             tgBotUser.setSilentEmptyDays(flag);
             tgBotUserRepository.save(tgBotUser);
         }
+        botUser.setSilentEmptyDays(flag);
     }
 
     public void delete(BotUser botUser) {

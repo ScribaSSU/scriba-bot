@@ -14,10 +14,9 @@ public class CommandText {
     public static final String THANKS = "спасибо";
     public static final String EXAMS = "сессия";
     public static final String CHOOSE_DEPARTMENT = "выбрать факультет и группу";
-    public static final String CHOOSE_STUDENT_GROUP = "выбор группы";
     public static final String DELETE_PROFILE = "удалить профиль";
-    public static final String YES = "да";
-    public static final String NO = "нет";
+    public static final String YES_DELETE_PROFILE = "да, удалить";
+    public static final String NO_DELETE_PROFILE = "нет, не удалять";
 
     public static final String GROUP_NUMBER_INPUT = "г ";
 
@@ -26,6 +25,7 @@ public class CommandText {
     public static final String YESTERDAY = "вчера";
     public static final String AFTER_TOMORROW = "послезавтра";
     public static final String ALL_LESSONS = "все занятия";
+    //todo
     public static final String TEACHER_SCHEDULE_FOR_EXTRAMURAL = "занятия заочников";
 
     public static final String MONDAY = "пн";
@@ -67,7 +67,7 @@ public class CommandText {
     public static final String SEND_EXAM_PERIOD = "рассылка расписания сессии";
     public static final String SEND_SCHEDULE = "рассылка расписания занятий";
 
-    public static final String EXIT_TEACHER_SCHEDULE_MODE = "Выйти из расписания преподавателя";
+    public static final String EXIT_TEACHER_SCHEDULE_MODE = "выйти из расписания преподавателя";
 
     private static final String HOUR = "^\\d*\\s*ч$";
     private static final String COURSE = "\\d{1}\\s*курс";
@@ -78,11 +78,6 @@ public class CommandText {
     public static final Pattern HOUR_PATTERN = Pattern.compile(HOUR);
     public static final Pattern COURSE_PATTERN = Pattern.compile(COURSE);
     public static final Pattern DEPARTMENT_PATTERN = Pattern.compile(DEPARTMENT);
-
-    public static final String DEPARTMENT_PAYLOAD = "dep";
-    public static final String COURSE_PAYLOAD = "course";
-    public static final String TEACHER_ID_PAYLOAD = "teacher id";
-
-    public static final String STICKER_WAS_SENT_TO_BOT = "STICKER_WAS_SENT_TO_BOT";
+    public static final String STICKER_WAS_SENT_TO_BOT = "sticker_was_sent_to_bot";
     public static final String TEACHER_PREFIX = "Преп";
 }

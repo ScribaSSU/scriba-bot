@@ -1,13 +1,13 @@
 package com.scribassu.scribabot.mapper;
 
+import com.scribassu.scribabot.dto.vk.VkMessageDto;
+import com.scribassu.scribabot.dto.vkkeyboard.*;
+import com.scribassu.scribabot.model.BotUserSource;
 import com.scribassu.scribabot.model.Command;
 import com.scribassu.scribabot.model.keyboard.Keyboard;
 import com.scribassu.scribabot.model.keyboard.KeyboardButton;
 import com.scribassu.scribabot.model.keyboard.KeyboardEmoji;
-import com.scribassu.scribabot.dto.vk.VkMessageDto;
-import com.scribassu.scribabot.dto.vkkeyboard.*;
 import com.scribassu.scribabot.text.CommandText;
-import com.scribassu.scribabot.model.BotUserSource;
 import com.scribassu.scribabot.util.Constants;
 import lombok.Data;
 import org.springframework.stereotype.Component;
@@ -27,11 +27,6 @@ public class HttpMapper {
 
     public Command toCommand(VkMessageDto incomingMessage) {
         var messageObject = incomingMessage.getObject();
-        var payload = messageObject.getPayload();
-        if (payload.startsWith(Constants.PAYLOAD_START) && payload.endsWith(Constants.PAYLOAD_END)) {
-            payload = payload.substring(Constants.PAYLOAD_START.length());
-            payload = payload.substring(0, payload.indexOf(Constants.PAYLOAD_END)).toLowerCase(Locale.ROOT);
-        }
 
         var message = removeEmoji(incomingMessage.getObject().getText()).toLowerCase(Locale.ROOT);
 
@@ -46,13 +41,12 @@ public class HttpMapper {
            }
         }
 
-        return new Command(message, payload.toLowerCase(Locale.ROOT), String.valueOf(incomingMessage.getObject().getPeerId()), BotUserSource.VK);
+        return new Command(message, String.valueOf(incomingMessage.getObject().getPeerId()), BotUserSource.VK);
     }
 
     public Command toCommand(Update update) {
         return new Command(removeEmoji(update.getMessage().getText()).toLowerCase(Locale.ROOT),
-                "",
-                String.valueOf(update.getMessage().getFrom().getId()),
+                String.valueOf(update.getMessage().getChatId()),
                 BotUserSource.TG);
     }
 
@@ -86,7 +80,7 @@ public class HttpMapper {
         return new VkKeyboardButton(
                 new VkKeyboardButtonActionText(
                         keyboardButton.getText(),
-                        keyboardButton.getPayload().orElse(DEFAULT_PAYLOAD),
+                        DEFAULT_PAYLOAD,
                         VkKeyboardButtonActionType.TEXT
                 ), VkKeyboardButtonColor.PRIMARY);
     }

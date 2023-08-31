@@ -21,7 +21,6 @@ public class UnrecognizedMessage {
     private Long id;
 
     private String message;
-    private String payload;
 
     private String userId;
 
@@ -33,7 +32,6 @@ public class UnrecognizedMessage {
 
     public UnrecognizedMessage(Command command, String userId, BotUserSource userSource) {
         this.message = command.getMessage();
-        this.payload = command.getPayload();
         this.userId = userId;
         this.userSource = userSource;
     }

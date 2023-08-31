@@ -21,14 +21,14 @@ public class BotMessageGenerator {
                                                       BotUser botUser) {
         return new BotMessage(
                 MessageGenerator.makeFullTimeLessonTemplate(fullTimeLessonDto, day, botUser.isFilterNomDenom()),
-                innerKeyboardGenerator.fullTimeSchedule(), botUser);
+                innerKeyboardGenerator.fullTimeSchedule(botUser), botUser);
     }
 
     public BotMessage getBotMessageForFullTimeLessonsAll(FullTimeLessonListDto fullTimeLessonDto,
                                                          BotUser botUser) {
         return new BotMessage(
                 MessageGenerator.makeFullTimeLessonTemplateLessonsAll(fullTimeLessonDto, botUser.isFilterNomDenom()),
-                innerKeyboardGenerator.fullTimeSchedule(), botUser);
+                innerKeyboardGenerator.fullTimeSchedule(botUser), botUser);
     }
 
     public BotMessage getBotMessageForUnsupportedLessons(BotUser botUser) {
@@ -39,11 +39,11 @@ public class BotMessageGenerator {
                                                          String day, BotUser botUser) {
         return new BotMessage(
                 MessageGenerator.makeFullTimeExamPeriodTemplate(examPeriodEventDto, day),
-                innerKeyboardGenerator.fullTimeSchedule(), botUser);
+                innerKeyboardGenerator.fullTimeSchedule(botUser), botUser);
     }
 
     public BotMessage getBotMessageForEmptyFullTimeExamPeriod(BotUser botUser) {
-        return new BotMessage(NO_EXAM_PERIOD_SCHEDULE, innerKeyboardGenerator.fullTimeSchedule(), botUser);
+        return new BotMessage(NO_EXAM_PERIOD_SCHEDULE, innerKeyboardGenerator.fullTimeSchedule(botUser), botUser);
     }
 
     public BotMessage getBotMessageForTeacherFullTimeLessons(TeacherFullTimeLessonListDto fullTimeLessonDto,
@@ -64,11 +64,11 @@ public class BotMessageGenerator {
                                                       String day, BotUser botUser) {
         return new BotMessage(
                 MessageGenerator.makeExtramuralEventTemplate(extramuralDto, day),
-                innerKeyboardGenerator.extramuralSchedule(), botUser);
+                innerKeyboardGenerator.extramuralSchedule(botUser), botUser);
     }
 
     public BotMessage getBotMessageForEmptyExtramuralEvent(BotUser botUser) {
-        return new BotMessage(NO_EXAM_PERIOD_SCHEDULE, innerKeyboardGenerator.extramuralSchedule(), botUser);
+        return new BotMessage(NO_EXAM_PERIOD_SCHEDULE, innerKeyboardGenerator.extramuralSchedule(botUser), botUser);
     }
 
     public BotMessage getBotMessageForEmptyExtramuralEventTeacher(BotUser botUser) {

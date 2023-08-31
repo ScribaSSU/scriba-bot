@@ -71,8 +71,8 @@ public class SettingsService implements BotMessageService {
             case CommandText.ENABLE_SEND_KEYBOARD:
             case CommandText.DISABLE_SEND_KEYBOARD:
             case CommandText.DELETE_PROFILE:
-            case CommandText.YES:
-            case CommandText.NO:
+            case CommandText.YES_DELETE_PROFILE:
+            case CommandText.NO_DELETE_PROFILE:
                 return true;
             default: return false;
         }
@@ -131,9 +131,9 @@ public class SettingsService implements BotMessageService {
                 return getCurrentUserSettings(botUser);
             case CommandText.DELETE_PROFILE:
                 return CompletableFuture.completedFuture(new BotMessage(DELETE_CONFIRMATION, innerKeyboardGenerator.confirmDeletion(), botUser));
-            case CommandText.NO:
+            case CommandText.NO_DELETE_PROFILE:
                 return CompletableFuture.completedFuture(new BotMessage(NOT_BYE_MESSAGE, innerKeyboardGenerator.settings(botUser), botUser));
-            case CommandText.YES:
+            case CommandText.YES_DELETE_PROFILE:
                 botUserService.delete(botUser);
                 return CompletableFuture.completedFuture(new BotMessage(BYE_MESSAGE, botUser));
         }

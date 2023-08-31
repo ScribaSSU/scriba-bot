@@ -4,6 +4,7 @@ import com.scribassu.scribabot.model.BotMessage;
 import com.scribassu.scribabot.model.Command;
 import com.scribassu.scribabot.generators.InnerKeyboardGenerator;
 import com.scribassu.scribabot.mapper.HttpMapper;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,12 +17,20 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 @Service
 @Slf4j
-@Data
 public class TgMessageSender extends TelegramLongPollingBot implements MessageSender {
 
-    private MessageHandler messageHandler;
-    private InnerKeyboardGenerator innerKeyboardGenerator;
-    private HttpMapper httpMapper;
+    private final MessageHandler messageHandler;
+    private final InnerKeyboardGenerator innerKeyboardGenerator;
+    private final HttpMapper httpMapper;
+
+    public TgMessageSender(MessageHandler messageHandler,
+                           InnerKeyboardGenerator innerKeyboardGenerator,
+                           HttpMapper httpMapper) {
+        super();
+        this.messageHandler = messageHandler;
+        this.innerKeyboardGenerator = innerKeyboardGenerator;
+        this.httpMapper = httpMapper;
+    }
 
     @Value("${scriba-bot.tg.name}")
     private String botUsername;

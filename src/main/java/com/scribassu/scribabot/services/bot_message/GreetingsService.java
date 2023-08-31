@@ -22,7 +22,7 @@ public class GreetingsService {
     private final InnerKeyboardGenerator innerKeyboardGenerator;
     private final BotUserService botUserService;
 
-    public boolean shouldAcceptCommand(String message, BotUser botUser) {
+    public boolean shouldAccept(String message, BotUser botUser) {
         switch (message) {
             case CommandText.STICKER_WAS_SENT_TO_BOT:
             case CommandText.TG_START:
@@ -57,7 +57,7 @@ public class GreetingsService {
                     botUserService.registerUser(botUser);
                     return CompletableFuture.completedFuture(new BotMessage(GREETING_WITH_CHOOSE_DEPARTMENT, innerKeyboardGenerator.departments(), botUser));
                 } else {
-                    botUserService.updatePreviousUserMessage("", botUser);
+                    botUserService.resetPreviousUserMessage(botUser);
                     return CompletableFuture.completedFuture(new BotMessage(RETURN_MAIN_MENU, innerKeyboardGenerator.mainMenu(botUser), botUser));
                 }
             case CommandText.THANKS:

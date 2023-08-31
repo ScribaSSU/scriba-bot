@@ -6,14 +6,12 @@ import com.scribassu.scribabot.model.BotUserSource;
 import com.scribassu.scribabot.model.keyboard.Keyboard;
 import com.scribassu.scribabot.model.keyboard.KeyboardButton;
 import com.scribassu.scribabot.repositories.notifications.*;
-import com.scribassu.scribabot.util.DepartmentConverter;
 import com.scribassu.tracto.dto.TeacherDto;
 import lombok.Data;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static com.scribassu.scribabot.model.keyboard.KeyboardEmoji.*;
 import static com.scribassu.scribabot.text.CommandText.TEACHER_PREFIX;
@@ -44,7 +42,7 @@ public class InnerKeyboardGenerator {
         var innerKeyboard = new Keyboard();
         for (var i = 0; i < 4; i++)
             innerKeyboard.add(new ArrayList<>());
-        innerKeyboard.get(0).add(new KeyboardButton(String.format("%1$s Расписание студентов %1$s", STUDENT_SCHEDULE_EMOJI), Optional.empty()));
+        innerKeyboard.get(0).add(new KeyboardButton(String.format("%1$s Расписание студентов %1$s", STUDENT_SCHEDULE_EMOJI)));
         innerKeyboard.get(1).add(new KeyboardButton(String.format("%1$s Расписание преподавателей %1$s", TEACHER_SCHEDULE_EMOJI)));
         innerKeyboard.get(2).add(SETTINGS_BUTTON);
         innerKeyboard.get(3).add(new KeyboardButton(String.format("%1$s Справка %1$s", HELP_EMOJI)));
@@ -134,7 +132,7 @@ public class InnerKeyboardGenerator {
         return innerKeyboard;
     }
 
-    public Keyboard fullTimeSchedule() {
+    public Keyboard fullTimeSchedule(BotUser botUser) {
         var innerKeyboard = new Keyboard();
         for (var i = 0; i < 6; i++)
             innerKeyboard.add(new ArrayList<>());
@@ -155,11 +153,16 @@ public class InnerKeyboardGenerator {
         innerKeyboard.get(4).add(CHOOSE_DEPARTMENT_AND_GROUP_BUTTON);
 
         innerKeyboard.get(5).add(MAIN_MENU_BUTTON);
+
+        if (botUser.wantTeacherSchedule()) {
+            innerKeyboard.add(new ArrayList<>());
+            innerKeyboard.get(6).add(EXIT_TEACHER_SCHEDULE_MODE);
+        }
         
         return innerKeyboard;
     }
 
-    public Keyboard extramuralSchedule() {
+    public Keyboard extramuralSchedule(BotUser botUser) {
         var innerKeyboard = new Keyboard();
         for (var i = 0; i < 4; i++)
             innerKeyboard.add(new ArrayList<>());
@@ -172,6 +175,12 @@ public class InnerKeyboardGenerator {
         innerKeyboard.get(2).add(CHOOSE_DEPARTMENT_AND_GROUP_BUTTON);
 
         innerKeyboard.get(3).add(MAIN_MENU_BUTTON);
+
+        if (botUser.wantTeacherSchedule()) {
+            innerKeyboard.add(new ArrayList<>());
+            innerKeyboard.get(4).add(EXIT_TEACHER_SCHEDULE_MODE);
+        }
+
         
         return innerKeyboard;
     }

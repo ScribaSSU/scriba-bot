@@ -9,10 +9,4 @@ import java.util.Optional;
 @AllArgsConstructor
 public class KeyboardButton {
     private String text;
-    private Optional<String> payload;
-
-    public KeyboardButton(String text) {
-        this.text = text;
-        this.payload = Optional.empty();
-    }
 }

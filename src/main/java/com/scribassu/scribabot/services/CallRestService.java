@@ -189,7 +189,7 @@ public class CallRestService {
 
     public TeacherFullTimeLessonListDto getTeacherLessonsByDay(String teacherId, String day) {
         RestTemplate restTemplate = new RestTemplate();
-        String uri = prefix + TEACHER_URI + "/" + teacherId + "/" + day;
+        String uri = prefix + TEACHER_URI + "/" + teacherId + "/full/" + day;
 
         //https://stackoverflow.com/questions/19540289/how-to-fix-the-java-security-cert-certificateexception-no-subject-alternative
         javax.net.ssl.HttpsURLConnection.setDefaultHostnameVerifier((hostname, sslSession) -> true);

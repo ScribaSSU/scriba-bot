@@ -2,7 +2,7 @@ package com.scribassu.scribabot.model;
 
 import com.scribassu.scribabot.entities.users.TgBotUser;
 import com.scribassu.scribabot.entities.users.VkBotUser;
-import com.scribassu.scribabot.util.Constants;
+import com.scribassu.scribabot.text.CommandText;
 import com.scribassu.tracto.dto.EducationForm;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -63,16 +63,8 @@ public class BotUser {
         return BotUserSource.VK.equals(this.source);
     }
 
-    public boolean registered() {
-        return null != this.userId && !this.userId.isEmpty();
-    }
-
-    public boolean notRegistered() {
-        return !registered();
-    }
-
     public boolean wantTeacherSchedule() {
-        return this.previousUserMessage.startsWith(Constants.TEACHER_ID);
+        return null != this.previousUserMessage && this.previousUserMessage.startsWith(CommandText.TEACHER_PREFIX);
     }
 
     public static boolean isBotUserFullTime(BotUser botUser) {

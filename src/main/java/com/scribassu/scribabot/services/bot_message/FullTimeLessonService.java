@@ -26,11 +26,7 @@ public class FullTimeLessonService implements BotMessageService {
 
     @Override
     public CompletableFuture<BotMessage> getBotMessage(String message, BotUser botUser) {
-        if (botUser.wantTeacherSchedule()) {
-            return getTeacherBotMessage(message, botUser);
-        } else {
-            return getStudentBotMessage(message, botUser);
-        }
+        return getStudentBotMessage(message, botUser);
     }
 
     @Override
@@ -49,64 +45,6 @@ public class FullTimeLessonService implements BotMessageService {
                 return BotUser.isBotUserFullTime(botUser);
             default: return false;
         }
-    }
-
-    private CompletableFuture<BotMessage> getTeacherBotMessage(String message, BotUser botUser) {
-        Calendar calendar = CalendarUtils.getCalendar();
-        TeacherFullTimeLessonListDto lessons = new TeacherFullTimeLessonListDto();
-        boolean isToday = false;
-        boolean isTomorrow = false;
-        boolean isYesterday = false;
-        String teacherId = botUser.getPreviousUserMessage().split(" ")[1];
-
-        switch (message) {
-            case CommandText.MONDAY:
-                lessons = callRestService.getTeacherLessonsByDay(teacherId, "1");
-                break;
-            case CommandText.TUESDAY:
-                lessons = callRestService.getTeacherLessonsByDay(teacherId, "2");
-                break;
-            case CommandText.WEDNESDAY:
-                lessons = callRestService.getTeacherLessonsByDay(teacherId, "3");
-                break;
-            case CommandText.THURSDAY:
-                lessons = callRestService.getTeacherLessonsByDay(teacherId, "4");
-                break;
-            case CommandText.FRIDAY:
-                lessons = callRestService.getTeacherLessonsByDay(teacherId, "5");
-                break;
-            case CommandText.SATURDAY:
-                lessons = callRestService.getTeacherLessonsByDay(teacherId, "6");
-                break;
-            case CommandText.TODAY:
-                String day = String.valueOf(CalendarUtils.getDayOfWeekStartsFromMonday(calendar));
-                lessons = callRestService.getTeacherLessonsByDay(teacherId, day);
-                isToday = true;
-                break;
-            case CommandText.TOMORROW:
-                calendar.add(Calendar.DAY_OF_WEEK, 1);
-                day = String.valueOf(CalendarUtils.getDayOfWeekStartsFromMonday(calendar));
-                lessons = callRestService.getTeacherLessonsByDay(teacherId, day);
-                isTomorrow = true;
-                break;
-            case CommandText.YESTERDAY:
-                calendar.add(Calendar.DAY_OF_WEEK, -1);
-                day = String.valueOf(CalendarUtils.getDayOfWeekStartsFromMonday(calendar));
-                lessons = callRestService.getTeacherLessonsByDay(teacherId, day);
-                isYesterday = true;
-                break;
-        }
-
-        if (isToday) {
-            return CompletableFuture.completedFuture(botMessageGenerator.getBotMessageForTeacherFullTimeLessons(lessons, CommandText.TODAY, botUser));
-        }
-        if (isTomorrow) {
-            return CompletableFuture.completedFuture(botMessageGenerator.getBotMessageForTeacherFullTimeLessons(lessons, CommandText.TOMORROW, botUser));
-        }
-        if (isYesterday) {
-            return CompletableFuture.completedFuture(botMessageGenerator.getBotMessageForTeacherFullTimeLessons(lessons, CommandText.YESTERDAY, botUser));
-        }
-        return CompletableFuture.completedFuture(botMessageGenerator.getBotMessageForTeacherFullTimeLessons(lessons, "", botUser));
     }
 
     private CompletableFuture<BotMessage> getStudentBotMessage(String message, BotUser botUser) {

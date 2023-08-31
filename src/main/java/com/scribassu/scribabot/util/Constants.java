@@ -26,7 +26,7 @@ public class Constants {
     public static final String PAYLOAD_END = "\"}";
     public static final String DEFAULT_PAYLOAD = "{\"button\": \"1\"}";
 
-    public static final String TEACHER_ID = "TEACHER_ID ";
+    public static final String TEACHER_ID = "TEACHER_ID";
 
     public static final String EMPTY_VK_KEYBOARD = "{\"buttons\":[],\"one_time\":true}";
 
