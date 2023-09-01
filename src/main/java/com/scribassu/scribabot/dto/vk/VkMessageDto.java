@@ -13,7 +13,7 @@ public class VkMessageDto {
     private long groupId;
 
     @JsonProperty("type")
-    private VkMessageType type;
+    private String type;
 
     @JsonProperty("event_id")
     private String eventId;
@@ -28,10 +28,6 @@ public class VkMessageDto {
     private String secret;
 
     public boolean isConfirmation() {
-        return this.type.equals(VkMessageType.confirmation);
-    }
-
-    public boolean isNewMessage() {
-        return this.type.equals(VkMessageType.message_new);
+        return this.type.equals("confirmation");
     }
 }
