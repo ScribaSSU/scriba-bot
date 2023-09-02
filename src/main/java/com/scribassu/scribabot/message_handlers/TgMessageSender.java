@@ -1,11 +1,9 @@
 package com.scribassu.scribabot.message_handlers;
 
-import com.scribassu.scribabot.model.BotMessage;
-import com.scribassu.scribabot.model.Command;
 import com.scribassu.scribabot.generators.InnerKeyboardGenerator;
 import com.scribassu.scribabot.mapper.HttpMapper;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import com.scribassu.scribabot.model.BotMessage;
+import com.scribassu.scribabot.model.Command;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -45,7 +43,7 @@ public class TgMessageSender extends TelegramLongPollingBot implements MessageSe
     public void onUpdateReceived(Update update) {
         var chatId = update.getMessage().getChatId();
         Command command = httpMapper.toCommand(update);
-        log.info("TG Message: " + command);
+        log.info("TG Message: {}", command);
         try {
             BotMessage botMessage = messageHandler.getBotMessage(command).get();
 

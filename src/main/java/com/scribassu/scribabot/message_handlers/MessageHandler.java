@@ -83,15 +83,6 @@ public class MessageHandler {
             return CompletableFuture.completedFuture(new BotMessage(DO_NOT_SEND, botUser));
         }
 
-        // todo to remove?
-//        if (!registered && !message.equals(CommandText.HELLO)
-//                && !message.equals(CommandText.MAIN_MENU)
-//                && !message.equals(CommandText.SHORT_MAIN_MENU)
-//                && !message.equals(CommandText.TG_START)) {
-//            botMessage = new BotMessage(GREETING_WITH_CHOOSE_DEPARTMENT, botUser);
-//            botUser.setUserId(userId); //DON'T SAVE! It is only for unrecognized messages check
-//            return CompletableFuture.completedFuture(botMessage);
-//        }
         if (!registeredUserResult.isRegistered()) {
             message = HELLO;
             command = new Command(message, userId, botUserSource);

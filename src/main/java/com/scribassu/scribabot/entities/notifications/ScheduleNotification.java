@@ -6,13 +6,13 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+@Entity
 @Data
 @NoArgsConstructor
-@MappedSuperclass
-public abstract class AbstractScheduleNotification {
+public class ScheduleNotification {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     private String userId;
@@ -23,14 +23,19 @@ public abstract class AbstractScheduleNotification {
     private boolean isEnabled;
     private Integer hourForSend;
 
-    public AbstractScheduleNotification(String userId,
-                                        BotUserSource userSource,
-                                        boolean isEnabled,
-                                        int hourForSend) {
+    @Enumerated(EnumType.STRING)
+    private NotificationType notificationType;
+
+    public ScheduleNotification(String userId,
+                                BotUserSource userSource,
+                                boolean isEnabled,
+                                int hourForSend,
+                                NotificationType notificationType) {
         this.userId = userId;
         this.userSource = userSource;
         this.isEnabled = isEnabled;
         this.hourForSend = hourForSend;
+        this.notificationType = notificationType;
     }
 
     public boolean fromVk() {
