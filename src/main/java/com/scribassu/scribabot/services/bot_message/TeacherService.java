@@ -70,7 +70,8 @@ public class TeacherService implements BotMessageService {
     }
 
     private String retrieveTeacherId(String message) {
-        return message.replace(TEACHER_PREFIX.toLowerCase(Locale.ROOT), "").substring(0, message.indexOf(" ") + 1);
+        var withoutPrefix  = message.replace(TEACHER_PREFIX.toLowerCase(Locale.ROOT), "").trim();
+        return withoutPrefix.substring(0, withoutPrefix.indexOf(" ") + 1);
     }
 
     private boolean userSendsTeacherPrompt(BotUser botUser) {
