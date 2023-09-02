@@ -1,11 +1,12 @@
 package com.scribassu.scribabot.services.bot_message;
 
-import com.scribassu.scribabot.entities.notifications.*;
+import com.scribassu.scribabot.entities.notifications.NotificationType;
+import com.scribassu.scribabot.entities.notifications.ScheduleNotification;
 import com.scribassu.scribabot.generators.InnerKeyboardGenerator;
 import com.scribassu.scribabot.model.BotMessage;
 import com.scribassu.scribabot.model.BotUser;
 import com.scribassu.scribabot.model.BotUserSource;
-import com.scribassu.scribabot.repositories.notifications.*;
+import com.scribassu.scribabot.repositories.notifications.ScheduleNotificationRepository;
 import com.scribassu.scribabot.services.BotMessageService;
 import com.scribassu.scribabot.services.BotUserService;
 import com.scribassu.scribabot.text.CommandText;
@@ -15,28 +16,24 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
+import static com.scribassu.scribabot.entities.notifications.NotificationType.*;
 import static com.scribassu.scribabot.text.MessageText.*;
 
 // 1127
 // 1038
 // 984
 // 734
+// 595
 // todo notification logic
 @Service
 @Slf4j
 @Data
 public class SettingsService implements BotMessageService {
     private final BotUserService botUserService;
-    private final ScheduleTodayNotificationRepository scheduleTodayNotificationRepository;
-    private final ScheduleTomorrowNotificationRepository scheduleTomorrowNotificationRepository;
-    private final ExamPeriodTodayNotificationRepository examPeriodTodayNotificationRepository;
-    private final ExamPeriodTomorrowNotificationRepository examPeriodTomorrowNotificationRepository;
-    private final ExamPeriodAfterTomorrowNotificationRepository examPeriodAfterTomorrowNotificationRepository;
-    private final ExtramuralEventTodayNotificationRepository extramuralEventTodayNotificationRepository;
-    private final ExtramuralEventTomorrowNotificationRepository extramuralEventTomorrowNotificationRepository;
-    private final ExtramuralEventAfterTomorrowNotificationRepository extramuralEventAfterTomorrowNotificationRepository;
+    private final ScheduleNotificationRepository scheduleNotificationRepository;
     private final InnerKeyboardGenerator innerKeyboardGenerator;
 
     @Override
@@ -81,8 +78,6 @@ public class SettingsService implements BotMessageService {
     @Override
     public CompletableFuture<BotMessage> getBotMessage(String message, BotUser botUser) {
         BotMessage botMessage = new BotMessage();
-        String userId = botUser.getUserId();
-        BotUserSource source = botUser.getSource();
 
         if (forFullTimeScheduleTodayNotification(message)) {
             return processFullTimeScheduleTodayNotification(message, botUser);
@@ -139,100 +134,39 @@ public class SettingsService implements BotMessageService {
         }
 
         if (CommandText.HOUR_PATTERN.matcher(message).matches()) {
-            int hourForSend = Integer.parseInt(message.substring(0, message.indexOf(" ")));
+            var hourForSend = Integer.parseInt(message.substring(0, message.indexOf(" ")));
+            var previousMessage = botUser.getPreviousUserMessage();
+            var notificationType = FULL_TIME_TODAY;
 
-            if (botUser.getPreviousUserMessage().equalsIgnoreCase(CHOOSE_SCHEDULE_NOTIFICATION_TIME_TODAY)) {
-                var scheduleTodayNotificationOptional =
-                        scheduleTodayNotificationRepository.findByUserIdAndUserSource(userId, source);
-
-                if (scheduleTodayNotificationOptional.isEmpty()) {
-                    scheduleTodayNotificationRepository.save(new ScheduleTodayNotification(userId, source, true, hourForSend));
-                } else {
-                    var scheduleTodayNotification = scheduleTodayNotificationOptional.get();
-                    scheduleTodayNotification.setHourForSend(hourForSend);
-                    scheduleTodayNotificationRepository.save(scheduleTodayNotification);
-                }
+            if (previousMessage.equalsIgnoreCase(CHOOSE_SCHEDULE_NOTIFICATION_TIME_TODAY)) {
+                notificationType = FULL_TIME_TODAY;
             }
-            if (botUser.getPreviousUserMessage().equalsIgnoreCase(CHOOSE_SCHEDULE_NOTIFICATION_TIME_TOMORROW)) {
-                ScheduleTomorrowNotification scheduleTomorrowNotification =
-                        scheduleTomorrowNotificationRepository.findByUserIdAndUserSource(userId, source);
 
-                if (null == scheduleTomorrowNotification) {
-                    scheduleTomorrowNotification = new ScheduleTomorrowNotification(userId, source, true, hourForSend);
-                } else {
-                    scheduleTomorrowNotification.setHourForSend(hourForSend);
-                }
-                scheduleTomorrowNotificationRepository.save(scheduleTomorrowNotification);
+            if (botUser.getPreviousUserMessage().equalsIgnoreCase(CHOOSE_SCHEDULE_NOTIFICATION_TIME_TOMORROW)) {
+                notificationType = FULL_TIME_TOMORROW;
             }
             if (botUser.getPreviousUserMessage().equalsIgnoreCase(CHOOSE_EXAM_PERIOD_NOTIFICATION_TIME_TODAY)) {
                 if (BotUser.isBotUserFullTime(botUser)) {
-                    ExamPeriodTodayNotification examPeriodTodayNotification =
-                            examPeriodTodayNotificationRepository.findByUserIdAndUserSource(userId, source);
-
-                    if (null == examPeriodTodayNotification) {
-                        examPeriodTodayNotification = new ExamPeriodTodayNotification(userId, source, true, hourForSend);
-                    } else {
-                        examPeriodTodayNotification.setHourForSend(hourForSend);
-                    }
-                    examPeriodTodayNotificationRepository.save(examPeriodTodayNotification);
+                    notificationType = EXAM_PERIOD_TODAY;
                 } else {
-                    ExtramuralEventTodayNotification extramuralEventTodayNotification =
-                            extramuralEventTodayNotificationRepository.findByUserIdAndUserSource(userId, source);
-
-                    if (null == extramuralEventTodayNotification) {
-                        extramuralEventTodayNotification = new ExtramuralEventTodayNotification(userId, source, true, hourForSend);
-                    } else {
-                        extramuralEventTodayNotification.setHourForSend(hourForSend);
-                    }
-                    extramuralEventTodayNotificationRepository.save(extramuralEventTodayNotification);
+                    notificationType = EXTRAMURAL_EVENT_TODAY;
                 }
             }
             if (botUser.getPreviousUserMessage().equalsIgnoreCase(CHOOSE_EXAM_PERIOD_NOTIFICATION_TIME_TOMORROW)) {
                 if (BotUser.isBotUserFullTime(botUser)) {
-                    ExamPeriodTomorrowNotification examPeriodTomorrowNotification =
-                            examPeriodTomorrowNotificationRepository.findByUserIdAndUserSource(userId, source);
-
-                    if (null == examPeriodTomorrowNotification) {
-                        examPeriodTomorrowNotification = new ExamPeriodTomorrowNotification(userId, source, true, hourForSend);
-                    } else {
-                        examPeriodTomorrowNotification.setHourForSend(hourForSend);
-                    }
-                    examPeriodTomorrowNotificationRepository.save(examPeriodTomorrowNotification);
+                    notificationType = EXAM_PERIOD_TOMORROW;
                 } else {
-                    ExtramuralEventTomorrowNotification extramuralEventTomorrowNotification =
-                            extramuralEventTomorrowNotificationRepository.findByUserIdAndUserSource(userId, source);
-
-                    if (null == extramuralEventTomorrowNotification) {
-                        extramuralEventTomorrowNotification = new ExtramuralEventTomorrowNotification(userId, source, true, hourForSend);
-                    } else {
-                        extramuralEventTomorrowNotification.setHourForSend(hourForSend);
-                    }
-                    extramuralEventTomorrowNotificationRepository.save(extramuralEventTomorrowNotification);
+                    notificationType = EXTRAMURAL_EVENT_TOMORROW;
                 }
             }
             if (botUser.getPreviousUserMessage().equalsIgnoreCase(CHOOSE_EXAM_PERIOD_NOTIFICATION_TIME_AFTER_TOMORROW)) {
                 if (BotUser.isBotUserFullTime(botUser)) {
-                    ExamPeriodAfterTomorrowNotification examPeriodAfterTomorrowNotification =
-                            examPeriodAfterTomorrowNotificationRepository.findByUserIdAndUserSource(userId, source);
-
-                    if (null == examPeriodAfterTomorrowNotification) {
-                        examPeriodAfterTomorrowNotification = new ExamPeriodAfterTomorrowNotification(userId, source, true, hourForSend);
-                    } else {
-                        examPeriodAfterTomorrowNotification.setHourForSend(hourForSend);
-                    }
-                    examPeriodAfterTomorrowNotificationRepository.save(examPeriodAfterTomorrowNotification);
+                    notificationType = EXAM_PERIOD_AFTER_TOMORROW;
                 } else {
-                    ExtramuralEventAfterTomorrowNotification extramuralEventAfterTomorrowNotification =
-                            extramuralEventAfterTomorrowNotificationRepository.findByUserIdAndUserSource(userId, source);
-
-                    if (null == extramuralEventAfterTomorrowNotification) {
-                        extramuralEventAfterTomorrowNotification = new ExtramuralEventAfterTomorrowNotification(userId, source, true, hourForSend);
-                    } else {
-                        extramuralEventAfterTomorrowNotification.setHourForSend(hourForSend);
-                    }
-                    extramuralEventAfterTomorrowNotificationRepository.save(extramuralEventAfterTomorrowNotification);
+                    notificationType = EXTRAMURAL_EVENT_AFTER_TOMORROW;
                 }
             }
+            upsertScheduleNotificationHourForSend(hourForSend, botUser, notificationType);
             final String hourMessage = SCHEDULE_WILL_BE_SENT_ABSTRACT + hourForSend + H_DOT;
             return CompletableFuture.completedFuture(new BotMessage(hourMessage, innerKeyboardGenerator.settings(botUser), botUser));
         }
@@ -242,11 +176,6 @@ public class SettingsService implements BotMessageService {
 
     private CompletableFuture<BotMessage> processFullTimeScheduleTodayNotification(String message, BotUser botUser) {
         BotMessage botMessage = new BotMessage();
-        String userId = botUser.getUserId();
-        BotUserSource source = botUser.getSource();
-
-        var scheduleTodayNotificationOptional =
-                scheduleTodayNotificationRepository.findByUserIdAndUserSource(userId, source);
 
         switch (message) {
             case CommandText.SET_SEND_SCHEDULE_TIME_TODAY:
@@ -254,31 +183,62 @@ public class SettingsService implements BotMessageService {
                 botUserService.updatePreviousUserMessage(formatSchedule, botUser);
                 return CompletableFuture.completedFuture(new BotMessage(formatSchedule, innerKeyboardGenerator.hours(), botUser));
             case CommandText.ENABLE_SEND_SCHEDULE_TODAY:
-                if (scheduleTodayNotificationOptional.isEmpty()) {
+                var scheduleTodayNotificationOptionalEn = enableScheduleNotification(botUser, FULL_TIME_TODAY);
+                if (scheduleTodayNotificationOptionalEn.isEmpty()) {
                     return CompletableFuture.completedFuture(new BotMessage(
                             NOT_ENABLE_SCHEDULE_NOTIFICATION_TODAY_FRMTD,
                             innerKeyboardGenerator.settingsScheduleNotification(botUser), botUser));
                 } else {
-                    var scheduleTodayNotificationEn = scheduleTodayNotificationOptional.get();
-                    scheduleTodayNotificationEn.setEnabled(true);
-                    scheduleTodayNotificationRepository.save(scheduleTodayNotificationEn);
-                    String enableNotificationMessage = String.format(SCHEDULE_WILL_BE_SENT, TODAY) +
-                            scheduleTodayNotificationEn.getHourForSend() + H_DOT;
                     return CompletableFuture.completedFuture(new BotMessage(
-                            enableNotificationMessage,
+                            String.format(SCHEDULE_WILL_BE_SENT, TODAY) +
+                                    scheduleTodayNotificationOptionalEn.get().getHourForSend() + H_DOT,
                             innerKeyboardGenerator.settingsScheduleNotification(botUser), botUser));
                 }
             case CommandText.DISABLE_SEND_SCHEDULE_TODAY:
-                if (scheduleTodayNotificationOptional.isEmpty()) {
+                var scheduleTodayNotificationOptionalDis = disableScheduleNotification(botUser, FULL_TIME_TODAY);
+                if (scheduleTodayNotificationOptionalDis.isEmpty()) {
                     return CompletableFuture.completedFuture(new BotMessage(
                             NOT_ENABLE_SCHEDULE_NOTIFICATION_TODAY_FRMTD,
                             innerKeyboardGenerator.settingsScheduleNotification(botUser), botUser));
                 } else {
-                    var scheduleTodayNotificationDis = scheduleTodayNotificationOptional.get();
-                    scheduleTodayNotificationDis.setEnabled(false);
-                    scheduleTodayNotificationRepository.save(scheduleTodayNotificationDis);
                     return CompletableFuture.completedFuture(new BotMessage(
                             String.format(SCHEDULE_IS_DISABLED, TODAY),
+                            innerKeyboardGenerator.settingsScheduleNotification(botUser), botUser));
+                }
+        }
+
+        return CompletableFuture.completedFuture(botMessage);
+    }
+
+    private CompletableFuture<BotMessage> processFullTimeScheduleTomorrowNotification(String message, BotUser botUser) {
+        BotMessage botMessage = new BotMessage();
+
+        switch (message) {
+            case CommandText.SET_SEND_SCHEDULE_TIME_TOMORROW:
+                String formatSchedule = String.format(CHOOSE_SCHEDULE_NOTIFICATION_TIME, TOMORROW);
+                botUserService.updatePreviousUserMessage(formatSchedule, botUser);
+                return CompletableFuture.completedFuture(new BotMessage(formatSchedule, innerKeyboardGenerator.hours(), botUser));
+            case CommandText.ENABLE_SEND_SCHEDULE_TOMORROW:
+                var scheduleTomorrowNotificationOptionalEn = enableScheduleNotification(botUser, FULL_TIME_TOMORROW);
+                if (scheduleTomorrowNotificationOptionalEn.isEmpty()) {
+                    return CompletableFuture.completedFuture(new BotMessage(
+                            NOT_ENABLE_SCHEDULE_NOTIFICATION_TOMORROW_FRMTD,
+                            innerKeyboardGenerator.settingsScheduleNotification(botUser), botUser));
+                } else {
+                    return CompletableFuture.completedFuture(new BotMessage(
+                            String.format(SCHEDULE_WILL_BE_SENT, TOMORROW) +
+                                    scheduleTomorrowNotificationOptionalEn.get().getHourForSend() + H_DOT,
+                            innerKeyboardGenerator.settingsScheduleNotification(botUser), botUser));
+                }
+            case CommandText.DISABLE_SEND_SCHEDULE_TOMORROW:
+                var scheduleTomorrowNotificationOptionalDis = enableScheduleNotification(botUser, FULL_TIME_TOMORROW);
+                if (scheduleTomorrowNotificationOptionalDis.isEmpty()) {
+                    return CompletableFuture.completedFuture(new BotMessage(
+                            NOT_ENABLE_SCHEDULE_NOTIFICATION_TOMORROW_FRMTD,
+                            innerKeyboardGenerator.settingsScheduleNotification(botUser), botUser));
+                } else {
+                    return CompletableFuture.completedFuture(new BotMessage(
+                            String.format(SCHEDULE_IS_DISABLED, TOMORROW),
                             innerKeyboardGenerator.settingsScheduleNotification(botUser), botUser));
                 }
         }
@@ -298,111 +258,62 @@ public class SettingsService implements BotMessageService {
                 return CompletableFuture.completedFuture(new BotMessage(formatSchedule, innerKeyboardGenerator.hours(), botUser));
             case CommandText.ENABLE_SEND_EXAM_PERIOD_TODAY:
                 if (BotUser.isBotUserFullTime(botUser)) {
-                    ExamPeriodTodayNotification examPeriodTodayNotificationEn =
-                            examPeriodTodayNotificationRepository.findByUserIdAndUserSource(userId, source);
-                    if (null != examPeriodTodayNotificationEn) {
-                        examPeriodTodayNotificationEn.setEnabled(true);
-                        examPeriodTodayNotificationRepository.save(examPeriodTodayNotificationEn);
+                    var enabledScheduleNotificationOptional = enableScheduleNotification(botUser, EXAM_PERIOD_TODAY);
+                    if (enabledScheduleNotificationOptional.isEmpty()) {
                         return CompletableFuture.completedFuture(new BotMessage(
-                                String.format(EXAM_PERIOD_WILL_BE_SENT, TODAY) +
-                                        examPeriodTodayNotificationEn.getHourForSend() + H_DOT,
+                                NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_TODAY_FRMTD,
                                 innerKeyboardGenerator.settingsExamNotification(botUser), botUser));
                     } else {
                         return CompletableFuture.completedFuture(new BotMessage(
-                                NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_TODAY_FRMTD,
+                                String.format(EXAM_PERIOD_WILL_BE_SENT, TODAY) +
+                                        enabledScheduleNotificationOptional.get().getHourForSend() + H_DOT,
                                 innerKeyboardGenerator.settingsExamNotification(botUser), botUser));
                     }
                 } else if (BotUser.isBotUserExtramural(botUser)) {
-                    ExtramuralEventTodayNotification extramuralEventTodayNotificationEn =
-                            extramuralEventTodayNotificationRepository.findByUserIdAndUserSource(userId, source);
-                    if (null != extramuralEventTodayNotificationEn) {
-                        extramuralEventTodayNotificationEn.setEnabled(true);
-                        extramuralEventTodayNotificationRepository.save(extramuralEventTodayNotificationEn);
+                    var extramuralEventTodayNotificationOptional = enableScheduleNotification(botUser, EXTRAMURAL_EVENT_TODAY);
+                    if (extramuralEventTodayNotificationOptional.isEmpty()) {
                         return CompletableFuture.completedFuture(new BotMessage(
-                                String.format(EXAM_PERIOD_WILL_BE_SENT, TODAY) +
-                                        extramuralEventTodayNotificationEn.getHourForSend() + H_DOT,
+                                NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_TODAY_FRMTD,
                                 innerKeyboardGenerator.settingsExamNotification(botUser), botUser));
                     } else {
                         return CompletableFuture.completedFuture(new BotMessage(
-                                NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_TODAY_FRMTD,
+                                String.format(EXAM_PERIOD_WILL_BE_SENT, TODAY) +
+                                        extramuralEventTodayNotificationOptional.get().getHourForSend() + H_DOT,
                                 innerKeyboardGenerator.settingsExamNotification(botUser), botUser));
                     }
                 }
                 break;
             case CommandText.DISABLE_SEND_EXAM_PERIOD_TODAY:
                 if (BotUser.isBotUserFullTime(botUser)) {
-                    ExamPeriodTodayNotification examPeriodTodayNotificationDis =
-                            examPeriodTodayNotificationRepository.findByUserIdAndUserSource(userId, source);
-                    if (null != examPeriodTodayNotificationDis) {
-                        examPeriodTodayNotificationDis.setEnabled(false);
-                        examPeriodTodayNotificationRepository.save(examPeriodTodayNotificationDis);
+                    var examPeriodTodayNotificationOptional =
+                            scheduleNotificationRepository.findByUserIdAndUserSource(userId, source, EXAM_PERIOD_TODAY);
+                    if (examPeriodTodayNotificationOptional.isEmpty()) {
                         return CompletableFuture.completedFuture(new BotMessage(
                                 String.format(EXAM_PERIOD_IS_DISABLED, TODAY),
                                 innerKeyboardGenerator.settingsExamNotification(botUser), botUser));
                     } else {
+                        var examPeriodTodayNotificationDis = examPeriodTodayNotificationOptional.get();
+                        examPeriodTodayNotificationDis.setEnabled(false);
+                        scheduleNotificationRepository.save(examPeriodTodayNotificationDis);
                         return CompletableFuture.completedFuture(new BotMessage(
-                                NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_TODAY_FRMTD,
+                                String.format(EXAM_PERIOD_IS_DISABLED, TODAY),
                                 innerKeyboardGenerator.settingsExamNotification(botUser), botUser));
                     }
                 } else if (BotUser.isBotUserExtramural(botUser)) {
-                    ExtramuralEventTodayNotification extramuralEventTodayNotificationDis =
-                            extramuralEventTodayNotificationRepository.findByUserIdAndUserSource(userId, source);
-                    if (null != extramuralEventTodayNotificationDis) {
-                        extramuralEventTodayNotificationDis.setEnabled(false);
-                        extramuralEventTodayNotificationRepository.save(extramuralEventTodayNotificationDis);
-                        return CompletableFuture.completedFuture(new BotMessage(
-                                String.format(EXAM_PERIOD_IS_DISABLED, TODAY),
-                                innerKeyboardGenerator.settingsExamNotification(botUser), botUser));
-                    } else {
+                    var extramuralEventTodayNotificationOptional =
+                            scheduleNotificationRepository.findByUserIdAndUserSource(userId, source, EXTRAMURAL_EVENT_TODAY);
+                    if (extramuralEventTodayNotificationOptional.isEmpty()) {
                         return CompletableFuture.completedFuture(new BotMessage(
                                 NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_TODAY_FRMTD,
                                 innerKeyboardGenerator.settingsExamNotification(botUser), botUser));
+                    } else {
+                        var extramuralEventTodayNotificationDis = extramuralEventTodayNotificationOptional.get();
+                        extramuralEventTodayNotificationDis.setEnabled(false);
+                        scheduleNotificationRepository.save(extramuralEventTodayNotificationDis);
+                        return CompletableFuture.completedFuture(new BotMessage(
+                                String.format(EXAM_PERIOD_IS_DISABLED, TODAY),
+                                innerKeyboardGenerator.settingsExamNotification(botUser), botUser));
                     }
-                }
-        }
-
-        return CompletableFuture.completedFuture(botMessage);
-    }
-
-    private CompletableFuture<BotMessage> processFullTimeScheduleTomorrowNotification(String message, BotUser botUser) {
-        BotMessage botMessage = new BotMessage();
-        String userId = botUser.getUserId();
-        BotUserSource source = botUser.getSource();
-
-        switch (message) {
-            case CommandText.SET_SEND_SCHEDULE_TIME_TOMORROW:
-                String formatSchedule = String.format(CHOOSE_SCHEDULE_NOTIFICATION_TIME, TOMORROW);
-                botUserService.updatePreviousUserMessage(formatSchedule, botUser);
-                return CompletableFuture.completedFuture(new BotMessage(formatSchedule, innerKeyboardGenerator.hours(), botUser));
-            case CommandText.ENABLE_SEND_SCHEDULE_TOMORROW:
-                ScheduleTomorrowNotification scheduleTomorrowNotificationEn =
-                        scheduleTomorrowNotificationRepository.findByUserIdAndUserSource(userId, source);
-                if (null != scheduleTomorrowNotificationEn) {
-                    scheduleTomorrowNotificationEn.setEnabled(true);
-                    scheduleTomorrowNotificationRepository.save(scheduleTomorrowNotificationEn);
-                    String enableNotificationMessage = String.format(SCHEDULE_WILL_BE_SENT, TOMORROW) +
-                            scheduleTomorrowNotificationEn.getHourForSend() + H_DOT;
-                    return CompletableFuture.completedFuture(new BotMessage(
-                            enableNotificationMessage,
-                            innerKeyboardGenerator.settingsScheduleNotification(botUser), botUser));
-                } else {
-                    return CompletableFuture.completedFuture(new BotMessage(
-                            NOT_ENABLE_SCHEDULE_NOTIFICATION_TOMORROW_FRMTD,
-                            innerKeyboardGenerator.settingsScheduleNotification(botUser), botUser));
-                }
-            case CommandText.DISABLE_SEND_SCHEDULE_TOMORROW:
-                ScheduleTomorrowNotification scheduleTomorrowNotificationDis =
-                        scheduleTomorrowNotificationRepository.findByUserIdAndUserSource(userId, source);
-                if (null != scheduleTomorrowNotificationDis) {
-                    scheduleTomorrowNotificationDis.setEnabled(false);
-                    scheduleTomorrowNotificationRepository.save(scheduleTomorrowNotificationDis);
-                    return CompletableFuture.completedFuture(new BotMessage(
-                            String.format(SCHEDULE_IS_DISABLED, TOMORROW),
-                            innerKeyboardGenerator.settingsScheduleNotification(botUser), botUser));
-                } else {
-                    return CompletableFuture.completedFuture(new BotMessage(
-                            NOT_ENABLE_SCHEDULE_NOTIFICATION_TOMORROW_FRMTD,
-                            innerKeyboardGenerator.settingsScheduleNotification(botUser), botUser));
                 }
         }
 
@@ -410,9 +321,7 @@ public class SettingsService implements BotMessageService {
     }
 
     private CompletableFuture<BotMessage> tomorrowNotificationsExamPeriod(String message, BotUser botUser) {
-        var botMessage = new BotMessage();
-        String userId = botUser.getUserId();
-        BotUserSource source = botUser.getSource();
+        BotMessage botMessage = new BotMessage();
 
         switch (message) {
             case CommandText.SET_SEND_EXAM_PERIOD_TIME_TOMORROW:
@@ -421,76 +330,62 @@ public class SettingsService implements BotMessageService {
                 return CompletableFuture.completedFuture(new BotMessage(formatSchedule, innerKeyboardGenerator.hours(), botUser));
             case CommandText.ENABLE_SEND_EXAM_PERIOD_TOMORROW:
                 if (BotUser.isBotUserFullTime(botUser)) {
-                    ExamPeriodTomorrowNotification examPeriodTomorrowNotificationEn =
-                            examPeriodTomorrowNotificationRepository.findByUserIdAndUserSource(userId, source);
-                    if (null != examPeriodTomorrowNotificationEn) {
-                        examPeriodTomorrowNotificationEn.setEnabled(true);
-                        examPeriodTomorrowNotificationRepository.save(examPeriodTomorrowNotificationEn);
+                    var examPeriodTomorrowNotificationOptional = enableScheduleNotification(botUser, EXAM_PERIOD_TOMORROW);
+                    if (examPeriodTomorrowNotificationOptional.isEmpty()) {
                         return CompletableFuture.completedFuture(new BotMessage(
-                                String.format(EXAM_PERIOD_WILL_BE_SENT, TOMORROW) +
-                                        examPeriodTomorrowNotificationEn.getHourForSend() + H_DOT,
+                                NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_TOMORROW_FRMTD,
                                 innerKeyboardGenerator.settingsExamNotification(botUser), botUser));
                     } else {
                         return CompletableFuture.completedFuture(new BotMessage(
-                                NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_TOMORROW_FRMTD,
+                                String.format(EXAM_PERIOD_WILL_BE_SENT, TOMORROW) +
+                                        examPeriodTomorrowNotificationOptional.get().getHourForSend() + H_DOT,
                                 innerKeyboardGenerator.settingsExamNotification(botUser), botUser));
                     }
                 } else if (BotUser.isBotUserExtramural(botUser)) {
-                    ExtramuralEventTomorrowNotification extramuralEventTomorrowNotificationEn =
-                            extramuralEventTomorrowNotificationRepository.findByUserIdAndUserSource(userId, source);
-                    if (null != extramuralEventTomorrowNotificationEn) {
-                        extramuralEventTomorrowNotificationEn.setEnabled(true);
-                        extramuralEventTomorrowNotificationRepository.save(extramuralEventTomorrowNotificationEn);
+                    var extramuralEventTomorrowNotificationOptional = enableScheduleNotification(botUser, EXTRAMURAL_EVENT_TOMORROW);
+                    if (extramuralEventTomorrowNotificationOptional.isEmpty()) {
                         return CompletableFuture.completedFuture(new BotMessage(
-                                String.format(EXAM_PERIOD_WILL_BE_SENT, TOMORROW) +
-                                        extramuralEventTomorrowNotificationEn.getHourForSend() + H_DOT,
+                                NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_TOMORROW_FRMTD,
                                 innerKeyboardGenerator.settingsExamNotification(botUser), botUser));
                     } else {
                         return CompletableFuture.completedFuture(new BotMessage(
-                                NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_TOMORROW_FRMTD,
+                                String.format(EXAM_PERIOD_WILL_BE_SENT, TOMORROW) +
+                                        extramuralEventTomorrowNotificationOptional.get().getHourForSend() + H_DOT,
                                 innerKeyboardGenerator.settingsExamNotification(botUser), botUser));
                     }
                 }
                 break;
             case CommandText.DISABLE_SEND_EXAM_PERIOD_TOMORROW:
                 if (BotUser.isBotUserFullTime(botUser)) {
-                    ExamPeriodTomorrowNotification examPeriodTomorrowNotificationDis =
-                            examPeriodTomorrowNotificationRepository.findByUserIdAndUserSource(userId, source);
-                    if (null != examPeriodTomorrowNotificationDis) {
-                        examPeriodTomorrowNotificationDis.setEnabled(false);
-                        examPeriodTomorrowNotificationRepository.save(examPeriodTomorrowNotificationDis);
+                    var examPeriodTomorrowNotificationOptional = disableScheduleNotification(botUser, EXAM_PERIOD_TOMORROW);
+                    if (examPeriodTomorrowNotificationOptional.isEmpty()) {
                         return CompletableFuture.completedFuture(new BotMessage(
-                                String.format(EXAM_PERIOD_IS_DISABLED, TOMORROW),
+                                NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_TOMORROW_FRMTD,
                                 innerKeyboardGenerator.settingsExamNotification(botUser), botUser));
                     } else {
                         return CompletableFuture.completedFuture(new BotMessage(
-                                NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_TOMORROW_FRMTD,
+                                String.format(EXAM_PERIOD_IS_DISABLED, TOMORROW),
                                 innerKeyboardGenerator.settingsExamNotification(botUser), botUser));
                     }
                 } else if (BotUser.isBotUserExtramural(botUser)) {
-                    ExtramuralEventTomorrowNotification extramuralEventTomorrowNotificationDis =
-                            extramuralEventTomorrowNotificationRepository.findByUserIdAndUserSource(userId, source);
-                    if (null != extramuralEventTomorrowNotificationDis) {
-                        extramuralEventTomorrowNotificationDis.setEnabled(false);
-                        extramuralEventTomorrowNotificationRepository.save(extramuralEventTomorrowNotificationDis);
+                    var extramuralEventTomorrowNotificationOptional = disableScheduleNotification(botUser, EXTRAMURAL_EVENT_TOMORROW);
+                    if (extramuralEventTomorrowNotificationOptional.isEmpty()) {
                         return CompletableFuture.completedFuture(new BotMessage(
-                                String.format(EXAM_PERIOD_IS_DISABLED, TOMORROW),
+                                NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_TOMORROW_FRMTD,
                                 innerKeyboardGenerator.settingsExamNotification(botUser), botUser));
                     } else {
                         return CompletableFuture.completedFuture(new BotMessage(
-                                NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_TOMORROW_FRMTD,
+                                String.format(EXAM_PERIOD_IS_DISABLED, TOMORROW),
                                 innerKeyboardGenerator.settingsExamNotification(botUser), botUser));
                     }
                 }
         }
-
         return CompletableFuture.completedFuture(botMessage);
     }
 
+
     private CompletableFuture<BotMessage> afterTomorrowNotificationsExamPeriod(String message, BotUser botUser) {
         BotMessage botMessage = new BotMessage();
-        String userId = botUser.getUserId();
-        BotUserSource source = botUser.getSource();
 
         switch (message) {
             case CommandText.SET_SEND_EXAM_PERIOD_TIME_AFTER_TOMORROW:
@@ -499,64 +394,52 @@ public class SettingsService implements BotMessageService {
                 return CompletableFuture.completedFuture(new BotMessage(formatSchedule, innerKeyboardGenerator.hours(), botUser));
             case CommandText.ENABLE_SEND_EXAM_PERIOD_AFTER_TOMORROW:
                 if (BotUser.isBotUserFullTime(botUser)) {
-                    ExamPeriodAfterTomorrowNotification examPeriodAfterTomorrowNotificationEn =
-                            examPeriodAfterTomorrowNotificationRepository.findByUserIdAndUserSource(userId, source);
-                    if (null != examPeriodAfterTomorrowNotificationEn) {
-                        examPeriodAfterTomorrowNotificationEn.setEnabled(true);
-                        examPeriodAfterTomorrowNotificationRepository.save(examPeriodAfterTomorrowNotificationEn);
+                    var examPeriodAfterTomorrowNotificationOptional = enableScheduleNotification(botUser, EXAM_PERIOD_AFTER_TOMORROW);
+                    if (examPeriodAfterTomorrowNotificationOptional.isEmpty()) {
                         return CompletableFuture.completedFuture(new BotMessage(
-                                String.format(EXAM_PERIOD_WILL_BE_SENT, AFTER_TOMORROW) +
-                                        examPeriodAfterTomorrowNotificationEn.getHourForSend() + H_DOT,
+                                NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_AFTER_TOMORROW_FRMTD,
                                 innerKeyboardGenerator.settingsExamNotification(botUser), botUser));
                     } else {
                         return CompletableFuture.completedFuture(new BotMessage(
-                                NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_AFTER_TOMORROW_FRMTD,
+                                String.format(EXAM_PERIOD_WILL_BE_SENT, AFTER_TOMORROW) +
+                                        examPeriodAfterTomorrowNotificationOptional.get().getHourForSend() + H_DOT,
                                 innerKeyboardGenerator.settingsExamNotification(botUser), botUser));
                     }
                 } else if (BotUser.isBotUserExtramural(botUser)) {
-                    ExtramuralEventAfterTomorrowNotification extramuralEventAfterTomorrowNotificationEn =
-                            extramuralEventAfterTomorrowNotificationRepository.findByUserIdAndUserSource(userId, source);
-                    if (null != extramuralEventAfterTomorrowNotificationEn) {
-                        extramuralEventAfterTomorrowNotificationEn.setEnabled(true);
-                        extramuralEventAfterTomorrowNotificationRepository.save(extramuralEventAfterTomorrowNotificationEn);
+                    var extramuralEventAfterTomorrowNotificationOptional = enableScheduleNotification(botUser, EXTRAMURAL_EVENT_AFTER_TOMORROW);
+                    if (extramuralEventAfterTomorrowNotificationOptional.isEmpty()) {
                         return CompletableFuture.completedFuture(new BotMessage(
-                                String.format(EXAM_PERIOD_WILL_BE_SENT, AFTER_TOMORROW) +
-                                        extramuralEventAfterTomorrowNotificationEn.getHourForSend() + H_DOT,
+                                NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_AFTER_TOMORROW_FRMTD,
                                 innerKeyboardGenerator.settingsExamNotification(botUser), botUser));
                     } else {
                         return CompletableFuture.completedFuture(new BotMessage(
-                                NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_AFTER_TOMORROW_FRMTD,
+                                String.format(EXAM_PERIOD_WILL_BE_SENT, AFTER_TOMORROW) +
+                                        extramuralEventAfterTomorrowNotificationOptional.get().getHourForSend() + H_DOT,
                                 innerKeyboardGenerator.settingsExamNotification(botUser), botUser));
                     }
                 }
                 break;
             case CommandText.DISABLE_SEND_EXAM_PERIOD_AFTER_TOMORROW:
                 if (BotUser.isBotUserFullTime(botUser)) {
-                    ExamPeriodAfterTomorrowNotification examPeriodAfterTomorrowNotificationDis =
-                            examPeriodAfterTomorrowNotificationRepository.findByUserIdAndUserSource(userId, source);
-                    if (null != examPeriodAfterTomorrowNotificationDis) {
-                        examPeriodAfterTomorrowNotificationDis.setEnabled(false);
-                        examPeriodAfterTomorrowNotificationRepository.save(examPeriodAfterTomorrowNotificationDis);
+                    var examPeriodAfterTomorrowNotificationOptional = disableScheduleNotification(botUser, EXAM_PERIOD_AFTER_TOMORROW);
+                    if (examPeriodAfterTomorrowNotificationOptional.isEmpty()) {
                         return CompletableFuture.completedFuture(new BotMessage(
-                                String.format(EXAM_PERIOD_IS_DISABLED, AFTER_TOMORROW),
+                                NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_AFTER_TOMORROW_FRMTD,
                                 innerKeyboardGenerator.settingsExamNotification(botUser), botUser));
                     } else {
                         return CompletableFuture.completedFuture(new BotMessage(
-                                NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_AFTER_TOMORROW_FRMTD,
+                                String.format(EXAM_PERIOD_IS_DISABLED, AFTER_TOMORROW),
                                 innerKeyboardGenerator.settingsExamNotification(botUser), botUser));
                     }
                 } else if (BotUser.isBotUserExtramural(botUser)) {
-                    ExtramuralEventAfterTomorrowNotification extramuralEventAfterTomorrowNotificationDis =
-                            extramuralEventAfterTomorrowNotificationRepository.findByUserIdAndUserSource(userId, source);
-                    if (null != extramuralEventAfterTomorrowNotificationDis) {
-                        extramuralEventAfterTomorrowNotificationDis.setEnabled(false);
-                        extramuralEventAfterTomorrowNotificationRepository.save(extramuralEventAfterTomorrowNotificationDis);
+                    var extramuralEventAfterTomorrowNotificationOptional = disableScheduleNotification(botUser, EXTRAMURAL_EVENT_AFTER_TOMORROW);
+                    if (extramuralEventAfterTomorrowNotificationOptional.isEmpty()) {
                         return CompletableFuture.completedFuture(new BotMessage(
-                                String.format(EXAM_PERIOD_IS_DISABLED, AFTER_TOMORROW),
+                                NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_AFTER_TOMORROW_FRMTD,
                                 innerKeyboardGenerator.settingsExamNotification(botUser), botUser));
                     } else {
                         return CompletableFuture.completedFuture(new BotMessage(
-                                NOT_ENABLE_EXAM_PERIOD_NOTIFICATION_AFTER_TOMORROW_FRMTD,
+                                String.format(EXAM_PERIOD_IS_DISABLED, AFTER_TOMORROW),
                                 innerKeyboardGenerator.settingsExamNotification(botUser), botUser));
                     }
                 }
@@ -590,190 +473,71 @@ public class SettingsService implements BotMessageService {
     }
 
     private String getScheduleNotificationSettingsFullTime(BotUser botUser) {
-        String userId = botUser.getUserId();
-        BotUserSource source = botUser.getSource();
-
-        var scheduleTodayNotificationOptional =
-                scheduleTodayNotificationRepository.findByUserIdAndUserSource(userId, source);
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("Рассылка расписания на сегодня: ");
-
-        if (scheduleTodayNotificationOptional.isEmpty()) {
-            stringBuilder.append("не подключена.");
-        } else {
-            var scheduleTodayNotification = scheduleTodayNotificationOptional.get();
-            if (scheduleTodayNotification.isEnabled()) {
-                stringBuilder.append("вкл, ");
-            } else {
-                stringBuilder.append("выкл, ");
-            }
-
-            stringBuilder.append(scheduleTodayNotification.getHourForSend()).append(H_DOT);
-        }
+        formatScheduleNotificationsSettings(botUser, FULL_TIME_TODAY, stringBuilder);
 
         stringBuilder.append("\n\n");
-
-        ScheduleTomorrowNotification scheduleTomorrowNotification =
-                scheduleTomorrowNotificationRepository.findByUserIdAndUserSource(userId, source);
 
         stringBuilder.append("Рассылка расписания на завтра: ");
-
-        if (null == scheduleTomorrowNotification) {
-            stringBuilder.append("не подключена.");
-        } else {
-            if (scheduleTomorrowNotification.isEnabled()) {
-                stringBuilder.append("вкл, ");
-            } else {
-                stringBuilder.append("выкл, ");
-            }
-
-            if (null == scheduleTomorrowNotification.getHourForSend()) {
-                stringBuilder.append("время не указано.");
-            } else {
-                stringBuilder.append(scheduleTomorrowNotification.getHourForSend()).append(H_DOT);
-            }
-        }
+        formatScheduleNotificationsSettings(botUser, FULL_TIME_TOMORROW, stringBuilder);
 
         stringBuilder.append("\n\n");
 
-        ExamPeriodTodayNotification examPeriodTodayNotification =
-                examPeriodTodayNotificationRepository.findByUserIdAndUserSource(userId, source);
         stringBuilder.append("Рассылка расписания сессии на сегодня: ");
-
-        if (null == examPeriodTodayNotification) {
-            stringBuilder.append("не подключена.");
-        } else {
-            if (examPeriodTodayNotification.isEnabled()) {
-                stringBuilder.append("вкл, ");
-            } else {
-                stringBuilder.append("выкл, ");
-            }
-
-            if (null == examPeriodTodayNotification.getHourForSend()) {
-                stringBuilder.append("время не указано.");
-            } else {
-                stringBuilder.append(examPeriodTodayNotification.getHourForSend()).append(H_DOT);
-            }
-        }
+        formatScheduleNotificationsSettings(botUser, EXAM_PERIOD_TODAY, stringBuilder);
 
         stringBuilder.append("\n\n");
 
-        ExamPeriodTomorrowNotification examPeriodTomorrowNotification =
-                examPeriodTomorrowNotificationRepository.findByUserIdAndUserSource(userId, source);
         stringBuilder.append("Рассылка расписания сессии на завтра: ");
-
-        if (null == examPeriodTomorrowNotification) {
-            stringBuilder.append("не подключена.");
-        } else {
-            if (examPeriodTomorrowNotification.isEnabled()) {
-                stringBuilder.append("вкл, ");
-            } else {
-                stringBuilder.append("выкл, ");
-            }
-
-            if (null == examPeriodTomorrowNotification.getHourForSend()) {
-                stringBuilder.append("время не указано.");
-            } else {
-                stringBuilder.append(examPeriodTomorrowNotification.getHourForSend()).append(H_DOT);
-            }
-        }
+        formatScheduleNotificationsSettings(botUser, EXAM_PERIOD_TOMORROW, stringBuilder);
 
         stringBuilder.append("\n\n");
 
-        ExamPeriodAfterTomorrowNotification examPeriodAfterTomorrowNotification =
-                examPeriodAfterTomorrowNotificationRepository.findByUserIdAndUserSource(userId, source);
         stringBuilder.append("Рассылка расписания сессии на послезавтра: ");
-
-        if (null == examPeriodAfterTomorrowNotification) {
-            stringBuilder.append("не подключена.");
-        } else {
-            if (examPeriodAfterTomorrowNotification.isEnabled()) {
-                stringBuilder.append("вкл, ");
-            } else {
-                stringBuilder.append("выкл, ");
-            }
-
-            if (null == examPeriodAfterTomorrowNotification.getHourForSend()) {
-                stringBuilder.append("время не указано.");
-            } else {
-                stringBuilder.append(examPeriodAfterTomorrowNotification.getHourForSend()).append(H_DOT);
-            }
-        }
+        formatScheduleNotificationsSettings(botUser, EXAM_PERIOD_AFTER_TOMORROW, stringBuilder);
 
         return stringBuilder.toString();
     }
 
     private String getScheduleNotificationSettingsExtramural(BotUser botUser) {
-        String userId = botUser.getUserId();
-        BotUserSource source = botUser.getSource();
-
         StringBuilder stringBuilder = new StringBuilder();
 
-        ExtramuralEventTodayNotification extramuralEventTodayNotification =
-                extramuralEventTodayNotificationRepository.findByUserIdAndUserSource(userId, source);
         stringBuilder.append("Рассылка расписания сессии на сегодня: ");
-
-        if (null == extramuralEventTodayNotification) {
-            stringBuilder.append("не подключена.");
-        } else {
-            if (extramuralEventTodayNotification.isEnabled()) {
-                stringBuilder.append("вкл, ");
-            } else {
-                stringBuilder.append("выкл, ");
-            }
-
-            if (null == extramuralEventTodayNotification.getHourForSend()) {
-                stringBuilder.append("время не указано.");
-            } else {
-                stringBuilder.append(extramuralEventTodayNotification.getHourForSend()).append(H_DOT);
-            }
-        }
+        formatScheduleNotificationsSettings(botUser, EXTRAMURAL_EVENT_TODAY, stringBuilder);
 
         stringBuilder.append("\n\n");
 
-        ExtramuralEventTomorrowNotification extramuralEventTomorrowNotification =
-                extramuralEventTomorrowNotificationRepository.findByUserIdAndUserSource(userId, source);
         stringBuilder.append("Рассылка расписания сессии на завтра: ");
-
-        if (null == extramuralEventTomorrowNotification) {
-            stringBuilder.append("не подключена.");
-        } else {
-            if (extramuralEventTomorrowNotification.isEnabled()) {
-                stringBuilder.append("вкл, ");
-            } else {
-                stringBuilder.append("выкл, ");
-            }
-
-            if (null == extramuralEventTomorrowNotification.getHourForSend()) {
-                stringBuilder.append("время не указано.");
-            } else {
-                stringBuilder.append(extramuralEventTomorrowNotification.getHourForSend()).append(H_DOT);
-            }
-        }
+        formatScheduleNotificationsSettings(botUser, EXTRAMURAL_EVENT_TOMORROW, stringBuilder);
 
         stringBuilder.append("\n\n");
 
-        ExtramuralEventAfterTomorrowNotification extramuralEventAfterTomorrowNotification =
-                extramuralEventAfterTomorrowNotificationRepository.findByUserIdAndUserSource(userId, source);
         stringBuilder.append("Рассылка расписания сессии на послезавтра: ");
-
-        if (null == extramuralEventAfterTomorrowNotification) {
-            stringBuilder.append("не подключена.");
-        } else {
-            if (extramuralEventAfterTomorrowNotification.isEnabled()) {
-                stringBuilder.append("вкл, ");
-            } else {
-                stringBuilder.append("выкл, ");
-            }
-
-            if (null == extramuralEventAfterTomorrowNotification.getHourForSend()) {
-                stringBuilder.append("время не указано.");
-            } else {
-                stringBuilder.append(extramuralEventAfterTomorrowNotification.getHourForSend()).append(H_DOT);
-            }
-        }
+        formatScheduleNotificationsSettings(botUser, EXTRAMURAL_EVENT_AFTER_TOMORROW, stringBuilder);
 
         return stringBuilder.toString();
+    }
+
+    private void formatScheduleNotificationsSettings(BotUser botUser, NotificationType notificationType, StringBuilder stringBuilder) {
+        var scheduleNotificationOptional =
+                scheduleNotificationRepository.findByUserIdAndUserSource(botUser.getUserId(), botUser.getSource(), notificationType);
+        if (scheduleNotificationOptional.isEmpty()) {
+            stringBuilder.append("не подключена.");
+        } else {
+            var scheduleNotification = scheduleNotificationOptional.get();
+            if (scheduleNotification.isEnabled()) {
+                stringBuilder.append("вкл, ");
+            } else {
+                stringBuilder.append("выкл, ");
+            }
+
+            if (null == scheduleNotification.getHourForSend()) {
+                stringBuilder.append("время не указано.");
+            } else {
+                stringBuilder.append(scheduleNotification.getHourForSend()).append(H_DOT);
+            }
+        }
     }
 
     private String firstNotEmpty(String string) {
@@ -790,5 +554,41 @@ public class SettingsService implements BotMessageService {
         return message.equals(CommandText.SET_SEND_SCHEDULE_TIME_TOMORROW)
                 || message.equals(CommandText.ENABLE_SEND_SCHEDULE_TOMORROW)
                 || message.equals(CommandText.DISABLE_SEND_SCHEDULE_TOMORROW);
+    }
+
+    private Optional<ScheduleNotification> enableScheduleNotification(BotUser botUser, NotificationType notificationType) {
+        return setScheduleNotificationStatus(botUser, notificationType, true);
+    }
+
+    private Optional<ScheduleNotification> disableScheduleNotification(BotUser botUser, NotificationType notificationType) {
+        return setScheduleNotificationStatus(botUser, notificationType, false);
+    }
+
+    private Optional<ScheduleNotification> setScheduleNotificationStatus(BotUser botUser, NotificationType notificationType, boolean isEnabled) {
+        var scheduleNotificationOptional =
+                scheduleNotificationRepository.findByUserIdAndUserSource(botUser.getUserId(), botUser.getSource(), notificationType);
+        if (scheduleNotificationOptional.isEmpty()) {
+            return Optional.empty();
+        } else {
+            var scheduleNotification = scheduleNotificationOptional.get();
+            scheduleNotification.setEnabled(isEnabled);
+            scheduleNotification = scheduleNotificationRepository.save(scheduleNotification);
+            return Optional.of(scheduleNotification);
+        }
+    }
+
+    private void upsertScheduleNotificationHourForSend(int hourForSend, BotUser botUser, NotificationType notificationType) {
+        var userId = botUser.getUserId();
+        var source = botUser.getSource();
+        var scheduleTodayNotificationOptional =
+                scheduleNotificationRepository.findByUserIdAndUserSource(userId, source, notificationType);
+
+        if (scheduleTodayNotificationOptional.isEmpty()) {
+            scheduleNotificationRepository.save(new ScheduleNotification(userId, source, true, hourForSend, notificationType));
+        } else {
+            var scheduleTodayNotification = scheduleTodayNotificationOptional.get();
+            scheduleTodayNotification.setHourForSend(hourForSend);
+            scheduleNotificationRepository.save(scheduleTodayNotification);
+        }
     }
 }

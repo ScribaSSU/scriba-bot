@@ -10,13 +10,12 @@
 	</parent>
 	<groupId>com.scribassu</groupId>
 	<artifactId>scriba-bot</artifactId>
-	<version>3.0.3</version>
+	<version>4.0.0</version>
 
 	<properties>
 		<java.version>11</java.version>
 		<apache.httpcomponents.version>4.5.13</apache.httpcomponents.version>
 		<apache.commons-lang.version>3.12.0</apache.commons-lang.version>
-		<gson.version>2.8.7</gson.version>
 		<lombok.version>1.18.20</lombok.version>
 		<mysql-connector.version>5.1.45</mysql-connector.version>
 		<tracto-dto.version>2.0.1</tracto-dto.version>

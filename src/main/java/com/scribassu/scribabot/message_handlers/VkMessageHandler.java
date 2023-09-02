@@ -5,6 +5,7 @@ import com.scribassu.scribabot.mapper.HttpMapper;
 import com.scribassu.scribabot.text.MessageText;
 import com.scribassu.scribabot.util.Constants;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +17,7 @@ import java.util.concurrent.CompletableFuture;
 
 @RestController
 @Data
+@Slf4j
 public class VkMessageHandler {
 
     @Value("${scriba-bot.vk.confirmation-code}")
@@ -29,6 +31,7 @@ public class VkMessageHandler {
     @PostMapping(value = "${scriba-bot.vk.url}", consumes = {"application/json"})
     @ResponseStatus(HttpStatus.OK)
     public String getMessage(@RequestBody VkMessageDto incomingMessage) throws Exception {
+        log.info("VK message: {}", incomingMessage);
         if (incomingMessage.isConfirmation()) {
             return confirmationCode;
         }

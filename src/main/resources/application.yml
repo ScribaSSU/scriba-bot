@@ -50,3 +50,7 @@ spring:
         dialect:
     hibernate:
       ddl-auto:
+
+logging:
+  level:
+    org.apache.http: ERROR

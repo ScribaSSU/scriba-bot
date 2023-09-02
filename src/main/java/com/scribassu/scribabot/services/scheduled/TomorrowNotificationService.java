@@ -1,8 +1,5 @@
 package com.scribassu.scribabot.services.scheduled;
 
-import com.scribassu.scribabot.entities.notifications.ExamPeriodTomorrowNotification;
-import com.scribassu.scribabot.entities.notifications.ExtramuralEventTomorrowNotification;
-import com.scribassu.scribabot.entities.notifications.ScheduleTomorrowNotification;
 import com.scribassu.scribabot.entities.users.TgBotUser;
 import com.scribassu.scribabot.entities.users.VkBotUser;
 import com.scribassu.scribabot.generators.BotMessageGenerator;
@@ -10,9 +7,7 @@ import com.scribassu.scribabot.message_handlers.TgMessageSender;
 import com.scribassu.scribabot.message_handlers.VkMessageSender;
 import com.scribassu.scribabot.model.BotMessage;
 import com.scribassu.scribabot.model.BotUser;
-import com.scribassu.scribabot.repositories.notifications.ExamPeriodTomorrowNotificationRepository;
-import com.scribassu.scribabot.repositories.notifications.ExtramuralEventTomorrowNotificationRepository;
-import com.scribassu.scribabot.repositories.notifications.ScheduleTomorrowNotificationRepository;
+import com.scribassu.scribabot.repositories.notifications.ScheduleNotificationRepository;
 import com.scribassu.scribabot.repositories.users.TgBotUserRepository;
 import com.scribassu.scribabot.repositories.users.VkBotUserRepository;
 import com.scribassu.scribabot.services.CallRestService;
@@ -25,8 +20,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.Calendar;
-import java.util.List;
 
+import static com.scribassu.scribabot.entities.notifications.NotificationType.*;
 import static com.scribassu.scribabot.text.MessageText.NO_EXAMS;
 import static com.scribassu.scribabot.text.MessageText.NO_LESSONS;
 
@@ -41,9 +36,7 @@ public class TomorrowNotificationService {
     private final BotMessageGenerator botMessageGenerator;
     private final VkBotUserRepository vkBotUserRepository;
     private final TgBotUserRepository tgBotUserRepository;
-    private final ScheduleTomorrowNotificationRepository scheduleTomorrowNotificationRepository;
-    private final ExamPeriodTomorrowNotificationRepository examPeriodTomorrowNotificationRepository;
-    private final ExtramuralEventTomorrowNotificationRepository extramuralEventTomorrowNotificationRepository;
+    private final ScheduleNotificationRepository scheduleNotificationRepository;
 
     @Scheduled(cron = "${scheduled.schedule-tomorrow-notification-service.cron}")
     public void sendSchedule() throws Exception {
@@ -56,8 +49,8 @@ public class TomorrowNotificationService {
         Calendar calendar = CalendarUtils.getCalendar();
         int hourOfDay = calendar.get(Calendar.HOUR_OF_DAY);
         log.info("Start to send tomorrow full time schedule for hour {}", hourOfDay);
-        List<ScheduleTomorrowNotification> scheduleTomorrowNotifications =
-                scheduleTomorrowNotificationRepository.findByHourForSendAndEnabled(hourOfDay);
+        var scheduleTomorrowNotifications =
+                scheduleNotificationRepository.findByHourForSendAndEnabled(hourOfDay, FULL_TIME_TOMORROW);
 
         if (!CollectionUtils.isEmpty(scheduleTomorrowNotifications)) {
             log.info("Send tomorrow full time schedule for hour {}", hourOfDay);
@@ -68,7 +61,7 @@ public class TomorrowNotificationService {
                 dayNumberInt++;
             }
             final String dayNumber = String.valueOf(dayNumberInt);
-            for (ScheduleTomorrowNotification notification : scheduleTomorrowNotifications) {
+            for (var notification : scheduleTomorrowNotifications) {
                 BotUser botUser;
                 if (notification.fromVk()) {
                     VkBotUser vkBotUser = vkBotUserRepository.findOneById(notification.getUserId());
@@ -116,12 +109,12 @@ public class TomorrowNotificationService {
         calendar.add(Calendar.DAY_OF_MONTH, -1);
         int hourOfDay = calendar.get(Calendar.HOUR_OF_DAY);
         log.info("Start to send tomorrow exam period schedule for hour {}", hourOfDay);
-        List<ExamPeriodTomorrowNotification> examPeriodTomorrowNotifications =
-                examPeriodTomorrowNotificationRepository.findByHourForSendAndEnabled(hourOfDay);
+        var examPeriodTomorrowNotifications =
+                scheduleNotificationRepository.findByHourForSendAndEnabled(hourOfDay, EXAM_PERIOD_TOMORROW);
 
         if (!CollectionUtils.isEmpty(examPeriodTomorrowNotifications)) {
             log.info("Send tomorrow exam period schedule for hour {}", hourOfDay);
-            for (ExamPeriodTomorrowNotification notification : examPeriodTomorrowNotifications) {
+            for (var notification : examPeriodTomorrowNotifications) {
                 BotUser botUser;
                 if (notification.fromVk()) {
                     VkBotUser vkBotUser = vkBotUserRepository.findOneById(notification.getUserId());
@@ -172,12 +165,12 @@ public class TomorrowNotificationService {
         calendar.add(Calendar.DAY_OF_MONTH, -1);
         int hourOfDay = calendar.get(Calendar.HOUR_OF_DAY);
         log.info("Start to send tomorrow extramural schedule for hour {}", hourOfDay);
-        List<ExtramuralEventTomorrowNotification> extramuralEventTomorrowNotifications =
-                extramuralEventTomorrowNotificationRepository.findByHourForSendAndEnabled(hourOfDay);
+        var extramuralEventTomorrowNotifications =
+                scheduleNotificationRepository.findByHourForSendAndEnabled(hourOfDay, EXTRAMURAL_EVENT_TOMORROW);
 
         if (!CollectionUtils.isEmpty(extramuralEventTomorrowNotifications)) {
             log.info("Send tomorrow extramural schedule for hour {}", hourOfDay);
-            for (ExtramuralEventTomorrowNotification notification : extramuralEventTomorrowNotifications) {
+            for (var notification : extramuralEventTomorrowNotifications) {
                 BotUser botUser;
                 if (notification.fromVk()) {
                     VkBotUser vkBotUser = vkBotUserRepository.findOneById(notification.getUserId());

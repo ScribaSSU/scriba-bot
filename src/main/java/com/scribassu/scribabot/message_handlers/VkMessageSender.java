@@ -2,9 +2,9 @@ package com.scribassu.scribabot.message_handlers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.scribassu.scribabot.model.BotMessage;
 import com.scribassu.scribabot.generators.InnerKeyboardGenerator;
 import com.scribassu.scribabot.mapper.HttpMapper;
+import com.scribassu.scribabot.model.BotMessage;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpResponse;
@@ -68,8 +68,6 @@ public class VkMessageSender implements MessageSender {
                 postParameters.add(new BasicNameValuePair("random_id", String.valueOf(random.nextInt())));
                 postParameters.add(new BasicNameValuePair("message", message));
 
-                var aa = httpMapper;
-
                 if (botMessage.getBotUser().isSentKeyboard() && botMessage.hasKeyboard()) {
                     ObjectMapper objectMapper = new ObjectMapper();
                     String keyboard;
@@ -95,7 +93,6 @@ public class VkMessageSender implements MessageSender {
                 } else {
                     startIndex += VK_LENGTH;
                 }
-                log.info("Response: " + response);
             }
         } catch (Exception e) {
             log.error(String.format("Failed to send VK message to user %s: %s", userId, e.getMessage()));

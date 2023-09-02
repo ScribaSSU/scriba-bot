@@ -1,11 +1,10 @@
 package com.scribassu.scribabot.generators;
 
-import com.scribassu.scribabot.entities.notifications.*;
 import com.scribassu.scribabot.model.BotUser;
 import com.scribassu.scribabot.model.BotUserSource;
 import com.scribassu.scribabot.model.keyboard.Keyboard;
 import com.scribassu.scribabot.model.keyboard.KeyboardButton;
-import com.scribassu.scribabot.repositories.notifications.*;
+import com.scribassu.scribabot.repositories.notifications.ScheduleNotificationRepository;
 import com.scribassu.tracto.dto.TeacherDto;
 import lombok.Data;
 import org.springframework.stereotype.Service;
@@ -13,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.scribassu.scribabot.entities.notifications.NotificationType.*;
 import static com.scribassu.scribabot.model.keyboard.KeyboardEmoji.*;
 import static com.scribassu.scribabot.text.CommandText.TEACHER_PREFIX;
 import static com.scribassu.scribabot.util.Constants.MAX_KEYBOARD_TEXT_LENGTH;
@@ -21,15 +21,7 @@ import static com.scribassu.scribabot.util.Constants.MAX_KEYBOARD_TEXT_LENGTH;
 @Data
 public class InnerKeyboardGenerator {
 
-    private final ExamPeriodAfterTomorrowNotificationRepository examPeriodAfterTomorrowNotificationRepository;
-    private final ExamPeriodTomorrowNotificationRepository examPeriodTomorrowNotificationRepository;
-    private final ExamPeriodTodayNotificationRepository examPeriodTodayNotificationRepository;
-    private final ScheduleTodayNotificationRepository scheduleTodayNotificationRepository;
-    private final ScheduleTomorrowNotificationRepository scheduleTomorrowNotificationRepository;
-    private final ExtramuralEventTodayNotificationRepository extramuralEventTodayNotificationRepository;
-    private final ExtramuralEventTomorrowNotificationRepository extramuralEventTomorrowNotificationRepository;
-    private final ExtramuralEventAfterTomorrowNotificationRepository extramuralEventAfterTomorrowNotificationRepository;
-
+    private final ScheduleNotificationRepository scheduleNotificationRepository;
     private static final KeyboardButton MAIN_MENU_BUTTON = new KeyboardButton(String.format("%1$s Главное меню %1$s", BACK_EMOJI));
     private static final KeyboardButton SETTINGS_BUTTON = new KeyboardButton(String.format("%1$s Настройки %1$s", SETTINGS_EMOJI));
     private static final KeyboardButton CHOOSE_DEPARTMENT_AND_GROUP_BUTTON = new KeyboardButton(String.format("%1$s Выбрать факультет и группу %1$s", SETTINGS_EMOJI));
@@ -298,23 +290,23 @@ public class InnerKeyboardGenerator {
         innerKeyboard.get(7).add(MAIN_MENU_BUTTON);
 
         if (BotUser.isBotUserFullTime(botUser)) {
-            ExamPeriodTodayNotification examPeriodTodayNotification = examPeriodTodayNotificationRepository.findByUserIdAndUserSource(userId, source);
-            ExamPeriodTomorrowNotification examPeriodTomorrowNotification = examPeriodTomorrowNotificationRepository.findByUserIdAndUserSource(userId, source);
-            ExamPeriodAfterTomorrowNotification examPeriodAfterTomorrowNotification = examPeriodAfterTomorrowNotificationRepository.findByUserIdAndUserSource(userId, source);
+            var examPeriodTodayNotification = scheduleNotificationRepository.findByUserIdAndUserSource(userId, source, EXAM_PERIOD_TODAY);
+            var examPeriodTomorrowNotification = scheduleNotificationRepository.findByUserIdAndUserSource(userId, source, EXAM_PERIOD_TOMORROW);
+            var examPeriodAfterTomorrowNotification = scheduleNotificationRepository.findByUserIdAndUserSource(userId, source, EXAM_PERIOD_AFTER_TOMORROW);
 
-            if (null != examPeriodTodayNotification && examPeriodTodayNotification.isEnabled()) {
+            if (examPeriodTodayNotification.isPresent() && examPeriodTodayNotification.get().isEnabled()) {
                 innerKeyboard.get(1).add(new KeyboardButton(String.format("%1$s Выкл. рассылку сессии на сегодня %1$s", NO_EMOJI)));
             } else {
                 innerKeyboard.get(1).add(new KeyboardButton(String.format("%1$s Вкл. рассылку сессии на сегодня %1$s", YES_EMOJI)));
             }
 
-            if (null != examPeriodTomorrowNotification && examPeriodTomorrowNotification.isEnabled()) {
+            if (examPeriodTomorrowNotification.isPresent() && examPeriodTomorrowNotification.get().isEnabled()) {
                 innerKeyboard.get(3).add(new KeyboardButton(String.format("%1$s Выкл. рассылку сессии на завтра %1$s", NO_EMOJI)));
             } else {
                 innerKeyboard.get(3).add(new KeyboardButton(String.format("%1$s Вкл. рассылку сессии на завтра %1$s", YES_EMOJI)));
             }
 
-            if (null != examPeriodAfterTomorrowNotification && examPeriodAfterTomorrowNotification.isEnabled()) {
+            if (examPeriodAfterTomorrowNotification.isPresent() && examPeriodAfterTomorrowNotification.get().isEnabled()) {
                 innerKeyboard.get(5).add(new KeyboardButton(String.format("%1$s Выкл. рассылку сессии на послезавтра %1$s", NO_EMOJI)));
             } else {
                 innerKeyboard.get(5).add(new KeyboardButton(String.format("%1$s Вкл. рассылку сессии на послезавтра %1$s", YES_EMOJI)));
@@ -322,23 +314,23 @@ public class InnerKeyboardGenerator {
         }
 
         if (BotUser.isBotUserExtramural(botUser)) {
-            ExtramuralEventTodayNotification extramuralEventTodayNotification = extramuralEventTodayNotificationRepository.findByUserIdAndUserSource(userId, source);
-            ExtramuralEventTomorrowNotification extramuralEventTomorrowNotification = extramuralEventTomorrowNotificationRepository.findByUserIdAndUserSource(userId, source);
-            ExtramuralEventAfterTomorrowNotification extramuralEventAfterTomorrowNotification = extramuralEventAfterTomorrowNotificationRepository.findByUserIdAndUserSource(userId, source);
+            var extramuralEventTodayNotification = scheduleNotificationRepository.findByUserIdAndUserSource(userId, source, EXTRAMURAL_EVENT_TODAY);
+            var extramuralEventTomorrowNotification = scheduleNotificationRepository.findByUserIdAndUserSource(userId, source, EXTRAMURAL_EVENT_TOMORROW);
+            var extramuralEventAfterTomorrowNotification = scheduleNotificationRepository.findByUserIdAndUserSource(userId, source, EXTRAMURAL_EVENT_AFTER_TOMORROW);
 
-            if (null != extramuralEventTodayNotification && extramuralEventTodayNotification.isEnabled()) {
+            if (extramuralEventTodayNotification.isPresent() && extramuralEventTodayNotification.get().isEnabled()) {
                 innerKeyboard.get(1).add(new KeyboardButton(String.format("%1$s Выкл. рассылку сессии на сегодня %1$s", NO_EMOJI)));
             } else {
                 innerKeyboard.get(1).add(new KeyboardButton(String.format("%1$s Вкл. рассылку сессии на сегодня %1$s", YES_EMOJI)));
             }
 
-            if (null != extramuralEventTomorrowNotification && extramuralEventTomorrowNotification.isEnabled()) {
+            if (extramuralEventTomorrowNotification.isPresent() && extramuralEventTomorrowNotification.get().isEnabled()) {
                 innerKeyboard.get(3).add(new KeyboardButton(String.format("%1$s Выкл. рассылку сессии на завтра %1$s", NO_EMOJI)));
             } else {
                 innerKeyboard.get(3).add(new KeyboardButton(String.format("%1$s Вкл. рассылку сессии на завтра %1$s", YES_EMOJI)));
             }
 
-            if (null != extramuralEventAfterTomorrowNotification && extramuralEventAfterTomorrowNotification.isEnabled()) {
+            if (extramuralEventAfterTomorrowNotification.isPresent() && extramuralEventAfterTomorrowNotification.get().isEnabled()) {
                 innerKeyboard.get(5).add(new KeyboardButton(String.format("%1$s Выкл. рассылку сессии на послезавтра %1$s", NO_EMOJI)));
             } else {
                 innerKeyboard.get(5).add(new KeyboardButton(String.format("%1$s Вкл. рассылку сессии на послезавтра %1$s", YES_EMOJI)));
@@ -357,8 +349,8 @@ public class InnerKeyboardGenerator {
         String userId = botUser.getUserId();
         BotUserSource source = botUser.getSource();
 
-        var scheduleTodayNotification = scheduleTodayNotificationRepository.findByUserIdAndUserSource(userId, source);
-        ScheduleTomorrowNotification scheduleTomorrowNotification = scheduleTomorrowNotificationRepository.findByUserIdAndUserSource(userId, source);
+        var scheduleTodayNotification = scheduleNotificationRepository.findByUserIdAndUserSource(userId, source, FULL_TIME_TODAY);
+        var scheduleTomorrowNotification = scheduleNotificationRepository.findByUserIdAndUserSource(userId, source, FULL_TIME_TOMORROW);
 
         innerKeyboard.get(0).add(new KeyboardButton("Уст. время рассылки расп-я на сегодня"));
 
@@ -370,7 +362,7 @@ public class InnerKeyboardGenerator {
 
         innerKeyboard.get(2).add(new KeyboardButton("Уст. время рассылки расп-я на завтра"));
 
-        if (null != scheduleTomorrowNotification && scheduleTomorrowNotification.isEnabled()) {
+        if (scheduleTomorrowNotification.isPresent() && scheduleTomorrowNotification.get().isEnabled()) {
             innerKeyboard.get(3).add(new KeyboardButton(String.format("%1$s Выкл. рассылку расп-я на завтра %1$s", NO_EMOJI)));
         } else {
             innerKeyboard.get(3).add(new KeyboardButton(String.format("%1$s Вкл. рассылку расп-я на завтра %1$s", YES_EMOJI)));
