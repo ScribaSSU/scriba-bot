@@ -70,7 +70,7 @@ public class MessageHandler {
         for (String mentionedName : mentionedNames) {
             if (message.contains(mentionedName.toLowerCase(Locale.ROOT))) {
                 // 1 for ] char
-                message = message.substring(message.indexOf(mentionedName) + mentionedName.length() + 1);
+                message = message.substring(message.indexOf(mentionedName) + mentionedName.length() + 1).trim();
                 isMentioned = true;
                 break;
             }
