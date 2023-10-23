@@ -50,6 +50,7 @@ public class MessageGenerator {
         WeekType currentWeekType = CalendarUtils.getWeekType(calendar, fullTimeLessonDto.getStudentGroup().getDepartment().isWeekShift());
 
         if (null != fullTimeLessonDto.getStudentGroup()) {
+            // todo: remove, now every department has its own week type
             // kgl has another week type
             if (fullTimeLessonDto.getStudentGroup().getDepartment().getUrl().equalsIgnoreCase("kgl")) {
                 currentWeekType = currentWeekType.equals(WeekType.NOM) ? WeekType.DENOM : WeekType.NOM;

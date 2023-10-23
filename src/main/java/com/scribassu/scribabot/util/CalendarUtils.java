@@ -24,7 +24,8 @@ public class CalendarUtils {
     }
 
     public static WeekType getWeekType(Calendar calendar, boolean departmentShift) {
-        return calendar.get(Calendar.WEEK_OF_YEAR) % 2 == 0 && departmentShift ? WeekType.NOM : WeekType.DENOM;
+        var increment = departmentShift ? 1 : 0;
+        return (calendar.get(Calendar.WEEK_OF_YEAR ) + increment) % 2 == 0 ? WeekType.NOM : WeekType.DENOM;
     }
 
     public static String weekTypeToLongString(WeekType weekType) {
