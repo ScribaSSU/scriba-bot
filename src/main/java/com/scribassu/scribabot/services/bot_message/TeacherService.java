@@ -116,7 +116,7 @@ public class TeacherService implements BotMessageService {
     private CompletableFuture<BotMessage> tryToSaveUsersTeacherChoice(String message, BotUser botUser) {
         try {
             var teacherId = retrieveTeacherId(message);
-            botUserService.updatePreviousUserMessage(TEACHER_PREFIX + teacherId, botUser);
+            botUserService.updatePreviousUserMessage(TEACHER_PREFIX + " " + teacherId, botUser);
             return CompletableFuture.completedFuture(new BotMessage(
                     CHOOSE_DAY_FOR_TEACHER_SCHEDULE,
                     innerKeyboardGenerator.teacherSchedule(botUser), botUser));
